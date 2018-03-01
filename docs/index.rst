@@ -1,21 +1,23 @@
+======
 MSL-IO
 ======
 
-Write the documentation for **MSL-IO**.
+Read and write MSL data files.
 
+========
 Contents
 ========
 
 .. toctree::
    :maxdepth: 2
 
+   new_reader
    License <license>
    Authors <authors>
    Release Notes <changelog>
 
-Indices and tables
-==================
+=====
+Index
+=====
 
-* :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
