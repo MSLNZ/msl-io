@@ -2,15 +2,15 @@ import os
 import importlib
 from collections import namedtuple
 
+from . import register
+from .base import Reader
+
 __author__ = 'jborbely'
 __copyright__ = '\xa9 2018, ' + __author__
 __version__ = '0.1.0'
 
 version_info = namedtuple('version_info', 'major minor micro')(*map(int, __version__.split('.')[:3]))
 """:obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro) tuple."""
-
-from . import register
-from .base import Reader
 
 # import all Reader classes that are in this directory
 _ignore_list = ('__init__.py', 'base.py', 'register.py')
