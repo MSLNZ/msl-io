@@ -1,5 +1,6 @@
 import os
 
+
 class Reader(object):
 
     def __init__(self, url, **kwargs):

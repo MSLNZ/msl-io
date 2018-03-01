@@ -1,6 +1,6 @@
+from . import register
 from .base import Reader
 
-from . import register
 
 @register.reader
 class TXT(Reader):

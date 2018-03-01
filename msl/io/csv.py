@@ -1,6 +1,6 @@
+from . import register
 from .base import Reader
 
-from . import register
 
 @register.reader
 class CSV(Reader):
@@ -14,5 +14,3 @@ class CSV(Reader):
 
     def read(self):
         return self.create_new_dataset()
-
-
