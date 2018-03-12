@@ -1,4 +1,3 @@
-import os
 
 
 class Reader(object):
@@ -10,10 +9,6 @@ class Reader(object):
     def url(self):
         return self._url
 
-    @classmethod
-    def extension(cls, url):
-        return os.path.splitext(url)[1]
-
     @staticmethod
     def can_read(url):
         return False
@@ -21,8 +16,31 @@ class Reader(object):
     def read(self):
         raise NotImplementedError
 
-    def create_new_dataset(self):
+    def create_root(self):
+        return Root(self.url)
+
+
+class Root(object):
+
+    def __init__(self, url):
+        self._url = url
+
+    @property
+    def url(self):
+        return self._url
+
+
+class Group(object):
+
+    def metadata(self):
+        return Metadata()
+
+    def dataset(self):
         return Dataset()
+
+
+class Metadata(object):
+    pass
 
 
 class Dataset(object):

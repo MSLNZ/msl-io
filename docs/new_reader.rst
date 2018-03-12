@@ -38,15 +38,15 @@ The following illustrates the basic requirements for creating a new Reader.
            return  # True or False
 
        def read(self):
-           """This method reads the data file and returns a Dataset object."""
+           """This method reads the data file(s) and returns a Root object."""
 
-           # Create an empty dataset
-           dataset = self.create_new_dataset()
+           # Create a new Root object
+           root = self.create_root()
 
            #
-           # Populate the attributes of this `dataset` from the information in the file
+           # Populate the attributes of `root` from the information in the file(s)
            #
 
-           # return the dataset
-           return dataset
+           # return the Root object
+           return root
 
