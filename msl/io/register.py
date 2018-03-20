@@ -10,13 +10,13 @@ def reader(reader_class):
 
     Parameters
     ----------
-    reader_class : :class:`~msl.io.base.Reader`
-        A :class:`~msl.io.base.Reader` subclass .
+    reader_class : :class:`~msl.io.reader.Reader`
+        A :class:`~msl.io.reader.Reader` subclass.
 
     Returns
     -------
-    :class:`~msl.io.base.Reader`
-        The :class:`~msl.io.base.Reader`.
+    :class:`~msl.io.reader.Reader`
+        The :class:`~msl.io.reader.Reader`.
     """
     def append(cls):
         _readers.append(cls)
