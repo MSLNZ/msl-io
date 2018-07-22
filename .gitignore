@@ -34,7 +34,11 @@ docs/_autosummary/
 
 # pytest and coverage
 .cache/
+.pytest_cache/
 htmlcov/
 .coverage
 junit.xml
 coverage.xml
+
+# ignore all scripts in the junk/ folder
+junk/
