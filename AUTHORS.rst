@@ -2,4 +2,4 @@
 Developers
 ==========
 
-* jborbely <joe.borbely@gmail.com>
+* Joseph Borbely <joseph.borbely@measurement.govt.nz>
