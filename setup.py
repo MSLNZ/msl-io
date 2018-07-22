@@ -19,19 +19,20 @@ class ApiDocs(Command):
         pass
 
     def run(self):
-        import sphinx
-        from sphinx.apidoc import main
-
         command = [
             None,  # in Sphinx < 1.7.0 the first command-line argument was parsed, in 1.7.0 it became argv[1:]
             '--force',  # overwrite existing files
             '--module-first',  # put module documentation before submodule documentation
             '--separate',  # put documentation for each module on its own page
-            '-o', './docs/_autosummary',  # where to save the output files
+            '-o', './docs/_api',  # where to save the output files
             'msl',  # the path to the Python package to document
         ]
 
-        if sphinx.version_info[:2] >= (1, 7):
+        import sphinx
+        if sphinx.version_info < (1, 7):
+            from sphinx.apidoc import main
+        else:
+            from sphinx.ext.apidoc import main  # Sphinx also changed the location of apidoc.main
             command.pop(0)
 
         main(command)
@@ -53,8 +54,6 @@ class BuildDocs(Command):
         pass
 
     def run(self):
-        import sphinx
-
         command = [
             None,  # in Sphinx < 1.7.0 the first command-line argument was parsed, in 1.7.0 it became argv[1:]
             '-b', 'html',  # the builder to use, e.g., create a HTML version of the documentation
@@ -64,10 +63,11 @@ class BuildDocs(Command):
             './docs/_build/html',  # where to save the output files
         ]
 
-        if sphinx.version_info[:2] < (1, 7):
-            from sphinx import build_main  # Sphinx also changed the location of build_main
+        import sphinx
+        if sphinx.version_info < (1, 7):
+            from sphinx import build_main
         else:
-            from sphinx.cmd.build import build_main
+            from sphinx.cmd.build import build_main  # Sphinx also changed the location of build_main
             command.pop(0)
 
         build_main(command)
@@ -96,17 +96,29 @@ setup(
     name='msl-io',
     version=fetch_init('__version__'),
     author=fetch_init('__author__'),
-    author_email='joe.borbely@gmail.com',
+    author_email='joseph.borbely@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-io',
-    description='Write a short description about msl-io here',
+    description='Read and write MSL data files',
     long_description=read('README.rst'),
     platforms='any',
     license='MIT',
-    classifiers=[],  # see https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: Console',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+    ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
-    install_requires=[],  # specify the packages that io depends on
+    install_requires=['numpy'],
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
-    include_package_data=True,  # includes all files specified in MANIFEST.in when building the distribution
+    include_package_data=True,
 )
