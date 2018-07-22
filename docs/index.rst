@@ -31,7 +31,7 @@ items that are in the file using
     >>> for name, value in root.items():
             print(name, value)
 
-where, `name` will be `value` will be of type :class:`~msl.io.group.Group` or :class`~msl.io.dataset.Dataset`.
+where, `value` will be of type :class:`~msl.io.group.Group` or :class:`~msl.io.dataset.Dataset`.
 
 Or view the metadata for `root`
 
