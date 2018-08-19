@@ -17,8 +17,8 @@ version_info = namedtuple('version_info', 'major minor micro')(*map(int, __versi
 
 # import all Reader classes that are in the "./readers" directory
 for module in os.listdir(os.path.dirname(__file__) + '/readers'):
-    if module.endswith('.py') and module != '__init__.py':
-        importlib.import_module('msl.io.'+module[:-3])
+    if module.endswith('.py') and not module.startswith('_'):
+        importlib.import_module('msl.io.readers.'+module[:-3])
 
 
 def read(url, **kwargs):
