@@ -17,7 +17,7 @@ class Reader(object):
         url : :class:`str`
             The location of a file on a local hard drive or on a network.
         **kwargs
-            Key-value pairs that may be required when reading the file.
+            Key-value pairs that a :class:`Reader` subclass may need when reading the file.
         """
         self._url = url
 
@@ -36,7 +36,7 @@ class Reader(object):
         return False
 
     @staticmethod
-    def get_lines(url, *args):
+    def get_lines(url, *args, **kwargs):
         """Return lines from the file.
 
         Parameters
@@ -54,19 +54,33 @@ class Reader(object):
             - ``get_lines(url, 2, 4)`` -> returns lines 2, 3 and 4
             - ``get_lines(url, 4, -1)`` -> skips the first 3 lines and returns the rest
             - ``get_lines(url, 2, -2)`` -> skips the first and last lines and returns the rest
-            - ``get_lines(url, -4, -2)`` > returns the fourth-, third- and second-last lines
+            - ``get_lines(url, -4, -2)`` -> returns the fourth-, third- and second-last lines
+
+        **kwargs
+            Accepts the following:
+
+            * ``remove_empty_lines`` : :class:`bool`, default: :data:`False`
+
+              Whether to remove all empty lines.
 
         Returns
         -------
         :class:`list` of :class:`str`
             The lines from the file. The newline character is stripped from each line.
         """
+        remove_empty_lines = kwargs.get('remove_empty_lines', False)
+
         def get_all_lines():
             with open(url, 'r') as f:
                 return f.read().split('\n')
 
+        def check_remove_empty(lns):
+            if remove_empty_lines:
+                return [val for val in lns if val]
+            return lns
+
         if not args:
-            return get_all_lines()
+            return check_remove_empty(get_all_lines())
         elif len(args) == 1:
             start, stop = None, args[0]
         else:
@@ -76,14 +90,14 @@ class Reader(object):
         if (start and start < 0) or (stop and stop < 0):
             lines = get_all_lines()
             if start is None:
-                return lines[stop:]
+                return check_remove_empty(lines[stop:])
             if start > 0:
                 start -= 1
             if stop == -1:
                 stop = None
             elif stop is not None and stop < -1:
                 stop += 1
-            return lines[start:stop]
+            return check_remove_empty(lines[start:stop])
 
         if start == 0 and stop is None:
             return []
@@ -116,7 +130,7 @@ class Reader(object):
                 lines.append(line.rstrip())
                 i += 1
 
-            return lines
+            return check_remove_empty(lines)
 
     @staticmethod
     def get_bytes(url, *args):
