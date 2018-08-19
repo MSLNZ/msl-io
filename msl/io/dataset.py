@@ -59,6 +59,9 @@ class Dataset(Vertex):
 
         self.is_read_only = is_read_only
 
+    def __repr__(self):
+        return repr(self._data)
+
     @property
     def is_read_only(self):
         """:class:`bool`: Whether this :class:`Dataset` is in read-only mode.

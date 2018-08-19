@@ -25,7 +25,7 @@ class Root(Group):
         super(Group, self).__init__('/', None, is_read_only, **metadata)
         self._url = str(url)
 
-    def __repr__(self):
+    def __str__(self):
         return '<{} id={:#x} url={}>'.format(self.__class__.__name__, id(self), self._url)
 
     @property

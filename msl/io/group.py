@@ -30,6 +30,9 @@ class Group(Vertex):
         """
         super(Group, self).__init__(name, parent, is_read_only, **metadata)
 
+    def __repr__(self):
+        return str(dict((key, str(value)) for key, value in self._mapping.items()))
+
     def __getitem__(self, item):
         if not item[0] == '/':
             item = '/' + item

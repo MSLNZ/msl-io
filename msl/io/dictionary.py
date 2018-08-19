@@ -19,8 +19,8 @@ class Dictionary(MutableMapping):
         self._is_read_only = bool(is_read_only)
         self._mapping = dict(**kwargs)
 
-    def __str__(self):
-        return str(self._mapping)
+    def __repr__(self):
+        return repr(self._mapping)
 
     def __iter__(self):
         return iter(self._mapping)
