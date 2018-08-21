@@ -39,7 +39,7 @@ def read(url, **kwargs):
     Raises
     ------
     IOError
-        If the file does not exist or if no :class:`~msl.io.base.Reader` exists to be able to
+        If the file does not exist or if no :class:`~msl.io.reader.Reader` exists to be able to
         read the specified file.
     """
     url = str(url)
