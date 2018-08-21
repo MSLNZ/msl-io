@@ -1,3 +1,5 @@
+.. _msl-io-welcome:
+
 ======
 MSL-IO
 ======

@@ -1,4 +1,4 @@
-.. _api:
+.. _io-api:
 
 ========================
 MSL-IO API Documentation
