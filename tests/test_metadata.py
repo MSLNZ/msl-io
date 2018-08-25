@@ -16,6 +16,7 @@ def test_behaves_like_dict():
     assert 'x' in meta
     assert 'y' not in meta
     assert repr(meta) == repr({'x': 1})
+    assert str(meta).startswith('<Metadata')
 
     # test copy()
     cp = meta.copy()
@@ -45,6 +46,8 @@ def test_behaves_like_dict():
     del d['c']
     with pytest.raises(KeyError):
         _ = d['c']
+    with pytest.raises(AttributeError):
+        del d.c
     assert len(d) == 1
 
     # test fromkeys(), with default != None, and clear()

@@ -79,6 +79,9 @@ def test_get_lines():
     assert Reader.get_lines(url, -100, -50) == []
     assert Reader.get_lines(url, 25, 100) == all_lines[24:]
 
+    assert len(Reader.get_lines(url)) == 26
+    assert len(Reader.get_lines(url, remove_empty_lines=True)) == 24
+
 
 def test_get_bytes():
     url = os.path.join(os.path.dirname(__file__), 'examples', 'test_file_for_static_Reader_methods')
@@ -133,7 +136,7 @@ def test_get_bytes():
     assert len(Reader.get_bytes(url, 5, 10)) == 6
     assert Reader.get_bytes(url, 3, -1) == all_bytes[2:]
     assert Reader.get_bytes(url, 123, -20) == all_bytes[122:-19]
-    assert Reader.get_bytes(url, -123, 55) == b''
+    assert Reader.get_bytes(url, -123, 55) == all_bytes[-123:54]
     assert Reader.get_bytes(url, 33, 57) == all_bytes[32:57]
     assert Reader.get_bytes(url, -8, -4) == all_bytes[-8:-3]
     assert len(Reader.get_bytes(url, -8, -4)) == 5

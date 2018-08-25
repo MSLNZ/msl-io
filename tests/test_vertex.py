@@ -26,6 +26,10 @@ def test_instantiation():
     with pytest.raises(ValueError):
         Vertex(name='.', parent=root, is_read_only=True)
 
+    # name cannot be None
+    with pytest.raises(ValueError):
+        Vertex(name=None, parent=root, is_read_only=True)
+
     # '/' and '.' characters are removed
     v = Vertex(name='//hello/wor.ld', is_read_only=False, parent=root)
     assert v.name == '/helloworld'

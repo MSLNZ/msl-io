@@ -15,6 +15,7 @@ def test_instantiation():
     assert root.metadata.is_read_only
     assert len(root) == 0
     assert len(root.metadata) == 0
+    assert str(root).startswith('<Root')
 
     root = Root('C:\\path\\to\\a\\windows.file', is_read_only=True)
     assert root.url == 'C:\\path\\to\\a\\windows.file'
