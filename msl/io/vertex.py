@@ -57,7 +57,7 @@ class Vertex(Dictionary):
 
     def __delitem__(self, item):
         self._raise_if_read_only()
-        if not item[0] == '/':
+        if item and not item[0] == '/':
             item = '/' + item
 
         try:

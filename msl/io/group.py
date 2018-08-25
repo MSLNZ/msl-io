@@ -34,7 +34,7 @@ class Group(Vertex):
         return str(dict((key, str(value)) for key, value in self._mapping.items()))
 
     def __getitem__(self, item):
-        if not item[0] == '/':
+        if item and not item[0] == '/':
             item = '/' + item
         try:
             return self._mapping[item]
