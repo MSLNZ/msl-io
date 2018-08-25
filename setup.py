@@ -24,7 +24,7 @@ class ApiDocs(Command):
             '--force',  # overwrite existing files
             '--module-first',  # put module documentation before submodule documentation
             '--separate',  # put documentation for each module on its own page
-            '-o', './docs/_api',  # where to save the output files
+            '-o', './docs/_autosummary',  # where to save the output files
             'msl',  # the path to the Python package to document
         ]
 
