@@ -94,7 +94,7 @@ sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
 setup(
     name='msl-io',
-    version=fetch_init('__version__'),
+    version='{}.{}.{}'.format(*fetch_init('__version__').split('.')[:3]),
     author=fetch_init('__author__'),
     author_email='joseph.borbely@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-io',
