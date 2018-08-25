@@ -5,7 +5,7 @@ _readers = []
 logger = logging.getLogger(__name__)
 
 
-def reader(reader_class):
+def register(reader_class):
     """Use as a decorator to register a :class:`~msl.io.reader.Reader` subclass.
 
     Parameters

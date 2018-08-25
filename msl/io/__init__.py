@@ -6,7 +6,7 @@ import os
 import importlib
 from collections import namedtuple
 
-from . import register
+from .register import register, _readers
 from .reader import Reader
 from .utils import find_files
 
@@ -50,14 +50,14 @@ def read(url, **kwargs):
     if not os.path.isfile(url):
         raise IOError('File does not exist ' + url)
 
-    for reader in register._readers:
+    for rdr in _readers:
         try:
-            can_read = reader.can_read(url)
+            can_read = rdr.can_read(url)
         except:
             continue
 
         if can_read:
-            root = reader(url, **kwargs).read()
+            root = rdr(url, **kwargs).read()
             root.is_read_only = True
             return root
 

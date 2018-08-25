@@ -12,7 +12,7 @@ The following illustrates the basic requirements for creating a new :class:`~msl
    from msl.io import register, Reader
 
    # register your Reader so that Python knows that your Reader exists
-   @register.reader
+   @register
    class AnExampleReader(Reader):
        """Name your class to be whatever you want, i.e., rename AnExampleReader"""
 
@@ -53,4 +53,7 @@ The following illustrates the basic requirements for creating a new :class:`~msl
 
 
 Once you create a new :class:`~msl.io.reader.Reader` you must add an example data file to
-the ``tests/examples/`` directory and add a test case to ``tests/test_read.py``.
+the `tests/examples`_ directory and add a test case to the `tests/test_read.py`_ file.
+
+.. _tests/examples: https://github.com/MSLNZ/msl-io/tree/master/tests/examples
+.. _tests/test_read.py: https://github.com/MSLNZ/msl-io/blob/master/tests/test_read.py
