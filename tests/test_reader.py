@@ -136,7 +136,7 @@ def test_get_bytes():
     assert len(Reader.get_bytes(url, 5, 10)) == 6
     assert Reader.get_bytes(url, 3, -1) == all_bytes[2:]
     assert Reader.get_bytes(url, 123, -20) == all_bytes[122:-19]
-    assert Reader.get_bytes(url, -123, 55) == all_bytes[-123:54]
+    assert Reader.get_bytes(url, -123, 55) == all_bytes[-123:55]
     assert Reader.get_bytes(url, 33, 57) == all_bytes[32:57]
     assert Reader.get_bytes(url, -8, -4) == all_bytes[-8:-3]
     assert len(Reader.get_bytes(url, -8, -4)) == 5
