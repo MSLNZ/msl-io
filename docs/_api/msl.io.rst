@@ -25,5 +25,6 @@ Submodules
    msl.io.reader
    msl.io.register
    msl.io.root
+   msl.io.utils
    msl.io.vertex
 

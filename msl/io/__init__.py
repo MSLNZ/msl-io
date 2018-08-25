@@ -7,6 +7,7 @@ from collections import namedtuple
 
 from . import register
 from .reader import Reader
+from .utils import find_files
 
 __author__ = 'Joseph Borbely'
 __copyright__ = '\xa9 2018, ' + __author__
