@@ -82,9 +82,6 @@ class Vertex(Dictionary):
 
         self._raise_key_error(item)
 
-    def __str__(self):
-        return '<{} id={:#x} name={}>'.format(self.__class__.__name__, id(self), self._name)
-
     @property
     def is_read_only(self):
         """:class:`bool`: Whether this :class:`Vertex` is in read-only mode.

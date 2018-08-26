@@ -26,7 +26,11 @@ class Root(Group):
         self._url = str(url)
 
     def __str__(self):
-        return '<{} id={:#x} url={}>'.format(self.__class__.__name__, id(self), self._url)
+        ng = len(list(self.groups()))
+        nd = len(list(self.datasets()))
+        nm = len(self.metadata)
+        return '<{} "{}" ({} groups, {} datasets, {} attributes)>'\
+            .format(self.__class__.__name__, self._url, ng, nd, nm)
 
     @property
     def url(self):

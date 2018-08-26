@@ -28,7 +28,7 @@ class Metadata(Dictionary):
         self._vertex_name = vertex_name
 
     def __str__(self):
-        return '<{} id={:#x} name={}>'.format(self.__class__.__name__, id(self), self._vertex_name)
+        return '<{} "{}" {}>'.format(self.__class__.__name__, self._vertex_name, self._mapping)
 
     def __getitem__(self, item):
         try:

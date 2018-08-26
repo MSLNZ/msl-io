@@ -33,6 +33,13 @@ class Group(Vertex):
     def __repr__(self):
         return str(dict((key, str(value)) for key, value in self._mapping.items()))
 
+    def __str__(self):
+        ng = len(list(self.groups()))
+        nd = len(list(self.datasets()))
+        nm = len(self.metadata)
+        return '<{} "{}" ({} groups, {} datasets, {} attributes)>'\
+            .format(self.__class__.__name__, self._name, ng, nd, nm)
+
     def __getitem__(self, item):
         if item and not item[0] == '/':
             item = '/' + item
