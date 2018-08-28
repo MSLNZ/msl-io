@@ -35,6 +35,31 @@ class Reader(object):
         """
         return False
 
+    def create_root(self, **metadata):
+        """Create the :class:`~msl.io.root.Root` :class:`~msl.io.group.Group`.
+
+        Parameters
+        ----------
+        **metadata
+            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
+            for the :class:`~msl.io.root.Root`.
+
+        Returns
+        -------
+        :class:`~msl.io.root.Root`
+            The root :class:`~msl.io.group.Group`, in writeable mode.
+        """
+        return Root(self.url, False, **metadata)
+
+    def read(self):
+        """
+        Read the file specified by :attr:`.url`.
+
+        .. important::
+            You must override this method.
+        """
+        raise NotImplementedError
+
     @staticmethod
     def get_lines(url, *args, **kwargs):
         """Return lines from the file.
@@ -212,28 +237,3 @@ class Reader(object):
             The extension, including the ``"."``.
         """
         return os.path.splitext(url)[1]
-
-    def read(self):
-        """
-        Read the file specified by :attr:`.url`.
-
-        .. important::
-            You must override this method.
-        """
-        raise NotImplementedError
-
-    def create_root(self, **metadata):
-        """Create the :class:`~msl.io.root.Root` :class:`~msl.io.group.Group`.
-
-        Parameters
-        ----------
-        **metadata
-            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for the :class:`~msl.io.root.Root`.
-
-        Returns
-        -------
-        :class:`~msl.io.root.Root`
-            The root :class:`~msl.io.group.Group`, in writeable mode.
-        """
-        return Root(self.url, False, **metadata)
