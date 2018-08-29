@@ -1,7 +1,7 @@
 """
-A :class:`dict` that can be made read only.
+An :class:`~collections.OrderedDict` that can be made read only.
 """
-from collections import MutableMapping, KeysView, ItemsView, ValuesView
+from collections import MutableMapping, KeysView, ItemsView, ValuesView, OrderedDict
 
 
 class Dictionary(MutableMapping):
@@ -17,10 +17,10 @@ class Dictionary(MutableMapping):
             Key-value pairs that are used to create the underlying :class:`dict` object.
         """
         self._is_read_only = bool(is_read_only)
-        self._mapping = dict(**kwargs)
+        self._mapping = OrderedDict(**kwargs)
 
     def __repr__(self):
-        return repr(self._mapping)
+        return '{' + ', '.join('{!r}: {!r}'.format(key, value) for key, value in self._mapping.items()) + '}'
 
     def __iter__(self):
         return iter(self._mapping)
@@ -71,4 +71,4 @@ class Dictionary(MutableMapping):
             raise ValueError('Cannot modify {!r}. It is accessed in read-only mode.'.format(self))
 
     def _raise_key_error(self, key):
-        raise KeyError('"{}" is not in {!r}'.format(key, self))
+        raise KeyError('{!r} is not in {!r}'.format(key, self))
