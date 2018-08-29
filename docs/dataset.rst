@@ -1,12 +1,12 @@
-.. _dataset:
+.. _msl-io-dataset:
 
 =======
 Dataset
 =======
 A :class:`~msl.io.dataset.Dataset` can be thought of as a file in your operating system and it
-is contained within a :ref:`group`.
+is contained within a :ref:`msl-io-group`.
 
-A :class:`~msl.io.dataset.Dataset` is essentially a :class:`numpy.ndarray` with :ref:`metadata`
+A :class:`~msl.io.dataset.Dataset` is essentially a :class:`numpy.ndarray` with :ref:`msl-io-metadata`
 and it can be accessed in read-only mode.
 
 Depending on the :class:`numpy.dtype` that was used to create the underlying :class:`numpy.ndarray` for the

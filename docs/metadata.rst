@@ -1,14 +1,14 @@
-.. _metadata:
+.. _msl-io-metadata:
 
 ========
 Metadata
 ========
-All :ref:`group` and :ref:`dataset` objects contain :class:`~msl.io.metadata.Metadata`. A
+All :ref:`msl-io-group` and :ref:`msl-io-dataset` objects contain :class:`~msl.io.metadata.Metadata`. A
 :class:`~msl.io.metadata.Metadata` object is a :class:`dict` that can be made read only and allows
 for accessing the keys of the :class:`dict` as class attributes (see :ref:`attribute-key-limitations` for
 more information).
 
-For example, suppose that a file is read with the `root` :ref:`group` having the following
+For example, suppose that a file is read with the `root` :ref:`msl-io-group` having the following
 :class:`~msl.io.metadata.Metadata`
 
 .. code-block:: pycon

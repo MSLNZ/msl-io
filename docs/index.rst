@@ -7,25 +7,26 @@ MSL-IO
 Read and write MSL data files.
 
 **MSL-IO** follows the data model used by HDF5_, where there is a :class:`~msl.io.root.Root`,
-:ref:`group`\'s and :ref:`dataset`\'s and these objects each have :ref:`metadata` associated with them.
+:ref:`msl-io-group`\'s and :ref:`msl-io-dataset`\'s and these objects each have :ref:`msl-io-metadata`
+associated with them.
 
 .. image:: _static/hdf5_data_model.png
 
 The data files that can be read are not restricted to HDF5_ files, but, rather any
 file format that has a :class:`~msl.io.reader.Reader` class implemented can be read.
-See :ref:`create-reader` for more details.
+See :ref:`io-create-reader` for more details.
 
 To read a data file it is as easy as
 
 .. code-block:: pycon
 
     >>> from msl.io import read
-    >>> root = read('/path/to/some/file.dat')
+    >>> root = read('/path/to/a/data.file')
 
 Provided that a :class:`~msl.io.reader.Reader` exists to read the file a :class:`~msl.io.root.Root`
 object is returned.
 
-Since the `root` object is a :ref:`group` (which operates like a Python dictionary) you can inspect the
+Since the `root` object is a :ref:`msl-io-group` (which operates like a Python dictionary) you can inspect the
 items that are in the file using
 
 .. code-block:: pycon
@@ -68,7 +69,7 @@ Setting the read-only mode of `root` propagates that mode to all items within `r
 will make `root` and all sub-:class:`~msl.io.group.Group`\'s and all sub-:class:`~msl.io.dataset.Dataset`\'s
 within `root` to be writable.
 
-You can make only a specific object (and it's sub objects) writeable as well. Assuming that `root` contains a
+You can make only a specific object (and it's sub members) writeable as well. Assuming that `root` contains a
 :class:`~msl.io.group.Group` called ``'my_group'`` and a :class:`~msl.io.dataset.Dataset` called ``'my_dataset'``
 you can make ``'my_dataset'`` writeable by
 
@@ -97,9 +98,10 @@ Contents
    Group <group>
    Dataset <dataset>
    Metadata <metadata>
-   new_reader
-   API <api_docs>
+   Install <install>
+   readers
    attribute_access
+   API <api_docs>
    License <license>
    Authors <authors>
    Release Notes <changelog>

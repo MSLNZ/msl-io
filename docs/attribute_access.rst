@@ -3,13 +3,12 @@
 ============================
 Accessing Keys as Attributes
 ============================
-In order to access a dictionary `key` as a class attribute, for a :ref:`group` or :ref:`metadata` object,
-the following naming rules for a `key` need to be followed:
+In order to access a dictionary `key` as a class attribute, for a :ref:`msl-io-group` or :ref:`msl-io-metadata`,
+or the `fieldnames` of a numpy array in a :ref:`msl-io-dataset` the following naming rules would need to be followed:
 
-* the name of a `key` matches the regex pattern ``^[A-Za-z][A-Za-z0-9_]*$``
-  (which states that the `key` must begin with a letter and is followed by any number of
-  alphanumeric characters or underscores)
-* the name of a `key` cannot be equal to any of the following:
+* the name matches the regex pattern ``^[A-Za-z][A-Za-z0-9_]*$`` (which states that the name must begin with
+  a letter and is followed by any number of alphanumeric characters or underscores)
+* the name cannot be equal to any of the following:
 
   - clear
   - copy
