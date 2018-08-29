@@ -1,0 +1,176 @@
+DRS Controls sofware. Lamp comparison, version June 2013, by F. Shindo
+
+
+
+ Format of data:
+ Wave [S_1 u_1]...[S_i u_i] N [Tlab] [T_det]
+Wave: wavelength in nm
+S_i (in V): signal on lamp #i dark corrected, u_i: associated uncertainty type A.  
+N: numbers of samples measured by DVM during integration time.
+Tlab (in Dg. Celsius): average of temperatures of detector room measured after and before wavelength cycle. Only if temperature room monitoring is ON.
+Ti (in Dg. Celsius): average of temperatures of detector measured at start and end of lamp cycle. Only if detector temperature monitoring is ON.
+
+Wavelength start(nm): 600.000
+ Wavelength end(nm): 800.000 
+ increment(nm): 50.000
+Grating blazed at: 300 nm	Bandwidth correction: 2.0 nm
+Numbers of lamps:    2
+LAMP i 	  Lamp 1  	  Lamp 2  	
+Name   	   F636   	   F637   	
+Tprobe	   NONE   	   NONE   	
+Channel	   Ch #1  	   Ch #2  	
+
+Laboratory Temperature ; PRTC ; 13
+
+Integration time (s):  5.00
+
+Source Monitoring OFF
+Stray light filters ON
+
+Comment:
+Comparison F 637 vs F636, PMT 800 V, gain 10^8, bandwidth 2 nm.
+
+
+Scan 1 , 3:07 p.m. 15/08/2018
+
+ l(nm) 	  LAMP 1  	u(LAMP 1) 	   N1  	  LAMP 2  	u(LAMP 2) 	   N2  	L1-L2 (nm)	  TLab 	
+ 600.001	3.90674757	0.00081172	     25	4.00397644	0.00067101	     25	   0.001	24.9189	
+ 650.000	2.98123609	0.00066831	     25	3.05663555	0.00051564	     25	   0.000	24.8316	
+ 700.000	2.01750383	0.00052352	     25	2.06664384	0.00046636	     25	  -0.000	24.8732	
+ 750.000	0.88464959	0.00031977	     25	0.90565554	0.00037502	     25	   0.001	24.9214	
+ 800.000	0.24576981	0.00015236	     25	0.25178801	0.00015180	     25	   0.000	24.8810	
+End of scan  1 , 15/08/2018 3:15 p.m.
+
+DRS Controls sofware. Lamp comparison, version June 2013, by F. Shindo
+
+
+
+ Format of data:
+ Wave [S_1 u_1]...[S_i u_i] N [Tlab] [T_det]
+Wave: wavelength in nm
+S_i (in V): signal on lamp #i dark corrected, u_i: associated uncertainty type A.  
+N: numbers of samples measured by DVM during integration time.
+Tlab (in Dg. Celsius): average of temperatures of detector room measured after and before wavelength cycle. Only if temperature room monitoring is ON.
+Ti (in Dg. Celsius): average of temperatures of detector measured at start and end of lamp cycle. Only if detector temperature monitoring is ON.
+
+Wavelength start(nm): 700.000
+ Wavelength end(nm): 1000.000 
+ increment(nm): 50.000
+Grating blazed at: 300 nm	Bandwidth correction: 2.0 nm
+Numbers of lamps:    2
+LAMP i 	  Lamp 1  	  Lamp 2  	
+Name   	   F636   	   F637   	
+Tprobe	   NONE   	   NONE   	
+Channel	   Ch #1  	   Ch #2  	
+
+Laboratory Temperature ; PRTC ; 13
+
+Integration time (s):  3.00
+
+Source Monitoring OFF
+Stray light filters ON
+
+Comment:
+Comparison F 637 vs F636, silicon diode B01, gain 10^10, bandwidth 2 nm.
+
+
+Scan 1 , 3:41 p.m. 15/08/2018
+
+ l(nm) 	  LAMP 1  	u(LAMP 1) 	   N1  	  LAMP 2  	u(LAMP 2) 	   N2  	L1-L2 (nm)	  TLab 	
+ 699.999	0.28950230	0.00002771	     15	0.29646518	0.00002512	     15	  -0.000	25.0014	
+ 750.000	0.21514902	0.00003220	     15	0.22018942	0.00002076	     15	   0.000	25.0109	
+ 800.000	0.14781682	0.00001841	     15	0.15123170	0.00001706	     15	   0.000	25.0590	
+ 850.000	0.11834768	0.00002386	     15	0.12094694	0.00002522	     15	  -0.001	25.0415	
+ 900.000	0.38180435	0.00003377	     15	0.39014681	0.00002978	     15	  -0.002	25.1330	
+ 950.000	0.29657645	0.00002815	     15	0.30267505	0.00003473	     15	  -0.001	25.1803	
+1000.000	0.22379780	0.00002216	     15	0.22835901	0.00002526	     15	  -0.000	25.1152	
+End of scan  1 , 15/08/2018 3:52 p.m.
+
+DRS Controls sofware. Lamp comparison, version June 2013, by F. Shindo
+
+
+
+ Format of data:
+ Wave [S_1 u_1]...[S_i u_i] N [Tlab] [T_det]
+Wave: wavelength in nm
+S_i (in V): signal on lamp #i dark corrected, u_i: associated uncertainty type A.  
+N: numbers of samples measured by DVM during integration time.
+Tlab (in Dg. Celsius): average of temperatures of detector room measured after and before wavelength cycle. Only if temperature room monitoring is ON.
+Ti (in Dg. Celsius): average of temperatures of detector measured at start and end of lamp cycle. Only if detector temperature monitoring is ON.
+
+Wavelength start(nm): 600.000
+ Wavelength end(nm): 800.000 
+ increment(nm): 50.000
+Grating blazed at: 300 nm	Bandwidth correction: 2.0 nm
+Numbers of lamps:    2
+LAMP i 	  Lamp 1  	  Lamp 2  	
+Name   	   F637   	   F636   	
+Tprobe	   NONE   	   NONE   	
+Channel	   Ch #1  	   Ch #2  	
+
+Laboratory Temperature ; PRTC ; 13
+
+Integration time (s):  5.00
+
+Source Monitoring OFF
+Stray light filters ON
+
+Comment:
+Comparison F 637 vs F636, PMT 800 V, 10^8 gain, bandwidth 2 nm.
+
+
+Scan 1 , 4:52 p.m. 15/08/2018
+
+ l(nm) 	  LAMP 1  	u(LAMP 1) 	   N1  	  LAMP 2  	u(LAMP 2) 	   N2  	L1-L2 (nm)	  TLab 	
+ 599.999	3.97931667	0.00072747	     25	3.95046750	0.00082741	     25	  -0.001	24.5619	
+ 650.000	3.03596723	0.00053139	     25	3.01833523	0.00059177	     25	   0.001	24.6620	
+ 700.000	2.05772692	0.00044831	     25	2.04602746	0.00051165	     25	   0.000	24.6961	
+ 750.000	0.90546395	0.00036504	     25	0.90075543	0.00032893	     25	   0.000	24.7744	
+ 800.000	0.25383292	0.00018402	     25	0.25259782	0.00013438	     25	  -0.001	24.8221	
+End of scan  1 , 15/08/2018 5:01 p.m.
+
+DRS Controls sofware. Lamp comparison, version June 2013, by F. Shindo
+
+
+
+ Format of data:
+ Wave [S_1 u_1]...[S_i u_i] N [Tlab] [T_det]
+Wave: wavelength in nm
+S_i (in V): signal on lamp #i dark corrected, u_i: associated uncertainty type A.  
+N: numbers of samples measured by DVM during integration time.
+Tlab (in Dg. Celsius): average of temperatures of detector room measured after and before wavelength cycle. Only if temperature room monitoring is ON.
+Ti (in Dg. Celsius): average of temperatures of detector measured at start and end of lamp cycle. Only if detector temperature monitoring is ON.
+
+Wavelength start(nm): 700.000
+ Wavelength end(nm): 1000.000 
+ increment(nm): 50.000
+Grating blazed at: 300 nm	Bandwidth correction: 2.0 nm
+Numbers of lamps:    2
+LAMP i 	  Lamp 1  	  Lamp 2  	
+Name   	   F637   	   F636   	
+Tprobe	   NONE   	   NONE   	
+Channel	   Ch #1  	   Ch #2  	
+
+Laboratory Temperature ; PRTC ; 13
+
+Integration time (s):  3.00
+
+Source Monitoring OFF
+Stray light filters ON
+
+Comment:
+Comparison F 637 vs F636, silicon diode B01, gain 10^10, bandwidth 2 nm.
+
+
+Scan 1 , 5:13 p.m. 15/08/2018
+
+ l(nm) 	  LAMP 1  	u(LAMP 1) 	   N1  	  LAMP 2  	u(LAMP 2) 	   N2  	L1-L2 (nm)	  TLab 	
+ 699.999	0.29340433	0.00002708	     15	0.29175971	0.00004191	     15	  -0.000	24.7131	
+ 750.000	0.21782622	0.00001709	     15	0.21684371	0.00002156	     15	   0.001	24.7930	
+ 800.000	0.14964215	0.00005159	     15	0.14909734	0.00002195	     15	  -0.001	24.8565	
+ 850.000	0.11968543	0.00002258	     15	0.11931207	0.00002344	     15	  -0.002	24.8891	
+ 900.000	0.38624750	0.00003951	     15	0.38486879	0.00003038	     15	  -0.001	24.9043	
+ 950.000	0.29974055	0.00003189	     15	0.29885503	0.00002186	     15	  -0.001	24.9552	
+1000.000	0.22602925	0.00002206	     15	0.22538340	0.00002079	     15	  -0.000	25.0154	
+End of scan  1 , 15/08/2018 5:24 p.m.
+
