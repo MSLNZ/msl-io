@@ -28,7 +28,7 @@ class Vertex(Dictionary):
 
         if parent is not None:
             # the name cannot contain '/' or '.' since these are special characters
-            name = str(name).replace('/', '').replace('.', '')
+            name = name.replace('/', '').replace('.', '')
 
             if not name:
                 raise ValueError('The vertex name must be a non-empty string')
@@ -47,7 +47,7 @@ class Vertex(Dictionary):
                 i += 1
                 key = '/' + '/'.join(name_split[-i:])
                 if key in ancestor._mapping:
-                    raise ValueError('The name of this vertex, "{}", is not unique'.format(key))
+                    raise ValueError('The name of this vertex, {!r}, is not unique'.format(key))
                 ancestor._mapping[key] = self
                 ancestor = ancestor._parent
 

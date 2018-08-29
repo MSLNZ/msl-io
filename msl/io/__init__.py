@@ -46,9 +46,8 @@ def read(url, **kwargs):
         If the file does not exist or if no :class:`~msl.io.reader.Reader` exists to be able to
         read the specified file.
     """
-    url = str(url)
     if not os.path.isfile(url):
-        raise IOError('File does not exist ' + url)
+        raise IOError('File does not exist {!r}'.format(url))
 
     for rdr in _readers:
         try:
@@ -61,4 +60,4 @@ def read(url, **kwargs):
             root.is_read_only = True
             return root
 
-    raise IOError('No Reader exists to read ' + url)
+    raise IOError('No Reader exists to read {!r}'.format(url))
