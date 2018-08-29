@@ -15,8 +15,6 @@ def test_behaves_like_dict():
     assert meta.get('y', -99) == -99
     assert 'x' in meta
     assert 'y' not in meta
-    assert repr(meta) == repr({'x': 1})
-    assert str(meta).startswith('<Metadata')
 
     # test copy()
     cp = meta.copy()

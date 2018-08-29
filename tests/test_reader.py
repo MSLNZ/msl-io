@@ -18,7 +18,7 @@ def test_instantiate():
 
 
 def test_get_lines():
-    url = os.path.join(os.path.dirname(__file__), 'examples', 'test_file_for_static_Reader_methods')
+    url = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_methods')
 
     # get all 26 lines in order to use slicing to compare the results
     with open(url, 'r') as fp:
@@ -84,7 +84,7 @@ def test_get_lines():
 
 
 def test_get_bytes():
-    url = os.path.join(os.path.dirname(__file__), 'examples', 'test_file_for_static_Reader_methods')
+    url = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_methods')
 
     # get all 185 bytes in order to use slicing to compare the results
     with open(url, 'rb') as fp:

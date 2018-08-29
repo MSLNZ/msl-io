@@ -5,7 +5,7 @@ from msl.io.vertex import Vertex
 
 
 def test_instantiation():
-    root = Root('', is_read_only=True)
+    root = Root('', is_read_only=True, cls=type)
 
     v = Vertex(name='this is ok', is_read_only=True, parent=root)
     assert v.is_read_only
