@@ -220,6 +220,7 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info.major), None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'h5py': ('http://docs.h5py.org/en/latest/', None),
 }
 
 # warn about all broken links
