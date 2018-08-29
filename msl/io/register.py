@@ -20,6 +20,6 @@ def register(reader_class):
     """
     def append(cls):
         _readers.append(cls)
-        logger.debug('registered ' + str(cls))
+        logger.debug('registered {!r}'.format(cls))
         return cls
     return append(reader_class)

@@ -29,7 +29,7 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
 
         * ``'data'`` -> find all files with the word ``data`` in the filename
         * ``'\.png$'`` -> find all files with the extension ``png``
-        * ``'\.(jpeg|jpg)$'`` -> find all files with the extensions ``jpeg`` and ``jpg``
+        * ``'\.jpe*g$'`` -> find all files with the extensions ``jpeg`` and ``jpg``
 
     levels : :class:`int`, optional
         The number of sub-folder levels to recursively search for files.
@@ -62,11 +62,11 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
         The path to a file.
     """
     if levels is not None and levels < 0:
-        logger.debug('find_files -> passed lowest-level folder: %s', folder)
+        logger.debug('find_files -> passed lowest-level folder %r', folder)
         return
 
     if ignore_hidden_folders and os.path.basename(folder).startswith('.'):
-        logger.debug('find_files -> ignore hidden folder: %s', folder)
+        logger.debug('find_files -> ignore hidden folder %r', folder)
         return
 
     if exclude_folders:
@@ -81,7 +81,7 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
         basename = os.path.basename(folder)
         for exclude in ex_compiled:
             if exclude.search(basename):
-                logger.debug('find_files -> excluding folder: %s', folder)
+                logger.debug('find_files -> excluding folder %r', folder)
                 return
     else:
         ex_compiled = None
@@ -90,29 +90,28 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
         try:
             names = os.listdir(folder)
         except PermissionError:
-            logger.debug('find_files -> permission error: %s', folder)
+            logger.debug('find_files -> permission error %r', folder)
             return
     else:
         names = os.listdir(folder)
 
     if isinstance(pattern, str):
         regex = re.compile(pattern, flags=regex_flags) if pattern else None
-    else: # the value should already be of type re.Pattern
+    else:  # the value should already be of type re.Pattern
         regex = pattern
 
     for name in names:
-        path = '{}/{}'.format(folder, name)
+        path = folder + '/' + name
         if os.path.isfile(path):
             if regex is None or regex.search(name):
                 yield path
         elif os.path.isdir(path) or (follow_symlinks and os.path.islink(path)):
-            lvl = None if levels is None else levels - 1
-            for file in find_files(path,
+            for item in find_files(path,
                                    pattern=regex,
-                                   levels=lvl,
+                                   levels=None if levels is None else levels - 1,
                                    regex_flags=regex_flags,
                                    exclude_folders=ex_compiled,
                                    ignore_permission_error=ignore_permission_error,
                                    ignore_hidden_folders=ignore_hidden_folders,
                                    follow_symlinks=follow_symlinks):
-                yield file
+                yield item
