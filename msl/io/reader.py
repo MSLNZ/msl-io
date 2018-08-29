@@ -49,14 +49,29 @@ class Reader(object):
         :class:`~msl.io.root.Root`
             The root :class:`~msl.io.group.Group`, in writeable mode.
         """
-        return Root(self.url, False, **metadata)
+        return Root(self._url, False, self.__class__, **metadata)
 
     def read(self):
         """
         Read the file specified by :attr:`.url`.
 
         .. important::
-            You must override this method.
+            You must override this method, for example:
+
+            .. code-block:: python
+
+                def read(self):
+                    # read the data, for example, from a text-based file
+                    lines = self.get_lines(self.url)
+
+                    # create the root object (with optional metadata)
+                    root = self.create_root(**metadata)
+
+                    # ... create the Groups and Datasets ...
+
+                    # return the root object
+                    return root
+
         """
         raise NotImplementedError
 
@@ -91,7 +106,7 @@ class Reader(object):
         Returns
         -------
         :class:`list` of :class:`str`
-            The lines from the file. The newline character is stripped from each line.
+            The lines from the file. Trailing whitespace is stripped from each line.
         """
         remove_empty_lines = kwargs.get('remove_empty_lines', False)
 
