@@ -27,8 +27,8 @@ class Metadata(Dictionary):
         super(Metadata, self).__init__(is_read_only, **kwargs)
         self._vertex_name = vertex_name
 
-    def __str__(self):
-        return '<{} "{}" {}>'.format(self.__class__.__name__, self._vertex_name, self._mapping)
+    def __repr__(self):
+        return '<Metadata {!r} {}>'.format(self._vertex_name, super(Metadata, self).__repr__())
 
     def __getitem__(self, item):
         try:

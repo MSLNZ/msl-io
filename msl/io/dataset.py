@@ -59,10 +59,9 @@ class Dataset(Vertex):
 
         self.is_read_only = is_read_only
 
-    def __str__(self):
-        return '<{} "{}" shape={} dtype={} ({} attributes)>'\
-            .format(self.__class__.__name__, self._name,
-                    self._data.shape, self._data.dtype, len(self.metadata))
+    def __repr__(self):
+        return '<Dataset {!r} shape={} dtype={} ({} metadata)>'\
+            .format(self._name, self._data.shape, self._data.dtype.str, len(self.metadata))
 
     @property
     def is_read_only(self):

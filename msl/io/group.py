@@ -31,14 +31,10 @@ class Group(Vertex):
         super(Group, self).__init__(name, parent, is_read_only, **metadata)
 
     def __repr__(self):
-        return str(dict((key, str(value)) for key, value in self._mapping.items()))
-
-    def __str__(self):
-        ng = len(list(self.groups()))
-        nd = len(list(self.datasets()))
-        nm = len(self.metadata)
-        return '<{} "{}" ({} groups, {} datasets, {} attributes)>'\
-            .format(self.__class__.__name__, self._name, ng, nd, nm)
+        g = len(list(self.groups()))
+        d = len(list(self.datasets()))
+        m = len(self.metadata)
+        return '<Group {!r} ({} groups, {} datasets, {} metadata)>'.format(self._name, g, d, m)
 
     def __getitem__(self, item):
         if item and not item[0] == '/':
