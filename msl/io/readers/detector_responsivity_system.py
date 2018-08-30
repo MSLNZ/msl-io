@@ -117,19 +117,19 @@ class DRS(Reader):
         # the info about the devices under test
         self._index_log += 1
         meta['devices'] = dict()
-        names = [dev.strip().upper() for dev in self._lines_log[self._index_log].split('\t') if dev]
-        if names[0].endswith('I'):
+        self._names = [dev.strip().upper() for dev in self._lines_log[self._index_log].split('\t') if dev]
+        if self._names[0].endswith('I'):
             skip = 1
-            names = names[1:]
+            self._names = self._names[1:]
         else:
             skip = 0
-        for name in names:
+        for name in self._names:
             meta['devices'][name] = dict()
         for label in ['Name', 'Tprobe', 'Channel']:
             self._index_log += 1
             line_split = [item.strip() for item in self._lines_log[self._index_log].split('\t') if item]
             device_key = label if skip == 0 else line_split[0]
-            for index, name in enumerate(names):
+            for index, name in enumerate(self._names):
                 meta['devices'][name][device_key] = line_split[index + skip]
 
         # some LOG files have info about the lab temperature
@@ -191,8 +191,8 @@ class DRS(Reader):
 
         # get the field names to use for the numpy array
         aliases = self._default_alias.copy()
-        for key in group.parent.metadata.devices.keys():
-            aliases[key] = group.parent.metadata.devices[key]['Name']
+        for name in self._names:
+            aliases[name] = group.parent.metadata.devices[name]['Name']
 
         self._index_dat += 1
         header = [item.strip() for item in self._lines_dat[self._index_dat].split('\t') if item]
@@ -240,11 +240,12 @@ class DRS(Reader):
 
         # get the field names to use for the numpy array
         aliases = self._default_alias.copy()
-        for key in group.parent.metadata.devices.keys():
-            aliases[key] = group.parent.metadata.devices[key]['Name']
+        for name in self._names:
+            aliases[name] = group.parent.metadata.devices[name]['Name']
 
         self._index_log += 1
         header = [item.strip() for item in self._lines_log[self._index_log].split('\t') if item.strip()]
+        assert header[0] == 'l(nm)', self._lines_log[self._index_log]
         fieldnames = []
         for h in header:
             if h == 'Name':
@@ -260,17 +261,16 @@ class DRS(Reader):
         # get the LOG data
         self._index_log += 1
         n = len(header)
-        data = [[] for _ in group.parent.metadata.devices.keys()]
-
+        data = [[] for _ in self._names]
         while self._index_log < self._num_lines_log and not self._lines_log[self._index_log].startswith('End'):
-            for i, key in enumerate(group.parent.metadata.devices.keys()):
+            for i, name in enumerate(self._names):
                 values = []
                 items = [item for item in self._lines_log[self._index_log].split('\t') if item]
                 for j, item in enumerate(items):
                     if j == 0:
                         values.append(float(item[:-2]))
                     elif j == 1:
-                        assert item == aliases[key], 'expect Name={}, got {}'.format(aliases[key], item)
+                        assert item == aliases[name], 'expect Name={}, got {}'.format(aliases[name], item)
                     elif j >= n:
                         break
                     else:
@@ -287,11 +287,11 @@ class DRS(Reader):
             assert self._lines_log[self._index_log].startswith('End of scan'), self._lines_log[self._index_log]
             meta['end_time'] = self._to_datetime(self._lines_log[self._index_log])
 
-        for i, key in enumerate(group.parent.metadata.devices.keys()):
-            vertex_name = 'log-' + aliases[key]
+        for i, name in enumerate(self._names):
+            vertex_name = 'log-' + aliases[name]
             vertex_name = vertex_name.replace('.', '')  # cannot contain a "."
             if vertex_name in group:
-                vertex_name += '-({})'.format(key[-1])
+                vertex_name += '-({})'.format(name[-1])
 
             group.create_dataset(
                 vertex_name,
