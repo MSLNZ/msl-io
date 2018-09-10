@@ -94,7 +94,7 @@ sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
 setup(
     name='msl-io',
-    version='{}.{}.{}'.format(*fetch_init('__version__').split('.')[:3]),
+    version=fetch_init('__version__'),
     author=fetch_init('__author__'),
     author_email='joseph.borbely@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-io',
@@ -116,7 +116,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest'],
+    tests_require=['pytest-cov', 'pytest', 'numpy', 'h5py'],
     install_requires=['numpy'],
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
