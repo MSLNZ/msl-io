@@ -4,6 +4,9 @@ General functions.
 import re
 import os
 import logging
+from smtplib import SMTP
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 logger = logging.getLogger(__name__)
 
@@ -115,3 +118,83 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
                                    ignore_hidden_folders=ignore_hidden_folders,
                                    follow_symlinks=follow_symlinks):
                 yield item
+
+
+def send_email(to, config, subject='', body='', frm=None):
+    """Send an email.
+
+    Parameters
+    ----------
+    to : :class:`str`
+        Who do you want to send the email to? Can omit the ``@domain`` part
+        if a ``domain`` key is specified in the `config` file.
+    config : :class:`str`
+        The path to the configuration file to use to send the email. A
+        configuration file contains ``key=value`` pairs.
+
+        The following ``keys`` must be defined:
+
+        - ``host``: The name, or IP address, of the remote host
+        - ``port``: The port number to connect to on the remote host
+
+        The following ``keys`` are optional:
+
+        - ``domain``: The domain part of the email address. Can start with ``@``
+        - ``use_encryption``: True|Yes|1 or False|No|0 [default: No]
+        - ``username``: The user name to authenticate with
+        - ``password``: The password for the authentication
+
+        .. warning::
+            Since this information is specified in plain text in the configuration
+            file you should set the file permissions provided by your operating
+            system to ensure that your authentication credentials are safe.
+
+    subject : :class:`str`, optional
+        The text to include in the subject field.
+    body : :class:`str`, optional
+        The text to include in the body of the email.
+    frm : :class:`str`, optional
+        Who is sending the email? If not specified then equals the `to` value.
+    """
+    cfg = dict()
+    with open(config, 'r') as fp:
+        for line in fp:
+            if line.startswith('#'):
+                continue
+            line_split = line.split('=')
+            if len(line_split) > 1:
+                cfg[line_split[0].lower().strip()] = line_split[1].strip()
+
+    host, port = cfg.get('host'), cfg.get('port')
+    if host is None or port is None:
+        raise ValueError('You must specify the "host" and "port" in the config file')
+
+    domain = cfg.get('domain')
+    if domain is not None and not domain.startswith('@'):
+        domain = '@' + domain
+
+    if domain is not None and '@' not in to:
+        to += domain
+
+    if frm is None:
+        frm = to
+    elif domain is not None and '@' not in frm:
+        frm += domain
+
+    server = SMTP(host=host, port=int(port))
+
+    if cfg.get('use_encryption', 'no').lower()[0] in ('t', 'y', '1'):
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+
+    username, password = cfg.get('username'), cfg.get('password')
+    if username and password:
+        server.login(username, password)
+
+    msg = MIMEMultipart()
+    msg['From'] = frm
+    msg['To'] = to
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    server.sendmail(msg['From'], msg['To'], msg.as_string())
