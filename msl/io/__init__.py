@@ -11,7 +11,7 @@ from .reader import Reader
 from .utils import find_files
 
 __author__ = 'Joseph Borbely'
-__copyright__ = '\xa9 2018, ' + __author__
+__copyright__ = '\xa9 2018 - 2019, ' + __author__
 __version__ = '0.1.0.dev0'
 
 _v = re.search('(\d+)\.(\d+)\.(\d+)[.-]?(.*)', __version__).groups()
