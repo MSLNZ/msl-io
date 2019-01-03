@@ -44,7 +44,7 @@ class DRS(Reader):
         self._lines_dat = self.get_lines(self.url, remove_empty_lines=True)
         self._num_lines_dat = len(self._lines_dat)
 
-        self._lines_log = self.get_lines(self.url[:-3]+'log', remove_empty_lines=True)
+        self._lines_log = self.get_lines(self.url[:-3]+'LOG', remove_empty_lines=True)
         self._num_lines_log = len(self._lines_log)
 
         num_runs = 0
