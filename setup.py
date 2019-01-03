@@ -54,6 +54,8 @@ class BuildDocs(Command):
         pass
 
     def run(self):
+        import sphinx
+
         command = [
             None,  # in Sphinx < 1.7.0 the first command-line argument was parsed, in 1.7.0 it became argv[1:]
             '-b', 'html',  # the builder to use, e.g., create a HTML version of the documentation
@@ -63,7 +65,6 @@ class BuildDocs(Command):
             './docs/_build/html',  # where to save the output files
         ]
 
-        import sphinx
         if sphinx.version_info < (1, 7):
             from sphinx import build_main
         else:
