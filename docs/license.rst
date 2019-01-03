@@ -5,4 +5,4 @@ License
 =======
 
 .. literalinclude:: ../LICENSE.txt
-   :language:text
+   :language: text
