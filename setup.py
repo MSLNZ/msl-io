@@ -97,7 +97,7 @@ setup(
     name='msl-io',
     version=fetch_init('__version__'),
     author=fetch_init('__author__'),
-    author_email='joseph.borbely@measurement.govt.nz',
+    author_email='info@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-io',
     description='Read and write MSL data files',
     long_description=read('README.rst'),
