@@ -2,7 +2,7 @@
 Base class for all :class:`Reader`\'s.
 """
 import os
-import sys
+import itertools
 
 from .root import Root
 
@@ -95,6 +95,7 @@ class Reader(object):
             - ``get_lines(url, 4, -1)`` -> skips the first 3 lines and returns the rest
             - ``get_lines(url, 2, -2)`` -> skips the first and last lines and returns the rest
             - ``get_lines(url, -4, -2)`` -> returns the fourth-, third- and second-last lines
+            - ``get_lines(url, 1, -1, 6)`` -> returns every 6th line in the file
 
         **kwargs
             Accepts the following:
@@ -108,69 +109,42 @@ class Reader(object):
         :class:`list` of :class:`str`
             The lines from the file. Trailing whitespace is stripped from each line.
         """
-        remove_empty_lines = kwargs.get('remove_empty_lines', False)
 
-        def get_all_lines():
+        # want the "stop" line to be included
+        if (len(args) > 1) and (args[1] is not None) and (args[1] < 0):
+            if args[1] == -1:
+                args = (args[0], None) + args[2:]
+            else:
+                args = (args[0],) + (args[1] + 1,) + args[2:]
+
+        # want the "start" line to be included
+        if (len(args) > 1) and (args[0] is not None) and (args[0] > 0):
+            args = (args[0] - 1,) + args[1:]
+
+        # itertools.islice does not support negative indices, but want to allow
+        # getting the last "N" lines from a file.
+        if any(val < 0 for val in args if val):
             with open(url, 'r') as f:
-                return f.read().split('\n')
+                lines = [line.rstrip() for line in f.readlines()]
 
-        def check_remove_empty(lns):
-            if remove_empty_lines:
-                return [val for val in lns if val]
-            return lns
+            if len(args) == 1:
+                lines = lines[args[0]:]
+            elif len(args) == 2:
+                lines = lines[args[0]:args[1]]
+            else:
+                lines = lines[args[0]:args[1]:args[2]]
 
-        if not args:
-            return check_remove_empty(get_all_lines())
-        elif len(args) == 1:
-            start, stop = None, args[0]
         else:
-            start, stop = args[0], args[1]
+            if not args:
+                args = (None,)
 
-        # if either `start` or `stop` is negative then we must read all lines anyways
-        if (start and start < 0) or (stop and stop < 0):
-            lines = get_all_lines()
-            if start is None:
-                return check_remove_empty(lines[stop:])
-            if start > 0:
-                start -= 1
-            if stop == -1:
-                stop = None
-            elif stop is not None and stop < -1:
-                stop += 1
-            return check_remove_empty(lines[start:stop])
+            with open(url, 'r') as f:
+                lines = [line.rstrip() for line in itertools.islice(f, *args)]
 
-        if start == 0 and stop is None:
-            return []
+        if kwargs.get('remove_empty_lines', False):
+            return [line for line in lines if line]
 
-        if stop is None:
-            stop = sys.maxsize
-
-        if stop == 0:
-            return []
-
-        if start is None:
-            start = 1
-
-        with open(url, 'r') as fp:
-
-            # skip lines until the `start` line
-            i = 0
-            while i < start:
-                line = fp.readline()
-                if not line:
-                    return []  # EOF reached
-                i += 1
-            lines = [line.rstrip()]
-
-            # read lines until the EOF or until the `stop` line
-            while i < stop:
-                line = fp.readline()
-                if not line:
-                    break
-                lines.append(line.rstrip())
-                i += 1
-
-            return check_remove_empty(lines)
+        return lines
 
     @staticmethod
     def get_bytes(url, *args):

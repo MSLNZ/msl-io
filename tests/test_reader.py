@@ -24,63 +24,55 @@ def test_get_lines():
     with open(url, 'r') as fp:
         all_lines = fp.read().split('\n')
 
+    assert len(Reader.get_lines(url)) == 26
+    assert len(Reader.get_lines(url, remove_empty_lines=True)) == 24
+
     assert Reader.get_lines(url) == all_lines
     assert Reader.get_lines(url, None) == all_lines
-    assert Reader.get_lines(url, 0) == all_lines[:0]
     assert Reader.get_lines(url, 0) == []
-    assert Reader.get_lines(url, 1) == all_lines[:1]
-    assert Reader.get_lines(url, -1) == all_lines[-1:]
-    assert Reader.get_lines(url, 5) == all_lines[:5]
-    assert Reader.get_lines(url, -5) == all_lines[-5:]
-    assert Reader.get_lines(url, 100) == all_lines[:100]  # there are only 26 lines
+    assert Reader.get_lines(url, 1) == ['line1']
+    assert Reader.get_lines(url, -1) == ['line26']
+    assert Reader.get_lines(url, 5) == ['line1', 'line2', 'line3', 'line4', 'line5']
+    assert Reader.get_lines(url, -5) == ['line22', 'line23', 'line24', 'line25', 'line26']
     assert Reader.get_lines(url, 100) == all_lines
-    assert Reader.get_lines(url, -100) == all_lines[-100:]
     assert Reader.get_lines(url, -100) == all_lines
 
     assert Reader.get_lines(url, None, None) == all_lines
-    assert Reader.get_lines(url, None, 0) == all_lines[:0]
     assert Reader.get_lines(url, None, 0) == []
-    assert Reader.get_lines(url, None, 1) == all_lines[:1]
-    assert Reader.get_lines(url, None, -1) == all_lines[-1:]
-    assert Reader.get_lines(url, None, 5) == all_lines[:5]
-    assert Reader.get_lines(url, None, -5) == all_lines[-5:]
-    assert Reader.get_lines(url, None, 100) == all_lines[:100]  # there are only 26 lines
+    assert Reader.get_lines(url, None, 1) == ['line1']
+    assert Reader.get_lines(url, None, -1) == all_lines
+    assert Reader.get_lines(url, None, 5) == ['line1', 'line2', 'line3', 'line4', 'line5']
+    assert Reader.get_lines(url, None, -20) == ['line1', 'line2', 'line3', 'line4', 'line5', 'line6', 'line7']
     assert Reader.get_lines(url, None, 100) == all_lines
-    assert Reader.get_lines(url, None, -100) == all_lines[-100:]
-    assert Reader.get_lines(url, None, -100) == all_lines
+    assert Reader.get_lines(url, None, -100) == []
 
-    # if `start` is > 0 then we should subtract 1 from the `start` index in all_lines
-    # because the first line is considered as `start`=1
-    assert Reader.get_lines(url, 0, None) == []
-    assert Reader.get_lines(url, 1, None) == all_lines[0:]
+    assert Reader.get_lines(url, 0, None) == all_lines
     assert Reader.get_lines(url, 1, None) == all_lines
-    assert Reader.get_lines(url, -1, None) == all_lines[-1:]
-    assert Reader.get_lines(url, 5, None) == all_lines[4:]
-    assert Reader.get_lines(url, -5, None) == all_lines[-5:]
-    assert Reader.get_lines(url, 100, None) == all_lines[99:]  # there are only 26 lines
-    assert Reader.get_lines(url, 100, None) == []
-    assert Reader.get_lines(url, -100, None) == all_lines[-100:]
+    assert Reader.get_lines(url, -1, None) == ['line26']
+    assert Reader.get_lines(url, 18, None) == ['line18', 'line19', 'line20', '', 'line22',
+                                               'line23', 'line24', 'line25', 'line26']
+    assert Reader.get_lines(url, -5, None) == ['line22', 'line23', 'line24', 'line25', 'line26']
+    assert Reader.get_lines(url, 100, None) == []  # there are only 26 lines
     assert Reader.get_lines(url, -100, None) == all_lines
 
-    # if `start` is > 0 then we should subtract 1 from the `start` index in all_lines
-    # if `end` < -1 the we should add 1 so that the `end` line is included
     assert Reader.get_lines(url, 0, 0) == []
-    assert Reader.get_lines(url, 1, 1) == all_lines[0:1]
+    assert Reader.get_lines(url, 1, 1) == ['line1']
     assert Reader.get_lines(url, 1, -1) == all_lines
-    assert Reader.get_lines(url, 4, 8) == all_lines[3:8]
-    assert Reader.get_lines(url, -8, -4) == all_lines[-8:-3]
-    assert len(Reader.get_lines(url, -8, -4)) == 5
-    assert Reader.get_lines(url, -4, -2) == all_lines[-4:-1]
-    assert len(Reader.get_lines(url, -4, -2)) == 3
-    assert Reader.get_lines(url, 2, 4) == all_lines[1:4]
+    assert Reader.get_lines(url, 4, 8) == ['line4', 'line5', 'line6', 'line7', 'line8']
+    assert Reader.get_lines(url, -8, -4) == ['line19', 'line20', '', 'line22', 'line23']
+    assert Reader.get_lines(url, 2, 4) == ['line2', 'line3', 'line4']
     assert Reader.get_lines(url, -5, 4) == []
-    assert Reader.get_lines(url, 4, -4) == all_lines[3:-3]
+    assert Reader.get_lines(url, 10, -7) == ['line10', '', 'line12', 'line13', 'line14', 'line15',
+                                             'line16', 'line17', 'line18', 'line19', 'line20']
     assert Reader.get_lines(url, 100, 200) == []  # there are only 26 lines
     assert Reader.get_lines(url, -100, -50) == []
-    assert Reader.get_lines(url, 25, 100) == all_lines[24:]
+    assert Reader.get_lines(url, 25, 100) == ['line25', 'line26']
 
-    assert len(Reader.get_lines(url)) == 26
-    assert len(Reader.get_lines(url, remove_empty_lines=True)) == 24
+    assert Reader.get_lines(url, 1, -1, 6) == ['line1', 'line7', 'line13', 'line19', 'line25']
+    assert Reader.get_lines(url, 0, None, 6) == ['line1', 'line7', 'line13', 'line19', 'line25']
+    assert Reader.get_lines(url, None, None, 6) == ['line1', 'line7', 'line13', 'line19', 'line25']
+    assert Reader.get_lines(url, 1, 15, 6) == ['line1', 'line7', 'line13']
+    assert Reader.get_lines(url, -20, -5, 5) == ['line7', 'line12', 'line17', 'line22']
 
 
 def test_get_bytes():
