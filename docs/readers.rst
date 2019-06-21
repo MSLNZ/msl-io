@@ -17,7 +17,7 @@ The following :class:`~msl.io.reader.Reader`\'s are available:
 Create a New Reader
 ===================
 When adding a new MSL Reader class to the repository_ the following steps should be performed.
-Please follow the `style guide`_.
+Please follow the :ref:`style guide <style guide>`.
 
 .. note::
    If you do not want to upload the new MSL Reader class to the repository_ then you only need to
@@ -76,7 +76,7 @@ Please follow the `style guide`_.
    to make sure that your Reader is returned by calling the :func:`~msl.io.read` function using your example
    data file as the input and that the information in the returned object is correct. Run the tests using
    ``python setup.py tests`` (ideally you would run the tests for all
-   :ref:`currently-supported versions <io-dependencies>` of Python, see also `test_envs.py`_).
+   :ref:`currently-supported versions <io-dependencies>` of Python, see also :ref:`create_readme_condatests`).
 4. Create a new ``msl.io.readers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
    template that is used for the other ``.rst`` files in this directory.
 5. Add the new Reader, alphabetically, to the ``.. toctree::`` in `docs/readers.rst`_. Follow the
@@ -87,7 +87,6 @@ Please follow the `style guide`_.
    ``docs/_build/html/index.html`` file).
 8. If running the tests pass and building the documentation show no errors/warnings then create a `pull request`_.
 
-.. _style guide: https://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-io
 .. _tests/samples: https://github.com/MSLNZ/msl-io/tree/master/tests/samples
@@ -96,4 +95,3 @@ Please follow the `style guide`_.
 .. _docs/readers.rst: https://github.com/MSLNZ/msl-io/blob/master/docs/readers.rst
 .. _msl/io/readers/: https://github.com/MSLNZ/msl-io/tree/master/msl/io/readers
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
-.. _test_envs.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#test-envs-py-commands
