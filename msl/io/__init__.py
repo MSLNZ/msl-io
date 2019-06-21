@@ -8,7 +8,7 @@ from collections import namedtuple
 
 from .register import register, _readers
 from .reader import Reader
-from .utils import find_files
+from .utils import search
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2019, ' + __author__

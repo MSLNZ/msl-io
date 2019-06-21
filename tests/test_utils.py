@@ -1,13 +1,13 @@
 import os
 import re
 
-from msl.io import find_files
+from msl.io import search
 
 
 def test_find_files():
 
     def ff(**kwargs):
-        return list(find_files(base, **kwargs))
+        return list(search(base, **kwargs))
 
     # the msl-io folder
     base = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -42,3 +42,12 @@ def test_find_files():
 
     files = ff(pattern=r'README', levels=None, ignore_hidden_folders=False, exclude_folders='.eggs')
     assert len(files) == 2, 'We need the .pytest_cache/ folder to exist... Rerun tests!'
+
+    files = ff(pattern=r'README', levels=None, ignore_hidden_folders=False, exclude_folders=['.eggs', '.pytest_cache', '.cache'])
+    assert len(files) == 1
+
+    files = ff(pattern=r'(^in|^auth)', levels=1, exclude_folders='htmlcov')
+    assert len(files) == 3
+
+    files = ff(pattern=r'(^in|^auth)', levels=1, regex_flags=re.IGNORECASE, exclude_folders='htmlcov')
+    assert len(files) == 4

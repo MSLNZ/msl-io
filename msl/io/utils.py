@@ -16,8 +16,8 @@ except NameError:
     PermissionError = OSError  # for Python 2.7
 
 
-def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
-               ignore_permission_error=True, ignore_hidden_folders=True, follow_symlinks=False):
+def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
+           ignore_permission_error=True, ignore_hidden_folders=True, follow_symlinks=False):
     """Search for files starting from a base folder.
 
     Parameters
@@ -30,9 +30,13 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
 
         Examples,
 
-        * ``'data'`` -> find all files with the word ``data`` in the filename
-        * ``'\.png$'`` -> find all files with the extension ``png``
-        * ``'\.jpe*g$'`` -> find all files with the extensions ``jpeg`` and ``jpg``
+        * ``r'data'`` :math:`\\rightarrow` find all files with the word ``data``
+          in the filename
+
+        * ``r'\.png$'`` :math:`\\rightarrow` find all files with the extension `png``
+
+        * ``r'\.jpe*g$'`` :math:`\\rightarrow` find all files with the extensions
+          ``jpeg`` and ``jpg``
 
     levels : :class:`int`, optional
         The number of sub-folder levels to recursively search for files.
@@ -45,10 +49,12 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
 
         Examples,
 
-        * ``'bin'`` -> exclude all folders that contain the word ``bin``
-        * ``'^My'`` -> exclude all folders that start with the letters ``My``
-        * ``['bin', '^My']`` or ``'(bin|^My')`` -> exclude all folders that contain
-          the word ``bin`` and start with the letters ``My``
+        * ``r'bin'`` :math:`\\rightarrow` exclude all folders that contain the word ``bin``
+
+        * ``r'^My'`` :math:`\\rightarrow` exclude all folders that start with the letters ``My``
+
+        * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\\rightarrow` exclude
+          all folders that contain the word ``bin`` or start with the letters ``My``
 
     ignore_permission_error : :class:`bool`, optional
         Whether to ignore :exc:`PermissionError` exceptions when reading
@@ -109,14 +115,14 @@ def find_files(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=No
             if regex is None or regex.search(name):
                 yield path
         elif os.path.isdir(path) or (follow_symlinks and os.path.islink(path)):
-            for item in find_files(path,
-                                   pattern=regex,
-                                   levels=None if levels is None else levels - 1,
-                                   regex_flags=regex_flags,
-                                   exclude_folders=ex_compiled,
-                                   ignore_permission_error=ignore_permission_error,
-                                   ignore_hidden_folders=ignore_hidden_folders,
-                                   follow_symlinks=follow_symlinks):
+            for item in search(path,
+                               pattern=regex,
+                               levels=None if levels is None else levels - 1,
+                               regex_flags=regex_flags,
+                               exclude_folders=ex_compiled,
+                               ignore_permission_error=ignore_permission_error,
+                               ignore_hidden_folders=ignore_hidden_folders,
+                               follow_symlinks=follow_symlinks):
                 yield item
 
 
