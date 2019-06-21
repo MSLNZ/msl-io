@@ -77,7 +77,7 @@ class Reader(object):
 
     @staticmethod
     def get_lines(url, *args, **kwargs):
-        """Return lines from the file.
+        """Return lines from a file.
 
         Parameters
         ----------
@@ -88,14 +88,25 @@ class Reader(object):
 
             Examples:
 
-            - ``get_lines(url)`` -> returns all lines
-            - ``get_lines(url, 5)`` -> returns the first 5 lines
-            - ``get_lines(url, -5)`` -> returns the last 5 lines
-            - ``get_lines(url, 2, 4)`` -> returns lines 2, 3 and 4
-            - ``get_lines(url, 4, -1)`` -> skips the first 3 lines and returns the rest
-            - ``get_lines(url, 2, -2)`` -> skips the first and last lines and returns the rest
-            - ``get_lines(url, -4, -2)`` -> returns the fourth-, third- and second-last lines
-            - ``get_lines(url, 1, -1, 6)`` -> returns every 6th line in the file
+            * ``get_lines(url)`` :math:`\\rightarrow` returns all lines
+
+            * ``get_lines(url, 5)`` :math:`\\rightarrow` returns the first 5 lines
+
+            * ``get_lines(url, -5)`` :math:`\\rightarrow` returns the last 5 lines
+
+            * ``get_lines(url, 2, 4)`` :math:`\\rightarrow` returns lines 2, 3 and 4
+
+            * ``get_lines(url, 4, -1)`` :math:`\\rightarrow` skips the first 3 lines
+              and returns the rest
+
+            * ``get_lines(url, 2, -2)`` :math:`\\rightarrow` skips the first and last
+              lines and returns the rest
+
+            * ``get_lines(url, -4, -2)`` :math:`\\rightarrow` returns the fourth-,
+              third- and second-last lines
+
+            * ``get_lines(url, 1, -1, 6)`` :math:`\\rightarrow` returns every sixth
+              line in the file
 
         **kwargs
             Accepts the following:
@@ -148,7 +159,7 @@ class Reader(object):
 
     @staticmethod
     def get_bytes(url, *args):
-        """Return bytes from the file.
+        """Return bytes from a file.
 
         Parameters
         ----------
@@ -159,12 +170,20 @@ class Reader(object):
 
             Examples:
 
-            - ``get_bytes(url)`` -> returns all bytes
-            - ``get_bytes(url, 5)`` -> returns the first 5 bytes
-            - ``get_bytes(url, -5)`` -> returns the last 5 bytes
-            - ``get_bytes(url, 5, 10)`` -> returns bytes 5 through 10 (inclusive)
-            - ``get_bytes(url, 3, -1)`` -> skips the first 2 bytes and returns the rest
-            - ``get_bytes(url, -8, -4)`` -> returns the eighth- through fourth-last bytes (inclusive)
+            * ``get_bytes(url)`` :math:`\\rightarrow` returns all bytes
+
+            * ``get_bytes(url, 5)`` :math:`\\rightarrow` returns the first 5 bytes
+
+            * ``get_bytes(url, -5)`` :math:`\\rightarrow` returns the last 5 bytes
+
+            * ``get_bytes(url, 5, 10)`` :math:`\\rightarrow` returns bytes 5 through
+              10 (inclusive)
+
+            * ``get_bytes(url, 3, -1)`` :math:`\\rightarrow` skips the first 2 bytes
+              and returns the rest
+
+            * ``get_bytes(url, -8, -4)`` :math:`\\rightarrow` returns the eighth-
+              through fourth-last bytes (inclusive)
 
         Returns
         -------
