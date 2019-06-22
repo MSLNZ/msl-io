@@ -185,50 +185,46 @@ class Reader(object):
             * ``get_bytes(url, -8, -4)`` :math:`\\rightarrow` returns the eighth-
               through fourth-last bytes (inclusive)
 
+            * ``get_bytes(url, 1, -1, 2)`` :math:`\\rightarrow` returns every other byte
+
         Returns
         -------
         :class:`bytes`
             The bytes from the file.
         """
-        n = os.path.getsize(url)
+        size = os.path.getsize(url)
 
         if not args:
-            start, stop = 0, None
+            start, stop, step = 0, size, 1
         elif len(args) == 1:
-            val = args[0]
-            if val is None:
-                start, stop = 0, None
-            elif val < 0:
-                start, stop = n + val, None
-            else:
-                start, stop = 0, val
+            start, stop, step = 0, args[0], 1
+            if stop is None:
+                stop = size
+            elif stop < 0:
+                start, stop = size + stop + 1, size
+        elif len(args) == 2:
+            start, stop, step = args[0] or 0, args[1], 1
+            if stop is None or stop == -1:
+                stop = size
         else:
-            start, stop = args[0], args[1]
-            if start is None:
-                start = 0
-            elif start > 0:
-                start -= 1
-            if stop == -1:
-                stop = None
-            elif stop is not None and stop < -1:
-                stop += 1
-
-        if start > n:
-            return b''
+            start, stop, step = args[0] or 0, args[1] or size, args[2] or 1
 
         if start < 0:
-            start = max(0, start + n)
+            start = max(size + start, 0)
+        elif start > 0:
+            start -= 1
+        start = min(size, start)
 
-        with open(url, 'rb') as fp:
-            fp.seek(start)
+        if stop < 0:
+            stop += size + 1
+        stop = min(size, stop)
 
-            if stop is None:
-                return fp.read()
-
-            if stop < 0:
-                stop += n
-
-            return fp.read(max(0, stop - start))
+        with open(url, 'rb') as f:
+            f.seek(start)
+            data = f.read(max(0, stop - start))
+            if step == 1:
+                return data
+            return data[::step]
 
     @staticmethod
     def get_extension(url):

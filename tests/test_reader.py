@@ -20,7 +20,7 @@ def test_instantiate():
 def test_get_lines():
     url = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_methods')
 
-    # get all 26 lines in order to use slicing to compare the results
+    # the file contains 26 lines
     with open(url, 'r') as fp:
         all_lines = fp.read().split('\n')
 
@@ -73,75 +73,78 @@ def test_get_lines():
     assert Reader.get_lines(url, None, None, 6) == ['line1', 'line7', 'line13', 'line19', 'line25']
     assert Reader.get_lines(url, 1, 15, 6) == ['line1', 'line7', 'line13']
     assert Reader.get_lines(url, -20, -5, 5) == ['line7', 'line12', 'line17', 'line22']
+    assert Reader.get_lines(url, -100, -21, 2) == ['line1', 'line3', 'line5']
+    assert Reader.get_lines(url, -100, -20, 2) == ['line1', 'line3', 'line5', 'line7']
+    assert Reader.get_lines(url, 15, 25, 3) == ['line15', 'line18', '', 'line24']
+    assert Reader.get_lines(url, 15, 25, 3, remove_empty_lines=True) == ['line15', 'line18', 'line24']
 
 
 def test_get_bytes():
     url = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_methods')
 
-    # get all 185 bytes in order to use slicing to compare the results
+    # the file contains 185 bytes
     with open(url, 'rb') as fp:
         all_bytes = fp.read()
 
     assert Reader.get_bytes(url) == all_bytes
     assert Reader.get_bytes(url, None) == all_bytes
     assert Reader.get_bytes(url, 0) == b''
-    assert Reader.get_bytes(url, 1) == all_bytes[:1]
-    assert len(Reader.get_bytes(url, 1)) == 1
-    assert Reader.get_bytes(url, -1) == all_bytes[-1:]
-    assert len(Reader.get_bytes(url, -1)) == 1
-    assert Reader.get_bytes(url, 5) == all_bytes[:5]
-    assert len(Reader.get_bytes(url, 5)) == 5
-    assert Reader.get_bytes(url, -5) == all_bytes[-5:]
-    assert len(Reader.get_bytes(url, -5)) == 5
-    assert Reader.get_bytes(url, -50) == all_bytes[-50:]
+    assert Reader.get_bytes(url, 1) == b'l'
+    assert Reader.get_bytes(url, -1) == b'6'
+    assert Reader.get_bytes(url, 7) == b'line1\r\n'
+    assert Reader.get_bytes(url, -5) == b'ine26'
+    assert Reader.get_bytes(url, -20) == b'ne24\r\nline25\r\nline26'
     assert Reader.get_bytes(url, -5000) == all_bytes
     assert Reader.get_bytes(url, 5000) == all_bytes
 
-    # if `end` < -1 then we must add 1 to include this byte
     assert Reader.get_bytes(url, None, None) == all_bytes
     assert Reader.get_bytes(url, None, 0) == b''
     assert Reader.get_bytes(url, None, -1) == all_bytes
-    assert Reader.get_bytes(url, None, 1) == all_bytes[:1]
-    assert Reader.get_bytes(url, None, -3) == all_bytes[:-2]
-    assert Reader.get_bytes(url, None, 8) == all_bytes[:8]
-    assert Reader.get_bytes(url, None, -123) == all_bytes[:-122]
-    assert Reader.get_bytes(url, None, -5000) == all_bytes[:-5000]
+    assert Reader.get_bytes(url, None, 1) == b'l'
+    assert Reader.get_bytes(url, None, -180) == b'line1\r'
+    assert Reader.get_bytes(url, None, 8) == b'line1\r\nl'
+    assert Reader.get_bytes(url, None, -5000) == b''
     assert Reader.get_bytes(url, None, 5000) == all_bytes
 
-    # if `start` > 0 then we must subtract 1 to include this byte
     assert Reader.get_bytes(url, 0, None) == all_bytes
     assert Reader.get_bytes(url, 1, None) == all_bytes
-    assert Reader.get_bytes(url, -1, None) == all_bytes[-1:]
-    assert len(Reader.get_bytes(url, -1, None)) == 1
-    assert Reader.get_bytes(url, 5, None) == all_bytes[4:]
-    assert Reader.get_bytes(url, 98, None) == all_bytes[97:]
-    assert Reader.get_bytes(url, -50, None) == all_bytes[-50:]
+    assert Reader.get_bytes(url, -1, None) == b'6'
+    assert Reader.get_bytes(url, 142, None) == b'20\r\n\r\nline22\r\nline23\r\nline24\r\nline25\r\nline26'
+    assert Reader.get_bytes(url, -50, None) == b'\r\nline20\r\n\r\nline22\r\nline23\r\nline24\r\nline25\r\nline26'
     assert Reader.get_bytes(url, -5000, None) == all_bytes
     assert Reader.get_bytes(url, 5000, None) == b''
 
-    # if `start` > 0 then we must subtract 1 to include this byte
-    # if `end` < -1 then we must add 1 to include this byte
     assert Reader.get_bytes(url, 0, 0) == b''
-    assert Reader.get_bytes(url, 1, 1) == all_bytes[0:1]
+    assert Reader.get_bytes(url, 1, 1) == b'l'
     assert Reader.get_bytes(url, 1, -1) == all_bytes
-    assert Reader.get_bytes(url, 5, 10) == all_bytes[4:10]
-    assert len(Reader.get_bytes(url, 5, 10)) == 6
-    assert Reader.get_bytes(url, 3, -1) == all_bytes[2:]
-    assert Reader.get_bytes(url, 123, -20) == all_bytes[122:-19]
-    assert Reader.get_bytes(url, -123, 55) == all_bytes[-123:55]
-    assert Reader.get_bytes(url, 33, 57) == all_bytes[32:57]
-    assert Reader.get_bytes(url, -8, -4) == all_bytes[-8:-3]
-    assert len(Reader.get_bytes(url, -8, -4)) == 5
-    assert Reader.get_bytes(url, 600, -600) == all_bytes[599:-599]
+    assert Reader.get_bytes(url, 5, 10) == b'1\r\nlin'
+    assert Reader.get_bytes(url, 139, -1) == b'ine20\r\n\r\nline22\r\nline23\r\nline24\r\nline25\r\nline26'
+    assert Reader.get_bytes(url, 123, -20) == b'ine18\r\nline19\r\nline20\r\n\r\nline22\r\nline23\r\nlin'
+    assert Reader.get_bytes(url, -123, 55) == b''
+    assert Reader.get_bytes(url, 33, 57) == b'5\r\nline6\r\nline7\r\nline8\r\nl'
+    assert Reader.get_bytes(url, -10, -4) == b'25\r\nlin'
     assert Reader.get_bytes(url, 600, -600) == b''
-    assert Reader.get_bytes(url, 100, 50) == all_bytes[99:50]
     assert Reader.get_bytes(url, 100, 50) == b''
-    assert Reader.get_bytes(url, 5000, 6000) == all_bytes[4999:6000]
     assert Reader.get_bytes(url, 5000, 6000) == b''
-    assert Reader.get_bytes(url, -6000, -5000) == all_bytes[-6000:-4999]
     assert Reader.get_bytes(url, -6000, -5000) == b''
 
-    assert Reader.get_bytes(url, 10, 1000, 100) == all_bytes[9:1000]  # the step size is not used
+    assert Reader.get_bytes(url, 0, 7, 3) == b'le\n'
+    assert Reader.get_bytes(url, 1, 7, 3) == b'le\n'
+    assert Reader.get_bytes(url, 0, 8, 3) == b'le\n'
+    assert Reader.get_bytes(url, 1, 8, 3) == b'le\n'
+    assert Reader.get_bytes(url, 0, 9, 3) == b'le\n'
+    assert Reader.get_bytes(url, 1, 9, 3) == b'le\n'
+    assert Reader.get_bytes(url, 0, 12, 3) == b'le\nn'
+    assert Reader.get_bytes(url, 1, 12, 3) == b'le\nn'
+    assert Reader.get_bytes(url, 0, 13, 3) == b'le\nn\r'
+    assert Reader.get_bytes(url, 1, 13, 3) == b'le\nn\r'
+    assert Reader.get_bytes(url, 9, 49, 8) == b'ine5\r\n'
+    assert Reader.get_bytes(url, 9, 53, 8) == b'ine5\r\n'
+    assert Reader.get_bytes(url, -19, -5, 5) == b'el5'
+    assert Reader.get_bytes(url, -19, -4, 5) == b'el5n'
+    assert Reader.get_bytes(url, -10, -1, 2) == b'2\rln2'
+    assert Reader.get_bytes(url, -200, -180, 5) == b'l\r'
+    assert Reader.get_bytes(url, 109, 500, 10) == b'e7\niie4\n'
 
 
 def test_get_extension():
