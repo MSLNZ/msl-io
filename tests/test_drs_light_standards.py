@@ -34,9 +34,9 @@ def test_drs():
     assert root.is_dataset(dat)
     assert root.is_dataset(log636)
     assert root.is_dataset(log637)
-    assert dat.data['F636'][1] == 2.98123609
-    assert dat.data['u(F636)'][1] == 0.00066831
-    assert abs(log636.data.wavelength[0] - 600) < 0.001
+    assert dat['F636'][1] == 2.98123609
+    assert dat['u(F636)'][1] == 0.00066831
+    assert abs(log636.wavelength[0] - 600) < 0.001
 
     dat = root['run3']['scan1']['dat']
     log636 = root['run3']['scan1']['log-F636']
@@ -44,6 +44,6 @@ def test_drs():
     assert root.is_dataset(dat)
     assert root.is_dataset(log636)
     assert root.is_dataset(log637)
-    assert dat.data['F636'][3] == 0.90075543
-    assert dat.data['u(F636)'][3] == 0.00032893
-    assert abs(log636.data.wavelength[4] - 800) < 0.001
+    assert dat['F636'][3] == 0.90075543
+    assert dat['u(F636)'][3] == 0.00032893
+    assert abs(log636.wavelength[4] - 800) < 0.001

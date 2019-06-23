@@ -143,8 +143,8 @@ def test_create_dataset():
     assert not d1.is_read_only  # gets read-only value from root
     assert d1.name == '/data1'
     assert d1.parent is root
-    assert d1.data.size == 0
-    assert d1.data.dtype == float
+    assert d1.size == 0
+    assert d1.dtype == float
     assert len(d1.metadata) == 0
     assert 'data1' in root
 
@@ -152,9 +152,9 @@ def test_create_dataset():
     d2 = root.create_dataset('data2', shape=(10, 5), one=1)
     assert d2.name == '/data2'
     assert d2.parent is root
-    assert d2.data.shape == (10, 5)
-    assert d2.data.size == 50
-    assert d2.data.dtype == float
+    assert d2.shape == (10, 5)
+    assert d2.size == 50
+    assert d2.dtype == float
     assert len(d2.metadata) == 1
     assert d2.metadata == {'one': 1}
     assert 'data2' in root

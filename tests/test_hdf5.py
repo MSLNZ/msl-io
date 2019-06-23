@@ -26,8 +26,8 @@ def test_hdf5():
 
     d0 = root['D0']
     assert root.is_dataset(d0)
-    assert d0.data.shape == (10, 4)
-    assert d0.data.dtype.str == '<f4'
+    assert d0.shape == (10, 4)
+    assert d0.dtype.str == '<f4'
     assert len(d0.metadata) == 2
     assert d0.metadata['temperature'] == 21.2
     assert d0.metadata.temperature_units == 'deg C'
@@ -55,8 +55,8 @@ def test_hdf5():
     d1 = root.G0.G1A.D1
     assert root.is_dataset(d1)
     assert len(d1.metadata) == 0
-    assert d1.data.shape == (3, 3)
-    assert d1.data.dtype.str == '<f8'
+    assert d1.shape == (3, 3)
+    assert d1.dtype.str == '<f8'
 
     assert 'D2' in g1b
     assert 'D3' in g0.G1B
@@ -67,16 +67,16 @@ def test_hdf5():
     assert len(d2.metadata) == 2
     assert d2.metadata['voltage'] == 132.4
     assert d2.metadata['voltage_units'] == 'uV'
-    assert d2.data.shape == (10,)
-    assert d2.data.dtype.str == '<i4'
-    assert d2.data[3] == 90
+    assert d2.shape == (10,)
+    assert d2.dtype.str == '<i4'
+    assert d2[3] == 90
 
     d3 = g1b.D3
     assert root.is_dataset(d3)
     assert len(d3.metadata) == 0
-    assert d3.data.shape == (10,)
-    assert d3.data.dtype.str == '<i4'
-    assert d3.data[7] == 51
+    assert d3.shape == (10,)
+    assert d3.dtype.str == '<i4'
+    assert d3[7] == 51
 
     g2 = root.G0.G1B.G2
     assert root.is_group(g2)

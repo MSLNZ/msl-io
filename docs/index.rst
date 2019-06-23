@@ -32,7 +32,7 @@ items that are in the file using
 .. code-block:: pycon
 
     >>> for name, value in root.items():
-            print(name, value)
+            print(name, repr(value))
 
 where, `value` will be of type :class:`~msl.io.group.Group` or :class:`~msl.io.dataset.Dataset`.
 
@@ -54,7 +54,7 @@ If you only wanted to see what :class:`~msl.io.dataset.Dataset`\'s are in the fi
 .. code-block:: pycon
 
     >>> for dataset in root.datasets():
-            print(dataset)
+            print(repr(dataset))
 
 When `root` is returned it is accessed, by default, in read-only mode. If you want to edit the
 :class:`~msl.io.metadata.Metadata` for `root`, or modify any sub-:class:`~msl.io.group.Group`\'s or

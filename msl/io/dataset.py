@@ -46,22 +46,23 @@ class Dataset(Vertex):
         super(Dataset, self).__init__(name, parent, is_read_only, **metadata)
 
         if data is None:
-            self._array = np.ndarray(
+            self._data = np.ndarray(
                 shape, dtype=dtype, buffer=buffer, offset=offset, strides=strides, order=order
             )
         else:
             if isinstance(data, np.ndarray):
-                self._array = data
+                self._data = data
             else:
-                self._array = np.asarray(data, dtype=dtype, order=order)
-
-        self._data = self._array.view(np.recarray)
+                self._data = np.asarray(data, dtype=dtype, order=order)
 
         self.is_read_only = is_read_only
 
     def __repr__(self):
         return '<Dataset {!r} shape={} dtype={} ({} metadata)>'\
             .format(self._name, self._data.shape, self._data.dtype.str, len(self.metadata))
+
+    def __str__(self):
+        return repr(self._data)
 
     @property
     def is_read_only(self):
@@ -95,11 +96,36 @@ class Dataset(Vertex):
             self._name,
             self._parent,
             self._is_read_only if is_read_only is None else is_read_only,
-            data=self._array.copy(),
+            data=self._data.copy(),
             **self._metadata
         )
 
     @property
-    def data(self):
-        """:class:`numpy.ndarray`: The reference to the data."""
-        return self._data
+    def dtype(self):
+        """:class:`numpy.dtype`: The data type of the data set."""
+        return self._data.dtype
+
+    @property
+    def shape(self):
+        """:class:`tuple`: The shape of the data set."""
+        return self._data.shape
+
+    @property
+    def size(self):
+        """:class:`int`: The number of elements in the data set."""
+        return self._data.size
+
+    def __getitem__(self, item):
+        return self._data[item]
+
+    def __setitem__(self, item, value):
+        self._data[item] = value
+
+    def __getattr__(self, item):
+        try:
+            return self._data[item]
+        except IndexError:
+            return getattr(self._data, item)
+
+    def __len__(self):
+        return len(self._data)

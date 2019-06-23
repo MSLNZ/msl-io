@@ -1,4 +1,7 @@
+import sys
+
 import pytest
+import numpy as np
 
 from msl.io.dataset import Dataset
 
@@ -6,35 +9,44 @@ from msl.io.dataset import Dataset
 def test_instantiate():
     dset = Dataset(name='/data', parent=None, is_read_only=True, shape=(10, 10))
     assert dset.name == '/data'
-    assert len(dset.data) == 10
-    assert dset.data.size == 100
-    assert dset.data.dtype == float
-    assert dset.data.dtype.names is None
+    assert len(dset) == 10
+    assert dset.size == 100
+    assert dset.dtype == float
+    assert dset.dtype.names is None
 
     dset = Dataset(name='dataset 1', parent=None, is_read_only=True, shape=(100,), dtype=int)
     assert dset.name == 'dataset 1'
-    assert len(dset.data) == 100
-    assert dset.data.size == 100
-    assert dset.data.dtype == int
-    assert dset.data.dtype.names is None
+    assert len(dset) == 100
+    assert dset.size == 100
+    assert dset.dtype == int
+    assert dset.dtype.names is None
 
     dset = Dataset(name='mixed', parent=None, is_read_only=True, shape=(100,), dtype=[('x', float), ('y', int), ('z', str)])
     assert dset.name == 'mixed'
-    assert len(dset.data) == 100
-    assert dset.data.size == 100
-    assert len(dset.data['x']) == 100
-    assert dset.data.dtype[0] == float
-    assert len(dset.data['y']) == 100
-    assert dset.data.dtype[1] == int
-    assert len(dset.data['z']) == 100
-    assert dset.data.dtype[2] == str
-    assert dset.data.dtype.names == ('x', 'y', 'z')
+    assert len(dset) == 100
+    assert dset.size == 100
+    assert len(dset['x']) == 100
+    assert dset.dtype[0] == float
+    assert len(dset['y']) == 100
+    assert dset.dtype[1] == int
+    assert len(dset['z']) == 100
+    assert dset.dtype[2] == str
+    assert dset.dtype.names == ('x', 'y', 'z')
 
     dset = Dataset(name='xxx', parent=None, is_read_only=True, data=[1, 2, 3])
-    assert len(dset.data) == 3
-    assert dset.data[0] == 1
-    assert dset.data[1] == 2
-    assert dset.data[2] == 3
+    assert len(dset) == 3
+    assert dset[0] == 1
+    assert dset[1] == 2
+    assert dset[2] == 3
+    d = dset[:]
+    assert len(d) == 3
+    assert d[0] == 1
+    assert d[1] == 2
+    assert d[2] == 3
+    d = dset[::2]
+    assert len(d) == 2
+    assert d[0] == 1
+    assert d[1] == 3
 
 
 def test_metadata():
@@ -61,44 +73,47 @@ def test_metadata():
 def test_field_access_as_attribute():
     # no names defined in the dtype
     dset = Dataset(name='data', parent=None, is_read_only=False, shape=(3, 3))
-    assert len(dset.data) == 3
-    assert dset.data.shape == (3, 3)
-    assert dset.data.dtype == float
-    assert dset.data.dtype.names is None
+    assert len(dset) == 3
+    assert dset.shape == (3, 3)
+    assert dset.dtype == float
+    assert dset.dtype.names is None
+
     with pytest.raises(AttributeError):
-        _ = dset.data.there_are_no_field_names
+        _ = dset.there_are_no_field_names
 
     # names are defined in the dtype
     dset = Dataset(name='data', parent=None, is_read_only=False, shape=(100,),
                    dtype=[('x', float), ('y', int), ('z', str)])
-    assert len(dset.data['x']) == 100
-    assert len(dset.data.x) == 100
-    assert len(dset.data['y']) == 100
-    assert len(dset.data.y) == 100
-    dset.data.y[:] = 1
-    for val in dset.data.y:
+    assert len(dset['x']) == 100
+    assert len(dset.x) == 100
+    assert len(dset['y']) == 100
+    assert len(dset.y) == 100
+    dset.y[:] = 1
+    for val in dset.y:
         assert val == 1
-    assert len(dset.data['z']) == 100
-    assert len(dset.data.z) == 100
-    assert dset.data['z'][0] == ''
-    assert dset.data.z[0] == ''
-    assert dset.data.dtype.names == ('x', 'y', 'z')
+    dset.x = np.arange(100, 200)
+    assert np.array_equal(dset.x + dset.y, np.arange(101, 201))
+    assert len(dset['z']) == 100
+    assert len(dset.z) == 100
+    assert dset['z'][0] == ''
+    assert dset.z[0] == ''
+    assert dset.dtype.names == ('x', 'y', 'z')
 
 
 def test_read_only():
     dset = Dataset(name='my data', parent=None, is_read_only=True, shape=(100,), dtype=int)
     assert dset.name == 'my data'
-    assert len(dset.data) == 100
+    assert len(dset) == 100
     assert dset.is_read_only
     assert dset.metadata.is_read_only
 
     # cannot modify data
     with pytest.raises(ValueError):
-        dset.data[:] = 1
+        dset[:] = 1
 
     # cannot modify data
     with pytest.raises(ValueError):
-        dset.data[0] = 1
+        dset[0] = 1
 
     # make writable
     dset.is_read_only = False
@@ -106,8 +121,8 @@ def test_read_only():
     assert not dset.metadata.is_read_only
 
     # can modify data
-    dset.data[:] = 1
-    assert dset.data[0] == 1
+    dset[:] = 1
+    assert dset[0] == 1
 
     # make read only again
     dset.is_read_only = True
@@ -116,7 +131,7 @@ def test_read_only():
 
     # cannot modify data
     with pytest.raises(ValueError):
-        dset.data[:] = 1
+        dset[:] = 1
 
     # can make a dataset writeable but the metadata read-only
     dset.is_read_only = False
@@ -125,7 +140,7 @@ def test_read_only():
     dset.metadata.is_read_only = True
     assert not dset.is_read_only
     assert dset.metadata.is_read_only
-    dset.data[:] = 1
+    dset[:] = 1
     with pytest.raises(ValueError):
         dset.add_metadata(some_more_info=1)
 
@@ -142,7 +157,7 @@ def test_copy():
     assert copy.metadata.is_read_only
     assert copy.name == 'abcdefg'
     for i in range(10):
-        assert orig.data[i] == copy.data[i]
+        assert orig[i] == copy[i]
     assert orig.metadata['voltage'] == copy.metadata['voltage']
     assert orig.metadata['current'] == copy.metadata['current']
 
@@ -153,6 +168,39 @@ def test_copy():
     assert orig.is_read_only
     assert orig.metadata.is_read_only
 
-    copy.data[1] = 7
-    assert copy.data[1] == 7
-    assert orig.data[1] != copy.data[1]
+    copy[1] = 7
+    assert copy[1] == 7
+    assert orig[1] != copy[1]
+
+
+def test_string_representation():
+    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], is_read_only=True, foo='bar')
+
+    if sys.version_info.major == 2:
+        assert repr(dset) == "<Dataset 'abcd' shape=(2L, 2L) dtype=<f8 (1 metadata)>"
+    else:
+        assert repr(dset) == "<Dataset 'abcd' shape=(2, 2) dtype=<f8 (1 metadata)>"
+
+    assert str(dset) == ('array([[1., 2.],\n'
+                         '       [3., 4.]])')
+
+    assert str(dset.metadata) == "<Metadata 'abcd' {'foo': 'bar'}>"
+
+    # just for fun, test more index access
+    assert dset[0, 0] + dset[0, 1] == 3
+    assert all(dset[:, 0] + dset[:, 1] == [3, 7])
+    assert all(dset[0, :] + dset[1, :] == [4, 6])
+
+
+def test_ndarray_attribute():
+    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], is_read_only=True)
+
+    as_list = dset.tolist()
+    assert isinstance(as_list, list)
+    assert dset.tolist() == [[1, 2], [3, 4]]
+    assert dset.flatten().tolist() == [1, 2, 3, 4]
+
+    assert dset.max() == 4
+    assert dset.min() == 1
+    assert all(dset.max(axis=1) == [2, 4])
+    assert all(dset.max(axis=0) == [3, 4])

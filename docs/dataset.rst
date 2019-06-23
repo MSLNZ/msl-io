@@ -18,13 +18,13 @@ You can access the data in `dset` as keys
 
 .. code-block:: pycon
 
-   >>> z = dset.data['x'] + dset.data['y']
+   >>> z = dset['x'] + dset['y']
 
 or as attributes
 
 .. code-block:: pycon
 
-   >>> z = dset.data.x + dset.data.y
+   >>> z = dset.x + dset.y
 
 See :ref:`attribute-key-limitations` for more information.
 
