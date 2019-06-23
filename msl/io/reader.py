@@ -1,5 +1,5 @@
 """
-Base class for all :class:`Reader`\'s.
+Base class for all :class:`Reader`\\s.
 """
 import os
 import itertools
@@ -10,7 +10,7 @@ from .root import Root
 class Reader(object):
 
     def __init__(self, url, **kwargs):
-        """Base class for all :class:`Reader`\'s.
+        """Base class for all :class:`Reader`\\s.
 
         Parameters
         ----------
@@ -52,8 +52,10 @@ class Reader(object):
         return Root(self._url, False, self.__class__, **metadata)
 
     def read(self):
-        """
-        Read the file specified by :attr:`.url`.
+        """Read the file.
+
+        The URL of the file can be accessed by the :attr:`url` property
+        of the :class:`Reader`, i.e., ``self.url``
 
         .. important::
             You must override this method, for example:
@@ -238,6 +240,6 @@ class Reader(object):
         Returns
         -------
         :class:`str`
-            The extension, including the ``"."``.
+            The extension, including the ``'.'``.
         """
         return os.path.splitext(url)[1]

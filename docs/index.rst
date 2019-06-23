@@ -7,7 +7,7 @@ MSL-IO
 Read and write MSL data files.
 
 **MSL-IO** follows the data model used by HDF5_, where there is a :class:`~msl.io.root.Root`,
-:ref:`msl-io-group`\'s and :ref:`msl-io-dataset`\'s and these objects each have :ref:`msl-io-metadata`
+:ref:`msl-io-group`\s and :ref:`msl-io-dataset`\s and these objects each have :ref:`msl-io-metadata`
 associated with them.
 
 .. image:: _static/hdf5_data_model.png
@@ -42,14 +42,14 @@ Or view the metadata for `root`
 
     >>> root.metadata
 
-If you only wanted to see what :class:`~msl.io.group.Group`\'s are in the file
+If you only wanted to see what :class:`~msl.io.group.Group`\s are in the file
 
 .. code-block:: pycon
 
     >>> for group in root.groups():
             print(group)
 
-If you only wanted to see what :class:`~msl.io.dataset.Dataset`\'s are in the file
+If you only wanted to see what :class:`~msl.io.dataset.Dataset`\s are in the file
 
 .. code-block:: pycon
 
@@ -57,8 +57,8 @@ If you only wanted to see what :class:`~msl.io.dataset.Dataset`\'s are in the fi
             print(repr(dataset))
 
 When `root` is returned it is accessed, by default, in read-only mode. If you want to edit the
-:class:`~msl.io.metadata.Metadata` for `root`, or modify any sub-:class:`~msl.io.group.Group`\'s or
-sub-:class:`~msl.io.dataset.Dataset`\'s in `root`, then you must first set the object to be writable.
+:class:`~msl.io.metadata.Metadata` for `root`, or modify any sub-:class:`~msl.io.group.Group`\s or
+sub-:class:`~msl.io.dataset.Dataset`\s in `root`, then you must first set the object to be writable.
 
 Setting the read-only mode of `root` propagates that mode to all items within `root`. For example,
 
@@ -66,7 +66,7 @@ Setting the read-only mode of `root` propagates that mode to all items within `r
 
     >>> root.is_read_only = False
 
-will make `root` and all sub-:class:`~msl.io.group.Group`\'s and all sub-:class:`~msl.io.dataset.Dataset`\'s
+will make `root` and all sub-:class:`~msl.io.group.Group`\s and all sub-:class:`~msl.io.dataset.Dataset`\s
 within `root` to be writable.
 
 You can make only a specific object (and it's sub members) writeable as well. Assuming that `root` contains a

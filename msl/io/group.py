@@ -1,5 +1,5 @@
 """
-A :class:`Group` can contain sub-:class:`Group`\'s and/or :class:`~msl.io.dataset.Dataset`\'s.
+A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 """
 from .vertex import Vertex
 from .dataset import Dataset
@@ -8,7 +8,7 @@ from .dataset import Dataset
 class Group(Vertex):
 
     def __init__(self, name, parent, is_read_only, **metadata):
-        """A :class:`Group` can contain sub-:class:`Group`\'s and/or :class:`~msl.io.dataset.Dataset`\'s.
+        """A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 
         Do not instantiate directly. Create a new :class:`Group` using
         :meth:`~msl.io.group.Group.create_group`.
@@ -93,7 +93,7 @@ class Group(Vertex):
 
     def datasets(self):
         """
-        Returns a generator of all :class:`~msl.io.dataset.Dataset`\'s that are
+        Returns a generator of all :class:`~msl.io.dataset.Dataset`\\s that are
         contained within this :class:`Group`.
         """
         for obj in self._mapping.values():
@@ -102,7 +102,7 @@ class Group(Vertex):
 
     def groups(self):
         """
-        Returns a generator of all sub-:class:`Group`\'s that are contained within
+        Returns a generator of all sub-:class:`Group`\\s that are contained within
         this :class:`Group`.
         """
         for obj in self._mapping.values():

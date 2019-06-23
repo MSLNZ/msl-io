@@ -86,8 +86,8 @@ class Vertex(Dictionary):
     def is_read_only(self):
         """:class:`bool`: Whether this :class:`Vertex` is in read-only mode.
 
-        Setting this value will also update all sub-:class:`~msl.io.group.Group`\'s
-        and sub-:class:`~msl.io.dataset.Dataset`\'s to be in the same mode.
+        Setting this value will also update all sub-:class:`~msl.io.group.Group`\\s
+        and sub-:class:`~msl.io.dataset.Dataset`\\s to be in the same mode.
         """
         return self._is_read_only
 

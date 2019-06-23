@@ -4,7 +4,7 @@
 MSL Readers
 ===========
 
-The following :class:`~msl.io.reader.Reader`\'s are available:
+The following :class:`~msl.io.reader.Reader`\\s are available:
 
 .. toctree::
 
