@@ -39,8 +39,6 @@ class DRS(Reader):
 
     def read(self):
         """Reads the *.DAT* and corresponding *.LOG* file."""
-        root = self.create_root()
-
         self._lines_dat = self.get_lines(self.url, remove_empty_lines=True)
         self._num_lines_dat = len(self._lines_dat)
 
@@ -53,13 +51,13 @@ class DRS(Reader):
         while self._index_dat < self._num_lines_dat:
             if 'DRS' in self._lines_dat[self._index_dat]:
                 num_runs += 1
-                group = root.create_group('run%d' % num_runs)
+                group = self.create_group('run%d' % num_runs)
                 self._read_run(group)
             else:
                 self._index_dat += 1
                 self._index_log += 1
 
-        return root
+        return self
 
     def _read_run(self, group):
         group.add_metadata(**self._get_run_metadata())

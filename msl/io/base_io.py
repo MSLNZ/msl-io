@@ -1,13 +1,37 @@
-"""
-Base class for all :class:`Reader`\\s.
-"""
 import os
 import itertools
 
 from .root import Root
 
 
-class Reader(object):
+class BaseIO(Root):
+
+    def __init__(self, url, **metadata):
+        """Base class for all Readers and Writers.
+
+        Parameters
+        ----------
+        url
+        metadata
+        """
+        super(BaseIO, self).__init__(url, False, self.__class__, ** metadata)
+
+
+class Writer(BaseIO):
+
+    def __init__(self, url, **metadata):
+        super(Writer, self).__init__(url, **metadata)
+
+    def save(self, *, url=None, **kwargs):
+        """Save to file....
+
+        .. important::
+            You must override this method.
+        """
+        raise NotImplementedError
+
+
+class Reader(BaseIO):
 
     def __init__(self, url, **kwargs):
         """Base class for all :class:`Reader`\\s.
@@ -19,12 +43,8 @@ class Reader(object):
         **kwargs
             Key-value pairs that a :class:`Reader` subclass may need when reading the file.
         """
-        self._url = url
-
-    @property
-    def url(self):
-        """:class:`str`: The location of a file on a local hard drive or on a network."""
-        return self._url
+        super(Reader, self).__init__(url)
+        self.kwargs = kwargs
 
     @staticmethod
     def can_read(url):
@@ -34,22 +54,6 @@ class Reader(object):
             You must override this method.
         """
         return False
-
-    def create_root(self, **metadata):
-        """Create the :class:`~msl.io.root.Root` :class:`~msl.io.group.Group`.
-
-        Parameters
-        ----------
-        **metadata
-            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for the :class:`~msl.io.root.Root`.
-
-        Returns
-        -------
-        :class:`~msl.io.root.Root`
-            The root :class:`~msl.io.group.Group`, in writeable mode.
-        """
-        return Root(self._url, False, self.__class__, **metadata)
 
     def read(self):
         """Read the file.

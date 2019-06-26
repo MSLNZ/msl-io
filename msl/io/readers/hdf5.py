@@ -22,14 +22,6 @@ from msl.io import register, Reader
 @register
 class HDF5(Reader):
 
-    def __init__(self, url, **kwargs):
-        """Reader for the HDF5_ file format.
-
-        All kwargs are passed to :ref:`h5py.File <file_open>`.
-        """
-        super(HDF5, self).__init__(url)
-        self._kwargs = kwargs
-
     @staticmethod
     def can_read(url):
         """The HDF5_ file format has a standard signature_.
@@ -49,19 +41,19 @@ class HDF5(Reader):
             head, tail = os.path.split(name)
             if isinstance(obj, h5py.Dataset):
                 if head:
-                    root['/' + head].create_dataset(tail, data=obj[:], **obj.attrs)
+                    self['/' + head].create_dataset(tail, data=obj[:], **obj.attrs)
                 else:
-                    root.create_dataset(tail, data=obj[:], **obj.attrs)
+                    self.create_dataset(tail, data=obj[:], **obj.attrs)
             elif isinstance(obj, h5py.Group):
                 if head:
-                    root['/' + head].create_group(tail, **obj.attrs)
+                    self['/' + head].create_group(tail, **obj.attrs)
                 else:
-                    root.create_group(tail, **obj.attrs)
+                    self.create_group(tail, **obj.attrs)
             else:
                 assert False, 'Unhandled HDF5 object {}'.format(obj)
 
-        h5 = h5py.File(self.url, **self._kwargs)
-        root = self.create_root(**h5.attrs)
+        h5 = h5py.File(self.url, **self.kwargs)
+        self.add_metadata(**h5.attrs)
         h5.visititems(convert)
         h5.close()
-        return root
+        return self

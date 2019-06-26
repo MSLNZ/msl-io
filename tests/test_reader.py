@@ -2,12 +2,12 @@ import os
 
 import pytest
 
-from msl.io.reader import Reader
+from msl.io import Reader
 from msl.io.root import Root
 
 
 def test_get_root():
-    root = Reader('').create_root()
+    root = Reader('')
     assert isinstance(root, Root)
     assert not root.is_read_only
 

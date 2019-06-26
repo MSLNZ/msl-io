@@ -6,9 +6,18 @@ import os
 import importlib
 from collections import namedtuple
 
-from .register import register, _readers
-from .reader import Reader
+from .register import (
+    register,
+    _readers,
+)
+from .base_io import (
+    Reader,
+    Writer,
+)
 from .utils import search
+from .writers import (
+    JSONWriter,
+)
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2019, ' + __author__

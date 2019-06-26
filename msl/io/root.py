@@ -40,7 +40,7 @@ class Root(Group):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return '<Root {!r} ({} groups, {} datasets, {} metadata)>'.format(b, g, d, m)
+        return '<{} {!r} ({} groups, {} datasets, {} metadata)>'.format(self.__class__.__name__, b, g, d, m)
 
     @property
     def url(self):

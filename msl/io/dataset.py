@@ -124,7 +124,7 @@ class Dataset(Vertex):
     def __getattr__(self, item):
         try:
             return self._data[item]
-        except IndexError:
+        except (IndexError, ValueError):
             return getattr(self._data, item)
 
     def __len__(self):
