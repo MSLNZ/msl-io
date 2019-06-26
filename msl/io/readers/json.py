@@ -1,5 +1,5 @@
 """
-
+Reads a file that was created by :class:`~msl.io.writers.json.JSONWriter`.
 """
 import json
 
@@ -10,9 +10,15 @@ from msl.io import register, Reader
 
 @register
 class JSONReader(Reader):
-    """
-    version=1.0 -> A :class:``~msl.io.dataset.Dataset` uses a 'dtype' and a 'data' key
-    metadata
+    """Reads a file that was created by :class:`~msl.io.writers.json.JSONWriter`.
+
+    version=1.0 specifications
+
+        * A :class:`~msl.io.dataset.Dataset` uses a 'dtype' and a 'data' key to
+          uniquely identify the JSON object as a :class:`~msl.io.dataset.Dataset`
+
+        * If a metadata value is itself a :class:`dict` then it becomes a
+          :class:`~msl.io.group.Group`
     """
 
     @staticmethod
