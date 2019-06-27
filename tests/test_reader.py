@@ -3,7 +3,7 @@ import os
 import pytest
 
 from msl.io import Reader
-from msl.io.root import Root
+from msl.io.base_io import Root
 
 
 def test_get_root():

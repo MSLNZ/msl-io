@@ -1,11 +1,11 @@
 import pytest
 
-from msl.io.root import Root
+from msl.io.base_io import Root
 from msl.io.vertex import Vertex
 
 
 def test_instantiation():
-    root = Root('', is_read_only=True, cls=type)
+    root = Root('')
 
     v = Vertex(name='this is ok', is_read_only=True, parent=root)
     assert v.is_read_only

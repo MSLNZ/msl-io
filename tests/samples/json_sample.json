@@ -1,0 +1,40 @@
+#File created with: MSL JSONWriter version 1.0
+{
+  "foo": "bar",
+  "x": 9999,
+  "22": 22,
+  "33": 33,
+  "conditions": {
+    "temperature": 20.0,
+    "humidity": 45
+  },
+  "my_data": {
+    "meta": 999,
+    "dtype": "<i4",
+    "data": [
+      [0, 1, 2, 3, 4],
+      [5, 6, 7, 8, 9],
+      [10, 11, 12, 13, 14],
+      [15, 16, 17, 18, 19]
+    ]
+  },
+  "a": {
+    "b": {
+      "apple": "orange",
+      "c": {},
+      "dataset2": {
+        "dtype": [
+          ["a", "object"],
+          ["b", "object"],
+          ["c", "float64"],
+          ["d", "float64"],
+          ["e", "int32"]
+        ],
+        "data": [
+          ["100", "100s", 0.000640283, 0.0, 8],
+          ["100s", "50+50s", -0.000192765, 11.071, 9]
+        ]
+      }
+    }
+  }
+}

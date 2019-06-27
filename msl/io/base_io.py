@@ -1,83 +1,121 @@
+"""
+Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
+"""
 import os
 import itertools
 
-from .root import Root
+from .group import Group
 
 
-class BaseIO(Root):
-
-    def __init__(self, url, **metadata):
-        """Base class for all Readers and Writers.
-
-        Parameters
-        ----------
-        url
-        metadata
-        """
-        super(BaseIO, self).__init__(url, False, self.__class__, ** metadata)
-
-
-class Writer(BaseIO):
+class Root(Group):
 
     def __init__(self, url, **metadata):
-        super(Writer, self).__init__(url, **metadata)
+        """The root vertex in a rooted_, `directed graph`_.
 
-    def save(self, *, url=None, **kwargs):
-        """Save to file....
+        Do not instantiate this class directly.
 
-        .. important::
-            You must override this method.
-        """
-        raise NotImplementedError
-
-
-class Reader(BaseIO):
-
-    def __init__(self, url, **kwargs):
-        """Base class for all :class:`Reader`\\s.
+        .. _rooted: https://en.wikipedia.org/wiki/Rooted_graph
+        .. _directed graph: https://en.wikipedia.org/wiki/Directed_graph
 
         Parameters
         ----------
         url : :class:`str`
             The location of a file on a local hard drive or on a network.
+        **metadata
+            Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
+            for the :class:`~msl.io.base_io.Root`.
+        """
+        super(Group, self).__init__('/', None, False, **metadata)
+        self._url = url
+
+    def __repr__(self):
+        b = os.path.basename(self._url)
+        g = len(list(self.groups()))
+        d = len(list(self.datasets()))
+        m = len(self.metadata)
+        return '<{} {!r} ({} groups, {} datasets, {} metadata)>'.\
+            format(self.__class__.__name__, b, g, d, m)
+
+    @property
+    def url(self):
+        """:class:`str`: The location of a file on a local hard drive or on a network."""
+        return self._url
+
+
+class Writer(Root):
+
+    def __init__(self, url='', **metadata):
+        """
+        Parameters
+        ----------
+        url : :class:`str`, optional
+            The location of a file on a local hard drive or on a network.
+        **metadata
+            Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
+            of the :class:`~msl.io.base_io.Root`.
+        """
+        super(Writer, self).__init__(url, **metadata)
+
+    def write(self, url=None, root=None, **kwargs):
+        """Write to a file.
+
+        .. important::
+           You must override this method.
+
+        Parameters
+        ----------
+        url : :class:`str`, optional
+            The location of a file on a local hard drive or on a network. If :data:`None`
+            then uses the URL value that was specified when the :class:`~msl.io.base_io.Writer`
+            was created.
+        root : class:`~msl.io.base_io.Root`, optional
+            Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.
+            This is useful when converting between different file formats.
         **kwargs
-            Key-value pairs that a :class:`Reader` subclass may need when reading the file.
+            Additional key-value pairs to use when writing the file.
+        """
+        raise NotImplementedError
+
+
+class Reader(Root):
+
+    def __init__(self, url):
+        """
+        Parameters
+        ----------
+        url : :class:`str`
+            The location of a file on a local hard drive or on a network.
         """
         super(Reader, self).__init__(url)
-        self.kwargs = kwargs
 
     @staticmethod
     def can_read(url):
-        """:class:`bool`: Whether this :class:`Reader` can read the file specified by `url`.
+        """Whether this :class:`~msl.io.base_io.Reader` can read the file specified by `url`.
 
         .. important::
-            You must override this method.
+           You must override this method.
+
+        Returns
+        -------
+        :class:`bool`
+            Either :data:`True` or :data:`False`.
         """
         return False
 
-    def read(self):
+    def read(self, **kwargs):
         """Read the file.
 
-        The URL of the file can be accessed by the :attr:`url` property
-        of the :class:`Reader`, i.e., ``self.url``
+        The URL of the file can be accessed by the :attr:`~msl.io.base_io.Root.url`
+        property of the :class:`~msl.io.base_io.Reader`, i.e., ``self.url``
 
         .. important::
-            You must override this method, for example:
+           You must override this method.
 
-            .. code-block:: python
-
-                def read(self):
-                    # read the data, for example, from a text-based file
-                    lines = self.get_lines(self.url)
-
-                    # create the root object (with optional metadata)
-                    root = self.create_root(**metadata)
-
-                    # ... create the Groups and Datasets ...
-
-                    # return the root object
-                    return root
-
+        Parameters
+        ----------
+        **kwargs
+            Key-value pairs that the :class:`~msl.io.base_io.Reader` class may need
+            when reading the file.
         """
         raise NotImplementedError
 

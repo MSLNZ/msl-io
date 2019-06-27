@@ -12,22 +12,9 @@ from msl.io import register, Reader
 @register
 class DRS(Reader):
 
-    def __init__(self, url, **kwargs):
-        """
-        Reader for the Detector Responsivity System from Light Standards at MSL.
-        """
-        super(DRS, self).__init__(url)
-        self._lines_dat = []
-        self._lines_log = []
-        self._index_dat = 0
-        self._index_log = 0
-        self._num_lines_dat = 0
-        self._num_lines_log = 0
-        self._default_alias = {'l(nm)': 'wavelength'}
-
     @staticmethod
     def can_read(url):
-        """Checks if the first line starts with *DRS* and ends with *Shindo*."""
+        """Checks if the first line starts with ``DRS`` and ends with ``Shindo``."""
         if Reader.get_extension(url).lower() != '.dat':
             return False
         line = Reader.get_lines(url, 1)[0]
@@ -37,8 +24,16 @@ class DRS(Reader):
             return True
         return False
 
-    def read(self):
-        """Reads the *.DAT* and corresponding *.LOG* file."""
+    def read(self, **kwargs):
+        """Reads the *.DAT* and corresponding *.LOG* file.
+
+        Parameters
+        ----------
+        **kwargs
+            All key-value pairs are ignored.
+        """
+        self._default_alias = {'l(nm)': 'wavelength'}
+
         self._lines_dat = self.get_lines(self.url, remove_empty_lines=True)
         self._num_lines_dat = len(self._lines_dat)
 
@@ -56,8 +51,6 @@ class DRS(Reader):
             else:
                 self._index_dat += 1
                 self._index_log += 1
-
-        return self
 
     def _read_run(self, group):
         group.add_metadata(**self._get_run_metadata())

@@ -3,11 +3,11 @@ Helper functions for the tests
 """
 import os
 
-from msl.io import read as _io_read
+from msl.io import read
 
 
 def read_sample(filename, **kwargs):
-    """Read the file in the samples directory
+    """Read a file in the 'samples' directory.
 
     Parameters
     ----------
@@ -16,7 +16,6 @@ def read_sample(filename, **kwargs):
 
     Returns
     -------
-    msl.io.root.Root
-        The root object
+    A root object
     """
-    return _io_read(os.path.join(os.path.dirname(__file__), 'samples', filename), **kwargs)
+    return read(os.path.join(os.path.dirname(__file__), 'samples', filename), **kwargs)

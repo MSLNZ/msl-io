@@ -6,6 +6,7 @@ import os
 import importlib
 from collections import namedtuple
 
+from .utils import search
 from .register import (
     register,
     _readers,
@@ -14,9 +15,9 @@ from .base_io import (
     Reader,
     Writer,
 )
-from .utils import search
 from .writers import (
     JSONWriter,
+    HDF5Writer,
 )
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
@@ -42,18 +43,19 @@ def read(url, **kwargs):
     url : :class:`str`
         The path to the file to read.
     **kwargs
-        Keyword arguments that are passed to the :class:`~msl.io.reader.Reader` subclass.
+        Keyword arguments that are passed to the :meth:`~msl.io.base_io.Reader.read`
+        method of the :class:`~msl.io.base_io.Reader` that can read this file.
 
     Returns
     -------
-    :class:`~msl.io.root.Root`
-        The root object.
+    :class:`~msl.io.base_io.Reader`
+        The data from the file.
 
     Raises
     ------
     IOError
-        If the file does not exist or if no :class:`~msl.io.reader.Reader` exists to be able to
-        read the specified file.
+        If the file does not exist or if no :class:`~msl.io.base_io.Reader` exists
+        to be able to read the specified file.
     """
     if not os.path.isfile(url):
         raise IOError('File does not exist {!r}'.format(url))
@@ -65,7 +67,8 @@ def read(url, **kwargs):
             continue
 
         if can_read:
-            root = rdr(url, **kwargs).read()
+            root = rdr(url)
+            root.read(**kwargs)
             root.is_read_only = True
             return root
 

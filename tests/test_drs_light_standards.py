@@ -5,7 +5,7 @@ from helper import read_sample
 
 def test_drs():
     root = read_sample('Lamp_15082018_4.DAT')
-    assert root.reader_class is DRS
+    assert isinstance(root, DRS)
 
     assert 'run1' in root
     assert 'scan1' in root['run1']

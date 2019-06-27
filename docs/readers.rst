@@ -4,12 +4,13 @@
 MSL Readers
 ===========
 
-The following :class:`~msl.io.reader.Reader`\\s are available:
+The following :class:`~msl.io.base_io.Reader`\s are available:
 
 .. toctree::
 
    DRS - Light Standards <_api/msl.io.readers.detector_responsivity_system>
-   HDF5 <_api/msl.io.readers.hdf5>
+   HDF5Reader <_api/msl.io.readers.hdf5>
+   JSON <_api/msl.io.readers.json_>
 
 .. _io-create-reader:
 
@@ -37,14 +38,6 @@ Please follow the :ref:`style guide <style guide>`.
        class AnExampleReader(Reader):
            """Name your class to be whatever you want, i.e., change AnExampleReader"""
 
-           def __init__(self, url, **kwargs):
-               # Initialize the parent Reader class
-               super(AnExampleReader, self).__init__(url)  # change AnExampleReader
-
-               # **kwargs represent additional (and optional) key-value pairs that
-               # a user can pass to your Reader class which you may need to know
-               # when reading the data file
-
            @staticmethod
            def can_read(url):
                """This method answers the following question:
@@ -56,21 +49,21 @@ Please follow the :ref:`style guide <style guide>`.
                question. For example, checking that the file extension is ".csv" is
                not unique enough.
                """
-               return True or False
+               return True (can read) or False (cannot read)
 
-           def read(self):
-               """This method reads the data file(s) and returns a Root object."""
+           def read(self, **kwargs):
+               """This method reads the data file(s).
 
-               # Create the Root object
-               # You can include key-value pairs to use as metadata for the Root
-               root = self.create_root(**metadata)
+               Your Reader class is a Root object.
 
-               #
-               # Populate the attributes of `root` from the information in the file(s)
-               #
+               The location of the data file to read is available at self.url
 
-               # Return the Root object
-               return root
+               To add metadata to Root use self.add_metadata(...)
+
+               To create a Group in Root use self.create_group(...)
+
+               To create a Dataset in Root use self.create_dataset(...)
+               """
 
 3. Add an example data file to the `tests/samples`_ directory and add a test case to the `tests/`_ directory
    to make sure that your Reader is returned by calling the :func:`~msl.io.read` function using your example

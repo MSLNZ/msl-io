@@ -2,30 +2,30 @@ import types
 
 import pytest
 
-from msl.io.root import Root
+from msl.io.base_io import Root
 from msl.io.group import Group
 from msl.io.dataset import Dataset
 
 
 def test_instantiation():
-    root = Root('some.file', is_read_only=True, cls=type)
+    root = Root('some.file')
     assert root.url == 'some.file'
     assert root.name == '/'
-    assert root.is_read_only
-    assert root.metadata.is_read_only
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
     assert len(root) == 0
     assert len(root.metadata) == 0
     assert str(root).startswith('<Root')
 
-    root = Root('C:\\path\\to\\a\\windows.file', is_read_only=True, cls=type)
+    root = Root('C:\\path\\to\\a\\windows.file')
     assert root.url == 'C:\\path\\to\\a\\windows.file'
     assert root.name == '/'
 
-    root = Root(r'\\network\drive with multiple\spa ces.file', is_read_only=True, cls=type)
+    root = Root(r'\\network\drive with multiple\spa ces.file')
     assert root.url == '\\\\network\\drive with multiple\\spa ces.file'
     assert root.name == '/'
 
-    root = Root('/home/another.xxx', is_read_only=False, cls=type)
+    root = Root('/home/another.xxx')
     assert root.url == '/home/another.xxx'
     assert root.name == '/'
     assert not root.is_read_only
@@ -33,14 +33,15 @@ def test_instantiation():
     assert len(root) == 0
     assert len(root.metadata) == 0
 
-    root = Root('/home/another.xxx', is_read_only=True, cls=type, one=1, two=2, three=3)
+    root = Root('/home/another.xxx', one=1, two=2, three=3)
     assert root.url == '/home/another.xxx'
     assert root.name == '/'
-    assert root.is_read_only
-    assert root.metadata.is_read_only
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
     assert len(root) == 0
-    assert 'is_read_only' not in root.metadata
     assert root.metadata == {'one': 1, 'two': 2, 'three': 3}
+
+    root.is_read_only = True
 
     # cannot add metadata
     with pytest.raises(ValueError):
@@ -52,14 +53,16 @@ def test_instantiation():
 
 
 def test_create_group():
-    root = Root('', is_read_only=True, cls=type)
+    root = Root('')
 
     # must specify a name for the group
     with pytest.raises(TypeError):
         root.create_group(is_read_only=True)
 
-    assert root.is_read_only
-    assert root.metadata.is_read_only
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
+
+    root.is_read_only = True
 
     # cannot create a group since root is in read-only mode
     with pytest.raises(ValueError):
@@ -119,14 +122,16 @@ def test_create_group():
 
 
 def test_create_dataset():
-    root = Root('', is_read_only=True, cls=type)
+    root = Root('')
 
     # must specify a name for the dataset
     with pytest.raises(TypeError):
         root.create_dataset()
 
-    assert root.is_read_only
-    assert root.metadata.is_read_only
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
+
+    root.is_read_only = True
 
     # cannot create a dataset if root is in read-only mode
     with pytest.raises(ValueError):
@@ -201,7 +206,7 @@ def test_create_dataset():
 
 
 def test_accessing_subgroups_subdatasets():
-    root = Root('', is_read_only=False, cls=type)
+    root = Root('')
 
     a = root.create_group('a')
     d1 = a.create_dataset('d1')
@@ -270,7 +275,7 @@ def test_accessing_subgroups_subdatasets():
 
 
 def test_in_not_in():
-    root = Root('', is_read_only=False, cls=type)
+    root = Root('')
 
     a = root.create_group('a')
     a.create_dataset('first dataset')
@@ -300,7 +305,7 @@ def test_in_not_in():
 
 
 def test_read_only_propagates():
-    root = Root('', is_read_only=False, cls=type)
+    root = Root('')
 
     g1 = root.create_group('g1')
     d1 = g1.create_dataset('d1')
@@ -361,7 +366,7 @@ def test_read_only_propagates():
 
 
 def test_datasets_groups():
-    root = Root('', is_read_only=False, cls=type)
+    root = Root('')
 
     d0 = root.create_dataset('d0')
     g1 = root.create_group('g1')
@@ -410,7 +415,7 @@ def test_datasets_groups():
 
 
 def test_delete_vertex():
-    root = Root('', is_read_only=False, cls=type)
+    root = Root('')
 
     root.create_group('g1')
     g2 = root.create_group('g2')

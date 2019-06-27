@@ -6,14 +6,14 @@ MSL-IO
 
 Read and write MSL data files.
 
-**MSL-IO** follows the data model used by HDF5_, where there is a :class:`~msl.io.root.Root`,
+**MSL-IO** follows the data model used by HDF5_, where there is a :class:`~msl.io.base_io.Root`,
 :ref:`msl-io-group`\s and :ref:`msl-io-dataset`\s and these objects each have :ref:`msl-io-metadata`
 associated with them.
 
 .. image:: _static/hdf5_data_model.png
 
 The data files that can be read are not restricted to HDF5_ files, but, rather any
-file format that has a :class:`~msl.io.reader.Reader` class implemented can be read.
+file format that has a :class:`~msl.io.base_io.Reader` class implemented can be read.
 See :ref:`io-create-reader` for more details.
 
 To read a data file it is as easy as
@@ -23,7 +23,7 @@ To read a data file it is as easy as
     >>> from msl.io import read
     >>> root = read('/path/to/a/data.file')
 
-Provided that a :class:`~msl.io.reader.Reader` exists to read the file a :class:`~msl.io.root.Root`
+Provided that a :class:`~msl.io.base_io.Reader` exists to read the file a :class:`~msl.io.base_io.Root`
 object is returned.
 
 Since the `root` object is a :ref:`msl-io-group` (which operates like a Python dictionary) you can inspect the

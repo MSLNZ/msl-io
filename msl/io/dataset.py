@@ -101,19 +101,9 @@ class Dataset(Vertex):
         )
 
     @property
-    def dtype(self):
-        """:class:`numpy.dtype`: The data type of the data set."""
-        return self._data.dtype
-
-    @property
-    def shape(self):
-        """:class:`tuple`: The shape of the data set."""
-        return self._data.shape
-
-    @property
-    def size(self):
-        """:class:`int`: The number of elements in the data set."""
-        return self._data.size
+    def data(self):
+        """:class:`numpy.ndarray`: The data of the data set."""
+        return self._data
 
     def __getitem__(self, item):
         return self._data[item]

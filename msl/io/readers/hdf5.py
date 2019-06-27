@@ -6,7 +6,7 @@ Reader for the HDF5_ file format.
    the more advanced features of a HDF5_ file then it is best to directly load
    the file using H5py_.
 
-.. _HDF5: https://portal.hdfgroup.org/display/support
+.. _HDF5: https://www.hdfgroup.org/
 .. _H5py: https://www.h5py.org/
 """
 import os
@@ -20,7 +20,7 @@ from msl.io import register, Reader
 
 
 @register
-class HDF5(Reader):
+class HDF5Reader(Reader):
 
     @staticmethod
     def can_read(url):
@@ -32,10 +32,16 @@ class HDF5(Reader):
         """
         return Reader.get_bytes(url, 8) == b'\x89HDF\r\n\x1a\n'
 
-    def read(self):
-        """Reads the HDF5_ file."""
+    def read(self, **kwargs):
+        """Reads the HDF5_ file.
+
+        Parameters
+        ----------
+        **kwargs
+            All key-value pairs are passed to :class:`File`.
+        """
         if h5py is None:
-            raise ImportError('You must install h5py to read HDF5 files.\nRun: pip install h5py')
+            raise ImportError('You must install h5py to read HDF5Reader files.\nRun: pip install h5py')
 
         def convert(name, obj):
             head, tail = os.path.split(name)
@@ -50,10 +56,9 @@ class HDF5(Reader):
                 else:
                     self.create_group(tail, **obj.attrs)
             else:
-                assert False, 'Unhandled HDF5 object {}'.format(obj)
+                assert False, 'Unhandled HDF5Reader object {}'.format(obj)
 
-        h5 = h5py.File(self.url, **self.kwargs)
+        h5 = h5py.File(self.url, mode='r', **kwargs)
         self.add_metadata(**h5.attrs)
         h5.visititems(convert)
         h5.close()
-        return self
