@@ -1,9 +1,16 @@
 #File created with: MSL JSONWriter version 1.0
 {
   "foo": "bar",
-  "x": 9999,
-  "22": 22,
-  "33": 33,
+  "null": null,
+  "boolean": true,
+  "integer": -99,
+  "float": 33.33e3,
+  "empty_list": [],
+  "array_strings": ["aaa", "bbb", "ccc", "ddd", "eee"],
+  "array_var_strings": ["a", "ab", "abc", "abcd", "abcde"],
+  "array_mixed_null": ["a", false, 5, 72.3, "hey", null],
+  "array_mixed": [true, -5, 0.002345, "something", 49.1871524],
+  "array_numbers": [1, 2.3, 4, -4e99],
   "conditions": {
     "temperature": 20.0,
     "humidity": 45
