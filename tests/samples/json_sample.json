@@ -28,8 +28,10 @@
   "a": {
     "b": {
       "apple": "orange",
+      "pear": "banana",
       "c": {},
       "dataset2": {
+        "fibonacci": [1, 1, 2, 3, 5, 8, 13, 21, 34, 55],
         "dtype": [
           ["a", "object"],
           ["b", "object"],

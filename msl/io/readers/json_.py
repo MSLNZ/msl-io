@@ -45,11 +45,24 @@ class JSONReader(Reader):
             fp.readline()  # skip the first line
             dict_ = json.loads(fp.read(), **kwargs)
 
+        def list_to_ndarray(list_):
+            # convert a Metadata value to ndarray because one can easily make ndarray read only
+            # use dtype=object because it guarantees that the data types are preserved
+            # for example,
+            #   >>> a = np.asarray([True, -5, 0.002345, 'something', 49.1871524])
+            #   >>> a
+            #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')
+            # would cast every element to a string
+            # also a regular Python list stores items as objects anyways
+            return np.asarray(list_, dtype=object)
+
         def create_group(parent, name, vertex):
             group = self if parent is None else parent.create_group(name)
             for key, value in vertex.items():
                 if not isinstance(value, dict):  # Metadata
-                    group.add_metadata(**{key: value})
+                    if isinstance(value, list):
+                        value = list_to_ndarray(value)
+                    group.metadata[key] = value
                 elif 'dtype' in value and 'data' in value:  # Dataset
                     kws = dict()
                     for dkey, dval in value.items():
@@ -62,10 +75,12 @@ class JSONReader(Reader):
                                     dtype=[tuple(item) for item in dval])
                             else:
                                 kws['data'] = np.asarray(value['data'], dtype=dval)
-                        else:
+                        else:  # Metadata
+                            if isinstance(dval, list):
+                                dval = list_to_ndarray(dval)
                             kws[dkey] = dval
                     group.create_dataset(key, **kws)
-                else:  # use recursion to create a Group
+                else:  # use recursion to create a sub-Group
                     create_group(group, key, value)
 
         # create the root group

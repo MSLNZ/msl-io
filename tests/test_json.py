@@ -28,7 +28,9 @@ def test_sample():
     temp.is_read_only = False
     assert temp.metadata.pop('null') is None
     assert 'null' not in temp.metadata
-    assert temp.metadata.pop('array_mixed_null') == ['a', False, 5, 72.3, 'hey', None]
+    array_mixed_null = temp.metadata.pop('array_mixed_null')
+    assert isinstance(array_mixed_null, np.ndarray)
+    assert np.array_equal(array_mixed_null, ['a', False, 5, 72.3, 'hey', None])
     assert 'array_mixed_null' not in temp.metadata
     hdf5_writer.write(root=temp, mode='w')
     root_hdf5 = read(hdf5_writer.url)
@@ -52,25 +54,72 @@ def test_sample():
         assert len(list(root.a.b.datasets())) == 1
         assert len(list(root.a.b.c.datasets())) == 0
 
-        # HDF5 does not support "null" type metadata values
-        # also, "array_mixed" gets converted to be all strings by HDF5
+        # HDF5 does not support NULL type values
+        # also, "array_mixed" gets converted to be all strings by h5py
         if root is root3:
             assert len(root.metadata) == 9
-            assert root.metadata.array_mixed == ['True', '-5', '0.002345', 'something', '49.1871524']
+            # use tolist() not np.array_equal
+            assert root.metadata.array_mixed.tolist() == ['True', '-5', '0.002345', 'something', '49.1871524']
         else:
             assert len(root.metadata) == 11
             assert root.metadata.null is None
-            assert root.metadata.array_mixed_null == ['a', False, 5, 72.3, 'hey', None]
-            assert root.metadata.array_mixed == [True, -5, 0.002345, 'something', 49.1871524]
+            # use tolist() not np.array_equal
+            assert root.metadata.array_mixed_null.tolist() == ['a', False, 5, 72.3, 'hey', None]
+            assert root.metadata.array_mixed.tolist() == [True, -5, 0.002345, 'something', 49.1871524]
 
         assert root.metadata.foo == 'bar'
         assert root.metadata.boolean is True
         assert root.metadata['integer'] == -99
         assert root.metadata['float'] == 33.33e3
-        assert root.metadata['empty_list'] == []
-        assert root.metadata.array_strings == ['aaa', 'bbb', 'ccc', 'ddd', 'eee']
-        assert root.metadata.array_var_strings == ['a', 'ab', 'abc', 'abcd', 'abcde']
-        assert root.metadata.array_numbers == [1, 2.3, 4, -4e99]
+        assert root.metadata['empty_list'].size == 0
+        # use tolist() not np.array_equal
+        assert root.metadata.array_strings.tolist() == ['aaa', 'bbb', 'ccc', 'ddd', 'eee']
+        assert root.metadata.array_var_strings.tolist() == ['a', 'ab', 'abc', 'abcd', 'abcde']
+        assert root.metadata.array_numbers.tolist() == [1, 2.3, 4, -4e99]
+
+        # make sure the Metadata values are read only
+        with pytest.raises(ValueError):
+            root.metadata['new_key'] = 'new value'
+        with pytest.raises(ValueError):
+            del root.metadata.foo
+        with pytest.raises(ValueError):
+            root.metadata.boolean = False
+        with pytest.raises(ValueError):
+            root.metadata.array_strings[0] = 'new string'
+        with pytest.raises(ValueError):
+            del root.metadata.array_var_strings
+        with pytest.raises(ValueError):
+            root.metadata.array_numbers[:] = [-9, -8, -7, -6]
+
+        root.is_read_only = False
+
+        # can now modify the Metadata
+        del root.metadata.foo
+        assert 'foo' not in root.metadata
+        root.metadata.boolean = False
+        assert root.metadata.boolean is False
+        root.metadata.array_strings[0] = 'new string'
+        # use tolist() not np.array_equal
+        assert root.metadata.array_strings.tolist() == ['new string', 'bbb', 'ccc', 'ddd', 'eee']
+        root.metadata.array_numbers[::2] = [-9, -8.8]
+        assert root.metadata.array_numbers.tolist() == [-9, 2.3, -8.8, -4e99]
+        assert 'new_key' not in root.metadata
+        root.metadata.new_key = 'new value'
+        assert root.metadata.new_key == 'new value'
+
+        root.is_read_only = True
+
+        # make sure the Metadata values are read only again
+        with pytest.raises(ValueError):
+            del root.metadata.new_key
+        with pytest.raises(ValueError):
+            root.metadata.boolean = True
+        with pytest.raises(ValueError):
+            root.metadata.array_strings[-1] = 'another string'
+        with pytest.raises(ValueError):
+            del root.metadata.array_var_strings
+        with pytest.raises(ValueError):
+            root.metadata.array_numbers[:] = [11, 22, 33, 44]
 
         assert 'conditions' in root
         assert 'my_data' in root
@@ -94,8 +143,9 @@ def test_sample():
         assert len(root.a.metadata) == 0
 
         b = root.a.b
-        assert len(b.metadata) == 1
+        assert len(b.metadata) == 2
         assert b.metadata.apple == 'orange'
+        assert b.metadata.pear == 'banana'
 
         c = root.a.b.c
         assert root.is_group(c)
@@ -103,7 +153,9 @@ def test_sample():
 
         dset = root.a.b.dataset2
         assert root.is_dataset(dset)
-        assert len(dset.metadata) == 0
+        assert len(dset.metadata) == 1
+        # use tolist() not np.array_equal
+        assert dset.metadata.fibonacci.tolist() == [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
         assert dset.shape == (2,)
         assert dset.dtype.names == ('a', 'b', 'c', 'd', 'e')
         assert dset['a'].dtype == np.object
@@ -111,11 +163,32 @@ def test_sample():
         assert dset['c'].dtype == np.float
         assert dset['d'].dtype == np.float
         assert dset['e'].dtype == np.int
-        assert np.array_equal(dset['a'], ['100', '100s'])
-        assert np.array_equal(dset['b'], ['100s', '50+50s'])
-        assert np.array_equal(dset['c'], [0.000640283, -0.000192765])
-        assert np.array_equal(dset['d'], [0.0, 11.071])
-        assert np.array_equal(dset['e'], [8, 9])
+        assert dset['a'].tolist() == ['100', '100s']
+        assert dset['b'].tolist() == ['100s', '50+50s']
+        assert dset['c'].tolist() == [0.000640283, -0.000192765]
+        assert dset['d'].tolist() == [0.0, 11.071]
+        assert dset['e'].tolist() == [8, 9]
+
+        # make sure the ndarray's are read only
+        with pytest.raises(ValueError):
+            dset.metadata.fibonacci[4] = -9
+        with pytest.raises(ValueError):
+            dset['e'] = [-1, 0]
+
+        root.is_read_only = False
+
+        dset.metadata.fibonacci[4] = -9
+        assert dset.metadata.fibonacci.tolist() == [1, 1, 2, 3, -9, 8, 13, 21, 34, 55]
+        dset['e'] = [-1, 0]
+        assert dset['e'].tolist() == [-1, 0]
+
+        root.is_read_only = True
+
+        # make sure the ndarray's are read only again
+        with pytest.raises(ValueError):
+            dset.metadata.fibonacci[4] = 0
+        with pytest.raises(ValueError):
+            dset['a'][0] = 'foo'
 
 
 def test_url_and_root():

@@ -9,6 +9,8 @@ try:
 except ImportError:
     from collections import MutableMapping
 
+import numpy as np
+
 from .dictionary import Dictionary
 
 
@@ -65,9 +67,17 @@ class Metadata(Dictionary):
 
     def __setattr__(self, item, value):
         if item.endswith('is_read_only'):
-            super(Metadata, self).__setattr__('_is_read_only', bool(value))
+            val = bool(value)
+            self.__dict__['_is_read_only'] = val
+            try:
+                # make all numpy ndarray's read only also
+                for obj in self.__dict__['_mapping'].values():
+                    if isinstance(obj, np.ndarray):
+                        obj.setflags(write=not val)
+            except KeyError:
+                pass
         elif item == '_mapping' or item == '_vertex_name':
-            super(Metadata, self).__setattr__(item, value)
+            self.__dict__[item] = value
         else:
             self._raise_if_read_only()
             self._mapping[item] = value
