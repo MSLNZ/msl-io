@@ -4,7 +4,10 @@ Writer for a JSON_ file format.
 .. _JSON: https://www.json.org/
 """
 import os
-import json
+from json import (
+    dump,
+    JSONEncoder,
+)
 
 import numpy as np
 
@@ -28,7 +31,7 @@ class JSONWriter(Writer):
             The name of the file to write to. If :data:`None` then uses the value of
             `url` that was specified when :class:`JSONWriter` was created.
         root : :class:`~msl.io.base_io.Root`, optional
-            Write `root` in JSON_ format. If :data:`None` the write the
+            Write `root` in JSON_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`JSONWriter`.
         **kwargs
@@ -47,49 +50,37 @@ class JSONWriter(Writer):
 
         def add_dataset(d, dataset):
             if dataset.dtype.fields:
-                # can't use dataset.dtype.fields.items() since Python < 3.6
+                # can't iterate over dataset.dtype.fields.items() since Python < 3.6
                 # does not preserve order in a dict
-                d['dtype'] = [[n, str(dataset.dtype.fields[n][0])] for n in dataset.dtype.names]
+                fields = dataset.dtype.fields
+                d['dtype'] = [[n, str(fields[n][0])] for n in dataset.dtype.names]
             else:
                 d['dtype'] = dataset.dtype.str
             d['data'] = dataset.tolist()
 
-        def metadata_to_dict(metadata):
-            d = dict()
-            for k, v in metadata.items():
-                if isinstance(v, Metadata):
-                    d[k] = metadata_to_dict(v)
-                elif isinstance(v, np.ndarray):
-                    d[k] = v.tolist()
-                elif isinstance(v, np.integer):
-                    d[k] = int(v)
-                elif isinstance(v, np.floating):
-                    d[k] = float(v)
-                elif isinstance(v, (complex, np.complexfloating)):
-                    d[k] = str(v)
-                else:
-                    d[k] = v
-            return d
+        def meta_to_dict(metadata):
+            return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else v)
+                        for k, v in metadata.items())
 
-        dict_ = dict(**metadata_to_dict(root.metadata))
+        dict_ = dict(**meta_to_dict(root.metadata))
 
         for name, value in root.items():
             vertices = name.split('/')
             root_key = vertices[1]
 
             if root_key not in dict_:
-                dict_[root_key] = dict(**metadata_to_dict(value.metadata))
+                dict_[root_key] = dict(**meta_to_dict(value.metadata))
                 if root.is_dataset(value):
                     add_dataset(dict_[root_key], value)
 
-            if len(vertices)>2:
+            if len(vertices) > 2:
                 vertex = dict_[root_key]
                 for key in vertices[2:-1]:
                     vertex = vertex[key]
 
                 leaf_key = vertices[-1]
                 if leaf_key not in vertex:
-                    vertex[leaf_key] = dict(**metadata_to_dict(value.metadata))
+                    vertex[leaf_key] = dict(**meta_to_dict(value.metadata))
                     if root.is_dataset(value):
                         add_dataset(vertex[leaf_key], value)
 
@@ -101,10 +92,24 @@ class JSONWriter(Writer):
         # so we should check if the file already exists
         if not mode:
             if os.path.isfile(url):
-                raise OSError('the {!r} file already exists'.format(url))
+                raise IOError('the {!r} file already exists'.format(url))
             mode = 'wt'
 
-        print(dict_)
+        encoder = kwargs.pop('cls', NumpyEncoder)
         with open(url, mode=mode) as fp:
             fp.write('#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__))
-            json.dump(dict_, fp, **kwargs)
+            dump(dict_, fp, cls=encoder, **kwargs)
+
+
+class NumpyEncoder(JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.bool_):
+            return bool(obj)
+        return JSONEncoder.default(self, obj)
