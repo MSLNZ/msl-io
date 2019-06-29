@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+import pytest
+
 from msl.io import read, HDF5Writer, JSONWriter
 from msl.io.readers.hdf5 import HDF5Reader
 
@@ -22,7 +24,7 @@ def test_hdf5():
     json_writer.write(root=root1, mode='w')
     root_json = read(json_writer.url)
     os.remove(json_writer.url)
-    writer2 = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5')
+    writer2 = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp2.h5')
     writer2.write(root=root_json, mode='w')
     root3 = read(writer2.url)
     assert root3.url == writer2.url
@@ -105,3 +107,37 @@ def test_hdf5():
         assert root.is_group(g2)
         assert len(g2.metadata) == 1
         assert g2.metadata['hello'] == 'world'
+
+
+def test_url_and_root():
+    root = read_sample('hdf5_sample.h5')
+
+    writer = HDF5Writer()
+
+    # no URL was specified
+    with pytest.raises(ValueError) as e:
+        writer.write(root=root)
+    assert 'url' in str(e)
+
+    # cannot overwrite a file by default
+    url = tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5'
+    with open(url, 'wt') as fp:
+        fp.write('Hi')
+    with pytest.raises(IOError) as e:
+        writer.write(url=url, root=root)
+    assert 'exists' in str(e)
+
+    # by specifying the mode one can overwrite a file
+    writer.write(url=url, root=root, mode='w')
+    os.remove(url)
+
+    # root must be a Root object
+    with pytest.raises(TypeError) as e:
+        writer.write(url='whatever', root=list(root.datasets())[0])
+    assert 'Root' in str(e)
+    with pytest.raises(TypeError) as e:
+        writer.write(url='whatever', root=list(root.groups())[0])
+    assert 'Root' in str(e)
+    with pytest.raises(TypeError) as e:
+        writer.write(url='whatever', root='Root')
+    assert 'Root' in str(e)
