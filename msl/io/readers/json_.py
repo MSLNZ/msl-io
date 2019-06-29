@@ -39,47 +39,34 @@ class JSONReader(Reader):
         ----------
         **kwargs
             All key-value pairs are passed to
-            `json.load <https://docs.python.org/3/library/json.html#json.load>`_.
+            `json.loads <https://docs.python.org/3/library/json.html#json.loads>`_.
         """
         with open(self.url, mode='rt') as fp:
             fp.readline()  # skip the first line
-            dict_ = json.load(fp, **kwargs)
+            dict_ = json.loads(fp.read(), **kwargs)
 
-        def is_dataset(obj):
-            return ('dtype' in obj) and ('data' in obj)
+        def create_group(parent, name, vertex):
+            group = self if parent is None else parent.create_group(name)
+            for key, value in vertex.items():
+                if not isinstance(value, dict):  # Metadata
+                    group.add_metadata(**{key: value})
+                elif 'dtype' in value and 'data' in value:  # Dataset
+                    kws = dict()
+                    for dkey, dval in value.items():
+                        if dkey == 'data':
+                            pass  # handled in the 'dtype' check
+                        elif dkey == 'dtype':
+                            if isinstance(dval, list):
+                                kws['data'] = np.asarray(
+                                    [tuple(row) for row in value['data']],
+                                    dtype=[tuple(item) for item in dval])
+                            else:
+                                kws['data'] = np.asarray(value['data'], dtype=dval)
+                        else:
+                            kws[dkey] = dval
+                    group.create_dataset(key, **kws)
+                else:  # use recursion to create a Group
+                    create_group(group, key, value)
 
-        def create_dataset(parent, name, dataset):
-            kws = dict()
-            for sub_key, sub_value in dataset.items():
-                if sub_key == 'data':
-                    pass
-                elif sub_key == 'dtype':
-                    if isinstance(sub_value, list):
-                        kws['data'] = np.asarray(
-                            [tuple(row) for row in dataset['data']],
-                            dtype=[tuple(item) for item in sub_value]
-                        )
-                    else:
-                        kws['data'] = np.asarray(dataset['data'], dtype=sub_value)
-                else:
-                    kws.update(**{sub_key: sub_value})
-            parent.create_dataset(name, **kws)
-
-        def create_group(parent, name, value):
-            group = parent.create_group(name)
-            for sub_key, sub_value in value.items():
-                if not isinstance(sub_value, dict):
-                    group.add_metadata(**{sub_key: sub_value})
-                elif is_dataset(sub_value):
-                    create_dataset(group, sub_key, sub_value)
-                else:
-                    create_group(group, sub_key, sub_value)
-            return group
-
-        for key, value in dict_.items():
-            if not isinstance(value, dict):
-                self.add_metadata(**{key: value})
-            elif is_dataset(value):
-                create_dataset(self, key, value)
-            else:
-                create_group(self, key, value)
+        # create the root group
+        create_group(None, '', dict_)
