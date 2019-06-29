@@ -121,7 +121,7 @@ setup(
         'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest', 'numpy', 'h5py'],
+    tests_require=['pytest-cov', 'pytest', 'numpy', 'h5py>=2.9'],
     install_requires=['numpy'],
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
