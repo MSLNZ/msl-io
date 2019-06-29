@@ -9,6 +9,7 @@ Writer for the HDF5_ file format.
 """
 import sys
 
+import numpy as np
 try:
     import h5py
 except ImportError:
@@ -54,29 +55,55 @@ class HDF5Writer(Writer):
         if 'mode' not in kwargs:
             kwargs['mode'] = 'x'  # Create file, fail if exists
 
+        def check_ndarray_dtype(obj):
+            if not isinstance(obj, np.ndarray):
+                return obj
+
+            # h5py variable-length string
+            vstr = h5py.special_dtype(vlen=str)
+
+            if obj.dtype.names is not None:
+                convert, dtype = False, []
+                for n in obj.dtype.names:
+                    typ = obj.dtype.fields[n][0]
+                    if isinstance(obj[n].item(0), unicode):
+                        dtype.append((n, vstr))
+                        convert = True
+                    else:
+                        dtype.append((n, typ))
+                if convert:
+                    return obj.astype(dtype=dtype)
+                return obj
+            elif obj.dtype.str[1] == 'U':
+                return obj.astype(dtype=vstr)
+            elif obj.dtype.str[1] == 'O':
+                has_complex = False
+                for item in obj.flat:
+                    if isinstance(item, unicode):
+                        return obj.astype(dtype=vstr)
+                    elif isinstance(item, np.complexfloating):
+                        has_complex = True
+                    elif item is None:
+                        return obj  # let h5py raise the error that HDF5 does not support NULL
+                if has_complex:
+                    return obj.astype(dtype=complex)
+                return obj.astype(dtype=float)
+            else:
+                return obj
+
         def meta_to_dict(metadata):
-            return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else v)
+            return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v))
                         for k, v in metadata.items())
 
         h5 = h5py.File(url, **kwargs)
         h5.attrs.update(**meta_to_dict(root.metadata))
-        for name, vertex in root.items():
-            if self.is_dataset(vertex):
-                data = vertex.data
-                if vertex.dtype.names is not None:
-                    convert, dtype = False, []
-                    for n in vertex.dtype.names:
-                        typ = vertex.dtype.fields[n][0]
-                        if isinstance(typ, object) and isinstance(vertex[n].item(0), unicode):
-                            # HDF5 variable-length string
-                            dtype.append((n, h5py.special_dtype(vlen=str)))
-                            convert = True
-                        else:
-                            dtype.append((n, typ))
-                    if convert:
-                        data = vertex.data.astype(dtype=dtype)
-                obj = h5.create_dataset(name, data=data)
+        for name, value in root.items():
+            if self.is_dataset(value):
+                try:
+                    vertex = h5.create_dataset(name, data=value.data)
+                except TypeError:
+                    vertex = h5.create_dataset(name, data=check_ndarray_dtype(value.data))
             else:
-                obj = h5.create_group(name)
-            obj.attrs.update(**meta_to_dict(vertex.metadata))
+                vertex = h5.create_group(name)
+            vertex.attrs.update(**meta_to_dict(value.metadata))
         h5.close()
