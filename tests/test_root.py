@@ -522,3 +522,149 @@ def test_delete_vertex():
 
     del root['g3']
     assert len(root) == 0
+
+
+def test_auto_create_subgroups():
+    root = Root('')
+
+    assert len(list(root.groups())) == 0
+    assert len(list(root.datasets())) == 0
+
+    root.create_group('a/group2/c/group4/d/group6')
+    root.create_dataset('/w/x/y/z', shape=(10,))
+
+    assert len(list(root.groups())) == 9
+
+    root.a.group2.c.group4.create_group('/m/n')
+
+    assert len(list(root.groups())) == 11
+
+    assert 'a' in root
+    assert 'group2' in root.a
+    assert 'c' in root.a.group2
+    assert 'group4' in root.a.group2.c
+    assert 'm' in root.a.group2.c.group4
+    assert 'm/n' in root.a.group2.c.group4
+    assert 'n' in root.a.group2.c.group4.m
+    assert 'd' in root.a.group2.c.group4
+    assert 'group6' in root.a.group2.c.group4.d
+
+    assert 'w' in root
+    assert 'w/x' in root
+    assert 'w/x/y' in root
+    assert 'w/x/y/z' in root
+    assert root.is_dataset(root['/w/x/y/z'])
+    assert root['/w/x/y/z'].shape == (10,)
+
+
+def test_requires():
+    root = Root('')
+
+    #
+    # Groups
+    #
+    assert 'a' not in root
+
+    a = root.require_group('a')
+    assert root.is_group(a)
+    assert 'a' in root
+    assert '/a' in root
+    assert root.require_group('a') is a
+    assert root.require_group('/a') is a
+
+    # group exists but adding new metadata to it
+    a2 = root.require_group('a', one=1)
+    assert a2 is a
+    assert a.metadata.one == 1
+    assert a2.metadata.one == 1
+
+    # try to add Metadata to a Group that is read only
+    root.is_read_only = True
+    with pytest.raises(ValueError):
+        root.require_group('a', two=2)
+    # read-only mode
+    with pytest.raises(ValueError):
+        a.create_group('b')
+
+    root.is_read_only = False
+    b = a.create_group('b')
+    with pytest.raises(ValueError):
+        a.create_group('b')
+    assert root.require_group('a/b') is b
+
+    root.require_group('/a/b/c/d/e/', foo='bar')
+    assert 'a' in root
+    assert 'b' in a
+    assert 'c' in root.a.b
+    assert 'd' in root.a.b.c
+    assert 'foo' not in root.metadata
+    assert 'foo' not in root.a.metadata
+    assert 'foo' not in root.a.b.metadata
+    assert 'foo' not in root.a.b.c.metadata
+    assert 'foo' not in root.a.b.c.d.metadata
+    assert 'foo' in root.a.b.c.d.e.metadata
+    assert root.a.b.c.d.e.metadata.foo == 'bar'
+
+    #
+    # Datasets
+    #
+    with pytest.raises(ValueError):
+        root.require_dataset('a')  # 'a' is already a Group but we are creating a Dataset
+    w = root.require_dataset('w')
+    assert root.is_dataset(w)
+    assert 'w' in root
+    assert '/w' in root
+    assert root.require_dataset('w') is w
+    assert root.require_dataset('/w/') is w
+
+    # dataset exists but adding new metadata to it
+    w2 = root.require_dataset('w', one=1)
+    assert w2 is w
+    assert len(w2.metadata) == 1
+    assert w.metadata.one == 1
+    assert w2.metadata.one == 1
+
+    # dataset exists but ignores key-value pairs that are not Metadata but are used to create the dataset
+    w2 = root.require_dataset('w', shape=(10,), order=None)
+    assert w2 is w
+    assert len(w2.metadata) == 1
+    assert w.metadata.one == 1
+    assert w2.metadata.one == 1
+    assert 'shape' not in w2.metadata
+    assert 'order' not in w2.metadata
+
+    # try to add Metadata to a Dataset that is read only
+    root.is_read_only = True
+    with pytest.raises(ValueError):
+        root.require_dataset('w', two=2)
+    # read-only mode
+    with pytest.raises(ValueError):
+        root.create_dataset('x')
+
+    # add a Dataset to the 'a' Group
+    root.is_read_only = False
+    x = a.create_dataset('x')
+    with pytest.raises(ValueError):
+        a.create_dataset('x')
+    assert root.require_dataset('/a/x') is x
+
+    # add a Dataset to the 'b' Group, create the necessary sub-Groups automatically
+    root.require_dataset('/b/x/y/z', data=[1, 2, 3, 4], foo='bar')
+    assert root.is_group(root.b)
+    assert root.is_group(root.b.x)
+    assert root.is_group(root.b.x.y)
+    assert root.is_dataset(root.b.x.y.z)
+    assert 'w' in root
+    assert 'b' in root
+    assert 'x' in root.b
+    assert 'y' in root.b.x
+    assert 'z' in root.b.x.y
+    assert 'foo' not in root.metadata
+    assert 'foo' not in root.b.metadata
+    assert 'foo' not in root.b.x.metadata
+    assert 'foo' not in root.b.x.y.metadata
+    assert 'foo' in root.b.x.y.z.metadata
+    assert root.b.x.y.z.metadata.foo == 'bar'
+    assert root.b.x.y.z.shape == (4,)
+    assert root.b.x.y.z.tolist() == [1, 2, 3, 4]
+    assert root.b.x.y.z.max() == 4

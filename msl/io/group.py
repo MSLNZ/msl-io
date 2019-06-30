@@ -110,29 +110,70 @@ class Group(Vertex):
                 yield obj
 
     def create_group(self, name, is_read_only=None, **metadata):
-        """Create a new sub-:class:`Group`
+        """Create a new :class:`Group`
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
         name : :class:`str`
-            The name of the new sub-:class:`Group`.
+            The name of the new :class:`Group`.
         is_read_only : :class:`bool`, optional
-            Whether to create this sub-:class:`Group` in read-only mode.
+            Whether to create this :class:`Group` in read-only mode.
             If :data:`None` then uses the mode for this :class:`Group`.
         **metadata
             Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for this sub-:class:`Group`.
+            for this :class:`Group`.
 
         Returns
         -------
         :class:`Group`
-            The new sub-:class:`Group` that was created.
+            The new :class:`Group` that was created.
         """
-        is_read_only, kws = self._check(is_read_only, **metadata)
-        return Group(name, self, is_read_only, **kws)
+        is_read_only, metadata = self._check(is_read_only, **metadata)
+        name, parent = self._create_ancestors(name, is_read_only)
+        return Group(name, parent, is_read_only, **metadata)
+
+    def require_group(self, name, is_read_only=None, **metadata):
+        """Require that a :class:`Group` exists.
+
+        If the :class:`Group` exists then it will be returned if it does not exist
+        then it is created.
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the :class:`Group`.
+        is_read_only : :class:`bool`, optional
+            Whether to return the :class:`Group` in read-only mode.
+            If :data:`None` then uses the mode for this :class:`Group`.
+        **metadata
+            Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
+            for this :class:`Group`.
+
+        Returns
+        -------
+        :class:`Group`
+            The :class:`Group` that was created or that already existed.
+        """
+        if name.endswith('/'):
+            name = name[:-1]
+        if not name.startswith('/'):
+            name = '/' + name
+        for group in self.groups():
+            if group.name == name:
+                if is_read_only is not None:
+                    group.is_read_only = is_read_only
+                group.add_metadata(**metadata)
+                return group
+        return self.create_group(name, is_read_only=is_read_only, **metadata)
 
     def create_dataset(self, name, is_read_only=None, **kwargs):
         """Create a new :class:`~msl.io.dataset.Dataset`.
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
@@ -149,8 +190,47 @@ class Group(Vertex):
         :class:`~msl.io.dataset.Dataset`
             The new :class:`~msl.io.dataset.Dataset` that was created.
         """
-        is_read_only, kws = self._check(is_read_only, **kwargs)
-        return Dataset(name, self, is_read_only, **kws)
+        is_read_only, kwargs = self._check(is_read_only, **kwargs)
+        name, parent = self._create_ancestors(name, is_read_only)
+        return Dataset(name, parent, is_read_only, **kwargs)
+
+    def require_dataset(self, name, is_read_only=None, **kwargs):
+        """Require that a :class:`~msl.io.dataset.Dataset` exists.
+
+        If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
+        if it does not exist then it is created.
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the :class:`~msl.io.dataset.Dataset`.
+        is_read_only : :class:`bool`, optional
+            Whether to create this :class:`~msl.io.dataset.Dataset` in read-only mode.
+            If :data:`None` then uses the mode for this :class:`Group`.
+        **kwargs
+            Key-value pairs that are passed to :class:`~msl.io.dataset.Dataset`.
+
+        Returns
+        -------
+        :class:`~msl.io.dataset.Dataset`
+            The :class:`~msl.io.dataset.Dataset` that was created or that already existed.
+        """
+        if name.endswith('/'):
+            name = name[:-1]
+        if not name.startswith('/'):
+            name = '/' + name
+        for dataset in self.datasets():
+            if dataset.name == name:
+                if is_read_only is not None:
+                    dataset.is_read_only = is_read_only
+                if kwargs:  # only add the kwargs that should be Metadata
+                    for kw in ['shape', 'dtype', 'buffer', 'offset', 'strides', 'order', 'data']:
+                        kwargs.pop(kw, None)
+                dataset.add_metadata(**kwargs)
+                return dataset
+        return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
 
     def _check(self, is_read_only, **kwargs):
         self._raise_if_read_only()
@@ -158,3 +238,19 @@ class Group(Vertex):
         if is_read_only is None:
             return self._is_read_only, kwargs
         return is_read_only, kwargs
+
+    def _create_ancestors(self, name, is_read_only):
+        # automatically create the ancestor Groups if they do not already exist
+        if name.endswith('/'):
+            name = name[:-1]
+        if name.startswith('/'):
+            name = name[1:]
+
+        names = name.split('/')
+        parent = self
+        for n in names[:-1]:
+            if n not in parent:
+                parent = Group(n, parent, is_read_only)
+            else:
+                parent = parent[n]
+        return names[-1], parent
