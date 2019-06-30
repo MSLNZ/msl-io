@@ -223,3 +223,96 @@ def test_url_and_root():
     with pytest.raises(TypeError) as e:
         writer.write(url='whatever', root='Root')
     assert 'Root' in str(e)
+
+
+def test_pretty_printing():
+    root = read_sample('json_sample.json')
+    root.is_read_only = False
+
+    root.create_dataset('aaa', data=np.ones((3, 3, 3)))
+
+    w = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
+    w.write(root=root, mode='w', sort_keys=True)
+
+    expected = """#File created with: MSL JSONWriter version 1.0
+{
+  "a": {
+    "b": {
+      "apple": "orange",
+      "c": {},
+      "dataset2": {
+        "data": [
+          ["100", "100s", 0.000640283, 0.0, 8],
+          ["100s", "50+50s", -0.000192765, 11.071, 9]
+        ],
+        "dtype": [
+          ["a", "object"],
+          ["b", "object"],
+          ["c", "float64"],
+          ["d", "float64"],
+          ["e", "int32"]
+        ],
+        "fibonacci": [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+      },
+      "pear": "banana"
+    }
+  },
+  "aaa": {
+    "data": [
+      [
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0]
+      ],
+      [
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0]
+      ],
+      [
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
+        [1.0, 1.0, 1.0]
+      ]
+    ],
+    "dtype": "<f8"
+  },
+  "array_mixed": [true, -5, 0.002345, "something", 49.1871524],
+  "array_mixed_null": ["a", false, 5, 72.3, "hey", null],
+  "array_numbers": [1, 2.3, 4, -4e+99],
+  "array_strings": ["aaa", "bbb", "ccc", "ddd", "eee"],
+  "array_var_strings": ["a", "ab", "abc", "abcd", "abcde"],
+  "boolean": true,
+  "conditions": {
+    "humidity": 45,
+    "temperature": 20.0
+  },
+  "empty_list": [],
+  "float": 33330.0,
+  "foo": "bar",
+  "integer": -99,
+  "my_data": {
+    "data": [
+      [0, 1, 2, 3, 4],
+      [5, 6, 7, 8, 9],
+      [10, 11, 12, 13, 14],
+      [15, 16, 17, 18, 19]
+    ],
+    "dtype": "<i4",
+    "meta": 999
+  },
+  "null": null
+}
+""".splitlines()
+
+    with open(w.url, 'rt') as fp:
+        written = [line.rstrip() for line in fp.read().splitlines()]
+
+    assert len(expected) == len(written)
+    for i in range(len(expected)):
+        assert expected[i] == written[i]
+
+    # make sure that we can still read the file
+    root = read_sample(w.url)
+
+    os.remove(w.url)

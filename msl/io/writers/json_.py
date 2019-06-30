@@ -5,10 +5,8 @@ Writer for a JSON_ file format. The corresponding :class:`~msl.io.base_io.Reader
 .. _JSON: https://www.json.org/
 """
 import os
-from json import (
-    dump,
-    JSONEncoder,
-)
+import sys
+import json
 
 import numpy as np
 
@@ -109,10 +107,10 @@ class JSONWriter(Writer):
         encoder = kwargs.pop('cls', _NumpyEncoder)
         with open(url, mode=mode) as fp:
             fp.write('#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__))
-            dump(dict_, fp, cls=encoder, **kwargs)
+            json.dump(dict_, fp, cls=encoder, **kwargs)
 
 
-class _NumpyEncoder(JSONEncoder):
+class _NumpyEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -123,4 +121,15 @@ class _NumpyEncoder(JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.bool_):
             return bool(obj)
-        return JSONEncoder.default(self, obj)
+
+        # Let the base class raise the TypeError
+        return json.JSONEncoder.default(self, obj)
+
+
+# Custom JSON encoder that writes a 1-dimensional list on a single line.
+if sys.version_info.major == 2:
+    from ._py2_json_encoder import _make_iterencode
+else:
+    from ._py3_json_encoder import _make_iterencode
+
+json.encoder._make_iterencode = _make_iterencode

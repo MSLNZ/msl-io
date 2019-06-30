@@ -21,5 +21,9 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 
+omit =
+    msl/io/writers/_py2_json_encoder.py
+    msl/io/writers/_py3_json_encoder.py
+
 [html]
 title = MSL-IO coverage report
