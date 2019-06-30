@@ -1,4 +1,4 @@
-msl.io.readers.json_ module
+msl.io.readers.json\_ module
 ============================
 
 .. automodule:: msl.io.readers.json_

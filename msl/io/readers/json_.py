@@ -1,5 +1,5 @@
 """
-Read a file that was created by :class:`~msl.io.writers.json.JSONWriter`.
+Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
 import json
 
@@ -14,18 +14,6 @@ from ..metadata import Metadata
 
 @register
 class JSONReader(Reader):
-    """
-    Version 1.0 specifications
-
-        * Use the ``'dtype'`` and ``'data'`` keys to uniquely identify a
-          `JSON <https://www.json.org/>`_ object as a :class:`~msl.io.dataset.Dataset`.
-
-        * If a :class:`~msl.io.metadata.Metadata` `key` has a `value` that is a
-          :class:`~msl.io.metadata.Metadata` object then the `key` becomes the name
-          of a :class:`~msl.io.group.Group` and the `value` becomes
-          :class:`~msl.io.metadata.Metadata` of that :class:`~msl.io.group.Group`.
-
-    """
 
     @staticmethod
     def can_read(url):
@@ -33,7 +21,11 @@ class JSONReader(Reader):
         return 'MSL JSONWriter' in Reader.get_lines(url, 1)[0]
 
     def read(self, **kwargs):
-        """Read the file that was created by :class:`~msl.io.writers.json.JSONWriter`
+        """Read the file that was created by :class:`~msl.io.writers.json_.JSONWriter`
+
+        If a :class:`~msl.io.metadata.Metadata` `key` has a `value` that is a
+        :class:`list` then the list is converted to an :class:`~numpy.ndarray`
+        with :class:`~numpy.dtype` = :class:`object`
 
         Parameters
         ----------

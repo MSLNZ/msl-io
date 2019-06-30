@@ -9,7 +9,7 @@ The following :class:`~msl.io.base_io.Reader`\s are available:
 .. toctree::
 
    DRS - Light Standards <_api/msl.io.readers.detector_responsivity_system>
-   HDF5Reader <_api/msl.io.readers.hdf5>
+   HDF5 <_api/msl.io.readers.hdf5>
    JSON <_api/msl.io.readers.json_>
 
 .. _io-create-reader:
@@ -26,7 +26,8 @@ Please follow the :ref:`style guide <style guide>`.
    module in your code your Reader will be available from the :func:`~msl.io.read` function.
 
 1. Create a fork_ of the repository_.
-2. Create a new Reader module by following this template and save it to the `msl/io/readers/`_ directory.
+2. Create a new :class:`~msl.io.base_io.Reader` by following this template and save it to
+   the `msl/io/readers/`_ directory.
 
     .. code-block:: python
 

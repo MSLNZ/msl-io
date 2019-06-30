@@ -1,5 +1,5 @@
-msl.io.writers.json_ module
-===========================
+msl.io.writers.json\_ module
+============================
 
 .. automodule:: msl.io.writers.json_
    :members:

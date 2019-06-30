@@ -6,14 +6,6 @@ msl.io package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-   msl.io.readers
-   msl.io.writers
-
 Submodules
 ----------
 

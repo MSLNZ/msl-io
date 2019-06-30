@@ -37,11 +37,9 @@ Since, by default, `root` is returned in read-only mode you cannot modify the me
 .. code-block:: pycon
 
     >>> root.metadata.voltage = 7.64
-    Traceback (most recent call last):
     ...
     ValueError: Cannot modify <Metadata id=0x1edf606ccf8 name=/>. It is accessed in read-only mode.
     >>> root.add_metadata(current=10.3, current_units='mA')
-    Traceback (most recent call last):
     ...
     ValueError: Cannot modify <Metadata id=0x1edf606ccf8 name=/>. It is accessed in read-only mode.
 

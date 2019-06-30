@@ -1,5 +1,6 @@
 """
-Writer for a JSON_ file format.
+Writer for a JSON_ file format. The corresponding :class:`~msl.io.base_io.Reader` is
+:class:`~msl.io.readers.json_.JSONReader`.
 
 .. _JSON: https://www.json.org/
 """
@@ -22,8 +23,18 @@ class JSONWriter(Writer):
         """Write to a JSON_ file.
 
         The first line in the output file contains a description that the
-        file was created by this :class:`JSONWriter`. It begins with a ``#`` and
-        contains the version number of the :class:`JSONWriter`.
+        file was created by the :class:`JSONWriter`. It begins with a ``#`` and
+        contains a version number.
+
+        Version 1.0 specifications
+
+            * Use the ``'dtype'`` and ``'data'`` keys to uniquely identify a
+              `JSON <https://www.json.org/>`_ object as a :class:`~msl.io.dataset.Dataset`.
+
+            * If a :class:`~msl.io.metadata.Metadata` `key` has a `value` that is a
+              :class:`~msl.io.metadata.Metadata` object then the `key` becomes the name
+              of a :class:`~msl.io.group.Group` and the `value` becomes
+              :class:`~msl.io.metadata.Metadata` of that :class:`~msl.io.group.Group`.
 
         Parameters
         ----------
@@ -95,13 +106,13 @@ class JSONWriter(Writer):
                 raise IOError('the {!r} file already exists'.format(url))
             mode = 'wt'
 
-        encoder = kwargs.pop('cls', NumpyEncoder)
+        encoder = kwargs.pop('cls', _NumpyEncoder)
         with open(url, mode=mode) as fp:
             fp.write('#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__))
             dump(dict_, fp, cls=encoder, **kwargs)
 
 
-class NumpyEncoder(JSONEncoder):
+class _NumpyEncoder(JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, np.ndarray):

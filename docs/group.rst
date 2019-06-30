@@ -3,7 +3,7 @@
 =====
 Group
 =====
-A :class:`~msl.io.group.Group` is analogous to a directory in your operating system. A :class:`~msl.io.group.Group`
+A :class:`~msl.io.group.Group` is analogous to a directory on your operating system. A :class:`~msl.io.group.Group`
 can contain any number of sub-:class:`~msl.io.group.Group`\s (i.e., subdirectories) and it can contain any number
 of :ref:`msl-io-dataset`\s. It uses a naming convention analogous to UNIX file systems where every subdirectory is
 separated from its parent directory by the ``'/'`` character.
