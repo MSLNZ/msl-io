@@ -533,6 +533,12 @@ def test_auto_create_subgroups():
     root.create_group('a/group2/c/group4/d/group6')
     root.create_dataset('/w/x/y/z', shape=(10,))
 
+    # intermediate Groups get created automatically
+    with pytest.raises(ValueError):
+        root.create_group('a/group2/c')
+    with pytest.raises(ValueError):
+        root.create_group('/w/x')
+
     assert len(list(root.groups())) == 9
 
     root.a.group2.c.group4.create_group('/m/n')
