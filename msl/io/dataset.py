@@ -97,12 +97,28 @@ class Dataset(Vertex):
             self._parent,
             self._is_read_only if is_read_only is None else is_read_only,
             data=self._data.copy(),
-            **self._metadata
+            **self._metadata.copy()
         )
 
     @property
     def data(self):
-        """:class:`numpy.ndarray`: The data of the data set."""
+        """:class:`numpy.ndarray`: The data of the data set.
+
+        .. note::
+           You do not have to call this attribute to get access to the
+           :class:`numpy.ndarray`. You can directly call the
+           :class:`numpy.ndarray` attribute from the :class:`Dataset`
+           object.
+
+           For example, suppose `dset` is a :class:`Dataset`
+
+           .. code-block:: pycon
+
+              >>> dset.shape
+              (4, 3)
+              >>> dset.tolist()
+              [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]
+        """
         return self._data
 
     def __getitem__(self, item):
