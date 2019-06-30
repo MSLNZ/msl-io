@@ -68,13 +68,17 @@ class Writer(Root):
             The location of a file on a local hard drive or on a network. If :data:`None`
             then uses the URL value that was specified when the :class:`~msl.io.base_io.Writer`
             was created.
-        root : class:`~msl.io.base_io.Root`, optional
+        root : :class:`~msl.io.base_io.Root`, optional
             Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.
             This is useful when converting between different file formats.
         **kwargs
             Additional key-value pairs to use when writing the file.
         """
         raise NotImplementedError
+
+    def save(self, url=None, root=None, **kwargs):
+        """Alias for :meth:`write`."""
+        self.write(url=url, root=root, **kwargs)
 
 
 class Reader(Root):
