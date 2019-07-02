@@ -14,6 +14,16 @@ from .. import Writer
 from ..metadata import Metadata
 from ..base_io import Root
 
+# Custom JSON encoder that writes a 1-dimensional list on a single line.
+if sys.version_info.major == 2:
+    PY2 = True
+    from ._py2_json_encoder import _make_iterencode
+else:
+    PY2 = False
+    from ._py3_json_encoder import _make_iterencode
+
+_original_make_iterencode = json.encoder._make_iterencode
+
 
 class JSONWriter(Writer):
 
@@ -44,7 +54,9 @@ class JSONWriter(Writer):
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`JSONWriter`.
         **kwargs
-            All key-value pairs are passed to
+            Accepts `mode`, `encoding` and `errors` keyword arguments (for Python 3)
+            which are passed to :func:`open`. Only `mode` is supported for Python 2.
+            All other key-value pairs are passed to
             `json.dump <https://docs.python.org/3/library/json.html#json.dump>`_.
             The default indentation is 2.
         """
@@ -93,21 +105,26 @@ class JSONWriter(Writer):
                     if root.is_dataset(value):
                         add_dataset(vertex[leaf_key], value)
 
+        params = ['mode'] if PY2 else ['mode', 'encoding', 'errors']
+        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
+        if not open_kwargs['mode']:
+            open_kwargs['mode'] = 'wt'
+            if os.path.isfile(url):
+                raise IOError("A {!r} file already exists.\n"
+                              "Specify mode='w' if you want to overwrite it.".format(url))
+
         if 'indent' not in kwargs:
             kwargs['indent'] = 2
+        if 'cls' not in kwargs:
+            kwargs['cls'] = _NumpyEncoder
+            json.encoder._make_iterencode = _make_iterencode
 
-        mode = kwargs.pop('mode', None)
-        # The 'x' mode was not introduced until Python 3.3
-        # so we should check if the file already exists
-        if not mode:
-            if os.path.isfile(url):
-                raise IOError('the {!r} file already exists'.format(url))
-            mode = 'wt'
-
-        encoder = kwargs.pop('cls', _NumpyEncoder)
-        with open(url, mode=mode) as fp:
+        with open(url, **open_kwargs) as fp:
             fp.write('#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__))
-            json.dump(dict_, fp, cls=encoder, **kwargs)
+            json.dump(dict_, fp, **kwargs)
+
+        if kwargs['cls'] is _NumpyEncoder:
+            json.encoder._make_iterencode = _original_make_iterencode
 
 
 class _NumpyEncoder(json.JSONEncoder):
@@ -124,12 +141,3 @@ class _NumpyEncoder(json.JSONEncoder):
 
         # Let the base class raise the TypeError
         return json.JSONEncoder.default(self, obj)
-
-
-# Custom JSON encoder that writes a 1-dimensional list on a single line.
-if sys.version_info.major == 2:
-    from ._py2_json_encoder import _make_iterencode
-else:
-    from ._py3_json_encoder import _make_iterencode
-
-json.encoder._make_iterencode = _make_iterencode
