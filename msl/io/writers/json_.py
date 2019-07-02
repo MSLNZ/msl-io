@@ -15,11 +15,10 @@ from ..metadata import Metadata
 from ..base_io import Root
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.
-if sys.version_info.major == 2:
-    PY2 = True
+PY2 = sys.version_info.major == 2
+if PY2:
     from ._py2_json_encoder import _make_iterencode
 else:
-    PY2 = False
     from ._py3_json_encoder import _make_iterencode
 
 _original_make_iterencode = json.encoder._make_iterencode
