@@ -1,5 +1,3 @@
-import sys
-
 import pytest
 import numpy as np
 
@@ -176,10 +174,8 @@ def test_copy():
 def test_string_representation():
     dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], is_read_only=True, foo='bar')
 
-    if sys.version_info.major == 2:
-        assert repr(dset) == "<Dataset 'abcd' shape=(2L, 2L) dtype=<f8 (1 metadata)>"
-    else:
-        assert repr(dset) == "<Dataset 'abcd' shape=(2, 2) dtype=<f8 (1 metadata)>"
+    assert repr(dset) in ["<Dataset 'abcd' shape=(2, 2) dtype=<f8 (1 metadata)>",
+                          "<Dataset 'abcd' shape=(2L, 2L) dtype=<f8 (1 metadata)>"]
 
     assert str(dset) == ('array([[1., 2.],\n'
                          '       [3., 4.]])')
