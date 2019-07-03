@@ -162,7 +162,7 @@ def test_sample():
         assert dset['b'].dtype == np.object
         assert dset['c'].dtype == np.float
         assert dset['d'].dtype == np.float
-        assert dset['e'].dtype == np.int
+        assert dset['e'].dtype == np.int32
         assert dset['a'].tolist() == ['100', '100s']
         assert dset['b'].tolist() == ['100s', '50+50s']
         assert dset['c'].tolist() == [0.000640283, -0.000192765]
