@@ -199,7 +199,7 @@ def test_url_and_root():
     # no URL was specified
     with pytest.raises(ValueError) as e:
         writer.write(root=root)
-    assert 'url' in str(e)
+    assert 'url' in str(e.value)
 
     # cannot overwrite a file by default
     url = tempfile.gettempdir() + '/msl-json-writer-temp.json'
@@ -207,7 +207,7 @@ def test_url_and_root():
         fp.write('Hi')
     with pytest.raises(IOError) as e:
         writer.write(url=url, root=root)
-    assert 'exists' in str(e)
+    assert 'exists' in str(e.value)
 
     # by specifying the mode one can overwrite a file
     writer.write(url=url, root=root, mode='w')
@@ -216,13 +216,13 @@ def test_url_and_root():
     # root must be a Root
     with pytest.raises(TypeError) as e:
         writer.write(url='whatever', root=list(root.datasets())[0])
-    assert 'Root' in str(e)
+    assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
         writer.write(url='whatever', root=list(root.groups())[0])
-    assert 'Root' in str(e)
+    assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
         writer.write(url='whatever', root='Root')
-    assert 'Root' in str(e)
+    assert 'Root' in str(e.value)
 
 
 def test_pretty_printing():

@@ -11,22 +11,22 @@ def test_raises_ioerror():
     # file does not exist
     with pytest.raises(IOError) as e:
         read('does_not.exist')
-    assert 'File does not exist' in str(e)
+    assert 'File does not exist' in str(e.value)
 
     # no Reader class exists to read this test_read.py file
     with pytest.raises(IOError) as e:
         read(__file__)
-    assert 'No Reader exists' in str(e)
+    assert 'No Reader exists' in str(e.value)
 
 
 def test_unicode_filename():
     with pytest.raises(IOError) as e:
         read_sample(u'Filé döes ñot éxist')
-    assert 'File does not exist' in str(e)
+    assert 'File does not exist' in str(e.value)
 
     with pytest.raises(IOError) as e:
         read_sample(u'uñicödé')
-    assert 'No Reader exists' in str(e)
+    assert 'No Reader exists' in str(e.value)
 
     root = read_sample(u'uñicödé.h5')
     assert root.metadata.is_unicode
