@@ -20,6 +20,9 @@ class Vertex(Dictionary):
             The parent of this vertex.
         is_read_only : :class:`bool`
             Whether this vertex is in read-only mode.
+        **metadata
+            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
+            for this :class:`Vertex`.
         """
         super(Vertex, self).__init__(is_read_only)
 
