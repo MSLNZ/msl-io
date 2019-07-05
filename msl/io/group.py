@@ -158,10 +158,7 @@ class Group(Vertex):
         :class:`Group`
             The :class:`Group` that was created or that already existed.
         """
-        if name.endswith('/'):
-            name = name[:-1]
-        if not name.startswith('/'):
-            name = '/' + name
+        name = '/' + name.strip('/')
         for group in self.groups():
             if group.name == name:
                 if is_read_only is not None:
@@ -217,10 +214,7 @@ class Group(Vertex):
         :class:`~msl.io.dataset.Dataset`
             The :class:`~msl.io.dataset.Dataset` that was created or that already existed.
         """
-        if name.endswith('/'):
-            name = name[:-1]
-        if not name.startswith('/'):
-            name = '/' + name
+        name = '/' + name.strip('/')
         for dataset in self.datasets():
             if dataset.name == name:
                 if is_read_only is not None:
@@ -241,12 +235,7 @@ class Group(Vertex):
 
     def _create_ancestors(self, name, is_read_only):
         # automatically create the ancestor Groups if they do not already exist
-        if name.endswith('/'):
-            name = name[:-1]
-        if name.startswith('/'):
-            name = name[1:]
-
-        names = name.split('/')
+        names = name.strip('/').split('/')
         parent = self
         for n in names[:-1]:
             if n not in parent:
