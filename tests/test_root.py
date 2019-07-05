@@ -1,3 +1,4 @@
+import sys
 import types
 
 import pytest
@@ -611,6 +612,39 @@ def test_requires():
     assert 'foo' in root.a.b.c.d.e.metadata
     assert root.a.b.c.d.e.metadata.foo == 'bar'
 
+    # change the read-only value of the new sub-groups that are required
+    assert not root.is_read_only
+    bb = root.require_group('aa/bb', is_read_only=True, hello='world')
+    assert bb is root.aa.bb
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
+    assert root.aa.is_read_only
+    assert root.aa.metadata.is_read_only
+    assert bb.is_read_only
+    assert bb.metadata.is_read_only
+    assert len(root.aa.bb.metadata) == 1
+    assert root.aa.bb.metadata.hello == 'world'
+    with pytest.raises(ValueError):
+        bb.add_metadata(one=1)
+    bb.is_read_only = False
+    bb.add_metadata(one=1)
+    assert len(root.aa.bb.metadata) == 2
+    assert root.aa.bb.metadata.hello == 'world'
+    assert root.aa.bb.metadata.one == 1
+    assert root.aa.is_read_only
+    assert root.aa.metadata.is_read_only
+    with pytest.raises(ValueError):
+        root.aa.add_metadata(two=2)
+
+    # require root.aa.bb but change the read-only value
+    assert not root.aa.bb.is_read_only
+    bb2 = root.require_group('aa/bb', is_read_only=True)
+    assert bb2 is root.aa.bb
+    assert bb2.is_read_only
+    assert root.aa.bb.is_read_only
+    with pytest.raises(ValueError):
+        bb2.add_metadata(three=3)
+
     #
     # Datasets
     #
@@ -674,3 +708,92 @@ def test_requires():
     assert root.b.x.y.z.shape == (4,)
     assert root.b.x.y.z.tolist() == [1, 2, 3, 4]
     assert root.b.x.y.z.max() == 4
+
+    # change the read-only value of the new Dataset that is required
+    assert not root.is_read_only
+    yy = root.require_dataset('xx/yy', is_read_only=True, hello='world')
+    assert yy is root.xx.yy
+    assert not root.is_read_only
+    assert not root.metadata.is_read_only
+    assert root.xx.is_read_only
+    assert root.xx.metadata.is_read_only
+    assert yy.is_read_only
+    assert yy.metadata.is_read_only
+    assert len(root.xx.yy.metadata) == 1
+    assert root.xx.yy.metadata.hello == 'world'
+    with pytest.raises(ValueError):
+        yy.add_metadata(one=1)
+    yy.is_read_only = False
+    yy.add_metadata(one=1)
+    assert len(root.xx.yy.metadata) == 2
+    assert root.xx.yy.metadata.hello == 'world'
+    assert root.xx.yy.metadata.one == 1
+    assert root.xx.is_read_only
+    assert root.xx.metadata.is_read_only
+    with pytest.raises(ValueError):
+        root.xx.add_metadata(two=2)
+
+    # require root.xx.yy but change the read-only value
+    assert not root.xx.yy.is_read_only
+    yy2 = root.require_dataset('/xx/yy/', is_read_only=True)
+    assert yy2 is root.xx.yy
+    assert yy2.is_read_only
+    assert root.xx.yy.is_read_only
+    with pytest.raises(ValueError):
+        yy2.add_metadata(three=3)
+
+
+def test_tree():
+    root = Root('')
+    a = root.create_group('a')
+    a.create_dataset('d1')
+    b = a.create_group('b')
+    b.create_dataset('d2')
+    c = b.create_group('c')
+    root.create_group('x/y/z')
+    d = c.create_group('d')
+    a.create_dataset('d3')
+    root.create_dataset('d4')
+    d.create_dataset('d5')
+    d.create_dataset('d6')
+    root.create_dataset('d7')
+
+    # Python 2 version has shape=(0L,)
+    tree_py2 = """
+<Root '' (7 groups, 7 datasets, 0 metadata)>
+  <Group '/a' (3 groups, 5 datasets, 0 metadata)>
+    <Group '/a/b' (2 groups, 3 datasets, 0 metadata)>
+      <Group '/a/b/c' (1 groups, 2 datasets, 0 metadata)>
+        <Group '/a/b/c/d' (0 groups, 2 datasets, 0 metadata)>
+          <Dataset '/a/b/c/d/d5' shape=(0L,) dtype=<f8 (0 metadata)>
+          <Dataset '/a/b/c/d/d6' shape=(0L,) dtype=<f8 (0 metadata)>
+      <Dataset '/a/b/d2' shape=(0L,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d1' shape=(0L,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d3' shape=(0L,) dtype=<f8 (0 metadata)>
+  <Dataset '/d4' shape=(0L,) dtype=<f8 (0 metadata)>
+  <Dataset '/d7' shape=(0L,) dtype=<f8 (0 metadata)>
+  <Group '/x' (2 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+      <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
+
+    tree = """
+<Root '' (7 groups, 7 datasets, 0 metadata)>
+  <Group '/a' (3 groups, 5 datasets, 0 metadata)>
+    <Group '/a/b' (2 groups, 3 datasets, 0 metadata)>
+      <Group '/a/b/c' (1 groups, 2 datasets, 0 metadata)>
+        <Group '/a/b/c/d' (0 groups, 2 datasets, 0 metadata)>
+          <Dataset '/a/b/c/d/d5' shape=(0,) dtype=<f8 (0 metadata)>
+          <Dataset '/a/b/c/d/d6' shape=(0,) dtype=<f8 (0 metadata)>
+      <Dataset '/a/b/d2' shape=(0,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d1' shape=(0,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d3' shape=(0,) dtype=<f8 (0 metadata)>
+  <Dataset '/d4' shape=(0,) dtype=<f8 (0 metadata)>
+  <Dataset '/d7' shape=(0,) dtype=<f8 (0 metadata)>
+  <Group '/x' (2 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+      <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
+
+    if sys.version_info.major == 2:
+        assert root.tree() == tree_py2[1:]  # skip the first line
+    else:
+        assert root.tree() == tree[1:]  # skip the first line

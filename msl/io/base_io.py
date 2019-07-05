@@ -41,6 +41,25 @@ class Root(Group):
         """:class:`str`: The location of a file on a local hard drive or on a network."""
         return self._url
 
+    def tree(self, indent=2):
+        """A representation of the `tree structure`_ of all :class:`~msl.io.group.Group`\\s
+        and :class:`~msl.io.dataset.Dataset`\\s that are in the :class:`Root`.
+
+        .. _tree structure: https://en.wikipedia.org/wiki/Tree_structure
+
+        Parameters
+        ----------
+        indent : :class:`int`, optional
+            The amount of indentation to add for each recursive level.
+
+        Returns
+        -------
+        :class:`str`
+            The `tree structure`_.
+        """
+        return repr(self) + '\n' + \
+            '\n'.join(' ' * (indent * k.count('/')) + repr(v) for k, v in sorted(self.items()))
+
 
 class Writer(Root):
 
