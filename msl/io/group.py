@@ -109,6 +109,33 @@ class Group(Vertex):
             if self.is_group(obj):
                 yield obj
 
+    def add_group(self, name, group):
+        """Add an existing :class:`Group` (and all sub-:class:`Vertices <Vertex>`) to this :class:`Group`.
+
+        The data in the :class:``Dataset` will be copied.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the new :class:`Group` that you are adding.
+        group : :class:`Group`
+            The :class:`Group` to add.
+        """
+        if not isinstance(group, Group):
+            raise TypeError('Must pass in a Group object, got {!r}'.format(group))
+
+        if not group:
+            self.create_group(name, **group.metadata)
+            return
+
+        name = name.strip('/')
+        for key, vertex in group.items():
+            n = name + key
+            if self.is_group(vertex):
+                self.create_group(n, **vertex.metadata)
+            elif self.is_dataset(vertex):
+                self.create_dataset(n, data=vertex.data.copy(), **vertex.metadata)
+
     def create_group(self, name, is_read_only=None, **metadata):
         """Create a new :class:`Group`
 

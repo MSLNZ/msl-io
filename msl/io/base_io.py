@@ -56,6 +56,30 @@ class Writer(Root):
         """
         super(Writer, self).__init__(url, **metadata)
 
+    def clear(self):
+        """Removes all :class:`Group`\\s and :class:`Dataset`\\s from this :class:`Writer`."""
+        self._mapping.clear()
+
+    def set_root(self, root):
+        """
+
+        Parameters
+        ----------
+        root
+
+        """
+        if not isinstance(root, Root):
+            raise TypeError('Must pass in a Root object, got {!r}'.format(root))
+        self.clear()
+        self.add_group('', root)
+
+    def delete_group(self, name):
+        name = '/' + name.strip('/')
+        for group in self.groups():
+            if group.name == name:
+                self.pop(group.name)
+                return
+
     def write(self, url=None, root=None, **kwargs):
         """Write to a file.
 
