@@ -93,6 +93,11 @@ pytest_runner = ['pytest-runner'] if testing else []
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
+if sys.version_info[:2] == (2, 7):
+    install_requires = ['numpy<=1.16.4']
+else:
+    install_requires = ['numpy']
+
 setup(
     name='msl-io',
     version=fetch_init('__version__'),
@@ -121,7 +126,7 @@ setup(
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest', 'numpy', 'h5py>=2.9'],
-    install_requires=['numpy'],
+    install_requires=install_requires,
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,
