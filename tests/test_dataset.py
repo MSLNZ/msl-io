@@ -166,8 +166,9 @@ def test_copy():
     assert orig.is_read_only
     assert orig.metadata.is_read_only
 
-    copy[1] = 7
-    assert copy[1] == 7
+    val = 7 if orig[1] != 7 else 8
+    copy[1] = val
+    assert copy[1] == val
     assert orig[1] != copy[1]
 
 
