@@ -98,3 +98,18 @@ def test_set_root():
     assert writer.metadata.foo == 'bar'
     assert writer.metadata.two == 2
     assert writer.metadata.three == 3
+
+    # d4 is a Dataset
+    with pytest.raises(TypeError):
+        writer.set_root(root.d4)
+
+    # pass in a Group instead of a Root
+    writer.set_root(root.x)
+    assert len(writer) == 2
+    assert len(list(writer.groups())) == 2
+    assert len(list(writer.datasets())) == 0
+    assert 'x' not in writer
+    assert 'y' in writer
+    assert 'y/z' in writer
+    assert 'z' in writer.y
+    assert len(writer.metadata) == 0

@@ -774,8 +774,53 @@ def test_tree():
     <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
       <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
 
-    # Python 2.7 version 64-bit has shape=(0L,) and we don't care about (0L,) vs (0,)
+    # Python 2.7 64-bit has shape=(0L,) and we don't care about (0L,) vs (0,)
     assert root.tree().replace('shape=(0L,)', 'shape=(0,)') == tree[1:]  # skip the first line
+
+    # use del instead of Group.remove()
+    del root.a.b.c
+
+    tree = """
+<Root '' (5 groups, 5 datasets, 0 metadata)>
+  <Group '/a' (1 groups, 3 datasets, 0 metadata)>
+    <Group '/a/b' (0 groups, 1 datasets, 0 metadata)>
+      <Dataset '/a/b/d2' shape=(0,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d1' shape=(0,) dtype=<f8 (0 metadata)>
+    <Dataset '/a/d3' shape=(0,) dtype=<f8 (0 metadata)>
+  <Dataset '/d4' shape=(0,) dtype=<f8 (0 metadata)>
+  <Dataset '/d7' shape=(0,) dtype=<f8 (0 metadata)>
+  <Group '/x' (2 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+      <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
+
+    # Python 2.7 64-bit has shape=(0L,) and we don't care about (0L,) vs (0,)
+    assert root.tree().replace('shape=(0L,)', 'shape=(0,)') == tree[1:]  # skip the first line
+
+    # use Group.remove() instead of del
+    root.remove('a')
+
+    tree = """
+<Root '' (3 groups, 2 datasets, 0 metadata)>
+  <Dataset '/d4' shape=(0,) dtype=<f8 (0 metadata)>
+  <Dataset '/d7' shape=(0,) dtype=<f8 (0 metadata)>
+  <Group '/x' (2 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+      <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
+
+    # Python 2.7 64-bit has shape=(0L,) and we don't care about (0L,) vs (0,)
+    assert root.tree().replace('shape=(0L,)', 'shape=(0,)') == tree[1:]  # skip the first line
+
+    # increase the indentation
+    tree = """
+<Root '' (3 groups, 2 datasets, 0 metadata)>
+     <Dataset '/d4' shape=(0,) dtype=<f8 (0 metadata)>
+     <Dataset '/d7' shape=(0,) dtype=<f8 (0 metadata)>
+     <Group '/x' (2 groups, 0 datasets, 0 metadata)>
+          <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+               <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
+
+    # Python 2.7 64-bit has shape=(0L,) and we don't care about (0L,) vs (0,)
+    assert root.tree(indent=5).replace('shape=(0L,)', 'shape=(0,)') == tree[1:]  # skip the first line
 
 
 def test_add_group():
