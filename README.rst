@@ -1,7 +1,7 @@
 MSL-IO
 ======
 
-|docs| |appveyor|
+|docs| |travis| |appveyor|
 
 Read and write MSL data files.
 
