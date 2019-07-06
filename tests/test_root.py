@@ -797,3 +797,243 @@ def test_tree():
         assert root.tree() == tree_py2[1:]  # skip the first line
     else:
         assert root.tree() == tree[1:]  # skip the first line
+
+
+def test_add_group():
+    root = Root('some file')
+
+    for item in [dict(), tuple(), list(), None, Dataset('dset', None, False)]:
+        with pytest.raises(TypeError):
+            root.add_group('name', item)
+
+    root2 = Root('New')
+    assert len(root2) == 0
+
+    #
+    # add a Group that does not contain sub-Groups nor Datasets
+    #
+
+    # add to the Root Group
+    root2.add_group('', root.create_group('a', one=1, foo='bar'))
+    assert len(root2) == 1
+    assert root2.a is not root.a
+    assert '/a' in root2
+    assert len(root2.a.metadata) == 2
+    assert root2.a.metadata.one == 1
+    assert root2.a.metadata['foo'] == 'bar'
+
+    root2.clear()  # also tests Root.clear()
+    assert len(root2) == 0
+
+    # creates an "/B" Group and then add to it
+    root2.add_group('B', root.create_group('b', two=2))
+    assert len(root2) == 2
+    assert root2.B.b is not root.b
+    assert '/B/b' in root2
+    assert 'B' in root2
+    assert 'b' in root2.B
+    assert '/B/b' in root2
+    assert len(root2.B.metadata) == 0
+    assert len(root2.B.b.metadata) == 1
+    assert root2.B.b.metadata.two == 2
+
+    root2.clear()
+    assert len(root2) == 0
+
+    # creates an "/A/B/C" Group and then add to it (add a ridiculous amount of '/')
+    root2.add_group('/////A/B/C//////////', root.create_group('c', x='x', y='y'))
+    assert len(root2) == 4
+    assert root2.A.B.C.c is not root.c
+    assert '/A' in root2
+    assert 'A/B' in root2
+    assert '/A/B/C' in root2
+    assert '/A/B/C/c' in root2
+    assert '/c' in root2.A.B.C
+    assert len(root2.A.metadata) == 0
+    assert len(root2.A.B.metadata) == 0
+    assert len(root2.A.B.C.metadata) == 0
+    assert len(root2.A.B.C.c.metadata) == 2
+    assert root2.A.B.C.c.metadata.x == 'x'
+    assert root2['A']['B'].C['c'].metadata['y'] == 'y'
+
+    # verify root's tree
+    assert len(root) == 3
+    assert 'a' in root
+    assert '/b' in root
+    assert 'c' in root
+    assert len(root.a.metadata) == 2
+    assert root.a.metadata.one == 1
+    assert root.a.metadata.foo == 'bar'
+    assert len(root.b.metadata) == 1
+    assert root.b.metadata.two == 2
+    assert len(root.c.metadata) == 2
+    assert root.c.metadata.x == 'x'
+    assert root.c.metadata.y == 'y'
+
+    # add some Datasets to root
+    root.b.create_dataset('/x', data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    root.c.create_dataset('y/z', shape=(3, 4), meta='data')
+    assert 'x' in root.b
+    assert 'z' in root.c.y
+
+    # add root to root2
+    root2.add_group('/old', root)
+    assert len(root2) == 11
+    assert '/A' in root2
+    assert 'A/B' in root2
+    assert '/A/B/C' in root2
+    assert '/A/B/C/c' in root2
+    assert '/c' in root2.A.B.C
+    assert 'old' in root2
+    assert 'old/a' in root2
+    assert '/old/b' in root2
+    assert '/old/c' in root2
+    assert '/old/b/x' in root2
+    assert 'y' in root2.old.c
+    assert '/y/z' in root2.old.c
+    assert len(root2.A.metadata) == 0
+    assert len(root2.A.B.metadata) == 0
+    assert len(root2.A.B.C.metadata) == 0
+    assert len(root2.A.B.C.c.metadata) == 2
+    assert root2.A.B.C.c.metadata.x == 'x'
+    assert root2['A']['B'].C['c'].metadata['y'] == 'y'
+    assert len(root2.old.a.metadata) == 2
+    assert root2.old.a.metadata.one == 1
+    assert root2.old.a.metadata.foo == 'bar'
+    assert len(root2.old.b.metadata) == 1
+    assert root2.old.b.metadata.two == 2
+    assert len(root2.old.c.metadata) == 2
+    assert root2.old.c.metadata.x == 'x'
+    assert root2.old.c.metadata.y == 'y'
+    assert len(root2.old.b.metadata) == 1
+    assert root2.old.b.metadata.two == 2
+    assert len(root2.old.c.metadata) == 2
+    assert root2.old.c.metadata.x == 'x'
+    assert root2.old['c'].metadata['y'] == 'y'
+    assert len(root2.old.c.y.metadata) == 0
+    assert len(root2.old.c.y.z.metadata) == 1
+    assert root2.old.c.y.z.metadata.meta == 'data'
+    assert root2.old.b.x.shape == (10,)
+    assert root2.old.c.y.z.shape == (3, 4)
+
+    # the Metadata is a copy
+    root2.old.c.y.z.metadata.meta = 'new value'
+    assert root2.old.c.y.z.metadata.meta is not root.c.y.z.metadata.meta
+    assert root2.old.c.y.z.metadata.meta == 'new value'
+    assert root.c.y.z.metadata.meta == 'data'
+
+    # the data in the Dataset is a copy
+    assert root2.old.b.x.data is not root.b.x.data
+    assert root2.old.c.y.z.data is not root.c.y.z.data
+    root2.old.b.x[:] = 1
+    assert sum(root2.old.b.x.data) == 10
+    for val in root.b.x.data.tolist():
+        assert val == 0
+
+
+def test_remove():
+    root = Root('')
+    a = root.create_group('a')
+    a.create_dataset('d1')
+    b = a.create_group('b')
+    b.create_dataset('d2')
+    c = b.create_group('c')
+    z = root.create_group('x/y/z')
+    d = c.create_group('d')
+    a.create_dataset('d3')
+    root.create_dataset('d4')
+    d.create_dataset('d5')
+    d.create_dataset('d6')
+    d7 = root.create_dataset('d7')
+
+    assert len(root) == 14
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 7
+    assert 'a' in root
+    assert 'd1' in root.a
+    assert 'b' in root.a
+    assert 'd2' in root.a.b
+    assert 'c' in root.a.b
+    assert 'x' in root
+    assert 'x/y' in root
+    assert 'y' in root.x
+    assert 'x/y/z' in root
+    assert 'z' in root.x.y
+    assert 'd' in root.a.b.c
+    assert '/a/d3' in root
+    assert 'd4' in root
+    assert '/d5' in root.a.b.c.d
+    assert '/a/b/c/d/d6' in root
+    assert 'd7' in root
+
+    # remove the 'd7' Dataset
+    d7_2 = root.remove('d7')
+    assert len(root) == 13
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 6
+    assert 'd7' not in root
+    assert d7_2 is d7
+
+    # remove the 'z' Group
+    assert root.remove('z') is None
+    assert len(root) == 13
+    assert 'x/y/z' in root
+    assert root.remove('/y/z') is None
+    assert len(root) == 13
+    assert 'x/y/z' in root
+    z2 = root.x.remove('y/z')
+    assert z2 is z
+    assert len(root) == 12
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 6
+    assert '/x/y/z' not in root
+
+    # cannot remove in read-only mode
+    root.is_read_only = True
+    with pytest.raises(ValueError):
+        root.remove('a')
+    assert len(root) == 12
+    assert 'a' in root
+
+    # remove Group 'd' (which also removes the 'd5' and 'd6' Datasets)
+    root.a.b.c.is_read_only = False
+    d2 = root.a.b.c.remove('d')
+    assert len(root) == 9
+    assert len(root.a) == 5
+    assert len(list(root.a.groups())) == 2
+    assert len(list(root.a.datasets())) == 3
+    assert len(root.a.b) == 2
+    assert len(list(root.a.b.groups())) == 1
+    assert len(list(root.a.b.datasets())) == 1
+    assert 'd' not in root.a.b.c
+    assert '/d' not in root.a.b.c
+    assert '/a/b/c/d' not in root
+    assert '/b/c/d' not in root.a
+    assert '/c/d' not in root.a.b
+    assert 'd/d5' not in root.a.b.c
+    assert 'd/d6' not in root.a.b.c
+    assert 'c/d/d5' not in root.a.b
+    assert 'c/d/d6' not in root.a.b
+    assert 'b/c/d/d5' not in root.a
+    assert 'b/c/d/d6' not in root.a
+    assert 'a/b/c/d/d5' not in root
+    assert 'a/b/c/d/d6' not in root
+    assert d2 is d
+    with pytest.raises(ValueError):  # root.a.b is still in read-only mode
+        root.a.b.remove('c')
+
+    # remove Group 'a'
+    root.is_read_only = False
+    a2 = root.remove('a')
+    assert len(root) == 3
+    assert len(list(root.groups())) == 2
+    assert len(list(root.datasets())) == 1
+    assert a2 is a
+    assert 'a' not in root
+    assert 'd4' in root
+    assert 'x' in root
+    assert '/x/y' in root
+    assert 'y' in root.x
+
+    root.clear()
+    assert len(root) == 0

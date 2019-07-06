@@ -10,12 +10,10 @@ from .group import Group
 class Root(Group):
 
     def __init__(self, url, **metadata):
-        """The root vertex in a rooted_, `directed graph`_.
+        """The root_ vertex in a tree_.
 
-        Do not instantiate this class directly.
-
-        .. _rooted: https://en.wikipedia.org/wiki/Rooted_graph
-        .. _directed graph: https://en.wikipedia.org/wiki/Directed_graph
+        .. _root: https://en.wikipedia.org/wiki/Tree_(graph_theory)#Rooted_tree
+        .. _tree: https://en.wikipedia.org/wiki/Tree_(graph_theory)
 
         Parameters
         ----------
@@ -43,7 +41,7 @@ class Root(Group):
 
     def tree(self, indent=2):
         """A representation of the `tree structure`_ of all :class:`~msl.io.group.Group`\\s
-        and :class:`~msl.io.dataset.Dataset`\\s that are in the :class:`Root`.
+        and :class:`~msl.io.dataset.Dataset`\\s that are in :class:`Root`.
 
         .. _tree structure: https://en.wikipedia.org/wiki/Tree_structure
 
@@ -75,29 +73,27 @@ class Writer(Root):
         """
         super(Writer, self).__init__(url, **metadata)
 
-    def clear(self):
-        """Removes all :class:`Group`\\s and :class:`Dataset`\\s from this :class:`Writer`."""
-        self._mapping.clear()
-
     def set_root(self, root):
-        """
+        """Set a new :class:`Root` for the :class:`Writer`.
+
+        .. attention::
+           This will clear the :class:`~msl.io.metadata.Metadata` of the :class:`Writer`
+           and all :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
+           that the :class:`Writer` currently contains. The `URL` that was specified when
+           the :class:`Writer` was created does not change.
 
         Parameters
         ----------
-        root
-
+        root : :class:`Root`
+            The new :class:`Root` for the :class:`Writer`.
         """
-        if not isinstance(root, Root):
+        if not isinstance(root, Group):  # it is okay to pass in any Group object
             raise TypeError('Must pass in a Root object, got {!r}'.format(root))
         self.clear()
-        self.add_group('', root)
-
-    def delete_group(self, name):
-        name = '/' + name.strip('/')
-        for group in self.groups():
-            if group.name == name:
-                self.pop(group.name)
-                return
+        self.metadata.clear()
+        self.add_metadata(**root.metadata)
+        if root:  # only do this if there are Groups and/or Datasets in the new root
+            self.add_group('', root)
 
     def write(self, url=None, root=None, **kwargs):
         """Write to a file.
@@ -109,7 +105,7 @@ class Writer(Root):
         ----------
         url : :class:`str`, optional
             The location of a file on a local hard drive or on a network. If :data:`None`
-            then uses the URL value that was specified when the :class:`~msl.io.base_io.Writer`
+            then uses the `URL` value that was specified when the :class:`~msl.io.base_io.Writer`
             was created.
         root : :class:`~msl.io.base_io.Root`, optional
             Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.

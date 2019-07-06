@@ -110,9 +110,9 @@ class Group(Vertex):
                 yield obj
 
     def add_group(self, name, group):
-        """Add an existing :class:`Group` (and all sub-:class:`Vertices <Vertex>`) to this :class:`Group`.
+        """Add a :class:`Group`.
 
-        The data in the :class:``Dataset` will be copied.
+        The data in the :class:`~msl.io.dataset.Dataset`\\s that are added will be copied.
 
         Parameters
         ----------
@@ -124,20 +124,21 @@ class Group(Vertex):
         if not isinstance(group, Group):
             raise TypeError('Must pass in a Group object, got {!r}'.format(group))
 
-        if not group:
-            self.create_group(name, **group.metadata)
+        name = '/' + name.strip('/')
+
+        if not group:  # no sub-Groups or Datasets, only add the Metadata
+            self.create_group(name + group.name, **group.metadata)
             return
 
-        name = name.strip('/')
         for key, vertex in group.items():
             n = name + key
             if self.is_group(vertex):
                 self.create_group(n, **vertex.metadata)
-            elif self.is_dataset(vertex):
+            else:  # must be a Dataset
                 self.create_dataset(n, data=vertex.data.copy(), **vertex.metadata)
 
     def create_group(self, name, is_read_only=None, **metadata):
-        """Create a new :class:`Group`
+        """Create a new :class:`Group`.
 
         Automatically creates the sub-:class:`Group`\\s if they do not exist.
 
@@ -252,6 +253,23 @@ class Group(Vertex):
                 dataset.add_metadata(**kwargs)
                 return dataset
         return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
+
+    def remove(self, name):
+        """Remove a :class:`Group` or a :class:`Dataset`.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the :class:`Group` or :class:`Dataset` to remove.
+
+        Returns
+        -------
+        :class:`Group` or :class:`Dataset`
+            The :class:`Group` or :class:`Dataset` that was removed or :data:`None`
+            if there was no :class:`Group` or :class:`Dataset` with the specified `name`.
+        """
+        name = '/' + name.strip('/')
+        return self.pop(name, None)
 
     def _check(self, is_read_only, **kwargs):
         self._raise_if_read_only()

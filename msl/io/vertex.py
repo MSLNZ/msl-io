@@ -1,7 +1,7 @@
 """
-A vertex in a `directed graph`_.
+A vertex in a tree_.
 
-.. _directed graph: https://en.wikipedia.org/wiki/Directed_graph
+.. _tree: https://en.wikipedia.org/wiki/Tree_(graph_theory)
 """
 from .dictionary import Dictionary
 from .metadata import Metadata
@@ -10,7 +10,7 @@ from .metadata import Metadata
 class Vertex(Dictionary):
 
     def __init__(self, name, parent, is_read_only, **metadata):
-        """A vertex in a `directed graph`_.
+        """A vertex in a tree_.
 
         Parameters
         ----------
@@ -69,16 +69,21 @@ class Vertex(Dictionary):
             pass  # raise a more detailed error message below
         else:
             # delete all sub-vertices
+            sub_vertices = []
             for key in list(self.keys()):
                 if key.startswith(item):
                     del self._mapping[key]
+                    sub_vertices.append(key)
 
             # notify all ancestors that this vertex was deleted
             ancestor = self._parent
             while ancestor is not None:
                 for key in list(ancestor.keys()):
-                    if key.endswith(item):
+                    if key.endswith(item):  # delete this vertex
                         del ancestor._mapping[key]
+                    for sub in sub_vertices:  # delete all sub-vertices
+                        if key.endswith(sub):
+                            del ancestor._mapping[key]
                 ancestor = ancestor._parent
 
             return
