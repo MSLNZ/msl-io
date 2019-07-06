@@ -1,7 +1,7 @@
 MSL-IO
 ======
 
-|docs|
+|docs| |appveyor|
 
 Read and write MSL data files.
 
@@ -9,3 +9,6 @@ Read and write MSL data files.
    :target: https://msl-io.readthedocs.io/en/latest/
    :alt: Documentation Status
    :scale: 100%
+
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-io/master.svg?label=AppVeyor
+    :target: https://ci.appveyor.com/project/jborbely/msl-io/branch/master
