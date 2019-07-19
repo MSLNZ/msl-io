@@ -5,7 +5,6 @@ Writer for a JSON_ file format. The corresponding :class:`~msl.io.base_io.Reader
 .. _JSON: https://www.json.org/
 """
 import os
-import sys
 import json
 
 import numpy as np
@@ -13,10 +12,10 @@ import numpy as np
 from .. import Writer
 from ..metadata import Metadata
 from ..base_io import Root
+from ..constants import IS_PYTHON2
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.
-PY2 = sys.version_info.major == 2
-if PY2:
+if IS_PYTHON2:
     from ._py2_json_encoder import _make_iterencode
 else:
     from ._py3_json_encoder import _make_iterencode
@@ -104,7 +103,7 @@ class JSONWriter(Writer):
                     if root.is_dataset(value):
                         add_dataset(vertex[leaf_key], value)
 
-        params = ['mode'] if PY2 else ['mode', 'encoding', 'errors']
+        params = ['mode'] if IS_PYTHON2 else ['mode', 'encoding', 'errors']
         open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
         if not open_kwargs['mode']:
             open_kwargs['mode'] = 'wt'

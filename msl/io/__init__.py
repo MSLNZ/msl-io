@@ -43,8 +43,8 @@ def read(url, **kwargs):
     url : :class:`str`
         The path to the file to read.
     **kwargs
-        Keyword arguments that are passed to the :meth:`~msl.io.base_io.Reader.read`
-        method of the :class:`~msl.io.base_io.Reader` that can read this file.
+        Keyword arguments that are passed to the :meth:`~msl.io.base_io.Reader.can_read`
+        and :meth:`~msl.io.base_io.Reader.read` methods.
 
     Returns
     -------
@@ -62,7 +62,7 @@ def read(url, **kwargs):
 
     for rdr in _readers:
         try:
-            can_read = rdr.can_read(url)
+            can_read = rdr.can_read(url, **kwargs)
         except:
             continue
 

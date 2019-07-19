@@ -7,8 +7,6 @@ Writer for the HDF5_ file format.
 .. _HDF5: https://www.hdfgroup.org/
 .. _H5py: https://www.h5py.org/
 """
-import sys
-
 import numpy as np
 try:
     import h5py
@@ -18,8 +16,9 @@ except ImportError:
 from .. import Writer
 from ..metadata import Metadata
 from ..base_io import Root
+from ..constants import IS_PYTHON2
 
-if sys.version_info.major > 2:
+if not IS_PYTHON2:
     unicode = str
 
 

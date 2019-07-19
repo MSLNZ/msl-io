@@ -9,16 +9,16 @@ from msl.io import (
     register,
     Reader,
 )
-from ..metadata import Metadata
+from ..constants import IS_PYTHON2
 
 
 @register
 class JSONReader(Reader):
 
     @staticmethod
-    def can_read(url):
+    def can_read(url, **kwargs):
         """Checks if the text ``MSL JSONWriter`` is in the first line of the file."""
-        return 'MSL JSONWriter' in Reader.get_lines(url, 1)[0]
+        return 'MSL JSONWriter' in Reader.get_lines(url, 1, **kwargs)[0]
 
     def read(self, **kwargs):
         """Read the file that was created by :class:`~msl.io.writers.json_.JSONWriter`
@@ -30,10 +30,15 @@ class JSONReader(Reader):
         Parameters
         ----------
         **kwargs
-            All key-value pairs are passed to
-            `json.loads <https://docs.python.org/3/library/json.html#json.loads>`_.
+            Accepts `encoding` and `errors` keyword arguments (for Python 3)
+            which are passed to :func:`open`. All other key-value pairs are passed to
+            `json.dump <https://docs.python.org/3/library/json.html#json.dump>`_.
+            The default indentation is 2.
+
         """
-        with open(self.url, mode='rt') as fp:
+        params = [] if IS_PYTHON2 else ['encoding', 'errors']
+        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
+        with open(self.url, mode='rt', **open_kwargs) as fp:
             fp.readline()  # skip the first line
             dict_ = json.loads(fp.read(), **kwargs)
 

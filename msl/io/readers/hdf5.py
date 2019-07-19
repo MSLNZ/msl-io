@@ -23,7 +23,7 @@ from msl.io import register, Reader
 class HDF5Reader(Reader):
 
     @staticmethod
-    def can_read(url):
+    def can_read(url, **kwargs):
         """The HDF5_ file format has a standard signature_.
 
         The first 8 bytes are ``\\x89HDF\\r\\n\\x1a\\n``.

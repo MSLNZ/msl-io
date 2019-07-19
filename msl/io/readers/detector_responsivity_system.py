@@ -13,7 +13,7 @@ from msl.io import register, Reader
 class DRS(Reader):
 
     @staticmethod
-    def can_read(url):
+    def can_read(url, **kwargs):
         """Checks if the first line starts with ``DRS`` and ends with ``Shindo``."""
         if Reader.get_extension(url).lower() != '.dat':
             return False

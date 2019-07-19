@@ -5,6 +5,7 @@ import os
 import itertools
 
 from .group import Group
+from .constants import IS_PYTHON2
 
 
 class Root(Group):
@@ -132,7 +133,7 @@ class Reader(Root):
         super(Reader, self).__init__(url)
 
     @staticmethod
-    def can_read(url):
+    def can_read(url, **kwargs):
         """Whether this :class:`~msl.io.base_io.Reader` can read the file specified by `url`.
 
         .. important::
@@ -196,17 +197,30 @@ class Reader(Root):
               line in the file
 
         **kwargs
-            Accepts the following:
 
-            * ``remove_empty_lines`` : :class:`bool`, default: :data:`False`
+            * ``remove_empty_lines`` : :class:`bool`
 
-              Whether to remove all empty lines.
+              Whether to remove all empty lines. Default is :data:`False`.
+
+            * ``encoding`` : :class:`str`
+
+              The name of the encoding used to decode the file. The default
+              encoding is platform dependent. Python 3 only.
+
+            * ``errors`` : :class:`str`
+
+              An optional string that specifies how encoding errors are to be handled.
+              Either 'strict' or 'ignore'. Python 3 only.
 
         Returns
         -------
         :class:`list` of :class:`str`
             The lines from the file. Trailing whitespace is stripped from each line.
         """
+        remove_empty_lines = kwargs.pop('remove_empty_lines', False)
+
+        params = [] if IS_PYTHON2 else ['encoding', 'errors']
+        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
 
         # want the "stop" line to be included
         if (len(args) > 1) and (args[1] is not None) and (args[1] < 0):
@@ -222,7 +236,7 @@ class Reader(Root):
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
         if any(val < 0 for val in args if val):
-            with open(url, 'r') as f:
+            with open(url, 'rt', **open_kwargs) as f:
                 lines = [line.rstrip() for line in f.readlines()]
 
             if len(args) == 1:
@@ -236,10 +250,10 @@ class Reader(Root):
             if not args:
                 args = (None,)
 
-            with open(url, 'r') as f:
+            with open(url, 'rt', **open_kwargs) as f:
                 lines = [line.rstrip() for line in itertools.islice(f, *args)]
 
-        if kwargs.get('remove_empty_lines', False):
+        if remove_empty_lines:
             return [line for line in lines if line]
 
         return lines

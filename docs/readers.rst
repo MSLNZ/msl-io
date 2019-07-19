@@ -40,7 +40,7 @@ Please follow the :ref:`style guide <style guide>`.
            """Name your class to be whatever you want, i.e., change AnExampleReader"""
 
            @staticmethod
-           def can_read(url):
+           def can_read(url, **kwargs):
                """This method answers the following question:
 
                Given a URL (which is a Python string that is the location of a file)
