@@ -2,6 +2,7 @@
 Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
 """
 import os
+import codecs
 import itertools
 
 from .group import Group
@@ -204,13 +205,12 @@ class Reader(Root):
 
             * ``encoding`` : :class:`str`
 
-              The name of the encoding used to decode the file. The default
-              encoding is platform dependent. Python 3 only.
+              The name of the encoding to use to decode the file. The default is ``'utf-8'``.
 
             * ``errors`` : :class:`str`
 
               An optional string that specifies how encoding errors are to be handled.
-              Either 'strict' or 'ignore'. Python 3 only.
+              Either ``'strict'`` or ``'ignore'``. The default is ``'strict'``.
 
         Returns
         -------
@@ -219,8 +219,13 @@ class Reader(Root):
         """
         remove_empty_lines = kwargs.pop('remove_empty_lines', False)
 
-        params = [] if IS_PYTHON2 else ['encoding', 'errors']
-        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
+        if 'encoding' not in kwargs:
+            kwargs['encoding'] = 'utf-8'
+
+        if IS_PYTHON2:
+            opener = codecs.open  # this allows the encoding and errors kwargs to be used
+        else:
+            opener = open
 
         # want the "stop" line to be included
         if (len(args) > 1) and (args[1] is not None) and (args[1] < 0):
@@ -236,7 +241,7 @@ class Reader(Root):
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
         if any(val < 0 for val in args if val):
-            with open(url, 'rt', **open_kwargs) as f:
+            with opener(url, 'r', **kwargs) as f:
                 lines = [line.rstrip() for line in f.readlines()]
 
             if len(args) == 1:
@@ -250,7 +255,7 @@ class Reader(Root):
             if not args:
                 args = (None,)
 
-            with open(url, 'rt', **open_kwargs) as f:
+            with opener(url, 'r', **kwargs) as f:
                 lines = [line.rstrip() for line in itertools.islice(f, *args)]
 
         if remove_empty_lines:

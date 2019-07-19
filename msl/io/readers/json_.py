@@ -2,6 +2,7 @@
 Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
 import json
+import codecs
 
 import numpy as np
 
@@ -30,15 +31,22 @@ class JSONReader(Reader):
         Parameters
         ----------
         **kwargs
-            Accepts `encoding` and `errors` keyword arguments (for Python 3)
-            which are passed to :func:`open`. All other key-value pairs are passed to
-            `json.dump <https://docs.python.org/3/library/json.html#json.dump>`_.
-            The default indentation is 2.
-
+            Accepts `encoding` and `errors` keyword arguments which are passed to
+            :func:`open`. The default `encoding` value is ``'utf-8'`` and the default
+            `errors` value is ``'strict'``. All additional keyword arguments are passed to
+            `json.loads <https://docs.python.org/3/library/json.html#json.loads>`_.
         """
-        params = [] if IS_PYTHON2 else ['encoding', 'errors']
-        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
-        with open(self.url, mode='rt', **open_kwargs) as fp:
+        open_kwargs = {
+            'encoding': kwargs.pop('encoding', 'utf-8'),
+            'errors': kwargs.pop('errors', 'strict'),
+        }
+
+        if IS_PYTHON2:
+            opener = codecs.open  # this allows the encoding and errors kwargs to be used
+        else:
+            opener = open
+
+        with opener(self.url, mode='r', **open_kwargs) as fp:
             fp.readline()  # skip the first line
             dict_ = json.loads(fp.read(), **kwargs)
 

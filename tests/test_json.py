@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import tempfile
 
@@ -333,3 +334,26 @@ def test_pretty_printing():
     assert written[1].endswith('}, "null": null}')
 
     os.remove(w.url)
+
+
+def test_unicode():
+    def do_asserts(r):
+        assert len(r.metadata) == 2
+        assert u'μ' in r.metadata
+        assert u'\u03bc' in r.metadata
+        assert 'unit' in r.metadata
+        assert r.metadata[u'μ'] == 'micro'
+        assert r.metadata[u'\u03bc'] == 'micro'
+        assert r.metadata.unit == u'°C'
+        assert r.metadata.unit == u'\xb0C'
+
+    root = read_sample(u'uñicödé.json')
+    do_asserts(root)
+
+    writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
+    writer.save(root=root, ensure_ascii=False, mode='w')
+
+    root2 = read(writer.url)
+    do_asserts(root2)
+
+    os.remove(writer.url)

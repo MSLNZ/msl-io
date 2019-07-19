@@ -6,6 +6,7 @@ Writer for a JSON_ file format. The corresponding :class:`~msl.io.base_io.Reader
 """
 import os
 import json
+import codecs
 
 import numpy as np
 
@@ -52,9 +53,9 @@ class JSONWriter(Writer):
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`JSONWriter`.
         **kwargs
-            Accepts `mode`, `encoding` and `errors` keyword arguments (for Python 3)
-            which are passed to :func:`open`. Only `mode` is supported for Python 2.
-            All other key-value pairs are passed to
+            Accepts `mode`, `encoding` and `errors` keyword arguments which are passed
+            to :func:`open`. The default `encoding` value is ``'utf-8'`` and the default
+            `errors` value is ``'strict'``. All additional keyword arguments are passed to
             `json.dump <https://docs.python.org/3/library/json.html#json.dump>`_.
             The default indentation is 2.
         """
@@ -103,10 +104,21 @@ class JSONWriter(Writer):
                     if root.is_dataset(value):
                         add_dataset(vertex[leaf_key], value)
 
-        params = ['mode'] if IS_PYTHON2 else ['mode', 'encoding', 'errors']
-        open_kwargs = dict((key, kwargs.pop(key, None)) for key in params)
+        open_kwargs = {
+            'mode': kwargs.pop('mode', None),
+            'encoding': kwargs.pop('encoding', 'utf-8'),
+            'errors': kwargs.pop('errors', 'strict')
+        }
+
+        if IS_PYTHON2:
+            opener = codecs.open  # this allows the encoding and errors kwargs to be used
+        else:
+            # don't use codecs.open because the file looks better when opened in Notepad
+            # (on Windows) when the standard open function use used
+            opener = open
+
         if not open_kwargs['mode']:
-            open_kwargs['mode'] = 'wt'
+            open_kwargs['mode'] = 'w'
             if os.path.isfile(url):
                 raise IOError("A {!r} file already exists.\n"
                               "Specify mode='w' if you want to overwrite it.".format(url))
@@ -117,7 +129,7 @@ class JSONWriter(Writer):
             kwargs['cls'] = _NumpyEncoder
             json.encoder._make_iterencode = _make_iterencode
 
-        with open(url, **open_kwargs) as fp:
+        with opener(url, **open_kwargs) as fp:
             fp.write('#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__))
             json.dump(dict_, fp, **kwargs)
 
