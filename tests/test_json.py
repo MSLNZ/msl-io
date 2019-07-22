@@ -350,10 +350,11 @@ def test_unicode():
     root = read_sample(u'uñicödé.json')
     do_asserts(root)
 
-    writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
-    writer.save(root=root, ensure_ascii=False, mode='w')
+    for b in [False, True]:
+        writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
+        writer.save(root=root, ensure_ascii=b, mode='w')
 
-    root2 = read(writer.url)
-    do_asserts(root2)
+        root2 = read(writer.url)
+        do_asserts(root2)
 
-    os.remove(writer.url)
+        os.remove(writer.url)
