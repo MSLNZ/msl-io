@@ -87,12 +87,6 @@ def fetch_init(key):
     return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
-testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if testing else []
-
-needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
-
 tests_require = ['h5py>=2.9', 'pytest-cov']
 
 if sys.version_info[:2] == (2, 7):
@@ -101,6 +95,12 @@ if sys.version_info[:2] == (2, 7):
 else:
     install_requires = ['numpy']
     tests_require.append('pytest')
+
+testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if testing else []
+
+needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
+sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
 
 setup(
     name='msl-io',
@@ -129,7 +129,7 @@ setup(
         'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=tests_require + install_requires,
+    tests_require=tests_require,
     install_requires=install_requires,
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
