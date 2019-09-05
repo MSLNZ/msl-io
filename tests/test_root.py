@@ -1061,3 +1061,99 @@ def test_remove():
 
     root.clear()
     assert len(root) == 0
+
+    # Check that removing an Group/Dataset also removes it from the descendants
+    root = Root('')
+    root.require_group('g1/g2/g3/g4')
+    root.require_dataset('g1/d0')
+    d1 = root.require_dataset('g1/g2/d1')
+    root.require_dataset('g1/g2/d2')
+    d3 = root.require_dataset('g1/g2/g3/d3')
+    root.require_dataset('g1/g2/g3/g4/d4')
+
+    assert len(root) == 9
+    assert len(list(root.groups())) == 4
+    assert len(list(root.datasets())) == 5
+    assert len(root.g1) == 8
+    assert len(list(root.g1.groups())) == 3
+    assert len(list(root.g1.datasets())) == 5
+    assert len(root.g1.g2) == 6
+    assert len(list(root.g1.g2.groups())) == 2
+    assert len(list(root.g1.g2.datasets())) == 4
+    assert len(root.g1.g2.g3) == 3
+    assert len(list(root.g1.g2.g3.groups())) == 1
+    assert len(list(root.g1.g2.g3.datasets())) == 2
+    assert len(root.g1.g2.g3.g4) == 1
+    assert len(list(root.g1.g2.g3.g4.groups())) == 0
+    assert len(list(root.g1.g2.g3.g4.datasets())) == 1
+
+    d3_removed = root.remove('g1/g2/g3/d3')
+    assert d3_removed is d3
+    assert 'd3' not in root['/g1/g2/g3']
+    assert 'd3' not in root.g1['g2/g3']
+    assert 'd3' not in root.g1.g2['/g3']
+    assert len(root) == 8
+    assert len(list(root.groups())) == 4
+    assert len(list(root.datasets())) == 4
+    assert len(root.g1) == 7
+    assert len(list(root.g1.groups())) == 3
+    assert len(list(root.g1.datasets())) == 4
+    assert len(root.g1.g2) == 5
+    assert len(list(root.g1.g2.groups())) == 2
+    assert len(list(root.g1.g2.datasets())) == 3
+    assert len(root.g1.g2.g3) == 2
+    assert len(list(root.g1.g2.g3.groups())) == 1
+    assert len(list(root.g1.g2.g3.datasets())) == 1
+    assert len(root.g1.g2.g3.g4) == 1
+    assert len(list(root.g1.g2.g3.g4.groups())) == 0
+    assert len(list(root.g1.g2.g3.g4.datasets())) == 1
+
+    d1_removed = root.g1.g2.remove('d1')
+    assert d1_removed is d1
+    assert 'd1' not in root['/g1/g2']
+    assert 'd1' not in root.g1['/g2']
+    assert 'd1' not in root.g1.g2
+    assert len(root) == 7
+    assert len(list(root.groups())) == 4
+    assert len(list(root.datasets())) == 3
+    assert len(root.g1) == 6
+    assert len(list(root.g1.groups())) == 3
+    assert len(list(root.g1.datasets())) == 3
+    assert len(root.g1.g2) == 4
+    assert len(list(root.g1.g2.groups())) == 2
+    assert len(list(root.g1.g2.datasets())) == 2
+    assert len(root.g1.g2.g3) == 2
+    assert len(list(root.g1.g2.g3.groups())) == 1
+    assert len(list(root.g1.g2.g3.datasets())) == 1
+    assert len(root.g1.g2.g3.g4) == 1
+    assert len(list(root.g1.g2.g3.g4.groups())) == 0
+    assert len(list(root.g1.g2.g3.g4.datasets())) == 1
+
+    g3 = root.g1.g2.g3
+    g3_removed = root.remove('/g1/g2/g3')
+    assert g3 is g3_removed
+    assert g3 not in root['/g1/g2']
+    assert g3 not in root.g1['g2']
+    assert len(root) == 4
+    assert len(list(root.groups())) == 2
+    assert len(list(root.datasets())) == 2
+    assert len(root.g1) == 3
+    assert len(list(root.g1.groups())) == 1
+    assert len(list(root.g1.datasets())) == 2
+    assert len(root.g1.g2) == 1
+    assert len(list(root.g1.g2.groups())) == 0
+    assert len(list(root.g1.g2.datasets())) == 1
+
+    g2 = root['/g1/g2']
+    g2_removed = root.g1.remove('g2')
+    assert g2 is g2_removed
+    assert g2 not in root['/g1']
+    assert g2 not in root.g1
+    assert len(root) == 2
+    assert len(list(root.groups())) == 1
+    assert len(list(root.datasets())) == 1
+    assert len(root.g1) == 1
+    assert len(list(root.g1.groups())) == 0
+    assert len(list(root.g1.datasets())) == 1
+
+    assert root.remove('a/b/c/d') is None

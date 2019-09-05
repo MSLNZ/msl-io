@@ -1,6 +1,8 @@
 """
 A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 """
+import os
+
 from .vertex import Vertex
 from .dataset import Dataset
 
@@ -269,7 +271,17 @@ class Group(Vertex):
             if there was no :class:`Group` or :class:`Dataset` with the specified `name`.
         """
         name = '/' + name.strip('/')
-        return self.pop(name, None)
+        obj = self.pop(name, None)
+        if obj is not None:
+            # then pop it from descendants as well
+            dirname, basename = os.path.split(name)
+            while dirname != '/':
+                item = self[dirname].pop(basename, None)
+                if item is not None:
+                    assert item is obj
+                basename = '{}/{}'.format(os.path.basename(dirname), basename)
+                dirname = os.path.dirname(dirname)
+        return obj
 
     def _check(self, is_read_only, **kwargs):
         self._raise_if_read_only()
