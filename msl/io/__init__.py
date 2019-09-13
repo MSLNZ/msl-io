@@ -6,7 +6,10 @@ import os
 import importlib
 from collections import namedtuple
 
-from .utils import search
+from .utils import (
+    search,
+    send_email,
+)
 from .register import (
     register,
     _readers,
@@ -42,7 +45,7 @@ for module in os.listdir(os.path.dirname(__file__) + '/readers'):
 
 
 def read(url, **kwargs):
-    """Factory function for reading a data file.
+    """Read a file that has a :ref:`Reader <io-readers>` implemented.
 
     Parameters
     ----------
@@ -88,7 +91,7 @@ def read_table(url, **kwargs):
 
     1. The first row is a header.
     2. All rows have the same number of columns.
-    3. All values in a column are of the same data type.
+    3. All data values in a column have the same data type.
 
     Parameters
     ----------
@@ -96,8 +99,8 @@ def read_table(url, **kwargs):
         The path to the file to read.
     **kwargs
         If the file is an Excel spreadsheet then the keyword arguments are passed to
-        :func:~`msl.io.tables.read_table_excel` otherwise all keyword arguments are passed
-        to :func:~`msl.io.tables.read_table_text`.
+        :func:`~msl.io.tables.read_table_excel` otherwise all keyword arguments are passed
+        to :func:`~msl.io.tables.read_table_text`.
 
     Returns
     -------
