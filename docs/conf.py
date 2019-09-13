@@ -222,6 +222,7 @@ intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None),
     'msl.package_manager': ('https://msl-package-manager.readthedocs.io/en/stable/', None),
+    'xlrd': ('https://xlrd.readthedocs.io/en/stable/', None),
 }
 
 # warn about all broken links

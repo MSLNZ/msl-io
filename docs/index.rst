@@ -15,15 +15,18 @@ associated with them.
 The data files that can be read are not restricted to HDF5_ files, but, rather any
 file format that has a :ref:`Reader <io-readers>` class implemented can be read.
 
+**Getting Started:**
+
 * :ref:`msl-io-read`
 * :ref:`msl-io-write`
 * :ref:`msl-io-convert`
+* :ref:`msl-io-read-table`
 
 .. _msl-io-read:
 
 Read a File
 ------------
-To read a file it is as easy as
+The :func:`~msl.io.read` function is used to read a file
 
 .. code-block:: pycon
 
@@ -150,6 +153,35 @@ Suppose you had an HDF5_ file and you wanted to convert it to the JSON_ format,
    >>> h5 = read('my_file.h5')
    >>> writer = JSONWriter('my_file.json')
    >>> writer.write(root=h5)
+
+
+.. _msl-io-read-table:
+
+Read a Tabular File
+-------------------
+The :func:`~msl.io.read_table` function is used to read a table from a file.
+
+A *table* has the following properties:
+
+1. The first row is a header.
+2. All rows have the same number of columns.
+3. All values in a column are of the same data type.
+
+The returned object is a :class:`~msl.io.dataset.Dataset` with the header provided as metadata.
+
+Read a table from a text-based file
+
+.. code-block:: pycon
+
+    >>> from msl.io import read_table
+    >>> dataset = read_table('my_data.csv')
+
+or from an Excel spreadsheet
+
+.. code-block:: pycon
+
+    >>> from msl.io import read_table
+    >>> dataset = read_table('my_data.xlsx', cell='B2:H26')
 
 ========
 Contents

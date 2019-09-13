@@ -19,6 +19,12 @@ from .writers import (
     JSONWriter,
     HDF5Writer,
 )
+from .base_io import Root
+from .readers.excel import ExcelReader
+from .tables import (
+    read_table_text,
+    read_table_excel,
+)
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2019, ' + __author__
@@ -73,3 +79,33 @@ def read(url, **kwargs):
             return root
 
     raise IOError('No Reader exists to read {!r}'.format(url))
+
+
+def read_table(url, **kwargs):
+    """Read tabular data from a file.
+
+    A *table* has the following properties:
+
+    1. The first row is a header.
+    2. All rows have the same number of columns.
+    3. All values in a column are of the same data type.
+
+    Parameters
+    ----------
+    url : :class:`str`
+        The path to the file to read.
+    **kwargs
+        If the file is an Excel spreadsheet then the keyword arguments are passed to
+        :func:~`msl.io.tables.read_table_excel` otherwise all keyword arguments are passed
+        to :func:~`msl.io.tables.read_table_text`.
+
+    Returns
+    -------
+    :class:`~msl.io.dataset.Dataset`
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is defined as metadata.
+    """
+    extn = Reader.get_extension(url).lower()
+    if extn in ['.xls', '.xlsx']:
+        return read_table_excel(url, **kwargs)
+    else:
+        return read_table_text(url, **kwargs)

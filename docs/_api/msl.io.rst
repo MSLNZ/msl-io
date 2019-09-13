@@ -17,5 +17,6 @@ Submodules
    msl.io.group
    msl.io.metadata
    msl.io.register
+   msl.io.tables
    msl.io.utils
    msl.io.vertex
