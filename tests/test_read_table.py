@@ -59,7 +59,7 @@ def test_fetch_all_data():
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
         assert np.array_equal(dset.metadata.header, header)
-        assert np.array_equal(dset, data)
+        assert np.array_equal(dset.data, data)
         assert dset.shape == (10,)
 
 
@@ -77,7 +77,7 @@ def test_ignore_timestamp_column():
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
         assert np.array_equal(dset.metadata.header, header[1:])
-        assert np.array_equal(dset, floats)
+        assert np.array_equal(dset.data, floats)
         assert dset.shape == (10, 4)
 
 
@@ -94,7 +94,7 @@ def test_single_column():
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
         assert np.array_equal(dset.metadata.header, [header[1]])
-        assert np.array_equal(dset, data['f1'])
+        assert np.array_equal(dset.data, data['f1'])
         assert dset.shape == (10,)
 
 
@@ -111,7 +111,7 @@ def test_single_row():
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
         assert np.array_equal(dset.metadata.header, header)
-        assert np.array_equal(dset, data[0])
+        assert np.array_equal(dset.data, data[0])
 
 
 def test_header_only():
