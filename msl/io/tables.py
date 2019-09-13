@@ -12,6 +12,7 @@ from . import (
 )
 from .dataset import Dataset
 
+_delimiter_map = {'.csv': ','}
 _excel_range_regex = re.compile(r'([a-zA-Z]+)(\d+):([a-zA-Z]+)(\d+)')
 
 
@@ -22,15 +23,16 @@ def read_table_text(url, **kwargs):
 
     1. The first row is a header.
     2. All rows have the same number of columns.
-    3. All values in a column are of the same data type.
+    3. All data values in a column have the same data type.
 
     Parameters
     ----------
     url : :class:`str`
         The path to the file to read.
     **kwargs
-        All keyword arguments are passed to :func:`numpy.loadtxt`. The
-        `delimiter` is automatically set to be ``','`` for CSV files.
+        All keyword arguments are passed to :func:`~numpy.loadtxt`. If the
+        `delimiter` is not specified and the `url` has ``csv`` as the file
+        extension then the `delimiter` is automatically set to be ``','``.
 
     Returns
     -------
@@ -41,9 +43,8 @@ def read_table_text(url, **kwargs):
         raise ValueError('Cannot use the "unpack" option')
 
     if 'delimiter' not in kwargs:
-        extn = Reader.get_extension(url)
-        delimiter_map = {'.csv': ','}
-        kwargs['delimiter'] = delimiter_map.get(extn)
+        extn = Reader.get_extension(url).lower()
+        kwargs['delimiter'] = _delimiter_map.get(extn)
 
     if 'skiprows' not in kwargs:
         kwargs['skiprows'] = 1
@@ -70,7 +71,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
 
     1. The first row is a header.
     2. All rows have the same number of columns.
-    3. All values in a column are of the same data type.
+    3. All data values in a column have the same data type.
 
     Parameters
     ----------
@@ -86,9 +87,9 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
         Whether dates should be returned as :class:`~datetime.datetime` objects.
         If :data:`False` then dates are returned as an ISO-8601 :class:`str`.
     dtype : :class:`object`, optional
-        If specified then it must be able to be converted to a :class:`numpy.dtype` object.
+        If specified then it must be able to be converted to a :class:`~numpy.dtype` object.
     **kwargs
-        All keyword arguments are passed to :func:`xlrd.open_workbook`.
+        All additional keyword arguments are passed to :func:`~xlrd.open_workbook`.
 
     Returns
     -------
