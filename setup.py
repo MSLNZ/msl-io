@@ -87,13 +87,14 @@ def fetch_init(key):
     return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
-tests_require = ['h5py>=2.9', 'pytest-cov']
+install_requires = ['xlrd']
+tests_require = ['h5py>=2.9', 'pytest-cov', 'xlrd']
 
 if sys.version_info[:2] == (2, 7):
-    install_requires = ['numpy<=1.16.4']
-    tests_require.append('pytest<=4.6.4')
+    install_requires.append('numpy<1.17')
+    tests_require.append('pytest<5.0')
 else:
-    install_requires = ['numpy']
+    install_requires.append('numpy')
     tests_require.append('pytest')
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
