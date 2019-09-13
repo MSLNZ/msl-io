@@ -1,26 +1,26 @@
 """
-Reader for Excel spreadsheets (.xls and .xlsx).
+Read an Excel spreadsheet (.xls and .xlsx).
 """
 from datetime import datetime
 
 import xlrd
 
-# Do not register this Reader because the information in an Excel file is unstructured
-# and one cannot generalize how to create a Root.
-
 
 class ExcelReader(object):
 
     def __init__(self, url, **kwargs):
-        """Reader for Excel spreadsheets (.xls and .xlsx).
+        """Read an Excel spreadsheet (.xls and .xlsx).
 
         This class simply provides a convenience for reading information
-        from Excel spreadsheets. It is not a registered :class:`~msl.io.base_io.Reader`.
+        from Excel spreadsheets. It is not :obj:`~msl.io.register.register`\ed
+        as a :class:`~msl.io.base_io.Reader` because the information in an Excel
+        spreadsheet is unstructured and therefore one cannot generalize how to parse
+        an Excel spreadsheet to create a :class:`~msl.io.base_io.Root`.
 
         Parameters
         ----------
         url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+            The location of an Excel spreadsheet on a local hard drive or on a network.
         **kwargs
             All keyword arguments are passed to :func:`~xlrd.open_workbook`.
         """
@@ -34,7 +34,7 @@ class ExcelReader(object):
 
     @property
     def url(self):
-        """:class:`str`: The location of the file on a local hard drive or on a network."""
+        """:class:`str`: The location of the Excel spreadsheet on a local hard drive or on a network."""
         return self._url
 
     @property
@@ -43,7 +43,7 @@ class ExcelReader(object):
         return self._workbook
 
     def read(self, cell=None, sheet=None, as_datetime=True):
-        """Read information from an Excel spreadsheet.
+        """Read information from the Excel spreadsheet.
 
         Parameters
         ----------
@@ -105,6 +105,28 @@ class ExcelReader(object):
         self.close()
 
     def _get_cell_range(self, sheet, start_row, end_row, start_col, end_col, as_datetime):
+        """Get a range of values.
+
+        Parameters
+        ----------
+        sheet : :class:`xlrd.sheet.Sheet`
+            The sheet object.
+        start_row : :class:`int`
+            The starting row (0 based).
+        end_row : :class:`int`
+            The ending row (0 based).
+        start_col : :class:`int`
+            The starting column (0 based).
+        end_col : :class:`int`
+            The ending column (0 based).
+        as_datetime : :class:`bool`
+            Whether dates are :class:`datetime.datetime` or :class:`str`.
+
+        Returns
+        -------
+        :class:`list` or :class:`tuple`
+            The values.
+        """
         if start_col == end_col:
             return tuple(self._get_cell(sheet, r, start_col, as_datetime) for r in range(start_row, end_row + 1))
         elif start_row == end_row:
@@ -114,6 +136,23 @@ class ExcelReader(object):
                     for r in range(start_row, end_row + 1)]
 
     def _get_cell(self, sheet, row, col, as_datetime):
+        """Get the value in a cell.
+
+        Parameters
+        ----------
+        sheet : :class:`xlrd.sheet.Sheet`
+            The sheet object.
+        row : :class:`int`
+            The row number (0 based).
+        col : :class:`int`
+            The column number (0 based).
+        as_datetime : :class:`bool`
+            Whether dates are :class:`datetime.datetime` or :class:`str`.
+
+        Returns
+        -------
+        The value.
+        """
         cell = sheet.cell(row, col)
         t = cell.ctype
         if t == xlrd.XL_CELL_NUMBER:

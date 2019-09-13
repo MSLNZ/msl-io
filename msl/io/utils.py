@@ -18,17 +18,17 @@ except NameError:
 
 def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
            ignore_permission_error=True, ignore_hidden_folders=True, follow_symlinks=False):
-    """Search for files starting from a base folder.
+    """Search for files starting from a root folder.
 
     Parameters
     ----------
     folder : :class:`str`
-        The base folder to begin searching for files.
+        The root folder to begin searching for files.
     pattern : :class:`str`, optional
         A regex string to use to filter the filenames. If :data:`None` then no
         filtering is applied and all files are yielded.
 
-        Examples,
+        Examples:
 
         * ``r'data'`` :math:`\\rightarrow` find all files with the word ``data``
           in the filename
@@ -47,7 +47,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         The pattern of folder names to exclude from the search. Can be a regex
         string. If :data:`None` then include all folders in the search.
 
-        Examples,
+        Examples:
 
         * ``r'bin'`` :math:`\\rightarrow` exclude all folders that contain the word ``bin``
 
