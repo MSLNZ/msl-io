@@ -92,10 +92,10 @@ tests_require = ['h5py>=2.9', 'pytest-cov', 'xlrd']
 
 if sys.version_info[:2] == (2, 7):
     install_requires.append('numpy<1.17')
-    tests_require.append('pytest<5.0')
+    tests_require.extend(['pytest<5.0', 'numpy>=1.16,<1.17'])
 else:
     install_requires.append('numpy')
-    tests_require.append('pytest')
+    tests_require.extend(['pytest', 'numpy>=1.16'])
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
