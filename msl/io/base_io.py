@@ -38,7 +38,7 @@ class Root(Group):
 
     @property
     def url(self):
-        """:class:`str`: The location of a file on a local hard drive or on a network."""
+        """:class:`str`: The location of the file on a local hard drive or on a network."""
         return self._url
 
     def tree(self, indent=2):
