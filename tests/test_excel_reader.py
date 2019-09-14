@@ -21,7 +21,7 @@ def test_raises():
     assert 'A1, BH11' in str(e.value)
 
     # the sheet does not exist in the Excel workbook
-    with pytest.raises(IOError) as e:
+    with pytest.raises(ValueError) as e:
         ExcelReader(url).read(sheet='XXXYYYZZZ')
     assert 'XXXYYYZZZ' in str(e.value)
 

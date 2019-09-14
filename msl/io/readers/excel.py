@@ -76,12 +76,12 @@ class ExcelReader(object):
         try:
             sheet = self._workbook.sheet_by_name(sheet_name)
         except xlrd.XLRDError:
-            # TODO want to raise IOError without nested exceptions
+            # TODO want to raise ValueError without nested exceptions
             #  Can "raise from None" when dropping Python 2 support
             sheet = None
 
         if sheet is None:
-            raise IOError('There is no sheet named {!r} in {!r}'.format(sheet_name, self._url))
+            raise ValueError('There is no sheet named {!r} in {!r}'.format(sheet_name, self._url))
 
         if cell is None:
             start_row, end_row = 0, sheet.nrows - 1
