@@ -49,19 +49,19 @@ def read_table_text(url, **kwargs):
     if 'skiprows' not in kwargs:
         kwargs['skiprows'] = 1
 
-    first_line = Reader.get_lines(url, 1, remove_empty_lines=True)
+    first_line = Reader.get_lines(url, kwargs['skiprows'], kwargs['skiprows'])
     if not first_line:
-        header = np.array([], dtype=str)
-        data = np.array([])
+        header, data = [], []
     else:
         header = first_line[0].split(kwargs['delimiter'])
         data = np.loadtxt(url, **kwargs)
-        if 'usecols' in kwargs:
-            if isinstance(kwargs['usecols'], int):
-                kwargs['usecols'] = [kwargs['usecols']]
-            header = [header[i] for i in kwargs['usecols']]
+        use_cols = kwargs.get('usecols')
+        if use_cols:
+            if isinstance(use_cols, int):
+                use_cols = [use_cols]
+            header = [header[i] for i in use_cols]
 
-    return Dataset(os.path.basename(url), None, True, data=data, header=np.asarray(header))
+    return Dataset(os.path.basename(url), None, True, data=data, header=np.asarray(header, dtype=str))
 
 
 def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
@@ -105,8 +105,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
     excel = ExcelReader(url, **kwargs)
     table = excel.read(cell=cell, sheet=sheet, as_datetime=as_datetime)
     if not table:
-        header = np.array([], dtype=str)
-        data = np.array([])
+        header, data = [], []
     else:
         # determine the range of rows and columns that were requested
         # to make the result consistent with the way read_table_text would return the table
@@ -121,19 +120,13 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
             row2, col2 = sheet.nrows, sheet.ncols
 
         if row1 == row2:
-            header = np.asarray(table, dtype=str)
-            data = np.asarray(table, dtype=dtype)
+            header, data = table, []
         elif col1 == col2:
-            header = np.asarray([table[0]], dtype=str)
-            if len(table) == 1:
-                data = np.asarray([table[0]], dtype=dtype)
-            else:
-                data = np.asarray(table[1:], dtype=dtype).flatten()
+            header, data = [table[0]], table[1:]
         else:
-            header = np.asarray(table[0], dtype=str)
-            data = np.asarray(table[1:], dtype=dtype)
+            header, data = table[0], table[1:]
             if len(data) == 1:  # a row vector
-                data = np.asarray(data[0], dtype=dtype)
+                data = data[0]
 
     excel.close()
-    return Dataset(os.path.basename(url), None, True, data=data, header=header)
+    return Dataset(os.path.basename(url), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))

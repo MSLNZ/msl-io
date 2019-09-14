@@ -100,8 +100,8 @@ def test_single_column():
 
 def test_single_row():
     params = [
-        ('.csv', dict(dtype=data.dtype, max_rows=1)),  # skiprows is 1 by default
-        ('.txt', dict(dtype=data.dtype, max_rows=1, delimiter='\t')),  # skiprows is 1 by default
+        ('.csv', dict(dtype=data.dtype, max_rows=1)),
+        ('.txt', dict(dtype=data.dtype, max_rows=1, delimiter='\t')),
         ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cell='A1:E2')),
         ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='BH11:BL12')),
         ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cell='A1:E2')),
@@ -116,8 +116,8 @@ def test_single_row():
 
 def test_header_only():
     params = [
-        ('.csv', dict(dtype=str, skiprows=0, max_rows=1)),
-        ('.txt', dict(dtype=str, skiprows=0, max_rows=1, delimiter='\t')),
+        ('.csv', dict(dtype=str, max_rows=0)),
+        ('.txt', dict(dtype=str, max_rows=0, delimiter='\t')),
         ('.xls', dict(sheet='A1', as_datetime=False, cell='A1:E1')),
         ('.xls', dict(sheet='BH11', as_datetime=False, cell='BH11:BL11')),
         ('.xlsx', dict(sheet='A1', as_datetime=False, cell='A1:E1')),
@@ -127,8 +127,7 @@ def test_header_only():
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
         assert np.array_equal(dset.metadata.header, header)
-        assert np.array_equal(dset.data, header)
-        assert dset.shape == (5,)
+        assert dset.data.size == 0
 
 
 def test_datetime_objects():
@@ -156,3 +155,25 @@ def test_datetime_objects():
         for h in header:
             assert np.array_equal(dset[h], data_datetimes[h])
         assert dset.shape == (10,)
+
+
+def test_skip_rows():
+    params = [
+        ('.csv', dict(dtype=data.dtype, skiprows=5)),
+        ('.txt', dict(dtype=data.dtype, delimiter='\t', skiprows=5)),
+    ]
+    new_header = ['2019-09-11 14:07:07', '-0.505250', '0.000119', '0.500923', '0.000120']
+    for extn, kwargs in params:
+        dset = read_table(get_url(extn), **kwargs)
+        assert np.array_equal(dset.metadata.header, new_header)
+        assert np.array_equal(dset.data, data[4:])
+        assert dset.shape == (6,)
+
+    params = [
+        ('.csv', dict(skiprows=100)),
+        ('.txt', dict(skiprows=100)),
+    ]
+    for extn, kwargs in params:
+        dset = read_table(get_url(extn), **kwargs)
+        assert dset.metadata.header.size == 0
+        assert dset.size == 0
