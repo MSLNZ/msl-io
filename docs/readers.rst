@@ -1,23 +1,21 @@
 .. _io-readers:
 
-===========
-MSL Readers
-===========
+=======
+Readers
+=======
 
 The following :class:`~msl.io.base_io.Reader`\s are available:
 
 .. toctree::
 
    DRS - Light Standards <_api/msl.io.readers.detector_responsivity_system>
-   Excel <_api/msl.io.readers.excel>
    HDF5 <_api/msl.io.readers.hdf5>
    JSON <_api/msl.io.readers.json_>
 
 .. _io-create-reader:
 
-===================
 Create a New Reader
-===================
++++++++++++++++++++
 When adding a new MSL Reader class to the repository_ the following steps should be performed.
 Please follow the :ref:`style guide <style guide>`.
 

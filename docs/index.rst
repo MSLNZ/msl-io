@@ -12,8 +12,8 @@ associated with them.
 
 .. image:: _static/hdf5_data_model.png
 
-The data files that can be read are not restricted to HDF5_ files, but, rather any
-file format that has a :ref:`Reader <io-readers>` class implemented can be read.
+The data files that can be read are not restricted to HDF5_ files, but any
+file format that has a :ref:`Reader <io-readers>` implemented can be read.
 
 **Getting Started:**
 
@@ -145,7 +145,7 @@ To write the file use *(NOTE: the file is not created until you call the* ``writ
 Convert a File
 --------------
 You can convert between file formats using any of the :ref:`Writers <io-writers>`.
-Suppose you had an HDF5_ file and you wanted to convert it to the JSON_ format,
+Suppose you had an HDF5_ file and you wanted to convert it to the JSON_ format
 
 .. code-block:: pycon
 
@@ -165,23 +165,17 @@ A *table* has the following properties:
 
 1. The first row is a header.
 2. All rows have the same number of columns.
-3. All values in a column are of the same data type.
+3. All data values in a column have the same data type.
 
 The returned object is a :class:`~msl.io.dataset.Dataset` with the header provided as metadata.
 
-Read a table from a text-based file
+You can read a table from a text-based file or from an Excel spreadsheet
 
 .. code-block:: pycon
 
     >>> from msl.io import read_table
-    >>> dataset = read_table('my_data.csv')
-
-or from an Excel spreadsheet
-
-.. code-block:: pycon
-
-    >>> from msl.io import read_table
-    >>> dataset = read_table('my_data.xlsx', cell='B2:H26')
+    >>> csv = read_table('my_data.csv')
+    >>> excel = read_table('my_data.xlsx', cell='B2:H26')
 
 ========
 Contents
@@ -196,8 +190,8 @@ Contents
    Metadata <metadata>
    readers
    writers
-   attribute_access
    API <api_docs>
+   attribute_access
    License <license>
    Authors <authors>
    Release Notes <changelog>

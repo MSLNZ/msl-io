@@ -1,8 +1,8 @@
 .. _io-writers:
 
-===========
-MSL Writers
-===========
+=======
+Writers
+=======
 
 The following :class:`~msl.io.base_io.Writer`\s are available:
 
@@ -13,9 +13,8 @@ The following :class:`~msl.io.base_io.Writer`\s are available:
 
 .. _io-create-writer:
 
-===================
 Create a New Writer
-===================
++++++++++++++++++++
 When adding a new MSL Writer class to the repository_ the following steps should be performed.
 Please follow the :ref:`style guide <style guide>`.
 

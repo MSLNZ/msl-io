@@ -21,15 +21,17 @@ Dependencies
 ------------
 * Python 2.7, 3.5+
 * numpy_
+* xlrd_
 
 Optional Dependencies
 ---------------------
 The following packages are not automatically installed when **MSL-IO** is installed but may be
 required to read some data files.
 
-* H5py_
+* h5py_ -- to include it automatically when installing **MSL-IO** run ``msl install io[h5py]``
 
 
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _numpy: https://www.numpy.org/
-.. _H5py: https://www.h5py.org/
+.. _h5py: https://www.h5py.org/
+.. _xlrd: https://xlrd.readthedocs.io/en/latest/
