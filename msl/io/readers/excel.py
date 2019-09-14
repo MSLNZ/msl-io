@@ -12,7 +12,7 @@ class ExcelReader(object):
         """Read an Excel spreadsheet (.xls and .xlsx).
 
         This class simply provides a convenience for reading information
-        from Excel spreadsheets. It is not :obj:`~msl.io.register.register`\ed
+        from Excel spreadsheets. It is not :obj:`~msl.io.utils.register`\ed
         as a :class:`~msl.io.base_io.Reader` because the information in an Excel
         spreadsheet is unstructured and therefore one cannot generalize how to parse
         an Excel spreadsheet to create a :class:`~msl.io.base_io.Root`.

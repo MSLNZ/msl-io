@@ -9,8 +9,6 @@ from collections import namedtuple
 from .utils import (
     search,
     send_email,
-)
-from .register import (
     register,
     _readers,
 )

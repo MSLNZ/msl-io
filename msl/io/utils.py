@@ -7,13 +7,34 @@ import logging
 from smtplib import SMTP
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-logger = logging.getLogger(__name__)
-
 try:
     PermissionError
 except NameError:
     PermissionError = OSError  # for Python 2.7
+
+logger = logging.getLogger(__package__)
+
+_readers = []
+
+
+def register(reader_class):
+    """Use as a decorator to register a :class:`~msl.io.base_io.Reader` subclass.
+
+    Parameters
+    ----------
+    reader_class : :class:`~msl.io.base_io.Reader`
+        A :class:`~msl.io.base_io.Reader` subclass.
+
+    Returns
+    -------
+    :class:`~msl.io.base_io.Reader`
+        The :class:`~msl.io.base_io.Reader`.
+    """
+    def append(cls):
+        _readers.append(cls)
+        logger.debug('registered {!r}'.format(cls))
+        return cls
+    return append(reader_class)
 
 
 def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
