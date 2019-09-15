@@ -54,16 +54,19 @@ Please follow the :ref:`style guide <style guide>`.
    template that is used for the other ``.rst`` files in this directory.
 5. Add the new Writer, alphabetically, to the ``.. toctree::`` in `docs/writers.rst`_. Follow the
    template that is used for the other Writers.
-6. Add yourself to ``AUTHORS.rst`` and add a note in ``CHANGES.rst`` that you created this new Writer. These
+6. Add the new Writer, alphabetically, to the ``.. autosummary::`` in `docs/api_docs.rst`_. Follow the
+   template that is used for the other Writers.
+7. Add yourself to ``AUTHORS.rst`` and add a note in ``CHANGES.rst`` that you created this new Writer. These
    files are located in the root directory of the **MSL-IO** package.
-7. Build the documentation running ``python setup.py docs`` (view the documentation by opening the
+8. Build the documentation running ``python setup.py docs`` (view the documentation by opening the
    ``docs/_build/html/index.html`` file).
-8. If running the tests pass and building the documentation show no errors/warnings then create a `pull request`_.
+9. If running the tests pass and building the documentation show no errors/warnings then create a `pull request`_.
 
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-io
 .. _tests/: https://github.com/MSLNZ/msl-io/blob/master/tests/
 .. _docs/_api: https://github.com/MSLNZ/msl-io/tree/master/docs/_api
 .. _docs/writers.rst: https://github.com/MSLNZ/msl-io/blob/master/docs/writers.rst
+.. _docs/api_docs.rst: https://github.com/MSLNZ/msl-io/blob/master/docs/api_docs.rst
 .. _msl/io/writers/: https://github.com/MSLNZ/msl-io/tree/master/msl/io/writers
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/

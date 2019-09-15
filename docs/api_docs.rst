@@ -12,14 +12,19 @@ The following functions are available to read a file
    ~msl.io.read_table
    ~msl.io.readers.excel.ExcelReader
 
+the following classes are available as :ref:`io-writers`
+
+.. autosummary::
+
+   ~msl.io.writers.hdf5.HDF5Writer
+   ~msl.io.writers.json_.JSONWriter
+
 and general helper functions
 
 .. autosummary::
 
    ~msl.io.utils.search
    ~msl.io.utils.send_email
-
-See the :ref:`io-readers` and :ref:`io-writers` sections for more information.
 
 Package Structure
 -----------------
@@ -38,3 +43,6 @@ Package Structure
    msl.io.vertex <_api/msl.io.vertex>
    msl.io.readers <_api/msl.io.readers>
    msl.io.writers <_api/msl.io.writers>
+
+.. _HDF5: https://www.hdfgroup.org/
+.. _JSON: https://www.json.org/
