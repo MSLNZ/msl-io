@@ -25,6 +25,7 @@ from .readers.excel import ExcelReader
 from .tables import (
     read_table_text,
     read_table_excel,
+    extension_delimiter_map,
 )
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
@@ -103,7 +104,7 @@ def read_table(url, **kwargs):
     Returns
     -------
     :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is defined as metadata.
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
     """
     extn = Reader.get_extension(url).lower()
     if extn in ['.xls', '.xlsx']:

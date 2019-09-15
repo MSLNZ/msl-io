@@ -12,8 +12,24 @@ from . import (
 )
 from .dataset import Dataset
 
-_delimiter_map = {'.csv': ','}
 _excel_range_regex = re.compile(r'([a-zA-Z]+)(\d+):([a-zA-Z]+)(\d+)')
+
+extension_delimiter_map = {'.csv': ','}
+""":class:`dict`: The delimiter to use to separate columns in a table based on the file extension.
+
+If the `delimiter` is not specified when calling the :func:`~msl.io.read_table` function then this
+extension-delimiter map is used to determine the value of the `delimiter`. If the file extension
+is not in the map then the value of the `delimiter` is :data:`None` (i.e., split columns by any
+whitespace). 
+
+Examples
+--------
+You can customize your own map
+
+    >>> from msl.io import extension_delimiter_map
+    >>> extension_delimiter_map['.txt'] = '\\t'
+
+"""
 
 
 def read_table_text(url, **kwargs):
@@ -37,14 +53,14 @@ def read_table_text(url, **kwargs):
     Returns
     -------
     :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is defined as metadata.
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
     """
     if kwargs.get('unpack', False):
         raise ValueError('Cannot use the "unpack" option')
 
     if 'delimiter' not in kwargs:
         extn = Reader.get_extension(url).lower()
-        kwargs['delimiter'] = _delimiter_map.get(extn)
+        kwargs['delimiter'] = extension_delimiter_map.get(extn)
 
     if 'skiprows' not in kwargs:
         kwargs['skiprows'] = 1
@@ -78,7 +94,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
     url : :class:`str`
         The path to the file to read.
     cell : :class:`str`, optional
-        The cells to read (for example, `'C9:G20'``). If not specified then reads all data
+        The cells to read (for example, ``'C9:G20'``). If not specified then reads all data
         in the specified `sheet`.
     sheet : :class:`str`, optional
         The name of the sheet to read the data from. If there is only one sheet
@@ -94,7 +110,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
     Returns
     -------
     :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is defined as metadata.
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
     """
     match = None
     if cell is not None:
