@@ -25,6 +25,7 @@ _original_make_iterencode = json.encoder._make_iterencode
 
 
 class JSONWriter(Writer):
+    """Create a JSON_ writer."""
 
     def write(self, url=None, root=None, **kwargs):
         """Write to a JSON_ file.
@@ -36,7 +37,7 @@ class JSONWriter(Writer):
         Version 1.0 specifications
 
             * Use the ``'dtype'`` and ``'data'`` keys to uniquely identify a
-              `JSON <https://www.json.org/>`_ object as a :class:`~msl.io.dataset.Dataset`.
+              JSON_ object as a :class:`~msl.io.dataset.Dataset`.
 
             * If a :class:`~msl.io.metadata.Metadata` `key` has a `value` that is a
               :class:`~msl.io.metadata.Metadata` object then the `key` becomes the name

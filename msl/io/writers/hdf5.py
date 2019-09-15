@@ -2,10 +2,10 @@
 Writer for the HDF5_ file format.
 
 .. attention::
-   requires that the H5py_ package is installed.
+   requires that the h5py_ package is installed.
 
 .. _HDF5: https://www.hdfgroup.org/
-.. _H5py: https://www.h5py.org/
+.. _h5py: https://www.h5py.org/
 """
 import numpy as np
 try:
@@ -23,6 +23,7 @@ if not IS_PYTHON2:
 
 
 class HDF5Writer(Writer):
+    """Create a HDF5_ writer."""
 
     def write(self, url=None, root=None, **kwargs):
         """Write to a HDF5_ file.

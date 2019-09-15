@@ -23,8 +23,16 @@ class ExcelReader(object):
             The location of an Excel spreadsheet on a local hard drive or on a network.
         **kwargs
             All keyword arguments are passed to :func:`~xlrd.open_workbook`.
-        """
 
+        Examples
+        --------
+        >>> from msl.io import ExcelReader
+        >>> excel = ExcelReader('lab_environment.xlsx')
+        >>> excel.read('B2')
+        49.82
+        >>> excel.read('A1:B4')
+        [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
+        """
         # change the default on_demand value
         if 'on_demand' not in kwargs:
             kwargs['on_demand'] = True
