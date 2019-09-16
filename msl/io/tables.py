@@ -105,7 +105,8 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
     dtype : :class:`object`, optional
         If specified then it must be able to be converted to a :class:`~numpy.dtype` object.
     **kwargs
-        All additional keyword arguments are passed to :func:`~xlrd.open_workbook`.
+        All additional keyword arguments are passed to :func:`~xlrd.open_workbook`. Can use
+        an `encoding` keyword argument as an alias for `encoding_override`.
 
     Returns
     -------

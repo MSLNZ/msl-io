@@ -22,7 +22,8 @@ class ExcelReader(object):
         url : :class:`str`
             The location of an Excel spreadsheet on a local hard drive or on a network.
         **kwargs
-            All keyword arguments are passed to :func:`~xlrd.open_workbook`.
+            All keyword arguments are passed to :func:`~xlrd.open_workbook`. Can use
+            an `encoding` keyword argument as an alias for `encoding_override`.
 
         Examples
         --------
@@ -36,6 +37,10 @@ class ExcelReader(object):
         # change the default on_demand value
         if 'on_demand' not in kwargs:
             kwargs['on_demand'] = True
+
+        encoding = kwargs.pop('encoding', None)
+        if encoding is not None:
+            kwargs['encoding_override'] = encoding
 
         self._url = url
         self._workbook = xlrd.open_workbook(url, **kwargs)
