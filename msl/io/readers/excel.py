@@ -115,7 +115,12 @@ class ExcelReader(object):
         self._workbook.release_resources()
 
     def __del__(self):
-        self.close()
+        try:
+            self.close()
+        except AttributeError:
+            # ignore AttributeError: 'ExcelReader' object has no attribute '_workbook'
+            # This could happen if xlrd.open_workbook fails
+            pass
 
     def _get_cell_range(self, sheet, start_row, end_row, start_col, end_col, as_datetime):
         """Get a range of values.
