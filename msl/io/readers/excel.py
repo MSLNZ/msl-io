@@ -23,7 +23,8 @@ class ExcelReader(object):
             The location of an Excel spreadsheet on a local hard drive or on a network.
         **kwargs
             All keyword arguments are passed to :func:`~xlrd.open_workbook`. Can use
-            an `encoding` keyword argument as an alias for `encoding_override`.
+            an `encoding` keyword argument as an alias for `encoding_override`. The
+            default `on_demand` value is :data:`True`.
 
         Examples
         --------
@@ -38,6 +39,7 @@ class ExcelReader(object):
         if 'on_demand' not in kwargs:
             kwargs['on_demand'] = True
 
+        # 'encoding' is an alias for 'encoding_override'
         encoding = kwargs.pop('encoding', None)
         if encoding is not None:
             kwargs['encoding_override'] = encoding
@@ -54,6 +56,10 @@ class ExcelReader(object):
     def workbook(self):
         """:class:`~xlrd.book.Book`: The workbook instance."""
         return self._workbook
+
+    def close(self):
+        """Calls :meth:`~xlrd.book.Book.release_resources`."""
+        self._workbook.release_resources()
 
     def read(self, cell=None, sheet=None, as_datetime=True):
         """Read information from the Excel spreadsheet.
@@ -109,18 +115,6 @@ class ExcelReader(object):
             start_row, start_col = xlrd.xlsx.cell_name_to_rowx_colx(cells[0])
             end_row, end_col = xlrd.xlsx.cell_name_to_rowx_colx(cells[1])
             return self._get_cell_range(sheet, start_row, end_row, start_col, end_col, as_datetime)
-
-    def close(self):
-        """Calls :meth:`~xlrd.book.Book.release_resources`."""
-        self._workbook.release_resources()
-
-    def __del__(self):
-        try:
-            self.close()
-        except AttributeError:
-            # ignore AttributeError: 'ExcelReader' object has no attribute '_workbook'
-            # This could happen if xlrd.open_workbook fails
-            pass
 
     def _get_cell_range(self, sheet, start_row, end_row, start_col, end_col, as_datetime):
         """Get a range of values.
