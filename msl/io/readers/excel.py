@@ -168,6 +168,8 @@ class ExcelReader(object):
         cell = sheet.cell(row, col)
         t = cell.ctype
         if t == xlrd.XL_CELL_NUMBER:
+            if cell.value.is_integer():
+                return int(cell.value)
             return cell.value
         elif t == xlrd.XL_CELL_DATE:
             dt = datetime(*xlrd.xldate_as_tuple(cell.value, self._workbook.datemode))
