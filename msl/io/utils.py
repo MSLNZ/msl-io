@@ -92,11 +92,10 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         The path to a file.
     """
     if levels is not None and levels < 0:
-        logger.debug('find_files -> passed lowest-level folder %r', folder)
         return
 
     if ignore_hidden_folders and os.path.basename(folder).startswith('.'):
-        logger.debug('find_files -> ignore hidden folder %r', folder)
+        logger.debug('ignore hidden folder %r', folder)
         return
 
     if exclude_folders:
@@ -111,7 +110,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         basename = os.path.basename(folder)
         for exclude in ex_compiled:
             if exclude.search(basename):
-                logger.debug('find_files -> excluding folder %r', folder)
+                logger.debug('excluding folder %r', folder)
                 return
     else:
         ex_compiled = None
@@ -120,7 +119,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         try:
             names = os.listdir(folder)
         except PermissionError:
-            logger.debug('find_files -> permission error %r', folder)
+            logger.debug('permission error %r', folder)
             return
     else:
         names = os.listdir(folder)
