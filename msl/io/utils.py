@@ -224,3 +224,4 @@ def send_email(to, config, subject='', body='', frm=None):
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
     server.sendmail(msg['From'], msg['To'], msg.as_string())
+    server.close()
