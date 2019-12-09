@@ -189,8 +189,9 @@ class Group(Vertex):
             The :class:`Group` that was created or that already existed.
         """
         name = '/' + name.strip('/')
+        group_name = name if self.parent is None else self.name + name
         for group in self.groups():
-            if group.name == name:
+            if group.name == group_name:
                 if is_read_only is not None:
                     group.is_read_only = is_read_only
                 group.add_metadata(**metadata)
@@ -245,8 +246,9 @@ class Group(Vertex):
             The :class:`~msl.io.dataset.Dataset` that was created or that already existed.
         """
         name = '/' + name.strip('/')
+        dataset_name = name if self.parent is None else self.name + name
         for dataset in self.datasets():
-            if dataset.name == name:
+            if dataset.name == dataset_name:
                 if is_read_only is not None:
                     dataset.is_read_only = is_read_only
                 if kwargs:  # only add the kwargs that should be Metadata

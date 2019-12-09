@@ -611,6 +611,22 @@ def test_requires():
     assert 'foo' in root.a.b.c.d.e.metadata
     assert root.a.b.c.d.e.metadata.foo == 'bar'
 
+    # make sure that calling require_group from a sub-Group works properly
+    c = a.b.c
+    d = c.d
+    e = d.e
+    assert a.require_group('b') is b
+    assert a.require_group('/b/c') is c
+    assert a.require_group('b/c/') is root.a.b.c
+    assert b.require_group('c/d/e') is e
+    assert b.require_group('c/d/e') is root.a.b.c.d.e
+    assert c.require_group('d') is d
+    assert c.require_group('d') is root.a.b.c.d
+    assert c.require_group('d/e') is e
+    assert c.require_group('/d/e/') is root.a.b.c.d.e
+    assert d.require_group('e') is e
+    assert d.require_group('e/') is root.a.b.c.d.e
+
     # change the read-only value of the new sub-groups that are required
     assert not root.is_read_only
     bb = root.require_group('aa/bb', is_read_only=True, hello='world')
@@ -740,6 +756,21 @@ def test_requires():
     assert root.xx.yy.is_read_only
     with pytest.raises(ValueError):
         yy2.add_metadata(three=3)
+
+    # make sure that calling require_dataset from a sub-Group works properly
+    a = root.a
+    assert a.require_dataset('x') is x
+    assert a.require_dataset('/x') is root.a.x
+    b = root['b']
+    assert b.require_dataset('x/y/z') is root.b.x.y.z
+    x = root['b']['x']
+    assert x.require_dataset('/y/z') is root.b.x.y.z
+    y = root['b']['x']['y']
+    assert y.require_dataset('/z/') is root.b.x.y.z
+    assert root['b']['x']['y'].require_dataset('z') is root.b.x.y.z
+    xx = root.xx
+    assert xx.require_dataset('yy') is root['xx']['yy']
+    assert root.xx.require_dataset('yy/') is yy2
 
 
 def test_tree():
