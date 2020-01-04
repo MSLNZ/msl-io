@@ -22,7 +22,7 @@ class Vertex(Dictionary):
             Whether this vertex is in read-only mode.
         **metadata
             Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for this :class:`Vertex`.
+            for this :class:`~msl.io.vertex.Vertex`.
         """
         super(Vertex, self).__init__(is_read_only)
 
@@ -92,7 +92,7 @@ class Vertex(Dictionary):
 
     @property
     def is_read_only(self):
-        """:class:`bool`: Whether this :class:`Vertex` is in read-only mode.
+        """:class:`bool`: Whether this :class:`~msl.io.vertex.Vertex` is in read-only mode.
 
         Setting this value will also update all sub-:class:`~msl.io.group.Group`\\s
         and sub-:class:`~msl.io.dataset.Dataset`\\s to be in the same mode.
@@ -112,19 +112,19 @@ class Vertex(Dictionary):
 
     @property
     def name(self):
-        """:class:`str`: The name of this :class:`Vertex`."""
+        """:class:`str`: The name of this :class:`~msl.io.vertex.Vertex`."""
         return self._name
 
     @property
     def parent(self):
-        """:class:`~msl.io.group.Group`: The parent of this :class:`Vertex`."""
+        """:class:`~msl.io.group.Group`: The parent of this :class:`~msl.io.vertex.Vertex`."""
         return self._parent
 
     @property
     def metadata(self):
-        """:class:`~msl.io.metadata.Metadata`: The metadata associated with this :class:`Vertex`."""
+        """:class:`~msl.io.metadata.Metadata`: The metadata associated with this :class:`~msl.io.vertex.Vertex`."""
         return self._metadata
 
     def add_metadata(self, **metadata):
-        """Add key-value pairs to the :class:`~msl.io.metadata.Metadata` for this :class:`Vertex`."""
+        """Add key-value pairs to the :class:`~msl.io.metadata.Metadata` for this :class:`~msl.io.vertex.Vertex`."""
         self._metadata.update(**metadata)
