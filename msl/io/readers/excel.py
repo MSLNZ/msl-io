@@ -29,11 +29,13 @@ class ExcelReader(object):
         Examples
         --------
         >>> from msl.io import ExcelReader
-        >>> excel = ExcelReader('lab_environment.xlsx')
+        >>> excel = ExcelReader('./tests/samples/lab_environment.xlsx')
+        >>> excel.read()
+        [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
         >>> excel.read('B2')
         49.82
-        >>> excel.read('A1:B4')
-        [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
+        >>> excel.read('A2:B4')
+        [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
         """
         # change the default on_demand value
         if 'on_demand' not in kwargs:
