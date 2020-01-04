@@ -40,7 +40,7 @@ class Dataset(Vertex):
             an array-like object which will be passed to :func:`numpy.asarray`,
             as well as `dtype` and `order`, to be used as the underlying data.
         **metadata
-            All other key-value pairs that will be used as
+            All other key-value pairs will be used as
             :class:`~msl.io.metadata.Metadata` for this :class:`Dataset`.
         """
         super(Dataset, self).__init__(name, parent, is_read_only, **metadata)
@@ -102,7 +102,7 @@ class Dataset(Vertex):
 
     @property
     def data(self):
-        """:class:`numpy.ndarray`: The data of the data set.
+        """:class:`numpy.ndarray`: The data of the :class:`Dataset`.
 
         .. note::
            You do not have to call this attribute to get access to the
@@ -110,14 +110,19 @@ class Dataset(Vertex):
            :class:`numpy.ndarray` attribute from the :class:`Dataset`
            object.
 
-           For example, suppose `dset` is a :class:`Dataset`
+           For example,
 
            .. code-block:: pycon
 
-              >>> dset.shape
-              (4, 3)
+              >>> from msl.io import JSONWriter
+              >>> root = JSONWriter()
+              >>> dset = root.create_dataset('my_data', data=[[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+              >>> dset.size
+              12
               >>> dset.tolist()
-              [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]
+              [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
+              >>> dset.mean(axis=1)
+              array([ 1.,  4.,  7., 10.])
         """
         return self._data
 
@@ -134,4 +139,9 @@ class Dataset(Vertex):
             return getattr(self._data, item)
 
     def __len__(self):
-        return len(self._data)
+        # if the ndarray is a scalar then the following exception is raised
+        #   TypeError: len() of unsized object
+        try:
+            return len(self._data)
+        except TypeError:
+            return self._data.size
