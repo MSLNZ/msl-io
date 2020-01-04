@@ -374,7 +374,7 @@ class Group(Vertex):
 
         Returns
         -------
-        :class:`Group` or :class:`Dataset`
+        :class:`Group`, :class:`Dataset` or :data:`None`
             The :class:`Group` or :class:`Dataset` that was removed or :data:`None`
             if there was no :class:`Group` or :class:`Dataset` with the specified `name`.
         """
