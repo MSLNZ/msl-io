@@ -67,6 +67,10 @@ class DatasetLogging(Dataset, logging.Handler):
         # method can simply return False.
         return False
 
+    def __hash__(self):
+        # need to override for linux and macOS running Python 3.7+
+        return logging.Handler.__hash__(self)
+
     def remove_handler(self):
         """Remove this :class:`~logging.Handler` from the ``RootLogger``.
 
