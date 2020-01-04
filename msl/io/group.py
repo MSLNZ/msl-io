@@ -5,6 +5,7 @@ import os
 
 from .vertex import Vertex
 from .dataset import Dataset
+from .dataset_logging import DatasetLogging
 
 
 class Group(Vertex):
@@ -257,6 +258,111 @@ class Group(Vertex):
                 dataset.add_metadata(**kwargs)
                 return dataset
         return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
+
+    def create_dataset_logging(self, name, level='INFO', attributes=None, **metadata):
+        """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            A name to associate with the :class:`~msl.io.dataset.Dataset`.
+        level : :class:`int` or :class:`str`
+            The :ref:`logging level <levels>` to use.
+        attributes : :class:`list` of :class:`str`
+            A list of :ref:`attribute names <logrecord-attributes>` to include in the
+            :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
+            If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
+        **metadata
+            All other key-value pairs will be used as
+            :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
+
+        Returns
+        -------
+        :class:`~msl.io.dataset_logging.DatasetLogging`
+            The :class:`~msl.io.dataset_logging.DatasetLogging` that was created.
+
+        Examples
+        --------
+        >>> import logging
+        >>> from msl.io import JSONWriter
+        >>> logger = logging.getLogger('my_logger')
+        >>> root = JSONWriter()
+        >>> log_dset = root.create_dataset_logging('log')
+        >>> logger.info('hi')
+        >>> logger.error('cannot do that!')
+        >>> print(log_dset)
+        array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
+              dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
+
+        Get all ``ERROR`` :ref:`logging records <log-record>`
+
+        >>> print(log_dset[ log_dset['levelname']=='ERROR' ])
+        [(..., 'ERROR', 'my_logger', 'cannot do that!')]
+
+        Stop the :class:`~msl.io.dataset_logging.DatasetLogging` object
+        from receiving :ref:`logging records <log-record>`
+
+        >>> log_dset.remove_handler()
+        """
+        is_read_only, metadata = self._check(False, **metadata)
+        name, parent = self._create_ancestors(name, is_read_only)
+        if attributes is None:
+            # if the default attribute names are changed then update the `attributes`
+            # description in the docstring of create_dataset_logging() and require_dataset_logging()
+            attributes = ['asctime', 'levelname', 'name', 'message']
+        return DatasetLogging(name, parent, level=level, attributes=attributes, **metadata)
+
+    def require_dataset_logging(self, name, level='INFO', attributes=None, **metadata):
+        """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
+
+        If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
+        if it does not exist then it is created.
+
+        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            A name to associate with the :class:`~msl.io.dataset.Dataset`.
+        level : :class:`int` or :class:`str`
+            The :ref:`logging level <levels>` to use.
+        attributes : :class:`list` of :class:`str`
+            A list of :ref:`attribute names <logrecord-attributes>` to include in the
+            :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
+            If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
+            If the :class:`~msl.io.dataset.Dataset` exists and if `attributes`
+            are specified and they do not match those of the existing
+            :class:`~msl.io.dataset.Dataset` then a :exc:`ValueError` is raised.
+        **metadata
+            All other key-value pairs will be used as
+            :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
+
+        Returns
+        -------
+        :class:`~msl.io.dataset_logging.DatasetLogging`
+            The :class:`~msl.io.dataset_logging.DatasetLogging` that was created or
+            that already existed.
+        """
+        name = '/' + name.strip('/')
+        dataset_name = name if self.parent is None else self.name + name
+        for dataset in self.datasets():
+            if dataset.name == dataset_name:
+                if ('logging_level' not in dataset.metadata) or \
+                        ('logging_level_name' not in dataset.metadata):
+                    raise ValueError('The required Dataset was found but it is not used for logging')
+                if attributes:
+                    for item in dataset.dtype.names:
+                        if item not in attributes:
+                            existing = ' '.join(dataset.dtype.names)
+                            requested = ' '.join(attributes)
+                            raise ValueError('The attribute names of the existing '
+                                             'logging Dataset are "{}" which do not match "{}"'
+                                             .format(existing, requested))
+                dataset.add_metadata(**metadata)
+                return dataset
+        return self.create_dataset_logging(name, level=level, attributes=attributes, **metadata)
 
     def remove(self, name):
         """Remove a :class:`Group` or a :class:`Dataset`.
