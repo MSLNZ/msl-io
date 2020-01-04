@@ -53,3 +53,9 @@ or as attributes
    >>> z = dset.x + dset.y
 
 See :ref:`attribute-key-limitations` for more information.
+
+Custom Dataset for Log Records
+------------------------------
+The :class:`~msl.io.dataset_logging.DatasetLogging` class is a custom :class:`~msl.io.dataset.Dataset`
+that is also a :class:`~logging.Handler` which automatically appends :mod:`logging` records
+to the :class:`~msl.io.dataset.Dataset`. See :meth:`~msl.io.group.Group.create_dataset_logging` for more details.
