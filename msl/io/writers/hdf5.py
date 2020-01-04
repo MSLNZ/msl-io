@@ -66,7 +66,7 @@ class HDF5Writer(Writer):
                 convert, dtype = False, []
                 for n in obj.dtype.names:
                     typ = obj.dtype.fields[n][0]
-                    if isinstance(obj[n].item(0), unicode):
+                    if isinstance(obj[n].item(0), (unicode, str)):
                         dtype.append((n, vstr))
                         convert = True
                     else:
@@ -74,12 +74,12 @@ class HDF5Writer(Writer):
                 if convert:
                     return obj.astype(dtype=dtype)
                 return obj
-            elif obj.dtype.str[1] == 'U':
+            elif obj.dtype.str == '|U':
                 return obj.astype(dtype=vstr)
-            elif obj.dtype.str[1] == 'O':
+            elif obj.dtype.str == '|O':
                 has_complex = False
                 for item in obj.flat:
-                    if isinstance(item, unicode):
+                    if isinstance(item, (unicode, str)):
                         return obj.astype(dtype=vstr)
                     elif isinstance(item, np.complexfloating):
                         has_complex = True
