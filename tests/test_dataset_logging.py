@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 
 from msl.io import JSONWriter, HDF5Writer, read
+from msl.io.dataset_logging import DatasetLogging
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
@@ -21,6 +22,8 @@ def test_create():
     dset = root.create_dataset_logging('log', level=logging.INFO)
 
     assert dset.name == '/log'
+    assert root.is_dataset(dset)
+    assert isinstance(dset, DatasetLogging)
     assert len(logging.getLogger().handlers) == 3
     assert len(dset) == 0
     assert np.array_equal(dset.dtype.names, ('asctime', 'levelname', 'name', 'message'))
@@ -144,7 +147,7 @@ def test_requires_failures():
     assert np.array_equal(root.logging.dtype.names, ['asctime', 'levelname', 'name', 'message'])
     with pytest.raises(ValueError) as err:
         root.require_dataset_logging('logging', attributes=['lineno', 'filename'])
-    assert err.match('do not match "lineno filename"')
+    assert str(err.value).endswith("does not equal ('lineno', 'filename')")
 
     with pytest.raises(ValueError) as err:
         root.require_dataset_logging('regular')
@@ -181,7 +184,10 @@ def test_save_then_read():
     h5 = HDF5Writer(url=os.path.join(tempfile.gettempdir(), 'msl-io-junk.h5'))
 
     json.create_dataset_logging('log', extra='ABC')
-    h5.require_dataset_logging('/a/b/c/d/e/log')
+    h5.require_dataset_logging('/a/b/c/d/e/log')  # doesn't exist so creates it
+
+    assert isinstance(json.log, DatasetLogging)
+    assert isinstance(h5.a.b.c.d.e.log, DatasetLogging)
 
     logger.info('hello %s', 'world')
     logger.warning('foo')
@@ -191,6 +197,23 @@ def test_save_then_read():
 
     json_2 = read(json.url)
     h5_2 = read(h5.url)
+    os.remove(json.url)
+    os.remove(h5.url)
+
+    # when a file is read, what was once a DatasetLogging object is loaded as a regular Dataset
+    # but can be turned back into a DatasetLogging by calling require_dataset_logging()
+    assert not isinstance(json_2.log, DatasetLogging)
+    assert not isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
+    assert json_2.is_dataset(json_2.log)
+    assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
+
+    # convert the Dataset to DatasetLogging
+    json_2.require_dataset_logging(json_2.log.name)
+    h5_2.a.b.c.require_dataset_logging('/d/e/log')
+    assert isinstance(json_2.log, DatasetLogging)
+    assert isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
+    assert json_2.is_dataset(json_2.log)
+    assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
 
     assert len(json_2.log.metadata) == 3
     assert json_2.log.metadata['extra'] == 'ABC'
@@ -204,14 +227,24 @@ def test_save_then_read():
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo'])
 
-    os.remove(json.url)
-    os.remove(h5.url)
-
     json.log.remove_handler()
 
     logger.info('baz')
     assert np.array_equal(json.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
+    assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz'])
+    assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
 
     h5.a.b.c.d.e.log.remove_handler()
+
+    logger.warning('ooops...')
+    logger.error('YIKES!')
+    assert np.array_equal(json.log['message'], ['hello world', 'foo'])
+    assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
+    assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!'])
+    assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!'])
+
+    json_2.log.remove_handler()
+    h5_2.a.b.c.d.e.log.remove_handler()
+
     assert len(logging.getLogger().handlers) == 2

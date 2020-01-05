@@ -270,8 +270,8 @@ class Group(Vertex):
             A name to associate with the :class:`~msl.io.dataset.Dataset`.
         level : :class:`int` or :class:`str`
             The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` of :class:`str`
-            A list of :ref:`attribute names <logrecord-attributes>` to include in the
+        attributes : :class:`list` or :class:`tuple` of :class:`str`
+            The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
             If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
         **metadata
@@ -317,7 +317,7 @@ class Group(Vertex):
     def require_dataset_logging(self, name, level='INFO', attributes=None, **metadata):
         """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
 
-        If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
+        If the :class:`~msl.io.dataset_logging.DatasetLogging` exists then it will be returned
         if it does not exist then it is created.
 
         Automatically creates the sub-:class:`Group`\\s if they do not exist.
@@ -328,8 +328,8 @@ class Group(Vertex):
             A name to associate with the :class:`~msl.io.dataset.Dataset`.
         level : :class:`int` or :class:`str`
             The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` of :class:`str`
-            A list of :ref:`attribute names <logrecord-attributes>` to include in the
+        attributes : :class:`list` or :class:`tuple` of :class:`str`
+            The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
             If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
             If the :class:`~msl.io.dataset.Dataset` exists and if `attributes`
@@ -352,16 +352,35 @@ class Group(Vertex):
                 if ('logging_level' not in dataset.metadata) or \
                         ('logging_level_name' not in dataset.metadata):
                     raise ValueError('The required Dataset was found but it is not used for logging')
-                if attributes:
-                    for item in dataset.dtype.names:
-                        if item not in attributes:
-                            existing = ' '.join(dataset.dtype.names)
-                            requested = ' '.join(attributes)
-                            raise ValueError('The attribute names of the existing '
-                                             'logging Dataset are "{}" which do not match "{}"'
-                                             .format(existing, requested))
-                dataset.add_metadata(**metadata)
-                return dataset
+
+                if attributes and (dataset.dtype.names != tuple(attributes)):
+                    raise ValueError('The attribute names of the existing '
+                                     'logging Dataset are {} which does not equal {}'
+                                     .format(dataset.dtype.names, tuple(attributes)))
+
+                if isinstance(dataset, DatasetLogging):
+                    return dataset
+
+                # replace the existing Dataset with a new DatasetLogging object
+                meta = dataset.metadata.copy()
+                data = dataset.data.copy()
+
+                # remove the existing Dataset from the ancestors, itself and the descendants
+                groups = tuple(self.get_ancestors()) + (self,) + tuple(self.groups())
+                for group in groups:
+                    for dset in group.datasets():
+                        if dset is dataset:
+                            key = '/' + dset.name.lstrip(group.name)
+                            del group._mapping[key]
+
+                # temporarily make this Group not in read-only mode
+                original_read_only_mode = bool(self._is_read_only)
+                self._is_read_only = False
+                dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names, data=data, **meta)
+                dset.add_metadata(**metadata)
+                self._is_read_only = original_read_only_mode
+                return dset
+
         return self.create_dataset_logging(name, level=level, attributes=attributes, **metadata)
 
     def remove(self, name):
@@ -390,6 +409,19 @@ class Group(Vertex):
                 basename = '{}/{}'.format(os.path.basename(dirname), basename)
                 dirname = os.path.dirname(dirname)
         return obj
+
+    def get_ancestors(self):
+        """Get the ancestors of this :class:`Group`.
+
+        Yields
+        ------
+        :class:`Group`
+            The ancestors of this :class:`Group`.
+        """
+        parent = self.parent
+        while parent is not None:
+            yield parent
+            parent = parent.parent
 
     def _check(self, is_read_only, **kwargs):
         self._raise_if_read_only()

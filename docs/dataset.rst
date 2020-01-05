@@ -54,8 +54,16 @@ or as attributes
 
 See :ref:`attribute-key-limitations` for more information.
 
-Custom Dataset for Log Records
-------------------------------
+A Dataset for Logging Records
+-----------------------------
 The :class:`~msl.io.dataset_logging.DatasetLogging` class is a custom :class:`~msl.io.dataset.Dataset`
 that is also a :class:`~logging.Handler` which automatically appends :mod:`logging` records
-to the :class:`~msl.io.dataset.Dataset`. See :meth:`~msl.io.group.Group.create_dataset_logging` for more details.
+to the :class:`~msl.io.dataset.Dataset`. See :meth:`~msl.io.group.Group.create_dataset_logging` for
+more details.
+
+When a file is :func:`~msl.io.read` it will load an object that was once a
+:class:`~msl.io.dataset_logging.DatasetLogging` as a :class:`~msl.io.dataset.Dataset`.
+If you want to convert the :class:`~msl.io.dataset.Dataset` to be a
+:class:`~msl.io.dataset_logging.DatasetLogging` object, so that :mod:`logging` records are once
+again appended to it, then call the :meth:`~msl.io.group.Group.require_dataset_logging` method
+with the *name* argument equal to the value of *name* for the :class:`~msl.io.dataset.Dataset`.

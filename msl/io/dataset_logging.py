@@ -24,8 +24,8 @@ class DatasetLogging(Dataset, logging.Handler):
             The parent :class:`~msl.io.group.Group` to the :class:`~msl.io.dataset.Dataset`.
         level : :class:`int` or :class:`str`
             The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` of :class:`str`
-            A list of :ref:`attribute names <logrecord-attributes>` to include in the
+        attributes : :class:`list` or :class:`tuple` of :class:`str`
+            The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
         **metadata
             All other key-value pairs will be used as

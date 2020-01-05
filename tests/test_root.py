@@ -1188,3 +1188,46 @@ def test_remove():
     assert len(list(root.g1.datasets())) == 1
 
     assert root.remove('a/b/c/d') is None
+
+
+def test_get_ancestors():
+    root = Root('')
+
+    assert isinstance(root.get_ancestors(), types.GeneratorType)
+    assert len(tuple(root.get_ancestors())) == 0
+
+    root.create_group('a/b/c/d/e/f/g/h')
+    root.a.create_dataset('dataset')
+
+    x = root.create_group('x')
+    x.require_group('y/z')
+    root.x.y.create_dataset('dataset')
+
+    ancestors = tuple(root.a.b.c.d.get_ancestors())
+    assert len(ancestors) == 4
+    assert ancestors[0] is root.a.b.c
+    assert ancestors[1] is root.a.b
+    assert ancestors[2] is root.a
+    assert ancestors[3] is root
+
+    h = root.a.b.c.d.e.f.g.h
+    ancestors = tuple(h.get_ancestors())
+    assert len(ancestors) == 8
+    assert ancestors[0] is root.a.b.c.d.e.f.g
+    assert ancestors[1] is root.a.b.c.d.e.f
+    assert ancestors[2] is root.a.b.c.d.e
+    assert ancestors[3] is root.a.b.c.d
+    assert ancestors[4] is root.a.b.c
+    assert ancestors[5] is root.a.b
+    assert ancestors[6] is root.a
+    assert ancestors[7] is root
+
+    ancestors = tuple(root.x.y.z.get_ancestors())
+    assert len(ancestors) == 3
+    assert ancestors[0] is root.x.y
+    assert ancestors[1] is root.x
+    assert ancestors[2] is root
+
+    ancestors = tuple(root.x.get_ancestors())
+    assert len(ancestors) == 1
+    assert ancestors[0] is root
