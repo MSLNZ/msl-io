@@ -95,22 +95,32 @@ class Group(Vertex):
         return isinstance(obj, Group)
 
     def datasets(self):
-        """
-        Returns a generator of all :class:`~msl.io.dataset.Dataset`\\s that are
-        contained within this :class:`Group`.
+        """Get all :class:`~msl.io.dataset.Dataset`\\s of this :class:`Group`.
+
+        Yields
+        ------
+        :class:`~msl.io.dataset.Dataset`
+            All :class:`~msl.io.dataset.Dataset`\\s that are contained within
+            this :class:`Group`.
         """
         for obj in self._mapping.values():
             if self.is_dataset(obj):
                 yield obj
 
     def groups(self):
-        """
-        Returns a generator of all sub-:class:`Group`\\s that are contained within
-        this :class:`Group`.
+        """Get all sub-:class:`Group`\\s (descendants) of this :class:`Group`.
+
+        Yields
+        ------
+        :class:`Group`
+            All sub-:class:`Group`\\s (descendants) that are contained within
+            this :class:`Group`.
         """
         for obj in self._mapping.values():
             if self.is_group(obj):
                 yield obj
+
+    descendants = groups
 
     def add_group(self, name, group):
         """Add a :class:`Group`.
@@ -366,7 +376,7 @@ class Group(Vertex):
                 data = dataset.data.copy()
 
                 # remove the existing Dataset from the ancestors, itself and the descendants
-                groups = tuple(self.get_ancestors()) + (self,) + tuple(self.groups())
+                groups = tuple(self.ancestors()) + (self,) + tuple(self.descendants())
                 for group in groups:
                     for dset in group.datasets():
                         if dset is dataset:
@@ -410,8 +420,8 @@ class Group(Vertex):
                 dirname = os.path.dirname(dirname)
         return obj
 
-    def get_ancestors(self):
-        """Get the ancestors of this :class:`Group`.
+    def ancestors(self):
+        """Get all parent :class:`Group`\\s (ancestors) of this :class:`Group`.
 
         Yields
         ------
