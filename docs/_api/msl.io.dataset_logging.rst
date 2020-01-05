@@ -5,3 +5,4 @@ msl.io.dataset\_logging module
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: emit
