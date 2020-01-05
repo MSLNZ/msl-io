@@ -251,3 +251,42 @@ def test_save_then_read():
     h5_2.a.b.c.d.e.log.remove_handler()
 
     assert len(logging.getLogger().handlers) == 1
+
+
+def test_all_attributes():
+    assert len(logging.getLogger().handlers) == 1
+
+    attributes = [
+        'asctime', 'created', 'filename', 'funcName', 'levelname',
+        'levelno', 'lineno', 'message', 'module', 'msecs', 'name', 'pathname',
+        'process', 'processName', 'relativeCreated', 'thread', 'threadName'
+    ]
+
+    json = JSONWriter()
+
+    c = json.create_group('a/b/c')
+    dset = c.create_dataset_logging('/d/e/f/log', level='DEBUG', attributes=attributes)
+
+    assert dset.name == '/a/b/c/d/e/f/log'
+
+    e = json.a.b.c.d.e
+    dset2 = e.require_dataset_logging('/f/log')
+    assert dset2 is dset
+
+    logger.debug('d e b u g')
+    logger.info('i n f o')
+    logger.warning('w a r n i n g')
+    logger.error('e r r o r')
+    logger.critical('c r i t i c a l')
+
+    assert len(dset) == 5
+    assert len(dset[dset['levelno'] > logging.DEBUG]) == 4
+    assert len(dset[dset['levelno'] > logging.INFO]) == 3
+    assert len(dset[dset['levelno'] > logging.WARNING]) == 2
+    assert len(dset[dset['levelno'] > logging.ERROR]) == 1
+    assert len(dset[dset['levelno'] > logging.CRITICAL]) == 0
+    assert np.array_equal(dset.dtype.names, attributes)
+
+    dset.remove_handler()
+
+    assert len(logging.getLogger().handlers) == 1
