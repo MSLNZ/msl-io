@@ -153,7 +153,7 @@ class Group(Vertex):
     def create_group(self, name, is_read_only=None, **metadata):
         """Create a new :class:`Group`.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
@@ -181,7 +181,7 @@ class Group(Vertex):
         If the :class:`Group` exists then it will be returned if it does not exist
         then it is created.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
@@ -212,7 +212,7 @@ class Group(Vertex):
     def create_dataset(self, name, is_read_only=None, **kwargs):
         """Create a new :class:`~msl.io.dataset.Dataset`.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
@@ -239,7 +239,7 @@ class Group(Vertex):
         If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
         if it does not exist then it is created.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
@@ -269,21 +269,28 @@ class Group(Vertex):
                 return dataset
         return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
 
-    def create_dataset_logging(self, name, level='INFO', attributes=None, **metadata):
+    def create_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **metadata):
         """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
         name : :class:`str`
             A name to associate with the :class:`~msl.io.dataset.Dataset`.
-        level : :class:`int` or :class:`str`
+        level : :class:`int` or :class:`str`, optional
             The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` or :class:`tuple` of :class:`str`
+        attributes : :class:`list` or :class:`tuple` of :class:`str`, optional
             The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
             If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
+        logger : :class:`~logging.Logger`, optional
+            The :class:`~logging.Logger` that this :class:`~msl.io.dataset_logging.DatasetLogging` object
+            will be added to. If :data:`None` then adds it to the ``root`` :class:`~logging.Logger`.
+        date_fmt : :class:`str`, optional
+            The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
+            to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
+            If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
         **metadata
             All other key-value pairs will be used as
             :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
@@ -308,7 +315,7 @@ class Group(Vertex):
 
         Get all ``ERROR`` :ref:`logging records <log-record>`
 
-        >>> print(log_dset[ log_dset['levelname']=='ERROR' ])
+        >>> print(log_dset[ log_dset['levelname'] == 'ERROR' ])
         [(..., 'ERROR', 'my_logger', 'cannot do that!')]
 
         Stop the :class:`~msl.io.dataset_logging.DatasetLogging` object
@@ -322,29 +329,42 @@ class Group(Vertex):
             # if the default attribute names are changed then update the `attributes`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
             attributes = ['asctime', 'levelname', 'name', 'message']
-        return DatasetLogging(name, parent, level=level, attributes=attributes, **metadata)
+        if date_fmt is None:
+            # if the default date_fmt is changed then update the `date_fmt`
+            # description in the docstring of create_dataset_logging() and require_dataset_logging()
+            date_fmt = '%Y-%m-%dT%H:%M:%S.%f'
+        return DatasetLogging(name, parent, level=level, attributes=attributes,
+                              logger=logger, date_fmt=date_fmt, **metadata)
 
-    def require_dataset_logging(self, name, level='INFO', attributes=None, **metadata):
+    def require_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **metadata):
         """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
 
         If the :class:`~msl.io.dataset_logging.DatasetLogging` exists then it will be returned
         if it does not exist then it is created.
 
-        Automatically creates the sub-:class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         Parameters
         ----------
         name : :class:`str`
             A name to associate with the :class:`~msl.io.dataset.Dataset`.
-        level : :class:`int` or :class:`str`
+        level : :class:`int` or :class:`str`, optional
             The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` or :class:`tuple` of :class:`str`
+        attributes : :class:`list` or :class:`tuple` of :class:`str`, optional
             The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
-            If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
             If the :class:`~msl.io.dataset.Dataset` exists and if `attributes`
             are specified and they do not match those of the existing
             :class:`~msl.io.dataset.Dataset` then a :exc:`ValueError` is raised.
+            If :data:`None` and the :class:`~msl.io.dataset.Dataset` does not exist
+            then uses ``asctime``, ``levelname``, ``name``, and ``message``.
+        logger : :class:`~logging.Logger`, optional
+            The :class:`~logging.Logger` that this :class:`~msl.io.dataset_logging.DatasetLogging` object
+            will be added to. If :data:`None` then adds it to the ``root`` :class:`~logging.Logger`.
+        date_fmt : :class:`str`, optional
+            The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
+            to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
+            If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
         **metadata
             All other key-value pairs will be used as
             :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
@@ -360,7 +380,8 @@ class Group(Vertex):
         for dataset in self.datasets():
             if dataset.name == dataset_name:
                 if ('logging_level' not in dataset.metadata) or \
-                        ('logging_level_name' not in dataset.metadata):
+                        ('logging_level_name' not in dataset.metadata) or \
+                        ('logging_date_format' not in dataset.metadata):
                     raise ValueError('The required Dataset was found but it is not used for logging')
 
                 if attributes and (dataset.dtype.names != tuple(attributes)):
@@ -375,8 +396,8 @@ class Group(Vertex):
                 meta = dataset.metadata.copy()
                 data = dataset.data.copy()
 
-                # remove the existing Dataset from the ancestors, itself and the descendants
-                groups = tuple(self.ancestors()) + (self,) + tuple(self.descendants())
+                # remove the existing Dataset from its descendants, itself and its ancestors
+                groups = tuple(self.descendants()) + (self,) + tuple(self.ancestors())
                 for group in groups:
                     for dset in group.datasets():
                         if dset is dataset:
@@ -386,12 +407,15 @@ class Group(Vertex):
                 # temporarily make this Group not in read-only mode
                 original_read_only_mode = bool(self._is_read_only)
                 self._is_read_only = False
-                dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names, data=data, **meta)
+                dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names,
+                                                   logger=logger, date_fmt=meta.logging_date_format,
+                                                   data=data, **meta)
                 dset.add_metadata(**metadata)
                 self._is_read_only = original_read_only_mode
                 return dset
 
-        return self.create_dataset_logging(name, level=level, attributes=attributes, **metadata)
+        return self.create_dataset_logging(name, level=level, attributes=attributes,
+                                           logger=logger, date_fmt=date_fmt, **metadata)
 
     def remove(self, name):
         """Remove a :class:`Group` or a :class:`Dataset`.
