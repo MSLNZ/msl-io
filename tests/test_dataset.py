@@ -201,3 +201,11 @@ def test_ndarray_attribute():
     assert dset.min() == 1
     assert all(dset.max(axis=1) == [2, 4])
     assert all(dset.max(axis=0) == [3, 4])
+
+
+def test_scalar():
+    dset = Dataset(name='abcd', parent=None, data=5, is_read_only=True)
+    assert len(dset) == 1
+    assert dset.shape == ()
+    assert dset.size == 1
+    assert dset.data == 5.0
