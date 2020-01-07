@@ -30,13 +30,31 @@ class DatasetLogging(Dataset, logging.Handler):
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
         logger : :class:`~logging.Logger`, optional
             The :class:`~logging.Logger` that this :class:`DatasetLogging` object
-            will be added to. If :data:`None` then adds it to the ``root`` :class:`~logging.Logger`.
+            will be added to. If :data:`None` then it is added to the ``root`` :class:`~logging.Logger`.
         date_fmt : :class:`str`, optional
             The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
             to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
         **kwargs
-            Additional keyword arguments that are passed to :class:`~msl.io.dataset.Dataset`.
+            Additional keyword arguments are passed to :class:`~msl.io.dataset.Dataset`.
+            The default behaviour is to append every :ref:`logging record <log-record>`
+            to the :class:`~msl.io.dataset.Dataset`. This guarantees that the size of the
+            :class:`~msl.io.dataset.Dataset` is equal to the number of
+            :ref:`logging records <log-record>` that were added to it. However, this behaviour
+            can decrease the performance if many :ref:`logging records <log-record>` are
+            added often because a copy of the data in the :class:`~msl.io.dataset.Dataset` is
+            created for each :ref:`logging record <log-record>` that is added. You can improve
+            the performance by specifying an initial size of the :class:`~msl.io.dataset.Dataset`
+            by including a `shape` or a `size` keyword argument. This will also automatically
+            create additional empty rows in the :class:`~msl.io.dataset.Dataset`, that is
+            proportional to the size of the :class:`~msl.io.dataset.Dataset`, if the size of the
+            :class:`~msl.io.dataset.Dataset` needs to be increased. If you do this then you will
+            want to call :meth:`.remove_empty_rows` before writing :class:`DatasetLogging` to a
+            file or interacting with the data in :class:`DatasetLogging` to remove the extra
+            rows that were created.
         """
+        if not attributes or not all(isinstance(a, str) for a in attributes):
+            raise ValueError('Must specify attribute names as strings, got: {}'.format(attributes))
+
         self._logger = None
         self._attributes = attributes
         self._uses_asctime = 'asctime' in attributes
@@ -52,8 +70,25 @@ class DatasetLogging(Dataset, logging.Handler):
         kwargs['logging_date_format'] = date_fmt
         self._dtype = np.dtype([(a, np.object) for a in attributes])
 
+        self._auto_resize = 'size' in kwargs or 'shape' in kwargs
+        if self._auto_resize:
+            if 'size' in kwargs:
+                kwargs['shape'] = (kwargs.pop('size'),)
+            elif isinstance(kwargs['shape'], int):
+                kwargs['shape'] = (kwargs['shape'],)
+
+            shape = kwargs['shape']
+            if len(shape) != 1:
+                raise ValueError('Invalid shape {}, the number of dimensions must be 1'.format(shape))
+            if shape[0] < 0:
+                raise ValueError('Invalid shape {}'.format(shape))
+
         # call Dataset.__init__ before Handler.__init__ in case the Dataset cannot be created
         Dataset.__init__(self, name, parent, False, dtype=self._dtype, **kwargs)
+
+        self._index = np.count_nonzero(self._data)
+        if self._auto_resize and self._data.shape < kwargs['shape']:
+            self._resize(new_allocated=kwargs['shape'][0])
 
         # the Handler will overwrite the self._name attribute so we create a reference to the
         # `name` of the Dataset and then set the `name` of the Handler after it is initialized
@@ -77,17 +112,29 @@ class DatasetLogging(Dataset, logging.Handler):
         # need to override for linux and macOS running Python 3.7+
         return logging.Handler.__hash__(self)
 
+    def remove_empty_rows(self):
+        """Remove empty rows from the :class:`~msl.io.dataset.Dataset`.
+
+        If the :class:`DatasetLogging` object was initialized with a `shape` or a `size` keyword
+        argument then the size of the :class:`~msl.io.dataset.Dataset` is always :math:`\\geq`
+        to the number of :ref:`logging records <log-record>` that were added to it. Calling this
+        method will remove the rows in the :class:`~msl.io.dataset.Dataset` that were not
+        from a :ref:`logging record <log-record>`.
+        """
+        # don't use "is not None" since this does not work as expected
+        self._data = self._data[self._data[self._dtype.names[0]] != None]
+
     def remove_handler(self):
         """Remove this class's :class:`~logging.Handler` from the associated :class:`~logging.Logger`.
 
         After calling this method :ref:`logging records <log-record>` are no longer
-        appended to the :class:`~msl.io.dataset.Dataset`.
+        added to the :class:`~msl.io.dataset.Dataset`.
         """
         if self._logger is not None:
             self._logger.removeHandler(self)
 
     def set_logger(self, logger):
-        """Add this class's :class:`~logging.Handler` to a :class:`~logging.Logger`
+        """Add this class's :class:`~logging.Handler` to a :class:`~logging.Logger`.
 
         Parameters
         ----------
@@ -112,4 +159,26 @@ class DatasetLogging(Dataset, logging.Handler):
             record.asctime = datetime.fromtimestamp(record.created).strftime(self._date_fmt)
         latest = tuple(record.__dict__[a] for a in self._attributes)
         row = np.asarray(latest, dtype=self._dtype)
-        self._data = np.append(self._data, row)
+        if self._auto_resize:
+            if self._index >= self._data.size:
+                self._resize()
+            self._data[self._index] = row
+            self._index += 1
+        else:
+            self._data = np.append(self._data, row)
+
+    def _resize(self, new_allocated=None):
+        # Over-allocates proportional to the size of the ndarray, making room
+        # for additional growth. This follows the over-allocating procedure that
+        # Python uses when appending to a list object, see `list_resize` in
+        # https://github.com/python/cpython/blob/master/Objects/listobject.c
+        if new_allocated is None:
+            new_size = self._data.size + 1
+            new_allocated = new_size + (new_size >> 3) + (3 if new_size < 9 else 6)
+
+        # don't use self._data.resize() because that fills the newly-created rows
+        # with 0 and want to fill the new rows with None to be explicit that the
+        # new rows are not associated with logging records
+        array = np.empty((new_allocated,), dtype=self._dtype)
+        array[:self._data.size] = self._data
+        self._data = array

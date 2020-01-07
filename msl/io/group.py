@@ -79,6 +79,22 @@ class Group(Vertex):
         return isinstance(obj, Dataset)
 
     @staticmethod
+    def is_dataset_logging(obj):
+        """Test whether an object is a :class:`~msl.io.dataset_logging.DatasetLogging`.
+
+        Parameters
+        ----------
+        obj : :class:`object`
+            The object to test.
+
+        Returns
+        -------
+        :class:`bool`
+            Whether `obj` is an instance of :class:`~msl.io.dataset_logging.DatasetLogging`.
+        """
+        return isinstance(obj, DatasetLogging)
+
+    @staticmethod
     def is_group(obj):
         """Test whether an object is a :class:`~msl.io.group.Group`.
 
@@ -269,7 +285,7 @@ class Group(Vertex):
                 return dataset
         return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
 
-    def create_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **metadata):
+    def create_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **kwargs):
         """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
 
         Automatically creates the ancestor :class:`Group`\\s if they do not exist.
@@ -285,15 +301,30 @@ class Group(Vertex):
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
             If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
         logger : :class:`~logging.Logger`, optional
-            The :class:`~logging.Logger` that this :class:`~msl.io.dataset_logging.DatasetLogging` object
-            will be added to. If :data:`None` then adds it to the ``root`` :class:`~logging.Logger`.
+            The :class:`~logging.Logger` that the :class:`~msl.io.dataset_logging.DatasetLogging` object
+            will be added to. If :data:`None` then it is added to the ``root`` :class:`~logging.Logger`.
         date_fmt : :class:`str`, optional
             The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
             to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
             If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
-        **metadata
-            All other key-value pairs will be used as
-            :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
+        **kwargs
+            Additional keyword arguments are passed to :class:`~msl.io.dataset.Dataset`.
+            The default behaviour is to append every :ref:`logging record <log-record>`
+            to the :class:`~msl.io.dataset.Dataset`. This guarantees that the size of the
+            :class:`~msl.io.dataset.Dataset` is equal to the number of
+            :ref:`logging records <log-record>` that were added to it. However, this behaviour
+            can decrease the performance if many :ref:`logging records <log-record>` are
+            added often because a copy of the data in the :class:`~msl.io.dataset.Dataset` is
+            created for each :ref:`logging record <log-record>` that is added. You can improve
+            the performance by specifying an initial size of the :class:`~msl.io.dataset.Dataset`
+            by including a `shape` or a `size` keyword argument. This will also automatically
+            create additional empty rows in the :class:`~msl.io.dataset.Dataset`, that is
+            proportional to the size of the :class:`~msl.io.dataset.Dataset`, if the size of the
+            :class:`~msl.io.dataset.Dataset` needs to be increased. If you do this then you will
+            want to call :meth:`~msl.io.dataset_logging.DatasetLogging.remove_empty_rows` before
+            writing :class:`~msl.io.dataset_logging.DatasetLogging` to a file or interacting
+            with the data in :class:`~msl.io.dataset_logging.DatasetLogging` to remove the
+            extra rows that were created.
 
         Returns
         -------
@@ -309,13 +340,14 @@ class Group(Vertex):
         >>> log_dset = root.create_dataset_logging('log')
         >>> logger.info('hi')
         >>> logger.error('cannot do that!')
-        >>> print(log_dset)
+        >>> log_dset.data
         array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
               dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
 
         Get all ``ERROR`` :ref:`logging records <log-record>`
 
-        >>> print(log_dset[ log_dset['levelname'] == 'ERROR' ])
+        >>> errors = log_dset[log_dset['levelname'] == 'ERROR']
+        >>> print(errors)
         [(..., 'ERROR', 'my_logger', 'cannot do that!')]
 
         Stop the :class:`~msl.io.dataset_logging.DatasetLogging` object
@@ -323,7 +355,7 @@ class Group(Vertex):
 
         >>> log_dset.remove_handler()
         """
-        is_read_only, metadata = self._check(False, **metadata)
+        is_read_only, metadata = self._check(False, **kwargs)
         name, parent = self._create_ancestors(name, is_read_only)
         if attributes is None:
             # if the default attribute names are changed then update the `attributes`
@@ -336,7 +368,7 @@ class Group(Vertex):
         return DatasetLogging(name, parent, level=level, attributes=attributes,
                               logger=logger, date_fmt=date_fmt, **metadata)
 
-    def require_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **metadata):
+    def require_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **kwargs):
         """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
 
         If the :class:`~msl.io.dataset_logging.DatasetLogging` exists then it will be returned
@@ -359,15 +391,30 @@ class Group(Vertex):
             If :data:`None` and the :class:`~msl.io.dataset.Dataset` does not exist
             then uses ``asctime``, ``levelname``, ``name``, and ``message``.
         logger : :class:`~logging.Logger`, optional
-            The :class:`~logging.Logger` that this :class:`~msl.io.dataset_logging.DatasetLogging` object
-            will be added to. If :data:`None` then adds it to the ``root`` :class:`~logging.Logger`.
+            The :class:`~logging.Logger` that the :class:`~msl.io.dataset_logging.DatasetLogging` object
+            will be added to. If :data:`None` then it is added to the ``root`` :class:`~logging.Logger`.
         date_fmt : :class:`str`, optional
             The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
             to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
             If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
-        **metadata
-            All other key-value pairs will be used as
-            :class:`~msl.io.metadata.Metadata` for the :class:`~msl.io.dataset.Dataset`.
+        **kwargs
+            Additional keyword arguments are passed to :class:`~msl.io.dataset.Dataset`.
+            The default behaviour is to append every :ref:`logging record <log-record>`
+            to the :class:`~msl.io.dataset.Dataset`. This guarantees that the size of the
+            :class:`~msl.io.dataset.Dataset` is equal to the number of
+            :ref:`logging records <log-record>` that were added to it. However, this behaviour
+            can decrease the performance if many :ref:`logging records <log-record>` are
+            added often because a copy of the data in the :class:`~msl.io.dataset.Dataset` is
+            created for each :ref:`logging record <log-record>` that is added. You can improve
+            the performance by specifying an initial size of the :class:`~msl.io.dataset.Dataset`
+            by including a `shape` or a `size` keyword argument. This will also automatically
+            create additional empty rows in the :class:`~msl.io.dataset.Dataset`, that is
+            proportional to the size of the :class:`~msl.io.dataset.Dataset`, if the size of the
+            :class:`~msl.io.dataset.Dataset` needs to be increased. If you do this then you will
+            want to call :meth:`~msl.io.dataset_logging.DatasetLogging.remove_empty_rows` before
+            writing :class:`~msl.io.dataset_logging.DatasetLogging` to a file or interacting
+            with the data in :class:`~msl.io.dataset_logging.DatasetLogging` to remove the
+            extra rows that were created.
 
         Returns
         -------
@@ -407,15 +454,15 @@ class Group(Vertex):
                 # temporarily make this Group not in read-only mode
                 original_read_only_mode = bool(self._is_read_only)
                 self._is_read_only = False
+                kwargs.update(meta)
                 dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names,
                                                    logger=logger, date_fmt=meta.logging_date_format,
-                                                   data=data, **meta)
-                dset.add_metadata(**metadata)
+                                                   data=data, **kwargs)
                 self._is_read_only = original_read_only_mode
                 return dset
 
         return self.create_dataset_logging(name, level=level, attributes=attributes,
-                                           logger=logger, date_fmt=date_fmt, **metadata)
+                                           logger=logger, date_fmt=date_fmt, **kwargs)
 
     def remove(self, name):
         """Remove a :class:`Group` or a :class:`Dataset`.

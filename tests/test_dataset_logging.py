@@ -76,7 +76,7 @@ def test_create_and_require():
     logger.critical(messages[3])
     logger.error(messages[4])
 
-    assert len(dset) == 5, dset
+    assert len(dset) == 5
     assert np.array_equal(dset['levelname'], ['DEBUG', 'WARNING', 'INFO', 'CRITICAL', 'ERROR'])
     assert np.array_equal(dset['message'], messages)
 
@@ -289,4 +289,238 @@ def test_all_attributes():
 
     dset.remove_handler()
 
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_is_logging_dataset():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter()
+    root.create_dataset('/a/b/regular')
+    root.create_dataset_logging('log')
+    root.create_dataset('regular')
+    root.create_dataset_logging('/a/b/log')
+    root.create_dataset_logging('/a/b/log2')
+
+    log_dsets = [dset for dset in root.datasets() if root.is_dataset_logging(dset)]
+
+    assert len(list(root.items())) == 7
+    assert len(list(root.descendants())) == 2
+    assert len(list(root.datasets())) == 5
+    assert len(log_dsets) == 3
+
+    assert len(logging.getLogger().handlers) == 4
+
+    for dset in root.datasets():
+        if root.is_dataset_logging(dset):
+            dset.remove_handler()
+
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_invalid_attributes():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter()
+
+    # cannot be an empty list/tuple
+    with pytest.raises(ValueError):
+        root.create_dataset_logging('log', attributes=[])
+    with pytest.raises(ValueError):
+        root.create_dataset_logging('log', attributes=tuple())
+
+    # every element must be a string
+    with pytest.raises(ValueError):
+        root.create_dataset_logging('log', attributes=[1, 2, 3])
+    with pytest.raises(ValueError):
+        root.create_dataset_logging('log', attributes=['1', '2', 3])
+
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_initial_shape():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter()
+
+    num_records = 1234
+
+    log1 = root.create_dataset_logging('log1', shape=(10000,))
+    log2 = root.create_dataset_logging('log2')
+    log3 = root.create_dataset_logging('log3', size=256)
+    log4 = root.create_dataset_logging('log4', size=0)
+
+    # the shape is an argument of Dataset and does not get passed to the Metadata
+    assert 'shape' not in log1.metadata
+
+    # specifying the `size` gets popped from the kwarg and gets converted to a `shape` kwarg
+    assert 'size' not in log3.metadata
+    assert 'shape' not in log3.metadata
+
+    assert len(logging.getLogger().handlers) == 5
+
+    assert len(log1) == 10000
+    assert len(log2) == 0
+    assert len(log3) == 256
+    assert len(log4) == 0
+
+    for i in range(num_records):
+        logging.info(i)  # just to be different, use the root logger
+
+    assert len(log1) == 10000
+    assert len(log2) == num_records
+    assert len(log3) == 1380
+    assert len(log4) == 1267
+
+    for dset in root.datasets():
+        dset.remove_empty_rows()
+
+    assert len(log1) == num_records
+    assert len(log2) == num_records
+    assert len(log3) == num_records
+    assert len(log4) == num_records
+
+    for i in range(num_records):
+        assert int(log1[i][3]) == i
+        assert int(log2[i][3]) == i
+        assert int(log3[i][3]) == i
+        assert int(log4[i][3]) == i
+
+    for dset in root.datasets():
+        dset.remove_handler()
+
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_initial_index_value():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter(url=os.path.join(tempfile.gettempdir(), 'msl-io-junk.json'))
+    root.create_dataset_logging('log')
+
+    n = 10
+
+    for i in range(n):
+        logger.info('message %d', i)
+
+    assert len(root.log) == n
+
+    root.write(mode='w')
+
+    root2 = read(root.url)
+    root3 = read(root.url)
+
+    # specify more than n elements
+    root2.require_dataset_logging(root.log.name, size=n+5)
+
+    # specify less than n elements which automatically gets increased to n
+    # also specify shape as an integer which gets cast to a 1-d tuple
+    root3.require_dataset_logging(root.log.name, shape=n-5)
+
+    assert len(logging.getLogger().handlers) == 4
+
+    os.remove(root.url)
+
+    assert root2.log.size == n+5
+    assert root3.log.size == n  # gets increased to n
+
+    root.log.remove_handler()
+    for i in range(n, 2*n):
+        logger.info('message %d', i)
+
+    assert root.log.size == n
+    assert root2.log.size == 24
+    assert root3.log.size == 27
+
+    root.log.remove_empty_rows()
+    root2.log.remove_empty_rows()
+    root3.log.remove_empty_rows()
+
+    assert root.log.size == n
+    assert root2.log.size == 2*n
+    assert root3.log.size == 2*n
+
+    root2.log.remove_handler()
+    for i in range(2*n, 3*n):
+        logger.info('message %d', i)
+
+    assert root.log.size == n
+    assert root2.log.size == 2*n
+    assert root3.log.size == 39
+
+    root.log.remove_empty_rows()
+    root2.log.remove_empty_rows()
+    root3.log.remove_empty_rows()
+
+    assert root.log.size == n
+    assert root2.log.size == 2*n
+    assert root3.log.size == 3*n
+
+    messages1 = root['log']['message']
+    messages2 = root2['log']['message']
+    messages3 = root3['log']['message']
+    for i in range(3*n):
+        if i < n:
+            assert messages1[i] == 'message %d' % i
+        if i < 2*n:
+            assert messages2[i] == 'message %d' % i
+        assert messages3[i] == 'message %d' % i
+
+    root3['log'].remove_handler()
+
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_invalid_shape_or_size():
+    root = JSONWriter()
+
+    with pytest.raises(ValueError) as err:
+        root.create_dataset_logging('log', shape=())
+    assert str(err.value).startswith('Invalid shape')
+
+    with pytest.raises(ValueError) as err:
+        root.create_dataset_logging('log', shape=[])
+    assert str(err.value).startswith('Invalid shape')
+
+    with pytest.raises(ValueError) as err:
+        root.create_dataset_logging('log', shape=(10, 5))
+    assert str(err.value).startswith('Invalid shape')
+
+    with pytest.raises(ValueError) as err:
+        root.create_dataset_logging('log', shape=(-1,))
+    assert str(err.value).startswith('Invalid shape')
+
+    with pytest.raises(ValueError) as err:
+        root.create_dataset_logging('log', size=-1)
+    assert str(err.value).startswith('Invalid shape')
+
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_set_logger():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter()
+    root.create_dataset_logging('log')
+
+    for obj in [None, 'no', JSONWriter, logging.INFO, logging.Formatter, logging.Handler]:
+        with pytest.raises(TypeError) as err:
+            root.log.set_logger(obj)
+        assert str(err.value) == 'Must be a logging.Logger object'
+
+    root.log.set_logger(logger)
+    root.log.remove_handler()
+    assert len(logging.getLogger().handlers) == 1
+
+
+def test_hash():
+    assert len(logging.getLogger().handlers) == 1
+
+    root = JSONWriter()
+    root.create_dataset_logging('log')
+
+    # just tests that a hash value exists, don't care about the actual value
+    assert isinstance(hash(root.log), int)
+
+    root.log.remove_handler()
     assert len(logging.getLogger().handlers) == 1
