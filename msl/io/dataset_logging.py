@@ -56,7 +56,7 @@ class DatasetLogging(Dataset, logging.Handler):
             raise ValueError('Must specify attribute names as strings, got: {}'.format(attributes))
 
         self._logger = None
-        self._attributes = attributes
+        self._attributes = tuple(attributes)
         self._uses_asctime = 'asctime' in attributes
         self._date_fmt = date_fmt
 
@@ -111,6 +111,27 @@ class DatasetLogging(Dataset, logging.Handler):
     def __hash__(self):
         # need to override for linux and macOS running Python 3.7+
         return logging.Handler.__hash__(self)
+
+    @property
+    def attributes(self):
+        """:class:`tuple` of :class:`str`: The :ref:`attribute names <logrecord-attributes>`
+        used by the :class:`DatasetLogging` object.
+        """
+        return self._attributes
+
+    @property
+    def date_fmt(self):
+        """:class:`str`: The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
+        that is used to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
+        """
+        return self._date_fmt
+
+    @property
+    def logger(self):
+        """:class:`~logging.Logger`: The :class:`~logging.Logger` that this
+        :class:`DatasetLogging` object is added to.
+        """
+        return self._logger
 
     def remove_empty_rows(self):
         """Remove empty rows from the :class:`~msl.io.dataset.Dataset`.
