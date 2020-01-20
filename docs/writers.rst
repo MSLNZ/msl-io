@@ -30,14 +30,14 @@ Please follow the :ref:`style guide <style guide>`.
         class MyExampleWriter(Writer):
             """Name your class to be whatever you want, i.e., change MyExampleWriter"""
 
-            def write(self, url=None, root=None, **kwargs):
+            def write(self, file=None, root=None, **kwargs):
                 """Implement your write method with the above signature.
 
                 Parameters
                 ----------
-                url : str
-                    The name of the file to write to. If None then uses the value of
-                    `url` that was specified when MyExampleWriter was created.
+                file : path-like or file-like
+                    The file to write to. If None then uses the value of
+                    `file` that was specified when MyExampleWriter was instantiated.
                 root : Root object
                     Write `root` to the file. If None then write the Groups and Datasets
                     that were created using MyExampleWriter.
@@ -45,11 +45,12 @@ Please follow the :ref:`style guide <style guide>`.
                     Optional key-value pairs.
                 """
 
-3. Add a test case to the `tests/`_ directory to make sure that your Writer works as expected. It is
+3. Add test cases to the `tests/`_ directory to make sure that your Writer works as expected. It is
    recommended to try converting a :class:`~msl.io.base_io.Root` object between your Writer and other
-   Writers that are available to verify different file-format conversions. Run the tests using
-   ``python setup.py tests`` (ideally you would run the tests for all
-   :ref:`currently-supported versions <io-dependencies>` of Python, see also :ref:`create_readme_condatests`).
+   Writers that are available to verify different file-format conversions. Also, look at the test
+   modules that begin with ``test_writer`` for more examples. Run the tests using ``python setup.py tests``
+   (ideally you would run the tests for all :ref:`currently-supported versions <io-dependencies>` of
+   Python, see also :ref:`create_readme_condatests`).
 4. Create a new ``msl.io.writers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
    template that is used for the other ``.rst`` files in this directory.
 5. Add the new Writer, alphabetically, to the ``.. toctree::`` in `docs/writers.rst`_. Follow the

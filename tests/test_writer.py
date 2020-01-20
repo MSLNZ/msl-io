@@ -9,7 +9,7 @@ def test_set_root():
 
     writer = Writer()
     assert len(writer) == 0
-    assert writer.url is None
+    assert writer.file is None
     assert len(writer.metadata) == 0
 
     for item in [dict(), tuple(), list(), None, Dataset('dset', None, False)]:
@@ -19,14 +19,14 @@ def test_set_root():
     # set an empty root is okay
     writer.set_root(root)
     assert len(writer) == 0
-    assert writer.url is None
+    assert writer.file is None
     assert len(writer.metadata) == 0
 
     # set an empty root with metadata
     root = Root('some file', one=1, foo='bar')
     writer.set_root(root)
     assert len(writer) == 0
-    assert writer.url is None
+    assert writer.file is None
     assert len(writer.metadata) == 2
     assert writer.metadata.one == 1
     assert writer.metadata.foo == 'bar'
@@ -34,7 +34,7 @@ def test_set_root():
     # check that the metadata gets replaced
     writer = Writer('a filename', meta='data')
     assert len(writer) == 0
-    assert writer.url == 'a filename'
+    assert writer.file == 'a filename'
     assert len(writer.metadata) == 1
     assert writer.metadata.meta == 'data'
     writer.set_root(root)
@@ -42,7 +42,7 @@ def test_set_root():
     assert writer.metadata.one == 1
     assert writer.metadata.foo == 'bar'
     assert 'meta' not in writer.metadata
-    assert writer.url == 'a filename'  # the URL does not change
+    assert writer.file == 'a filename'  # the URL does not change
 
     a = root.create_group('a')
     a.create_dataset('d1')

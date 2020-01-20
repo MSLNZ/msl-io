@@ -10,7 +10,7 @@ from msl.io.dataset import Dataset
 
 def test_instantiation():
     root = Root('some.file')
-    assert root.url == 'some.file'
+    assert root.file == 'some.file'
     assert root.name == '/'
     assert not root.is_read_only
     assert not root.metadata.is_read_only
@@ -19,15 +19,15 @@ def test_instantiation():
     assert str(root).startswith('<Root')
 
     root = Root('C:\\path\\to\\a\\windows.file')
-    assert root.url == 'C:\\path\\to\\a\\windows.file'
+    assert root.file == 'C:\\path\\to\\a\\windows.file'
     assert root.name == '/'
 
     root = Root(r'\\network\drive with multiple\spa ces.file')
-    assert root.url == '\\\\network\\drive with multiple\\spa ces.file'
+    assert root.file == '\\\\network\\drive with multiple\\spa ces.file'
     assert root.name == '/'
 
     root = Root('/home/another.xxx')
-    assert root.url == '/home/another.xxx'
+    assert root.file == '/home/another.xxx'
     assert root.name == '/'
     assert not root.is_read_only
     assert not root.metadata.is_read_only
@@ -35,7 +35,7 @@ def test_instantiation():
     assert len(root.metadata) == 0
 
     root = Root('/home/another.xxx', one=1, two=2, three=3)
-    assert root.url == '/home/another.xxx'
+    assert root.file == '/home/another.xxx'
     assert root.name == '/'
     assert not root.is_read_only
     assert not root.metadata.is_read_only

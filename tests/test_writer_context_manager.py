@@ -48,9 +48,9 @@ def test_none_type():
     for writer in writers:
         with pytest.raises(ValueError) as err:
             with writer() as root:
-                assert root.url is None
+                assert root.file is None
                 assert repr(root) == "<{} 'NoneType' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
-        assert err.match('specify a url')
+        assert err.match('specify a file')
 
 
 def test_file_path():
@@ -61,13 +61,13 @@ def test_file_path():
 
     for writer in writers:
         with writer(path) as root:
-            assert root.url == path
+            assert root.file == path
             fill_root_with_data(root)
             assert_root_data(root)
             assert repr(root) == "<{} 'foo' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
 
         root2 = read(path)
-        assert root2.url == path
+        assert root2.file == path
         assert_root_data(root2)
         os.remove(path)
 
@@ -81,12 +81,12 @@ def test_exception_raised():
     for writer in writers:
         with pytest.raises(ZeroDivisionError):
             with writer(path) as root:
-                assert root.url == path
+                assert root.file == path
                 assert repr(root) == "<{} 'bar' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 divide = 1/0
 
         root2 = read(path)
-        assert root2.url == path
+        assert root2.file == path
         assert len(root2.metadata) == 0
         assert len(list(root2.groups())) == 0
         assert len(list(root2.datasets())) == 0
@@ -95,13 +95,13 @@ def test_exception_raised():
     for writer in writers:
         with pytest.raises(ZeroDivisionError):
             with writer(path) as root:
-                assert root.url == path
+                assert root.file == path
                 fill_root_with_data(root)
                 assert_root_data(root)
                 assert repr(root) == "<{} 'bar' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
                 divide = 1/0
 
         root2 = read(path)
-        assert root2.url == path
+        assert root2.file == path
         assert_root_data(root2)
         os.remove(path)

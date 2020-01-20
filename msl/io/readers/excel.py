@@ -8,7 +8,7 @@ import xlrd
 
 class ExcelReader(object):
 
-    def __init__(self, url, **kwargs):
+    def __init__(self, file, **kwargs):
         """Read an Excel spreadsheet (.xls and .xlsx).
 
         This class simply provides a convenience for reading information
@@ -19,7 +19,7 @@ class ExcelReader(object):
 
         Parameters
         ----------
-        url : :class:`str`
+        file : :class:`str`
             The location of an Excel spreadsheet on a local hard drive or on a network.
         **kwargs
             All keyword arguments are passed to :func:`~xlrd.open_workbook`. Can use
@@ -46,13 +46,13 @@ class ExcelReader(object):
         if encoding is not None:
             kwargs['encoding_override'] = encoding
 
-        self._url = url
-        self._workbook = xlrd.open_workbook(url, **kwargs)
+        self._file = file
+        self._workbook = xlrd.open_workbook(file, **kwargs)
 
     @property
-    def url(self):
+    def file(self):
         """:class:`str`: The location of the Excel spreadsheet on a local hard drive or on a network."""
-        return self._url
+        return self._file
 
     @property
     def workbook(self):
@@ -88,7 +88,7 @@ class ExcelReader(object):
             if len(names) > 1:
                 raise IOError('{!r} contains the following sheets:\n  {}\n'
                               'You must specify the name of the sheet to read'
-                              .format(self._url, ', '.join(names)))
+                              .format(self._file, ', '.join(names)))
             else:
                 sheet_name = names[0]
         else:
@@ -102,7 +102,7 @@ class ExcelReader(object):
             sheet = None
 
         if sheet is None:
-            raise ValueError('There is no sheet named {!r} in {!r}'.format(sheet_name, self._url))
+            raise ValueError('There is no sheet named {!r} in {!r}'.format(sheet_name, self._file))
 
         if cell is None:
             start_row, end_row = 0, sheet.nrows - 1

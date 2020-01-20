@@ -39,7 +39,7 @@ class JSONWriter(Writer):
     (even if an unhandled exception is raised in the `with` block).
     """
 
-    def write(self, url=None, root=None, **kwargs):
+    def write(self, file=None, root=None, **kwargs):
         """Write to a JSON_ file.
 
         The first line in the output file contains a description that the
@@ -58,9 +58,9 @@ class JSONWriter(Writer):
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the value of
-            `url` that was specified when :class:`JSONWriter` was instantiated.
+            `file` that was specified when :class:`JSONWriter` was instantiated.
         root : :class:`~msl.io.base_io.Root`, optional
             Write `root` in JSON_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
@@ -72,10 +72,10 @@ class JSONWriter(Writer):
             `json.dump <https://docs.python.org/3/library/json.html#json.dump>`_.
             The default indentation is 2.
         """
-        if url is None:
-            url = self.url
-        if not url:
-            raise ValueError('You must specify a url to write the file to')
+        if file is None:
+            file = self.file
+        if not file:
+            raise ValueError('You must specify a file to write the root to')
 
         if root is None:
             root = self
@@ -131,13 +131,13 @@ class JSONWriter(Writer):
             # (on Windows) when the standard open function use used
             opener = open
 
-        is_file_like = hasattr(url, 'write')
+        is_file_like = hasattr(file, 'write')
 
         if not open_kwargs['mode']:
             open_kwargs['mode'] = 'w'
-            if not is_file_like and os.path.isfile(url):
+            if not is_file_like and os.path.isfile(file):
                 raise IOError("A {!r} file already exists.\n"
-                              "Specify mode='w' if you want to overwrite it.".format(url))
+                              "Specify mode='w' if you want to overwrite it.".format(file))
 
         if 'indent' not in kwargs:
             kwargs['indent'] = 2
@@ -148,18 +148,18 @@ class JSONWriter(Writer):
         header = '#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__)
 
         if is_file_like:
-            if isinstance(url, BufferedIOBase):  # a bytes-like object is required
+            if isinstance(file, BufferedIOBase):  # a bytes-like object is required
                 encoding = open_kwargs['encoding']
-                url.write(header.encode(encoding))
-                url.write(json.dumps(dict_, **kwargs).encode(encoding))
+                file.write(header.encode(encoding))
+                file.write(json.dumps(dict_, **kwargs).encode(encoding))
             elif IS_PYTHON2:
-                url.write(unicode(header))
-                url.write(unicode(json.dumps(dict_, **kwargs)))
+                file.write(unicode(header))
+                file.write(unicode(json.dumps(dict_, **kwargs)))
             else:
-                url.write(header)
-                json.dump(dict_, url, **kwargs)
+                file.write(header)
+                json.dump(dict_, file, **kwargs)
         else:
-            with opener(url, **open_kwargs) as fp:
+            with opener(file, **open_kwargs) as fp:
                 fp.write(header)
                 json.dump(dict_, fp, **kwargs)
 

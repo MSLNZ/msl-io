@@ -30,7 +30,7 @@ def test_unicode_filename():
 
     root = read_sample(u'uñicödé.h5')
     assert root.metadata.is_unicode
-    assert root.url.endswith(u'uñicödé.h5')
+    assert root.file.endswith(u'uñicödé.h5')
     assert u'café' in root
     assert u'/café' in root
     assert u'café/caña' in root

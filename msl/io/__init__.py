@@ -43,12 +43,12 @@ for module in os.listdir(os.path.dirname(__file__) + '/readers'):
         importlib.import_module('msl.io.readers.'+module[:-3])
 
 
-def read(url, **kwargs):
+def read(file, **kwargs):
     """Read a file that has a :ref:`Reader <io-readers>` implemented.
 
     Parameters
     ----------
-    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
         The file to read. For example, it could be a :class:`str` representing
         a file system path or a stream.
     **kwargs
@@ -66,25 +66,25 @@ def read(url, **kwargs):
         If the file does not exist or if no :class:`~msl.io.base_io.Reader` exists
         to be able to read the specified file.
     """
-    if not hasattr(url, 'read') and not os.path.isfile(url):
-        raise IOError('File does not exist {!r}'.format(url))
+    if not hasattr(file, 'read') and not os.path.isfile(file):
+        raise IOError('File does not exist {!r}'.format(file))
 
     for rdr in _readers:
         try:
-            can_read = rdr.can_read(url, **kwargs)
+            can_read = rdr.can_read(file, **kwargs)
         except:
             continue
 
         if can_read:
-            root = rdr(url)
+            root = rdr(file)
             root.read(**kwargs)
             root.is_read_only = True
             return root
 
-    raise IOError('No Reader exists to read {!r}'.format(url))
+    raise IOError('No Reader exists to read {!r}'.format(file))
 
 
-def read_table(url, **kwargs):
+def read_table(file, **kwargs):
     """Read tabular data from a file.
 
     A *table* has the following properties:
@@ -95,7 +95,7 @@ def read_table(url, **kwargs):
 
     Parameters
     ----------
-    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
         The file to read. For example, it could be a :class:`str` representing
         a file system path or a stream.
     **kwargs
@@ -108,10 +108,10 @@ def read_table(url, **kwargs):
     :class:`~msl.io.dataset.Dataset`
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
     """
-    extn = Reader.get_extension(url).lower()
+    extn = Reader.get_extension(file).lower()
     if extn.startswith('.xls'):
-        if hasattr(url, 'name'):  # a TextIOWrapper object that was created by calling open()
-            url = url.name
-        return read_table_excel(url, **kwargs)
+        if hasattr(file, 'name'):  # a TextIOWrapper object that was created by calling open()
+            file = file.name
+        return read_table_excel(file, **kwargs)
     else:
-        return read_table_text(url, **kwargs)
+        return read_table_text(file, **kwargs)

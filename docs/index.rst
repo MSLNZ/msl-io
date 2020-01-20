@@ -138,7 +138,7 @@ To write the file use *(NOTE: the file is not created until you call the* ``writ
 
 .. code-block:: pycon
 
-   >>> h5.write(url='my_file.h5')
+   >>> h5.write(file='my_file.h5')
 
 .. _msl-io-convert:
 

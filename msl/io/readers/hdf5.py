@@ -24,14 +24,14 @@ class HDF5Reader(Reader):
     """Reader for the HDF5_ file format."""
 
     @staticmethod
-    def can_read(url, **kwargs):
+    def can_read(file, **kwargs):
         """The HDF5_ file format has a standard signature_.
 
         The first 8 bytes are ``\\x89HDF\\r\\n\\x1a\\n``.
 
         .. _signature: https://support.hdfgroup.org/HDF5/doc/H5.format.html#Superblock
         """
-        return Reader.get_bytes(url, 8) == b'\x89HDF\r\n\x1a\n'
+        return Reader.get_bytes(file, 8) == b'\x89HDF\r\n\x1a\n'
 
     def read(self, **kwargs):
         """Reads the HDF5_ file.
@@ -59,7 +59,7 @@ class HDF5Reader(Reader):
             else:
                 assert False, 'Unhandled HDF5Reader object {}'.format(obj)
 
-        h5 = h5py.File(self.url, mode='r', **kwargs)
+        h5 = h5py.File(self.file, mode='r', **kwargs)
         self.add_metadata(**h5.attrs)
         h5.visititems(convert)
         h5.close()

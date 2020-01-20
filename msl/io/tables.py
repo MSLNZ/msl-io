@@ -32,7 +32,7 @@ You can customize your own map
 """
 
 
-def read_table_text(url, **kwargs):
+def read_table_text(file, **kwargs):
     """Read tabular data from a text-based file.
 
     A *table* has the following properties:
@@ -43,11 +43,11 @@ def read_table_text(url, **kwargs):
 
     Parameters
     ----------
-    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
         The file to read.
     **kwargs
         All keyword arguments are passed to :func:`~numpy.loadtxt`. If the
-        `delimiter` is not specified and the `url` has ``csv`` as the file
+        `delimiter` is not specified and the `file` has ``csv`` as the file
         extension then the `delimiter` is automatically set to be ``','``.
 
     Returns
@@ -59,28 +59,28 @@ def read_table_text(url, **kwargs):
         raise ValueError('Cannot use the "unpack" option')
 
     if 'delimiter' not in kwargs:
-        extn = Reader.get_extension(url).lower()
+        extn = Reader.get_extension(file).lower()
         kwargs['delimiter'] = extension_delimiter_map.get(extn)
 
     if 'skiprows' not in kwargs:
         kwargs['skiprows'] = 1
 
-    first_line = Reader.get_lines(url, kwargs['skiprows'], kwargs['skiprows'])
+    first_line = Reader.get_lines(file, kwargs['skiprows'], kwargs['skiprows'])
     if not first_line:
         header, data = [], []
     else:
         header = first_line[0].split(kwargs['delimiter'])
-        data = np.loadtxt(url, **kwargs)
+        data = np.loadtxt(file, **kwargs)
         use_cols = kwargs.get('usecols')
         if use_cols:
             if isinstance(use_cols, int):
                 use_cols = [use_cols]
             header = [header[i] for i in use_cols]
 
-    return Dataset(get_basename(url), None, True, data=data, header=np.asarray(header, dtype=str))
+    return Dataset(get_basename(file), None, True, data=data, header=np.asarray(header, dtype=str))
 
 
-def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
+def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
     """Read tabular data from an Excel spreadsheet.
 
     A *table* has the following properties:
@@ -91,7 +91,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
 
     Parameters
     ----------
-    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
         The file to read.
     cell : :class:`str`, optional
         The cells to read (for example, ``'C9:G20'``). If not specified then reads all data
@@ -119,7 +119,7 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
         if not match:
             raise ValueError('You must specify a range of cells, for example, "C3:M25"')
 
-    excel = ExcelReader(url, **kwargs)
+    excel = ExcelReader(file, **kwargs)
     table = excel.read(cell=cell, sheet=sheet, as_datetime=as_datetime)
     if not table:
         header, data = [], []
@@ -146,4 +146,4 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
                 data = data[0]
 
     excel.close()
-    return Dataset(get_basename(url), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))
+    return Dataset(get_basename(file), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))

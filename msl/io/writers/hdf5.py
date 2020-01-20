@@ -36,14 +36,14 @@ class HDF5Writer(Writer):
     (even if an unhandled exception is raised in the `with` block).
     """
 
-    def write(self, url=None, root=None, **kwargs):
+    def write(self, file=None, root=None, **kwargs):
         """Write to a HDF5_ file.
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the value of
-            `url` that was specified when :class:`HDF5Writer` was instantiated.
+            `file` that was specified when :class:`HDF5Writer` was instantiated.
         root : :class:`~msl.io.base_io.Root`, optional
             Write `root` in HDF5_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
@@ -54,10 +54,10 @@ class HDF5Writer(Writer):
         if h5py is None:
             raise ImportError('You must install h5py to write HDF5 files.\nRun: pip install h5py')
 
-        if url is None:
-            url = self.url
-        if not url:
-            raise ValueError('You must specify a url to write the file to')
+        if file is None:
+            file = self.file
+        if not file:
+            raise ValueError('You must specify a file to write the root to')
 
         if root is None:
             root = self
@@ -107,7 +107,7 @@ class HDF5Writer(Writer):
             return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v))
                         for k, v in metadata.items())
 
-        with h5py.File(url, **kwargs) as h5:
+        with h5py.File(file, **kwargs) as h5:
             h5.attrs.update(**meta_to_dict(root.metadata))
             for name, value in root.items():
                 if self.is_dataset(value):

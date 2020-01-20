@@ -30,7 +30,7 @@ def get_url(extension):
 
 def test_raises():
 
-    # url does not exist
+    # file does not exist
     with pytest.raises(IOError):
         read_table('does not exist')
 

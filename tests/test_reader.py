@@ -16,7 +16,7 @@ def test_get_root():
 
 def test_instantiate():
     reader = Reader('aaa.bbb')
-    assert reader.url == 'aaa.bbb'
+    assert reader.file == 'aaa.bbb'
 
 
 def test_get_lines():

@@ -19,12 +19,12 @@ class JSONReader(Reader):
     """Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`."""
 
     @staticmethod
-    def can_read(url, **kwargs):
+    def can_read(file, **kwargs):
         """Checks if the text ``MSL JSONWriter`` is in the first line of the file."""
-        if isinstance(url, BufferedIOBase):
-            text = Reader.get_bytes(url, 21, 34).decode()
+        if isinstance(file, BufferedIOBase):
+            text = Reader.get_bytes(file, 21, 34).decode()
         else:
-            text = Reader.get_lines(url, 1, **kwargs)[0][20:34]
+            text = Reader.get_lines(file, 1, **kwargs)[0][20:34]
         return text == 'MSL JSONWriter'
 
     def read(self, **kwargs):
@@ -52,14 +52,14 @@ class JSONReader(Reader):
         else:
             opener = open
 
-        if hasattr(self.url, 'read'):
-            self.url.readline()  # skip the first line
-            data = self.url.read()
+        if hasattr(self.file, 'read'):
+            self.file.readline()  # skip the first line
+            data = self.file.read()
             if isinstance(data, bytes):
                 data = data.decode(**open_kwargs)
             dict_ = json.loads(data, **kwargs)
         else:
-            with opener(self.url, mode='r', **open_kwargs) as fp:
+            with opener(self.file, mode='r', **open_kwargs) as fp:
                 fp.readline()  # skip the first line
                 dict_ = json.loads(fp.read(), **kwargs)
 

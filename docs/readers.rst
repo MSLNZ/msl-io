@@ -39,11 +39,13 @@ Please follow the :ref:`style guide <style guide>`.
            """Name your class to be whatever you want, i.e., change AnExampleReader"""
 
            @staticmethod
-           def can_read(url, **kwargs):
+           def can_read(file, **kwargs):
                """This method answers the following question:
 
-               Given a URL (which is a Python string that is the location of a file)
-               can your Reader read this file?
+               Given a path-like object (a Python string, bytes or os.PathLike object)
+               that represents the location of a file or a file-like object (a Python
+               stream that has a read() and write() method) can your Reader read this
+               file?
 
                You must perform all the necessary checks that *uniquely* answers this
                question. For example, checking that the file extension is ".csv" is
@@ -56,7 +58,7 @@ Please follow the :ref:`style guide <style guide>`.
 
                Your Reader class is a Root object.
 
-               The location of the data file to read is available at self.url
+               The data file to read is available at self.file
 
                To add metadata to Root use self.add_metadata(...)
 

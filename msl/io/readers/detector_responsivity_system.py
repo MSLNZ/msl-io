@@ -14,11 +14,11 @@ class DRS(Reader):
     """Reader for the Detector Responsivity System from Light Standards at MSL."""
 
     @staticmethod
-    def can_read(url, **kwargs):
+    def can_read(file, **kwargs):
         """Checks if the first line starts with ``DRS`` and ends with ``Shindo``."""
-        if Reader.get_extension(url).lower() != '.dat':
+        if Reader.get_extension(file).lower() != '.dat':
             return False
-        line = Reader.get_lines(url, 1)[0]
+        line = Reader.get_lines(file, 1)[0]
         if line.startswith('DRS') and line.endswith('Shindo'):
             return True
         if line.startswith('"DRS') and line.endswith('Shindo"'):
@@ -35,10 +35,10 @@ class DRS(Reader):
         """
         self._default_alias = {'l(nm)': 'wavelength'}
 
-        self._lines_dat = self.get_lines(self.url, remove_empty_lines=True)
+        self._lines_dat = self.get_lines(self.file, remove_empty_lines=True)
         self._num_lines_dat = len(self._lines_dat)
 
-        self._lines_log = self.get_lines(self.url[:-3]+'LOG', remove_empty_lines=True)
+        self._lines_log = self.get_lines(self.file[:-3]+'LOG', remove_empty_lines=True)
         self._num_lines_log = len(self._lines_log)
 
         num_runs = 0

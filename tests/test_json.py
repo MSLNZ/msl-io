@@ -17,9 +17,9 @@ def test_sample():
     # write as JSON then read
     writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
     writer.write(root=root1, mode='w')
-    root2 = read(writer.url)
-    assert root2.url == writer.url
-    os.remove(writer.url)
+    root2 = read(writer.file)
+    assert root2.file == writer.file
+    os.remove(writer.file)
 
     # convert to HDF5 then back to JSON
     hdf5_writer = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5')
@@ -34,13 +34,13 @@ def test_sample():
     assert np.array_equal(array_mixed_null, ['a', False, 5, 72.3, 'hey', None])
     assert 'array_mixed_null' not in temp.metadata
     hdf5_writer.write(root=temp, mode='w')
-    root_hdf5 = read(hdf5_writer.url)
-    os.remove(hdf5_writer.url)
+    root_hdf5 = read(hdf5_writer.file)
+    os.remove(hdf5_writer.file)
     writer2 = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp2.json')
     writer2.write(root=root_hdf5, mode='w')
-    root3 = read(writer2.url)
-    assert root3.url == writer2.url
-    os.remove(writer2.url)
+    root3 = read(writer2.file)
+    assert root3.file == writer2.file
+    os.remove(writer2.file)
 
     for root in [root1, root2, root3]:
         assert isinstance(root, JSONReader)
@@ -197,32 +197,32 @@ def test_url_and_root():
 
     writer = JSONWriter()
 
-    # no URL was specified
+    # no file was specified
     with pytest.raises(ValueError) as e:
         writer.write(root=root)
-    assert 'url' in str(e.value)
+    assert 'must specify a file' in str(e.value)
 
     # cannot overwrite a file by default
-    url = tempfile.gettempdir() + '/msl-json-writer-temp.json'
-    with open(url, 'wt') as fp:
+    file = tempfile.gettempdir() + '/msl-json-writer-temp.json'
+    with open(file, 'wt') as fp:
         fp.write('Hi')
     with pytest.raises(IOError) as e:
-        writer.write(url=url, root=root)
+        writer.write(file=file, root=root)
     assert 'exists' in str(e.value)
 
     # by specifying the mode one can overwrite a file
-    writer.write(url=url, root=root, mode='w')
-    os.remove(url)
+    writer.write(file=file, root=root, mode='w')
+    os.remove(file)
 
     # root must be a Root
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root=list(root.datasets())[0])
+        writer.write(file='whatever', root=list(root.datasets())[0])
     assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root=list(root.groups())[0])
+        writer.write(file='whatever', root=list(root.groups())[0])
     assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root='Root')
+        writer.write(file='whatever', root='Root')
     assert 'Root' in str(e.value)
 
 
@@ -306,7 +306,7 @@ def test_pretty_printing():
 }
 """.splitlines()
 
-    with open(w.url, 'rt') as fp:
+    with open(w.file, 'rt') as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
 
     assert len(expected) == len(written)
@@ -314,11 +314,11 @@ def test_pretty_printing():
         assert expected[i] == written[i]
 
     # make sure that we can still read the file
-    root = read_sample(w.url)
+    root = read_sample(w.file)
 
     # change the indentation to be 0
     w.save(root=root, mode='w', sort_keys=True, indent=0)
-    with open(w.url, 'rt') as fp:
+    with open(w.file, 'rt') as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
     assert len(expected) == len(written)
     for i in range(len(expected)):
@@ -326,14 +326,14 @@ def test_pretty_printing():
 
     # change the indentation to be None
     w.save(root=root, mode='w', sort_keys=True, indent=None)
-    with open(w.url, 'rt') as fp:
+    with open(w.file, 'rt') as fp:
         written = fp.read().splitlines()
     assert len(written) == 2
     assert written[0] == '#File created with: MSL JSONWriter version 1.0'
     assert written[1].startswith('{"a": {"b": {"apple":')
     assert written[1].endswith('}, "null": null}')
 
-    os.remove(w.url)
+    os.remove(w.file)
 
 
 def test_unicode():
@@ -354,7 +354,7 @@ def test_unicode():
         writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
         writer.save(root=root, ensure_ascii=b, mode='w')
 
-        root2 = read(writer.url)
+        root2 = read(writer.file)
         do_asserts(root2)
 
-        os.remove(writer.url)
+        os.remove(writer.file)

@@ -181,8 +181,8 @@ def test_filter_loggers():
 def test_save_then_read():
     assert len(logging.getLogger().handlers) == 1
 
-    json = JSONWriter(url=os.path.join(tempfile.gettempdir(), 'msl-io-junk.json'))
-    h5 = HDF5Writer(url=os.path.join(tempfile.gettempdir(), 'msl-io-junk.h5'))
+    json = JSONWriter(file=os.path.join(tempfile.gettempdir(), 'msl-io-junk.json'))
+    h5 = HDF5Writer(file=os.path.join(tempfile.gettempdir(), 'msl-io-junk.h5'))
 
     json.create_dataset_logging('log', date_fmt='%H:%M:%S', extra='ABC')
     h5.require_dataset_logging('/a/b/c/d/e/log')  # doesn't exist so creates it
@@ -196,10 +196,10 @@ def test_save_then_read():
     json.write(mode='w')
     h5.write(mode='w')
 
-    json_2 = read(json.url)
-    h5_2 = read(h5.url)
-    os.remove(json.url)
-    os.remove(h5.url)
+    json_2 = read(json.file)
+    h5_2 = read(h5.file)
+    os.remove(json.file)
+    os.remove(h5.file)
 
     # when a file is read, what was once a DatasetLogging object is loaded as a regular Dataset
     # but can be turned back into a DatasetLogging by calling require_dataset_logging()
@@ -395,7 +395,7 @@ def test_initial_shape():
 def test_initial_index_value():
     assert len(logging.getLogger().handlers) == 1
 
-    root = JSONWriter(url=os.path.join(tempfile.gettempdir(), 'msl-io-junk.json'))
+    root = JSONWriter(file=os.path.join(tempfile.gettempdir(), 'msl-io-junk.json'))
     root.create_dataset_logging('log')
 
     n = 10
@@ -407,8 +407,8 @@ def test_initial_index_value():
 
     root.write(mode='w')
 
-    root2 = read(root.url)
-    root3 = read(root.url)
+    root2 = read(root.file)
+    root3 = read(root.file)
 
     # specify more than n elements
     root2.require_dataset_logging(root.log.name, size=n+5)
@@ -419,7 +419,7 @@ def test_initial_index_value():
 
     assert len(logging.getLogger().handlers) == 4
 
-    os.remove(root.url)
+    os.remove(root.file)
 
     assert root2.log.size == n+5
     assert root3.log.size == n  # gets increased to n

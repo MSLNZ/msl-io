@@ -53,7 +53,7 @@ def test_string_io():
 
         with StringIO() as buf:
             with writer(buf) as root:
-                assert isinstance(root.url, StringIO)
+                assert isinstance(root.file, StringIO)
                 assert repr(root) == "<{} 'StringIO' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)
@@ -61,7 +61,7 @@ def test_string_io():
 
             buf.seek(0)
             root2 = read(buf)
-            assert isinstance(root2.url, StringIO)
+            assert isinstance(root2.file, StringIO)
             assert_root_data(root2)
 
 
@@ -70,7 +70,7 @@ def test_bytes_io():
     for writer in writers:
         with BytesIO() as buf:
             with writer(buf) as root:
-                assert isinstance(root.url, BytesIO)
+                assert isinstance(root.file, BytesIO)
                 assert repr(root) == "<{} 'BytesIO' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)
@@ -78,7 +78,7 @@ def test_bytes_io():
 
             buf.seek(0)
             root2 = read(buf)
-            assert isinstance(root2.url, BytesIO)
+            assert isinstance(root2.file, BytesIO)
             assert_root_data(root2)
 
 
@@ -95,16 +95,16 @@ def test_open_text():
         with open(path, 'wt') as fp:
             with writer(fp) as root:
                 if IS_PYTHON2:
-                    assert isinstance(root.url, file)
+                    assert isinstance(root.file, file)
                 else:
-                    assert isinstance(root.url, TextIOWrapper)
+                    assert isinstance(root.file, TextIOWrapper)
                 assert repr(root) == "<{} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)
                 assert repr(root) == "<{} 'textfile.txt' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
 
         root2 = read(path)
-        assert root2.url == path
+        assert root2.file == path
         assert_root_data(root2)
 
         os.remove(path)
@@ -120,16 +120,16 @@ def test_open_binary():
         with open(path, 'wb') as fp:
             with writer(fp) as root:
                 if IS_PYTHON2:
-                    assert isinstance(root.url, file)
+                    assert isinstance(root.file, file)
                 else:
-                    assert isinstance(root.url, BufferedWriter)
+                    assert isinstance(root.file, BufferedWriter)
                 assert repr(root) == "<{} 'binaryfile.bin' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)
                 assert repr(root) == "<{} 'binaryfile.bin' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
 
         root2 = read(path)
-        assert root2.url == path
+        assert root2.file == path
         assert_root_data(root2)
 
         os.remove(path)

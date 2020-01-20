@@ -12,7 +12,7 @@ from .utils import get_basename
 
 class Root(Group):
 
-    def __init__(self, url, **metadata):
+    def __init__(self, file, **metadata):
         """The root_ vertex in a tree_.
 
         .. _root: https://en.wikipedia.org/wiki/Tree_(graph_theory)#Rooted_tree
@@ -20,17 +20,17 @@ class Root(Group):
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-            The file root.
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file object that of the :class:`~msl.io.base_io.Root`.
         **metadata
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
             for the :class:`~msl.io.base_io.Root`.
         """
         super(Group, self).__init__('/', None, False, **metadata)
-        self._url = url
+        self._file = file
 
     def __repr__(self):
-        b = get_basename(self._url)
+        b = get_basename(self._file)
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
@@ -38,10 +38,10 @@ class Root(Group):
             format(self.__class__.__name__, b, g, d, m)
 
     @property
-    def url(self):
+    def file(self):
         """:term:`path-like <path-like object>` or :term:`file-like <file object>`: The file
         object that is associated with the :class:`Root`."""
-        return self._url
+        return self._file
 
     def tree(self, indent=2):
         """A representation of the `tree structure`_ of all :class:`~msl.io.group.Group`\\s
@@ -65,17 +65,17 @@ class Root(Group):
 
 class Writer(Root):
 
-    def __init__(self, url=None, **metadata):
+    def __init__(self, file=None, **metadata):
         """
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the data to. Can also be specified in the :meth:`write` method.
         **metadata
             Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
             of the :class:`~msl.io.base_io.Root`.
         """
-        super(Writer, self).__init__(url, **metadata)
+        super(Writer, self).__init__(file, **metadata)
 
     def set_root(self, root):
         """Set a new :class:`Root` for the :class:`Writer`.
@@ -83,7 +83,7 @@ class Writer(Root):
         .. attention::
            This will clear the :class:`~msl.io.metadata.Metadata` of the :class:`Writer`
            and all :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
-           that the :class:`Writer` currently contains. The `URL` that was specified when
+           that the :class:`Writer` currently contains. The `file` that was specified when
            the :class:`Writer` was created does not change.
 
         Parameters
@@ -99,7 +99,7 @@ class Writer(Root):
         if root:  # only do this if there are Groups and/or Datasets in the new root
             self.add_group('', root)
 
-    def write(self, url=None, root=None, **kwargs):
+    def write(self, file=None, root=None, **kwargs):
         """Write to a file.
 
         .. important::
@@ -107,9 +107,9 @@ class Writer(Root):
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the
-            `url` value that was specified when the :class:`~msl.io.base_io.Writer`
+            `file` value that was specified when the :class:`~msl.io.base_io.Writer`
             was instantiated.
         root : :class:`~msl.io.base_io.Root`, optional
             Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.
@@ -119,9 +119,9 @@ class Writer(Root):
         """
         raise NotImplementedError
 
-    def save(self, url=None, root=None, **kwargs):
+    def save(self, file=None, root=None, **kwargs):
         """Alias for :meth:`write`."""
-        self.write(url=url, root=root, **kwargs)
+        self.write(file=file, root=root, **kwargs)
 
     def __enter__(self):
         return self
@@ -134,25 +134,25 @@ class Writer(Root):
 
 class Reader(Root):
 
-    def __init__(self, url):
+    def __init__(self, file):
         """
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to read.
         """
-        super(Reader, self).__init__(url)
+        super(Reader, self).__init__(file)
 
     @staticmethod
-    def can_read(url, **kwargs):
-        """Whether this :class:`~msl.io.base_io.Reader` can read the file specified by `url`.
+    def can_read(file, **kwargs):
+        """Whether this :class:`~msl.io.base_io.Reader` can read the file specified by `file`.
 
         .. important::
            You must override this method.
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to check whether the :class:`~msl.io.base_io.Reader` can read it.
 
         Returns
@@ -165,8 +165,8 @@ class Reader(Root):
     def read(self, **kwargs):
         """Read the file.
 
-        The file can be accessed by the :attr:`~msl.io.base_io.Root.url`
-        property of the :class:`~msl.io.base_io.Reader`, i.e., ``self.url``
+        The file can be accessed by the :attr:`~msl.io.base_io.Root.file`
+        property of the :class:`~msl.io.base_io.Reader`, i.e., ``self.file``
 
         .. important::
            You must override this method.
@@ -180,36 +180,36 @@ class Reader(Root):
         raise NotImplementedError
 
     @staticmethod
-    def get_lines(url, *args, **kwargs):
+    def get_lines(file, *args, **kwargs):
         """Return lines from a file.
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to read lines from.
         *args : :class:`int` or :class:`tuple` of :class:`int`, optional
             The line(s) in the file to get.
 
             Examples:
 
-            * ``get_lines(url)`` :math:`\\rightarrow` returns all lines
+            * ``get_lines(file)`` :math:`\\rightarrow` returns all lines
 
-            * ``get_lines(url, 5)`` :math:`\\rightarrow` returns the first 5 lines
+            * ``get_lines(file, 5)`` :math:`\\rightarrow` returns the first 5 lines
 
-            * ``get_lines(url, -5)`` :math:`\\rightarrow` returns the last 5 lines
+            * ``get_lines(file, -5)`` :math:`\\rightarrow` returns the last 5 lines
 
-            * ``get_lines(url, 2, 4)`` :math:`\\rightarrow` returns lines 2, 3 and 4
+            * ``get_lines(file, 2, 4)`` :math:`\\rightarrow` returns lines 2, 3 and 4
 
-            * ``get_lines(url, 4, -1)`` :math:`\\rightarrow` skips the first 3 lines
+            * ``get_lines(file, 4, -1)`` :math:`\\rightarrow` skips the first 3 lines
               and returns the rest
 
-            * ``get_lines(url, 2, -2)`` :math:`\\rightarrow` skips the first and last
+            * ``get_lines(file, 2, -2)`` :math:`\\rightarrow` skips the first and last
               lines and returns the rest
 
-            * ``get_lines(url, -4, -2)`` :math:`\\rightarrow` returns the fourth-,
+            * ``get_lines(file, -4, -2)`` :math:`\\rightarrow` returns the fourth-,
               third- and second-last lines
 
-            * ``get_lines(url, 1, -1, 6)`` :math:`\\rightarrow` returns every sixth
+            * ``get_lines(file, 1, -1, 6)`` :math:`\\rightarrow` returns every sixth
               line in the file
 
         **kwargs
@@ -253,7 +253,7 @@ class Reader(Root):
         if (len(args) > 1) and (args[0] is not None) and (args[0] > 0):
             args = (args[0] - 1,) + args[1:]
 
-        is_file_like = hasattr(url, 'read')
+        is_file_like = hasattr(file, 'read')
 
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
@@ -262,11 +262,11 @@ class Reader(Root):
                 return [line.rstrip() for line in _file.readlines()]
 
             if is_file_like:
-                position = url.tell()
-                lines = get(url)
-                url.seek(position)
+                position = file.tell()
+                lines = get(file)
+                file.seek(position)
             else:
-                with opener(url, 'r', **kwargs) as f:
+                with opener(file, 'r', **kwargs) as f:
                     lines = get(f)
 
             if len(args) == 1:
@@ -284,11 +284,11 @@ class Reader(Root):
                 return [line.rstrip() for line in itertools.islice(_file, *args)]
 
             if is_file_like:
-                position = url.tell()
-                lines = get(url)
-                url.seek(position)
+                position = file.tell()
+                lines = get(file)
+                file.seek(position)
             else:
-                with opener(url, 'r', **kwargs) as f:
+                with opener(file, 'r', **kwargs) as f:
                     lines = get(f)
 
         if remove_empty_lines:
@@ -297,48 +297,48 @@ class Reader(Root):
         return lines
 
     @staticmethod
-    def get_bytes(url, *args):
+    def get_bytes(file, *args):
         """Return bytes from a file.
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to read bytes from.
         *args : :class:`int` or :class:`tuple` of :class:`int`, optional
             The position(s) in the file to retrieve bytes from.
 
             Examples:
 
-            * ``get_bytes(url)`` :math:`\\rightarrow` returns all bytes
+            * ``get_bytes(file)`` :math:`\\rightarrow` returns all bytes
 
-            * ``get_bytes(url, 5)`` :math:`\\rightarrow` returns the first 5 bytes
+            * ``get_bytes(file, 5)`` :math:`\\rightarrow` returns the first 5 bytes
 
-            * ``get_bytes(url, -5)`` :math:`\\rightarrow` returns the last 5 bytes
+            * ``get_bytes(file, -5)`` :math:`\\rightarrow` returns the last 5 bytes
 
-            * ``get_bytes(url, 5, 10)`` :math:`\\rightarrow` returns bytes 5 through
+            * ``get_bytes(file, 5, 10)`` :math:`\\rightarrow` returns bytes 5 through
               10 (inclusive)
 
-            * ``get_bytes(url, 3, -1)`` :math:`\\rightarrow` skips the first 2 bytes
+            * ``get_bytes(file, 3, -1)`` :math:`\\rightarrow` skips the first 2 bytes
               and returns the rest
 
-            * ``get_bytes(url, -8, -4)`` :math:`\\rightarrow` returns the eighth-
+            * ``get_bytes(file, -8, -4)`` :math:`\\rightarrow` returns the eighth-
               through fourth-last bytes (inclusive)
 
-            * ``get_bytes(url, 1, -1, 2)`` :math:`\\rightarrow` returns every other byte
+            * ``get_bytes(file, 1, -1, 2)`` :math:`\\rightarrow` returns every other byte
 
         Returns
         -------
         :class:`bytes`
             The bytes from the file.
         """
-        is_file_like = hasattr(url, 'read')
+        is_file_like = hasattr(file, 'read')
         if is_file_like:
-            position = url.tell()
-            url.seek(0, os.SEEK_END)
-            size = url.tell()
-            url.seek(position)
+            position = file.tell()
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+            file.seek(position)
         else:
-            size = os.path.getsize(url)
+            size = os.path.getsize(file)
 
         if not args:
             start, stop, step = 0, size, 1
@@ -366,10 +366,10 @@ class Reader(Root):
         stop = min(size, stop)
 
         if is_file_like:
-            position = url.tell()
-            _file = url
+            position = file.tell()
+            _file = file
         else:
-            _file = open(url, 'rb')
+            _file = open(file, 'rb')
 
         _file.seek(start)
         data = _file.read(max(0, stop - start))
@@ -377,19 +377,19 @@ class Reader(Root):
             data = data[::step]
 
         if is_file_like:
-            url.seek(position)
+            file.seek(position)
         else:
             _file.close()
 
         return data
 
     @staticmethod
-    def get_extension(url):
+    def get_extension(file):
         """Return the extension of the file.
 
         Parameters
         ----------
-        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to get the extension of.
 
         Returns
@@ -398,9 +398,9 @@ class Reader(Root):
             The extension, including the ``'.'``.
         """
         try:
-            return os.path.splitext(url)[1]
+            return os.path.splitext(file)[1]
         except (TypeError, AttributeError):
             try:
-                return Reader.get_extension(url.name)
+                return Reader.get_extension(file.name)
             except AttributeError:
                 return ''

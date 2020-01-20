@@ -15,20 +15,20 @@ def test_hdf5():
     # write as HDF5 then read
     writer = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5')
     writer.write(root=root1, mode='w')
-    root2 = read(writer.url)
-    assert root2.url == writer.url
-    os.remove(writer.url)
+    root2 = read(writer.file)
+    assert root2.file == writer.file
+    os.remove(writer.file)
 
     # convert to JSON then back to HDF5
     json_writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
     json_writer.write(root=root1, mode='w')
-    root_json = read(json_writer.url)
-    os.remove(json_writer.url)
+    root_json = read(json_writer.file)
+    os.remove(json_writer.file)
     writer2 = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp2.h5')
     writer2.write(root=root_json, mode='w')
-    root3 = read(writer2.url)
-    assert root3.url == writer2.url
-    os.remove(writer2.url)
+    root3 = read(writer2.file)
+    assert root3.file == writer2.file
+    os.remove(writer2.file)
 
     for root in [root1, root2, root3]:
         assert isinstance(root, HDF5Reader)
@@ -114,30 +114,30 @@ def test_url_and_root():
 
     writer = HDF5Writer()
 
-    # no URL was specified
+    # no file was specified
     with pytest.raises(ValueError) as e:
         writer.write(root=root)
-    assert 'url' in str(e.value)
+    assert 'must specify a file' in str(e.value)
 
     # cannot overwrite a file by default
-    url = tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5'
-    with open(url, 'wt') as fp:
+    file = tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5'
+    with open(file, 'wt') as fp:
         fp.write('Hi')
     with pytest.raises(IOError) as e:
-        writer.write(url=url, root=root)
+        writer.write(file=file, root=root)
     assert 'exists' in str(e.value)
 
     # by specifying the mode one can overwrite a file
-    writer.write(url=url, root=root, mode='w')
-    os.remove(url)
+    writer.write(file=file, root=root, mode='w')
+    os.remove(file)
 
     # root must be a Root object
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root=list(root.datasets())[0])
+        writer.write(file='whatever', root=list(root.datasets())[0])
     assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root=list(root.groups())[0])
+        writer.write(file='whatever', root=list(root.groups())[0])
     assert 'Root' in str(e.value)
     with pytest.raises(TypeError) as e:
-        writer.write(url='whatever', root='Root')
+        writer.write(file='whatever', root='Root')
     assert 'Root' in str(e.value)
