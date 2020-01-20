@@ -3,6 +3,7 @@ Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
 import json
 import codecs
+from io import BufferedIOBase
 
 import numpy as np
 
@@ -19,7 +20,11 @@ class JSONReader(Reader):
     @staticmethod
     def can_read(url, **kwargs):
         """Checks if the text ``MSL JSONWriter`` is in the first line of the file."""
-        return 'MSL JSONWriter' in Reader.get_lines(url, 1, **kwargs)[0]
+        if isinstance(url, BufferedIOBase):
+            text = Reader.get_bytes(url, 21, 34).decode()
+        else:
+            text = Reader.get_lines(url, 1, **kwargs)[0][20:34]
+        return text == 'MSL JSONWriter'
 
     def read(self, **kwargs):
         """Read the file that was created by :class:`~msl.io.writers.json_.JSONWriter`
@@ -37,7 +42,7 @@ class JSONReader(Reader):
             `json.loads <https://docs.python.org/3/library/json.html#json.loads>`_.
         """
         open_kwargs = {
-            'encoding': kwargs.pop('encoding', 'utf-8'),
+            'encoding': kwargs.get('encoding', 'utf-8'),
             'errors': kwargs.pop('errors', 'strict'),
         }
 
@@ -46,9 +51,16 @@ class JSONReader(Reader):
         else:
             opener = open
 
-        with opener(self.url, mode='r', **open_kwargs) as fp:
-            fp.readline()  # skip the first line
-            dict_ = json.loads(fp.read(), **kwargs)
+        if hasattr(self.url, 'read'):
+            self.url.readline()  # skip the first line
+            data = self.url.read()
+            if isinstance(data, bytes):
+                data = data.decode(**open_kwargs)
+            dict_ = json.loads(data, **kwargs)
+        else:
+            with opener(self.url, mode='r', **open_kwargs) as fp:
+                fp.readline()  # skip the first line
+                dict_ = json.loads(fp.read(), **kwargs)
 
         def list_to_ndarray(list_):
             # convert a Metadata value to ndarray because one can easily make ndarray read only

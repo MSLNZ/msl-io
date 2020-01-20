@@ -1,4 +1,5 @@
 import types
+import logging
 
 import pytest
 
@@ -984,6 +985,130 @@ def test_add_group():
     assert sum(root2.old.b.x.data) == 10
     for val in root.b.x.data.tolist():
         assert val == 0
+
+
+def test_add_dataset():
+    root = Root('some file')
+    for item in [dict(), tuple(), list(), None, 1.0, Root('r'), Group('group', None, True)]:
+        with pytest.raises(TypeError):
+            root.add_dataset('name', item)
+
+    assert len(root) == 0
+
+    dset1 = Dataset('dset1', None, False, data=[1, 2, 3], dtype=int)
+    dset2 = Dataset('dset2', None, False, data=[4.0, 5.0, 6.0], foo='bar')
+    dset3 = Dataset('dset3', None, False, data=[-23.4, 1.78], one=1, two=2)
+
+    root.add_dataset('dset1_copy', dset1)
+
+    d = root.create_group('a/b/c/d')
+    c = d.parent
+    assert c is root.a.b.c
+    c.add_dataset('dset2_copy', dset2)
+
+    c.add_dataset('/x/y/dset3_copy', dset3)
+
+    assert len(list(root.datasets())) == 3
+    assert len(list(root.a.datasets())) == 2
+    assert len(list(root.a.b.datasets())) == 2
+    assert len(list(root.a.b.c.datasets())) == 2
+    assert len(list(root.a.b.c.x.datasets())) == 1
+    assert len(list(root.a.b.c.x.y.datasets())) == 1
+    assert len(list(root.a.b.c.d.datasets())) == 0
+
+    assert root.dset1_copy is not dset1
+    assert root.a.b.c.dset2_copy is not dset2
+    assert root.a.b.c.x.y.dset3_copy is not dset3
+
+    assert all(v1 == v2 for v1, v2 in zip(dset1, root.dset1_copy))
+    assert all(v1 == v2 for v1, v2 in zip(dset2, root.a.b.c.dset2_copy))
+    assert all(v1 == v2 for v1, v2 in zip(dset3, root.a.b.c.x.y.dset3_copy))
+
+    assert len(root.dset1_copy.metadata) == 0
+    assert len(c.dset2_copy.metadata) == 1
+    assert c.dset2_copy.metadata.foo == 'bar'
+    assert len(c.x.y.dset3_copy.metadata) == 2
+    assert c.x.y.dset3_copy.metadata['one'] == 1
+    assert c['x']['y']['dset3_copy'].metadata.two == 2
+
+
+def test_add_dataset_logging():
+    logger = logging.getLogger('test_add_dataset_logging')
+
+    root = Root('some file')
+    for item in [dict(), tuple(), list(), None, 1.0, Root('r'),
+                 Group('group', None, True), Dataset('d', None, True)]:
+        with pytest.raises(TypeError):
+            root.add_dataset_logging('name', item)
+
+    assert len(root) == 0
+    assert len(logger.handlers) == 0
+    assert len(logging.getLogger().handlers) == 1
+
+    dsetlog1 = root.create_dataset_logging('dsetlog1', level='DEBUG', attributes=['levelname', 'message'],
+                                           logger=logger, date_fmt='%H-%M')
+
+    logger.info('bang!')
+
+    root2 = Root('some file')
+    root2.create_group('a/b/c')
+    b = root2.a.b
+    b.add_dataset_logging('x/y/dsetlog2', dsetlog1)
+
+    assert len(logger.handlers) == 2
+    assert len(logging.getLogger().handlers) == 1
+
+    logger.debug('hello')
+    logger.info('world')
+
+    dsetlog1.remove_handler()
+    assert len(logger.handlers) == 1
+    assert len(logging.getLogger().handlers) == 1
+
+    logger.warning('foo')
+    logger.error('bar')
+
+    assert dsetlog1.metadata['logging_level'] == logging.DEBUG
+    assert dsetlog1.metadata.logging_level_name == 'DEBUG'
+    assert dsetlog1.metadata.logging_date_format == '%H-%M'
+    assert dsetlog1.level == logging.DEBUG
+    assert dsetlog1.date_fmt == '%H-%M'
+    assert dsetlog1.logger is logger
+    assert all(a == b for a, b in zip(dsetlog1.attributes, ['levelname', 'message']))
+
+    assert b.x.y.dsetlog2.metadata['logging_level'] == logging.DEBUG
+    assert b.x.y.dsetlog2.metadata.logging_level_name == 'DEBUG'
+    assert b.x.y.dsetlog2.metadata.logging_date_format == '%H-%M'
+    assert b.x.y.dsetlog2.level == logging.DEBUG
+    assert b.x.y.dsetlog2.date_fmt == '%H-%M'
+    assert b.x.y.dsetlog2.logger is logger
+    assert all(a == b for a, b in zip(dsetlog1.attributes, b.x.y.dsetlog2.attributes))
+
+    assert root.dsetlog1.data.size == 3
+    row = root.dsetlog1.data[0]
+    assert row['levelname'] == 'INFO' and row['message'] == 'bang!'
+    row = root.dsetlog1.data[1]
+    assert row['levelname'] == 'DEBUG' and row['message'] == 'hello'
+    row = root.dsetlog1.data[2]
+    assert row['levelname'] == 'INFO' and row['message'] == 'world'
+
+    assert root2.a.b.x.y.dsetlog2.data.size == 5
+    y = b.x.y
+    row = root.dsetlog1.data[0]
+    assert row['levelname'] == 'INFO' and row['message'] == 'bang!'
+    row = y.dsetlog2.data[1]
+    assert row['levelname'] == 'DEBUG' and row['message'] == 'hello'
+    row = y.dsetlog2.data[2]
+    assert row['levelname'] == 'INFO' and row['message'] == 'world'
+    row = y.dsetlog2.data[3]
+    assert row['levelname'] == 'WARNING' and row['message'] == 'foo'
+    row = y.dsetlog2.data[4]
+    assert row['levelname'] == 'ERROR' and row['message'] == 'bar'
+
+    root2.a.b.x.y.dsetlog2.remove_handler()
+
+    assert len(logger.handlers) == 0
+    assert len(logging.getLogger().handlers) == 1
 
 
 def test_remove():

@@ -9,7 +9,7 @@ def test_set_root():
 
     writer = Writer()
     assert len(writer) == 0
-    assert writer.url == ''
+    assert writer.url is None
     assert len(writer.metadata) == 0
 
     for item in [dict(), tuple(), list(), None, Dataset('dset', None, False)]:
@@ -19,14 +19,14 @@ def test_set_root():
     # set an empty root is okay
     writer.set_root(root)
     assert len(writer) == 0
-    assert writer.url == ''
+    assert writer.url is None
     assert len(writer.metadata) == 0
 
     # set an empty root with metadata
     root = Root('some file', one=1, foo='bar')
     writer.set_root(root)
     assert len(writer) == 0
-    assert writer.url == ''
+    assert writer.url is None
     assert len(writer.metadata) == 2
     assert writer.metadata.one == 1
     assert writer.metadata.foo == 'bar'

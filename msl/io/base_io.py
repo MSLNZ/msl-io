@@ -7,6 +7,7 @@ import itertools
 
 from .group import Group
 from .constants import IS_PYTHON2
+from .utils import get_basename
 
 
 class Root(Group):
@@ -19,8 +20,8 @@ class Root(Group):
 
         Parameters
         ----------
-        url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file root.
         **metadata
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
             for the :class:`~msl.io.base_io.Root`.
@@ -29,7 +30,7 @@ class Root(Group):
         self._url = url
 
     def __repr__(self):
-        b = os.path.basename(self._url)
+        b = get_basename(self._url)
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
@@ -38,7 +39,8 @@ class Root(Group):
 
     @property
     def url(self):
-        """:class:`str`: The location of the file on a local hard drive or on a network."""
+        """:term:`path-like <path-like object>` or :term:`file-like <file object>`: The file
+        object that is associated with the :class:`Root`."""
         return self._url
 
     def tree(self, indent=2):
@@ -63,12 +65,13 @@ class Root(Group):
 
 class Writer(Root):
 
-    def __init__(self, url='', **metadata):
-        """
+    def __init__(self, url=None, **metadata):
+        """Base class for all :class:`~msl.io.base_io.Writer`\\s.
+
         Parameters
         ----------
-        url : :class:`str`, optional
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+            The file to write the data to. Can also be specified in the :meth:`write` method.
         **metadata
             Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
             of the :class:`~msl.io.base_io.Root`.
@@ -105,10 +108,10 @@ class Writer(Root):
 
         Parameters
         ----------
-        url : :class:`str`, optional
-            The location of a file on a local hard drive or on a network. If :data:`None`
-            then uses the `URL` value that was specified when the :class:`~msl.io.base_io.Writer`
-            was created.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+            The file to write the `root` to. If :data:`None` then uses the
+            `url` value that was specified when the :class:`~msl.io.base_io.Writer`
+            was instantiated.
         root : :class:`~msl.io.base_io.Root`, optional
             Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.
             This is useful when converting between different file formats.
@@ -121,15 +124,24 @@ class Writer(Root):
         """Alias for :meth:`write`."""
         self.write(url=url, root=root, **kwargs)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        # always write the Root to the stream even if
+        # an exception was raised in the context
+        self.write()
+
 
 class Reader(Root):
 
     def __init__(self, url):
-        """
+        """Base class for all :class:`~msl.io.base_io.Reader`\\s.
+
         Parameters
         ----------
-        url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file to read.
         """
         super(Reader, self).__init__(url)
 
@@ -140,17 +152,22 @@ class Reader(Root):
         .. important::
            You must override this method.
 
+        Parameters
+        ----------
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file to check whether the :class:`~msl.io.base_io.Reader` can read it.
+
         Returns
         -------
         :class:`bool`
-            Either :data:`True` or :data:`False`.
+            Either :data:`True` (can read) or :data:`False` (cannot read).
         """
         return False
 
     def read(self, **kwargs):
         """Read the file.
 
-        The URL of the file can be accessed by the :attr:`~msl.io.base_io.Root.url`
+        The file can be accessed by the :attr:`~msl.io.base_io.Root.url`
         property of the :class:`~msl.io.base_io.Reader`, i.e., ``self.url``
 
         .. important::
@@ -170,8 +187,8 @@ class Reader(Root):
 
         Parameters
         ----------
-        url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file to read lines from.
         *args : :class:`int` or :class:`tuple` of :class:`int`, optional
             The line(s) in the file to get.
 
@@ -238,11 +255,21 @@ class Reader(Root):
         if (len(args) > 1) and (args[0] is not None) and (args[0] > 0):
             args = (args[0] - 1,) + args[1:]
 
+        is_file_like = hasattr(url, 'read')
+
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
         if any(val < 0 for val in args if val):
-            with opener(url, 'r', **kwargs) as f:
-                lines = [line.rstrip() for line in f.readlines()]
+            def get(_file):
+                return [line.rstrip() for line in _file.readlines()]
+
+            if is_file_like:
+                position = url.tell()
+                lines = get(url)
+                url.seek(position)
+            else:
+                with opener(url, 'r', **kwargs) as f:
+                    lines = get(f)
 
             if len(args) == 1:
                 lines = lines[args[0]:]
@@ -255,8 +282,16 @@ class Reader(Root):
             if not args:
                 args = (None,)
 
-            with opener(url, 'r', **kwargs) as f:
-                lines = [line.rstrip() for line in itertools.islice(f, *args)]
+            def get(_file):
+                return [line.rstrip() for line in itertools.islice(_file, *args)]
+
+            if is_file_like:
+                position = url.tell()
+                lines = get(url)
+                url.seek(position)
+            else:
+                with opener(url, 'r', **kwargs) as f:
+                    lines = get(f)
 
         if remove_empty_lines:
             return [line for line in lines if line]
@@ -269,8 +304,8 @@ class Reader(Root):
 
         Parameters
         ----------
-        url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file to read bytes from.
         *args : :class:`int` or :class:`tuple` of :class:`int`, optional
             The position(s) in the file to retrieve bytes from.
 
@@ -298,7 +333,14 @@ class Reader(Root):
         :class:`bytes`
             The bytes from the file.
         """
-        size = os.path.getsize(url)
+        is_file_like = hasattr(url, 'read')
+        if is_file_like:
+            position = url.tell()
+            url.seek(0, os.SEEK_END)
+            size = url.tell()
+            url.seek(position)
+        else:
+            size = os.path.getsize(url)
 
         if not args:
             start, stop, step = 0, size, 1
@@ -325,12 +367,23 @@ class Reader(Root):
             stop += size + 1
         stop = min(size, stop)
 
-        with open(url, 'rb') as f:
-            f.seek(start)
-            data = f.read(max(0, stop - start))
-            if step == 1:
-                return data
-            return data[::step]
+        if is_file_like:
+            position = url.tell()
+            _file = url
+        else:
+            _file = open(url, 'rb')
+
+        _file.seek(start)
+        data = _file.read(max(0, stop - start))
+        if step != 1:
+            data = data[::step]
+
+        if is_file_like:
+            url.seek(position)
+        else:
+            _file.close()
+
+        return data
 
     @staticmethod
     def get_extension(url):
@@ -338,12 +391,18 @@ class Reader(Root):
 
         Parameters
         ----------
-        url : :class:`str`
-            The location of a file on a local hard drive or on a network.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+            The file to get the extension of.
 
         Returns
         -------
         :class:`str`
             The extension, including the ``'.'``.
         """
-        return os.path.splitext(url)[1]
+        try:
+            return os.path.splitext(url)[1]
+        except (TypeError, AttributeError):
+            try:
+                return Reader.get_extension(url.name)
+            except AttributeError:
+                return ''

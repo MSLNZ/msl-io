@@ -2,7 +2,6 @@
 Read tabular data from a file.
 """
 import re
-import os
 
 import numpy as np
 
@@ -11,6 +10,7 @@ from . import (
     ExcelReader,
 )
 from .dataset import Dataset
+from .utils import get_basename
 
 _excel_range_regex = re.compile(r'([a-zA-Z]+)(\d+):([a-zA-Z]+)(\d+)')
 
@@ -43,8 +43,8 @@ def read_table_text(url, **kwargs):
 
     Parameters
     ----------
-    url : :class:`str`
-        The path to the file to read.
+    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The file to read.
     **kwargs
         All keyword arguments are passed to :func:`~numpy.loadtxt`. If the
         `delimiter` is not specified and the `url` has ``csv`` as the file
@@ -77,7 +77,7 @@ def read_table_text(url, **kwargs):
                 use_cols = [use_cols]
             header = [header[i] for i in use_cols]
 
-    return Dataset(os.path.basename(url), None, True, data=data, header=np.asarray(header, dtype=str))
+    return Dataset(get_basename(url), None, True, data=data, header=np.asarray(header, dtype=str))
 
 
 def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
@@ -91,8 +91,8 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
 
     Parameters
     ----------
-    url : :class:`str`
-        The path to the file to read.
+    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The file to read.
     cell : :class:`str`, optional
         The cells to read (for example, ``'C9:G20'``). If not specified then reads all data
         in the specified `sheet`.
@@ -146,4 +146,4 @@ def read_table_excel(url, cell=None, sheet=None, as_datetime=True, dtype=None, *
                 data = data[0]
 
     excel.close()
-    return Dataset(os.path.basename(url), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))
+    return Dataset(get_basename(url), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))

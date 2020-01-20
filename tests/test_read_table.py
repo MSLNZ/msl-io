@@ -1,5 +1,7 @@
+from __future__ import unicode_literals
 import os
 from datetime import datetime
+from io import StringIO, BytesIO
 
 import pytest
 import numpy as np
@@ -177,3 +179,73 @@ def test_skip_rows():
         dset = read_table(get_url(extn), **kwargs)
         assert dset.metadata.header.size == 0
         assert dset.size == 0
+
+
+def test_text_file_like():
+    params = [
+        ('.csv', dict(dtype=data.dtype, delimiter=',')),
+        ('.txt', dict(dtype=data.dtype, delimiter='\t')),
+    ]
+
+    def assert_dataset(dataset):
+        assert np.array_equal(dataset.metadata.header, header)
+        assert np.array_equal(dataset.data, data)
+        assert dataset.shape == (10,)
+
+    for extn, kwargs in params:
+        # first, load it using the file path to get it into a Dataset object
+        dset_temp = read_table(get_url(extn), **kwargs)
+
+        with StringIO() as buf:
+            delim = kwargs['delimiter']
+            buf.write(delim.join(h for h in dset_temp.metadata.header) + '\n')
+            for row in dset_temp:
+                buf.write(delim.join(str(val) for val in row) + '\n')
+
+            buf.seek(0)
+            dset = read_table(buf, **kwargs)
+            assert dset.name == 'StringIO'
+            assert_dataset(dset)
+
+        with open(get_url(extn), 'r') as fp:
+            dset = read_table(fp, **kwargs)
+            assert dset.name == 'table' + extn
+            assert_dataset(dset)
+
+        kwargs['delimiter'] = kwargs['delimiter'].encode()
+
+        with BytesIO() as buf:
+            delim = kwargs['delimiter']
+            buf.write(delim.join(h.encode() for h in dset_temp.metadata.header) + b'\n')
+            for row in dset_temp:
+                buf.write(delim.join(str(val).encode() for val in row) + b'\n')
+
+            buf.seek(0)
+            dset = read_table(buf, **kwargs)
+            assert dset.name == 'BytesIO'
+            assert_dataset(dset)
+
+        with open(get_url(extn), 'rb') as fp:
+            dset = read_table(fp, **kwargs)
+            assert dset.name == 'table' + extn
+            assert_dataset(dset)
+
+
+def test_excel_open():
+    params = [
+        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
+        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
+    ]
+
+    for extn, kwargs in params:
+        for mode in ['rt', 'rb']:
+            with open(get_url(extn), mode=mode) as fp:
+                dataset = read_table(fp, **kwargs)
+                assert np.array_equal(dataset.metadata.header, header)
+                assert np.array_equal(dataset.data, data)
+                assert dataset.shape == (10,)
+
+    # there is no point to test StringIO nor BytesIO because `read_table`
+    # checks the file path extension to decide how to read the table
+    # and a StringIO and a BytesIO object do not have an extension to check
+    # so read_table_excel will not be called, also xlrd cannot load a file stream

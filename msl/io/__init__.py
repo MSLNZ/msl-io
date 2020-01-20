@@ -48,11 +48,12 @@ def read(url, **kwargs):
 
     Parameters
     ----------
-    url : :class:`str`
-        The path to the file to read.
+    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The file to read. For example, it could be a :class:`str` representing
+        a file system path or a stream.
     **kwargs
-        Keyword arguments that are passed to the :meth:`~msl.io.base_io.Reader.can_read`
-        and :meth:`~msl.io.base_io.Reader.read` methods.
+        Keyword arguments that are passed to the :meth:`Reader.can_read() <msl.io.base_io.Reader.can_read>`
+        and :meth:`Reader.read() <msl.io.base_io.Reader.read>` methods.
 
     Returns
     -------
@@ -65,7 +66,7 @@ def read(url, **kwargs):
         If the file does not exist or if no :class:`~msl.io.base_io.Reader` exists
         to be able to read the specified file.
     """
-    if not os.path.isfile(url):
+    if not hasattr(url, 'read') and not os.path.isfile(url):
         raise IOError('File does not exist {!r}'.format(url))
 
     for rdr in _readers:
@@ -94,8 +95,9 @@ def read_table(url, **kwargs):
 
     Parameters
     ----------
-    url : :class:`str`
-        The path to the file to read.
+    url : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The file to read. For example, it could be a :class:`str` representing
+        a file system path or a stream.
     **kwargs
         If the file is an Excel spreadsheet then the keyword arguments are passed to
         :func:`~msl.io.tables.read_table_excel` otherwise all keyword arguments are passed
@@ -107,7 +109,9 @@ def read_table(url, **kwargs):
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
     """
     extn = Reader.get_extension(url).lower()
-    if extn in ['.xls', '.xlsx']:
+    if extn.startswith('.xls'):
+        if hasattr(url, 'name'):  # a TextIOWrapper object that was created by calling open()
+            url = url.name
         return read_table_excel(url, **kwargs)
     else:
         return read_table_text(url, **kwargs)

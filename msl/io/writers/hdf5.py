@@ -30,9 +30,9 @@ class HDF5Writer(Writer):
 
         Parameters
         ----------
-        url : :class:`str`, optional
-            The name of the file to write to. If :data:`None` then uses the value of
-            `url` that was specified when :class:`HDF5Writer` was created.
+        url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+            The file to write the `root` to. If :data:`None` then uses the value of
+            `url` that was specified when :class:`HDF5Writer` was instantiated.
         root : :class:`~msl.io.base_io.Root`, optional
             Write `root` in HDF5_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
@@ -43,14 +43,15 @@ class HDF5Writer(Writer):
         if h5py is None:
             raise ImportError('You must install h5py to write HDF5 files.\nRun: pip install h5py')
 
-        url = self.url if url is None else url
+        if url is None:
+            url = self.url
         if not url:
             raise ValueError('You must specify a url to write the file to')
 
         if root is None:
             root = self
         elif not isinstance(root, Root):
-            raise TypeError('the root parameter must be a Root object')
+            raise TypeError('The root parameter must be a Root object')
 
         if 'mode' not in kwargs:
             kwargs['mode'] = 'x'  # Create file, fail if exists
@@ -95,15 +96,14 @@ class HDF5Writer(Writer):
             return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v))
                         for k, v in metadata.items())
 
-        h5 = h5py.File(url, **kwargs)
-        h5.attrs.update(**meta_to_dict(root.metadata))
-        for name, value in root.items():
-            if self.is_dataset(value):
-                try:
-                    vertex = h5.create_dataset(name, data=value.data)
-                except TypeError:
-                    vertex = h5.create_dataset(name, data=check_ndarray_dtype(value.data))
-            else:
-                vertex = h5.create_group(name)
-            vertex.attrs.update(**meta_to_dict(value.metadata))
-        h5.close()
+        with h5py.File(url, **kwargs) as h5:
+            h5.attrs.update(**meta_to_dict(root.metadata))
+            for name, value in root.items():
+                if self.is_dataset(value):
+                    try:
+                        vertex = h5.create_dataset(name, data=value.data)
+                    except TypeError:
+                        vertex = h5.create_dataset(name, data=check_ndarray_dtype(value.data))
+                else:
+                    vertex = h5.create_group(name)
+                vertex.attrs.update(**meta_to_dict(value.metadata))

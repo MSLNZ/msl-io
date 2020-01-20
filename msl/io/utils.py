@@ -225,3 +225,27 @@ def send_email(to, config, subject='', body='', frm=None):
     msg.attach(MIMEText(body, 'plain'))
     server.sendmail(msg['From'], msg['To'], msg.as_string())
     server.close()
+
+
+def get_basename(obj):
+    """Get the :func:`~os.path.basename` of a file.
+
+    Parameters
+    ----------
+    obj : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The object to get the :func:`~os.path.basename` of. If the object does not
+        support the :func:`~os.path.basename` function then the
+        :attr:`__name__ <definition.__name__>` of the `obj` is returned.
+
+    Returns
+    -------
+    :class:`str`
+        The basename of `obj`.
+    """
+    try:
+        return os.path.basename(obj)
+    except TypeError:
+        try:
+            return os.path.basename(obj.name)
+        except AttributeError:
+            return obj.__class__.__name__
