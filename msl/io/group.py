@@ -138,15 +138,30 @@ class Group(Vertex):
 
     descendants = groups
 
+    def ancestors(self):
+        """Get all parent :class:`Group`\\s (ancestors) of this :class:`Group`.
+
+        Yields
+        ------
+        :class:`Group`
+            The ancestors of this :class:`Group`.
+        """
+        parent = self.parent
+        while parent is not None:
+            yield parent
+            parent = parent.parent
+
     def add_group(self, name, group):
         """Add a :class:`Group`.
+
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
         The data in the :class:`~msl.io.dataset.Dataset`\\s that are added will be copied.
 
         Parameters
         ----------
         name : :class:`str`
-            The name of the new :class:`Group` that you are adding.
+            The name of the new :class:`Group` to add.
         group : :class:`Group`
             The :class:`Group` to add.
         """
@@ -162,9 +177,11 @@ class Group(Vertex):
         for key, vertex in group.items():
             n = name + key
             if self.is_group(vertex):
-                self.create_group(n, **vertex.metadata)
+                self.create_group(n, is_read_only=vertex.is_read_only, **vertex.metadata.copy())
             else:  # must be a Dataset
-                self.create_dataset(n, data=vertex.data.copy(), **vertex.metadata)
+                self.create_dataset(
+                    n, is_read_only=vertex.is_read_only, data=vertex.data.copy(), **vertex.metadata.copy()
+                )
 
     def create_group(self, name, is_read_only=None, **metadata):
         """Create a new :class:`Group`.
@@ -225,6 +242,27 @@ class Group(Vertex):
                 return group
         return self.create_group(name, is_read_only=is_read_only, **metadata)
 
+    def add_dataset(self, name, dataset):
+        """Add a :class:`~msl.io.dataset.Dataset`.
+
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the new :class:`~msl.io.dataset.Dataset` to add.
+        dataset : :class:`~msl.io.dataset.Dataset`
+            The :class:`~msl.io.dataset.Dataset` to add. The data in the
+            :class:`~msl.io.dataset.Dataset` is copied.
+        """
+        if not isinstance(dataset, Dataset):
+            raise TypeError('Must pass in a Dataset object, got {!r}'.format(dataset))
+
+        name = '/' + name.strip('/')
+        self.create_dataset(
+            name, is_read_only=dataset.is_read_only, data=dataset.data.copy(), **dataset.metadata.copy()
+        )
+
     def create_dataset(self, name, is_read_only=None, **kwargs):
         """Create a new :class:`~msl.io.dataset.Dataset`.
 
@@ -284,6 +322,33 @@ class Group(Vertex):
                 dataset.add_metadata(**kwargs)
                 return dataset
         return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
+
+    def add_dataset_logging(self, name, dataset_logging):
+        """Add a :class:`~msl.io.dataset_logging.DatasetLogging`.
+
+        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the new :class:`~msl.io.dataset_logging.DatasetLogging` to add.
+        dataset_logging : :class:`~msl.io.dataset_logging.DatasetLogging`
+            The :class:`~msl.io.dataset_logging.DatasetLogging` to add. The data in the
+            :class:`~msl.io.dataset_logging.DatasetLogging` is copied.
+        """
+        if not isinstance(dataset_logging, DatasetLogging):
+            raise TypeError('Must pass in a DatasetLogging object, got {!r}'.format(dataset_logging))
+
+        name = '/' + name.strip('/')
+        self.create_dataset_logging(
+            name,
+            level=dataset_logging.level,
+            attributes=dataset_logging.attributes,
+            logger=dataset_logging.logger,
+            date_fmt=dataset_logging.date_fmt,
+            data=dataset_logging.data.copy(),
+            **dataset_logging.metadata.copy()
+        )
 
     def create_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **kwargs):
         """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
@@ -490,19 +555,6 @@ class Group(Vertex):
                 basename = '{}/{}'.format(os.path.basename(dirname), basename)
                 dirname = os.path.dirname(dirname)
         return obj
-
-    def ancestors(self):
-        """Get all parent :class:`Group`\\s (ancestors) of this :class:`Group`.
-
-        Yields
-        ------
-        :class:`Group`
-            The ancestors of this :class:`Group`.
-        """
-        parent = self.parent
-        while parent is not None:
-            yield parent
-            parent = parent.parent
 
     def _check(self, is_read_only, **kwargs):
         self._raise_if_read_only()
