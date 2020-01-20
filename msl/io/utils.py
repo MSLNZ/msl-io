@@ -244,7 +244,7 @@ def get_basename(obj):
     """
     try:
         return os.path.basename(obj)
-    except TypeError:
+    except (TypeError, AttributeError):
         try:
             return os.path.basename(obj.name)
         except AttributeError:
