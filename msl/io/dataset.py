@@ -145,3 +145,6 @@ class Dataset(Vertex):
             return len(self._data)
         except TypeError:
             return self._data.size
+
+    def __iter__(self):
+        return iter(self._data)
