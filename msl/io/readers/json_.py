@@ -16,6 +16,7 @@ from ..constants import IS_PYTHON2
 
 @register
 class JSONReader(Reader):
+    """Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`."""
 
     @staticmethod
     def can_read(url, **kwargs):

@@ -66,8 +66,7 @@ class Root(Group):
 class Writer(Root):
 
     def __init__(self, url=None, **metadata):
-        """Base class for all :class:`~msl.io.base_io.Writer`\\s.
-
+        """
         Parameters
         ----------
         url : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
@@ -136,8 +135,7 @@ class Writer(Root):
 class Reader(Root):
 
     def __init__(self, url):
-        """Base class for all :class:`~msl.io.base_io.Reader`\\s.
-
+        """
         Parameters
         ----------
         url : :term:`path-like <path-like object>` or :term:`file-like <file object>`

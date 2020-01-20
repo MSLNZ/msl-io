@@ -21,6 +21,7 @@ from msl.io import register, Reader
 
 @register
 class HDF5Reader(Reader):
+    """Reader for the HDF5_ file format."""
 
     @staticmethod
     def can_read(url, **kwargs):

@@ -11,6 +11,7 @@ from msl.io import register, Reader
 
 @register
 class DRS(Reader):
+    """Reader for the Detector Responsivity System from Light Standards at MSL."""
 
     @staticmethod
     def can_read(url, **kwargs):

@@ -26,7 +26,18 @@ _original_make_iterencode = json.encoder._make_iterencode
 
 
 class JSONWriter(Writer):
-    """Create a JSON_ writer."""
+    """Create a JSON_ writer.
+
+    You can use :class:`JSONWriter` as a context manager. For example,
+
+    .. code-block:: python
+
+        with JSONWriter('my_file.json') as root:
+            root.create_dataset('dset', data=[1, 2, 3])
+
+    This will automatically write `root` to a file when leaving the `with` block
+    (even if an unhandled exception is raised in the `with` block).
+    """
 
     def write(self, url=None, root=None, **kwargs):
         """Write to a JSON_ file.
