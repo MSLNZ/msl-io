@@ -25,15 +25,16 @@ if not IS_PYTHON2:
 class HDF5Writer(Writer):
     """Create a HDF5_ writer.
 
-    You can use :class:`HDF5Writer` as a context manager. For example,
+    You can use :class:`HDF5Writer` as a :ref:`context manager <with>`.
+    For example,
 
     .. code-block:: python
 
         with HDF5Writer('my_file.h5') as root:
             root.create_dataset('dset', data=[1, 2, 3])
 
-    This will automatically write `root` to a file when leaving the `with` block
-    (even if an unhandled exception is raised in the `with` block).
+    This will automatically write `root` to the specified file when
+    the :ref:`with <with>` block exits.
     """
 
     def write(self, file=None, root=None, **kwargs):

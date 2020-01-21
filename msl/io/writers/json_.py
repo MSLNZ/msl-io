@@ -28,15 +28,18 @@ _original_make_iterencode = json.encoder._make_iterencode
 class JSONWriter(Writer):
     """Create a JSON_ writer.
 
-    You can use :class:`JSONWriter` as a context manager. For example,
+    You can use :class:`JSONWriter` as a :ref:`context manager <with>`.
+    For example,
 
     .. code-block:: python
 
         with JSONWriter('my_file.json') as root:
             root.create_dataset('dset', data=[1, 2, 3])
+            root.set_context_kwargs(indent=4)
 
-    This will automatically write `root` to a file when leaving the `with` block
-    (even if an unhandled exception is raised in the `with` block).
+    This will automatically write `root` to the specified file using
+    ``indent=4`` as a keyword argument to the :meth:`.write` method when
+    the :ref:`with <with>` block exits.
     """
 
     def write(self, file=None, root=None, **kwargs):
