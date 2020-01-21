@@ -233,7 +233,7 @@ def test_pretty_printing():
     root.create_dataset('aaa', data=np.ones((3, 3, 3)))
 
     w = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
-    w.save(root=root, mode='w', sort_keys=True)  # use save instead of write (just for a change)
+    w.save(root=root, mode='w', sort_keys=True, separators=(', ', ': '))
 
     expected = """#File created with: MSL JSONWriter version 1.0
 {
@@ -317,7 +317,7 @@ def test_pretty_printing():
     root = read_sample(w.file)
 
     # change the indentation to be 0
-    w.save(root=root, mode='w', sort_keys=True, indent=0)
+    w.save(root=root, mode='w', sort_keys=True, indent=0, separators=(', ', ': '))
     with open(w.file, 'rt') as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
     assert len(expected) == len(written)
@@ -325,13 +325,13 @@ def test_pretty_printing():
         assert expected[i].lstrip() == written[i]
 
     # change the indentation to be None
-    w.save(root=root, mode='w', sort_keys=True, indent=None)
+    w.save(root=root, mode='w', sort_keys=True, indent=None, separators=(',', ':'))
     with open(w.file, 'rt') as fp:
         written = fp.read().splitlines()
     assert len(written) == 2
     assert written[0] == '#File created with: MSL JSONWriter version 1.0'
-    assert written[1].startswith('{"a": {"b": {"apple":')
-    assert written[1].endswith('}, "null": null}')
+    assert written[1].startswith('{"a":{"b":{"apple":')
+    assert written[1].endswith('},"null":null}')
 
     os.remove(w.file)
 

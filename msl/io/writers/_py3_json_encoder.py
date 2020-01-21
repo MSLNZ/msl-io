@@ -46,24 +46,23 @@ def _make_iterencode(markers, _default, _encoder, _indent, _floatstr,
 
         shape = []
         dim(lst)
-        # create a "__indent" and a "__item_separator" variable
+        # create a new __indent variable and use it for the rest
+        # of the _iterencode_list function
         if len(shape) == 1:
             __indent = None
-            __item_separator = _item_separator + ' '
         else:
             __indent = _indent
-            __item_separator = _item_separator
         #########################################################
 
         buf = '['
         if __indent is not None:
             _current_indent_level += 1
             newline_indent = '\n' + __indent * _current_indent_level
-            separator = __item_separator + newline_indent
+            separator = _item_separator + newline_indent
             buf += newline_indent
         else:
             newline_indent = None
-            separator = __item_separator
+            separator = _item_separator
         first = True
         for value in lst:
             if first:
