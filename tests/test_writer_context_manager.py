@@ -3,6 +3,7 @@ When a new Writer is created is should be added to the list of writers to test.
 """
 import os
 import tempfile
+from io import StringIO
 
 import pytest
 import numpy as np
@@ -105,3 +106,14 @@ def test_exception_raised():
         assert root2.file == path
         assert_root_data(root2)
         os.remove(path)
+
+
+def test_update_context_kwargs():
+    with StringIO() as buf:
+        with JSONWriter() as root:
+            root.add_metadata(one=1)
+            root.create_dataset('dset', data=np.arange(9).reshape(3, 3))
+            root.update_context_kwargs(file=buf, indent=None, separators=('|', ';'), sort_keys=True)
+        file_info, value = buf.getvalue().splitlines()
+        assert 'MSL JSONWriter' in file_info
+        assert value == '{"dset";{"data";[[0|1|2]|[3|4|5]|[6|7|8]]|"dtype";"<i4"}|"one";1}'

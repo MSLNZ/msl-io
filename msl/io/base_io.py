@@ -76,6 +76,7 @@ class Writer(Root):
             of the :class:`~msl.io.base_io.Root`.
         """
         super(Writer, self).__init__(file, **metadata)
+        self._context_kwargs = {}
 
     def set_root(self, root):
         """Set a new :class:`Root` for the :class:`Writer`.
@@ -98,6 +99,20 @@ class Writer(Root):
         self.add_metadata(**root.metadata)
         if root:  # only do this if there are Groups and/or Datasets in the new root
             self.add_group('', root)
+
+    def update_context_kwargs(self, **kwargs):
+        """
+        When a :class:`Writer` is used as a :ref:`context manager <with>` the
+        :meth:`write` method is automatically called when exiting the
+        :ref:`context manager <with>`. You can specify the keyword arguments
+        that will be passed to the :meth:`write` method by calling
+        :meth:`update_context_kwargs` with the appropriate key-value pairs
+        before the :ref:`context manager <with>` exits. You can call this
+        method multiple times since the key-value pairs get
+        :meth:`updated <dict.update>` to the underlying :class:`dict` that
+        contains all keyword arguments that are passed to the :meth:`write` method.
+        """
+        self._context_kwargs.update(**kwargs)
 
     def write(self, file=None, root=None, **kwargs):
         """Write to a file.
@@ -127,9 +142,9 @@ class Writer(Root):
         return self
 
     def __exit__(self, *args):
-        # always write the Root to the stream even if
-        # an exception was raised in the context
-        self.write()
+        # always write the Root to the file even if
+        # an exception was raised in the context manager
+        self.write(**self._context_kwargs)
 
 
 class Reader(Root):
