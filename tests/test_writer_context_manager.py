@@ -113,7 +113,8 @@ def test_update_context_kwargs():
         with JSONWriter() as root:
             root.add_metadata(one=1)
             root.create_dataset('dset', data=np.arange(9).reshape(3, 3))
+            dtype_str = root.dset.dtype.str
             root.update_context_kwargs(file=buf, indent=None, separators=('|', ';'), sort_keys=True)
         file_info, value = buf.getvalue().splitlines()
         assert 'MSL JSONWriter' in file_info
-        assert value == '{"dset";{"data";[[0|1|2]|[3|4|5]|[6|7|8]]|"dtype";"<i4"}|"one";1}'
+        assert value == '{"dset";{"data";[[0|1|2]|[3|4|5]|[6|7|8]]|"dtype";"%s"}|"one";1}' % dtype_str
