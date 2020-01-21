@@ -44,7 +44,8 @@ def _make_iterencode(markers, _default, _encoder, _indent, _floatstr,
 
         shape = []
         dim(lst)
-        # create a new "__indent" variable
+        # create a new __indent variable and use it for the rest
+        # of the _iterencode_list function
         if len(shape) == 1:
             __indent = None
         else:
