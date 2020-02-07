@@ -170,7 +170,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'MSL-IO.tex', 'MSL-IO Documentation',
-     'Measurement Standards Laboratory', 'manual'),
+     'Measurement Standards Laboratory of New Zealand', 'manual'),
 ]
 
 
