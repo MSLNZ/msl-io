@@ -2,6 +2,10 @@
 # see https://coverage.readthedocs.io/en/latest/config.html
 [run]
 branch = True
+omit =
+    msl/examples/*
+    msl/io/writers/_py2_json_encoder.py
+    msl/io/writers/_py3_json_encoder.py
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -20,10 +24,6 @@ exclude_lines =
     # Don't complain if non-runnable code isn't run:
     if 0:
     if __name__ == .__main__.:
-
-omit =
-    msl/io/writers/_py2_json_encoder.py
-    msl/io/writers/_py3_json_encoder.py
 
 [html]
 title = MSL-IO coverage report
