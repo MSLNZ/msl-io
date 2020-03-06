@@ -10,6 +10,7 @@ from .utils import (
     search,
     send_email,
     register,
+    git_revision,
     _readers,
 )
 from .base_io import (

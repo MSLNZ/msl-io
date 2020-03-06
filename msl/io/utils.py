@@ -4,6 +4,7 @@ General functions.
 import re
 import os
 import logging
+import subprocess
 from smtplib import SMTP
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -249,3 +250,30 @@ def get_basename(obj):
             return os.path.basename(obj.name)
         except AttributeError:
             return obj.__class__.__name__
+
+
+def git_revision(git_dir, short=False):
+    """Get the SHA-1 hash value of the git revision.
+
+    This function requires that git_ is installed and that it is
+    available on ``PATH``.
+
+    .. _git: https://git-scm.com/
+
+    Parameters
+    ----------
+    git_dir : :class:`str`
+        A directory that is under version control.
+    short : :class:`bool`, optional
+        Whether to return the shortened version of the SHA-1 hash value.
+
+    Returns
+    -------
+    :class:`str`
+        The SHA-1 hash value of the currently checked-out commit.
+    """
+    cmd = ['git', 'rev-parse', 'HEAD']
+    if short:
+        cmd.insert(2, '--short')
+    sha1 = subprocess.check_output(cmd, cwd=git_dir)
+    return sha1.strip().decode('ascii')
