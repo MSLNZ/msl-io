@@ -50,7 +50,7 @@ class HDF5Writer(Writer):
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`HDF5Writer`.
         **kwargs
-            All key-value pairs are passed to :class:`File`.
+            All key-value pairs are passed to :class:`~h5py.File`.
         """
         if h5py is None:
             raise ImportError('You must install h5py to write HDF5 files.\nRun: pip install h5py')

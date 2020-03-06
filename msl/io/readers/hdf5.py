@@ -39,7 +39,7 @@ class HDF5Reader(Reader):
         Parameters
         ----------
         **kwargs
-            All key-value pairs are passed to :class:`File`.
+            All key-value pairs are passed to :class:`~h5py.File`.
         """
         if h5py is None:
             raise ImportError('You must install h5py to read HDF5 files.\nRun: pip install h5py')
