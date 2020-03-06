@@ -530,18 +530,19 @@ class Group(Vertex):
                                            logger=logger, date_fmt=date_fmt, **kwargs)
 
     def remove(self, name):
-        """Remove a :class:`Group` or a :class:`Dataset`.
+        """Remove a :class:`Group` or a :class:`~msl.io.dataset.Dataset`.
 
         Parameters
         ----------
         name : :class:`str`
-            The name of the :class:`Group` or :class:`Dataset` to remove.
+            The name of the :class:`Group` or :class:`~msl.io.dataset.Dataset` to remove.
 
         Returns
         -------
-        :class:`Group`, :class:`Dataset` or :data:`None`
-            The :class:`Group` or :class:`Dataset` that was removed or :data:`None`
-            if there was no :class:`Group` or :class:`Dataset` with the specified `name`.
+        :class:`Group`, :class:`~msl.io.dataset.Dataset` or :data:`None`
+            The :class:`Group` or :class:`~msl.io.dataset.Dataset` that was
+            removed or :data:`None` if there was no :class:`Group` or
+            :class:`~msl.io.dataset.Dataset` with the specified `name`.
         """
         name = '/' + name.strip('/')
         obj = self.pop(name, None)
