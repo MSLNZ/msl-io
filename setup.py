@@ -4,7 +4,6 @@ import sys
 import subprocess
 from distutils.cmd import Command
 from setuptools import setup, find_packages
-from setuptools.command.install import install
 
 
 class ApiDocs(Command):
@@ -76,22 +75,6 @@ class BuildDocs(Command):
 
         build_main(command)
         sys.exit(0)
-
-
-class Install(install):
-    """
-    Ensures that the value of __version__ is correct if
-    installing the package from a non-release code base.
-    """
-    def run(self):
-        install.run(self)
-        try:
-            with open(self.install_libbase + '/msl/io/__init__.py', mode='r+') as fp:
-                text = fp.read()
-                fp.seek(0)
-                fp.write(re.sub(r'__version__\s*=.*', '__version__ = {!r}'.format(version), text))
-        finally:
-            pass
 
 
 def read(filename):
@@ -185,7 +168,19 @@ setup(
     extras_require={
         'h5py': ['h5py'],
     },
-    cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs, 'install': Install},
+    cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,
 )
+
+if 'dev' in version and {'install', 'update', 'upgrade'}.intersection(sys.argv):
+    # ensure that the value of __version__ is correct if installing the package from a non-release code base
+    try:
+        cmd = [sys.executable, '-c', 'import msl.io as p; print(p.__file__)']
+        path = subprocess.check_output(cmd, cwd=os.path.dirname(sys.executable))
+        with open(path.strip().decode(), mode='r+') as fp:
+            text = fp.read()
+            fp.seek(0)
+            fp.write(re.sub(r'__version__\s*=.*', '__version__ = {!r}'.format(version), text))
+    except:
+        pass
