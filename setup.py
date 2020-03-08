@@ -184,3 +184,5 @@ if 'dev' in version and {'install', 'update', 'upgrade'}.intersection(sys.argv):
             fp.write(re.sub(r'__version__\s*=.*', '__version__ = {!r}'.format(version), text))
     except:
         pass
+else:
+    raise ValueError(str(sys.argv))
