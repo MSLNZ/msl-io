@@ -88,10 +88,10 @@ def fetch_init(key):
     return re.search(r'{}\s*=\s*(.*)'.format(key), init_text).group(1)[1:-1]
 
 
-def git_revision():
-    # returns the git revision hash value if 'dev' is in __version__ or an empty string otherwise
+def get_version():
+    init_version = fetch_init('__version__')
     if 'dev' not in fetch_init('__version__'):
-        return ''
+        return init_version
 
     file_dir = os.path.dirname(os.path.abspath(__file__))
     try:
@@ -109,12 +109,16 @@ def git_revision():
                 else:  # detached HEAD
                     sha1 = text
         except:
-            return ''
+            return init_version
     else:
         sha1 = sha1.strip().decode('ascii')
 
-    # Following PEP-440, the local version identifier starts with '+'
-    return '+' + sha1[:7]
+    # following PEP-440, the local version identifier starts with '+'
+    git_revision = '+' + sha1[:7]
+
+    if not init_version.endswith(git_revision):
+        return init_version + git_revision
+    return init_version
 
 
 install_requires = ['xlrd']
@@ -133,7 +137,7 @@ pytest_runner = ['pytest-runner'] if testing else []
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
 
-version = fetch_init('__version__') + git_revision()
+version = get_version()
 
 setup(
     name='msl-io',
