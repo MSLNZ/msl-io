@@ -173,16 +173,22 @@ setup(
     include_package_data=True,
 )
 
-if 'dev' in version and {'install', 'update', 'upgrade'}.intersection(sys.argv):
+if 'dev' in version:
     # ensure that the value of __version__ is correct if installing the package from a non-release code base
-    try:
-        cmd = [sys.executable, '-c', 'import msl.io as p; print(p.__file__)']
-        path = subprocess.check_output(cmd, cwd=os.path.dirname(sys.executable))
-        with open(path.strip().decode(), mode='r+') as fp:
+    init_path = ''
+    if {'install'}.intersection(sys.argv):
+        try:
+            cmd = [sys.executable, '-c', 'import msl.io as p; print(p.__file__)']
+            out = subprocess.check_output(cmd, cwd=os.path.dirname(sys.executable))
+            init_path = out.strip().decode()
+        except:
+            pass
+
+    elif {'egg_info'}.intersection(sys.argv):
+        init_path = os.path.dirname(sys.argv[0]) + '/msl/io/__init__.py'
+
+    if os.path.isfile(init_path):
+        with open(init_path, mode='r+') as fp:
             text = fp.read()
             fp.seek(0)
             fp.write(re.sub(r'__version__\s*=.*', '__version__ = {!r}'.format(version), text))
-    except:
-        pass
-else:
-    raise ValueError(str(sys.argv))
