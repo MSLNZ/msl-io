@@ -180,18 +180,22 @@ setup(
 if 'dev' in version:
     # ensure that the value of __version__ is correct if installing the package from a non-release code base
     init_path = ''
-    if {'install'}.intersection(sys.argv):
+    if 'install' in sys.argv:
+        # python setup.py install
         try:
             cmd = [sys.executable, '-c', 'import msl.io as p; print(p.__file__)']
             out = subprocess.check_output(cmd, cwd=os.path.dirname(sys.executable))
             init_path = out.strip().decode()
         except:
             pass
-
-    elif {'egg_info'}.intersection(sys.argv):
+    elif 'egg_info' in sys.argv:
+        # pip install
         init_path = os.path.dirname(sys.argv[0]) + '/msl/io/__init__.py'
 
-    if os.path.isfile(init_path):
+    # do not update the __version__ in __init__.py if executing: pip install -e .
+    pip_editable_mode = os.path.dirname(sys.argv[0]).endswith('msl-io')
+
+    if os.path.isfile(init_path) and not pip_editable_mode:
         with open(init_path, mode='r+') as fp:
             text = fp.read()
             fp.seek(0)
