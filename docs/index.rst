@@ -12,8 +12,9 @@ associated with them.
 
 .. image:: _static/hdf5_data_model.png
 
-The data files that can be read are not restricted to HDF5_ files, but any
-file format that has a :ref:`Reader <io-readers>` implemented can be read.
+The data files that can be read are not restricted to HDF5_ files, but any file format that has a
+:ref:`Reader <io-readers>` implemented can be read and data files can be created using any of the
+:ref:`Writers <io-writers>`.
 
 **Getting Started:**
 
