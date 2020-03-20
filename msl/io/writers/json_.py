@@ -31,11 +31,16 @@ class JSONWriter(Writer):
     You can use :class:`JSONWriter` as a :ref:`context manager <with>`.
     For example,
 
-    .. code-block:: python
+    .. code-block:: pycon
 
-        with JSONWriter('my_file.json') as root:
-            root.create_dataset('dset', data=[1, 2, 3])
-            root.set_context_kwargs(indent=4)
+        >>> with JSONWriter('example.json') as root:
+        ...     dset = root.create_dataset('dset', data=[1, 2, 3])
+        ...     root.update_context_kwargs(indent=4)
+
+    .. invisible-code-block: pycon
+
+        >>> import os
+        >>> os.remove('example.json')
 
     This will automatically write `root` to the specified file using
     ``indent=4`` as a keyword argument to the :meth:`.write` method when
