@@ -156,14 +156,14 @@ class Group(Vertex):
 
         Automatically creates the ancestor :class:`Group`\\s if they do not exist.
 
-        The data in the :class:`~msl.io.dataset.Dataset`\\s that are added will be copied.
-
         Parameters
         ----------
         name : :class:`str`
             The name of the new :class:`Group` to add.
         group : :class:`Group`
-            The :class:`Group` to add.
+            The :class:`Group` to add. The :class:`~msl.io.dataset.Dataset`\\s and
+            :class:`~msl.io.metadata.Metadata` that are contained within the
+            `group` will be copied.
         """
         if not isinstance(group, Group):
             raise TypeError('Must pass in a Group object, got {!r}'.format(group))
@@ -171,7 +171,7 @@ class Group(Vertex):
         name = '/' + name.strip('/')
 
         if not group:  # no sub-Groups or Datasets, only add the Metadata
-            self.create_group(name + group.name, **group.metadata)
+            self.create_group(name + group.name, **group.metadata.copy())
             return
 
         for key, vertex in group.items():
@@ -252,8 +252,8 @@ class Group(Vertex):
         name : :class:`str`
             The name of the new :class:`~msl.io.dataset.Dataset` to add.
         dataset : :class:`~msl.io.dataset.Dataset`
-            The :class:`~msl.io.dataset.Dataset` to add. The data in the
-            :class:`~msl.io.dataset.Dataset` is copied.
+            The :class:`~msl.io.dataset.Dataset` to add. The :class:`~msl.io.dataset.Dataset`
+            and the :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset, Dataset):
             raise TypeError('Must pass in a Dataset object, got {!r}'.format(dataset))
@@ -333,8 +333,9 @@ class Group(Vertex):
         name : :class:`str`
             The name of the new :class:`~msl.io.dataset_logging.DatasetLogging` to add.
         dataset_logging : :class:`~msl.io.dataset_logging.DatasetLogging`
-            The :class:`~msl.io.dataset_logging.DatasetLogging` to add. The data in the
-            :class:`~msl.io.dataset_logging.DatasetLogging` is copied.
+            The :class:`~msl.io.dataset_logging.DatasetLogging` to add. The
+            :class:`~msl.io.dataset_logging.DatasetLogging` and the
+            :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset_logging, DatasetLogging):
             raise TypeError('Must pass in a DatasetLogging object, got {!r}'.format(dataset_logging))
