@@ -1,5 +1,5 @@
 """
-Data about data.
+Provides information about other data.
 """
 try:
     # this try..except block fixes:
@@ -17,7 +17,7 @@ from .dictionary import Dictionary
 class Metadata(Dictionary):
 
     def __init__(self, is_read_only, vertex_name, **kwargs):
-        """Data about data.
+        """Provides information about other data.
 
         Do not instantiate directly. A :class:`Metadata` object is created automatically
         when :meth:`~msl.io.group.Group.create_dataset` or :meth:`~msl.io.group.Group.create_group`

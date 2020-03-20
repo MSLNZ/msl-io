@@ -21,6 +21,8 @@ _readers = []
 def register(reader_class):
     """Use as a decorator to register a :class:`~msl.io.base_io.Reader` subclass.
 
+    See :ref:`io-create-reader` for an example on how to use @register decorator.
+
     Parameters
     ----------
     reader_class : :class:`~msl.io.base_io.Reader`
@@ -55,10 +57,10 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         * ``r'data'`` :math:`\\rightarrow` find all files with the word ``data``
           in the filename
 
-        * ``r'\.png$'`` :math:`\\rightarrow` find all files with the extension `png``
+        * ``r'\.png$'`` :math:`\\rightarrow` find all files with the extension ``.png``
 
-        * ``r'\.jpe*g$'`` :math:`\\rightarrow` find all files with the extensions
-          ``jpeg`` and ``jpg``
+        * ``r'\.jpe*g$'`` :math:`\\rightarrow` find all files with the extension
+          ``.jpeg`` or ``.jpg``
 
     levels : :class:`int`, optional
         The number of sub-folder levels to recursively search for files.

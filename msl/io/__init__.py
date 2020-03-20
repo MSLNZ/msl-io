@@ -1,5 +1,5 @@
 """
-Read and write MSL data files.
+Read and write data files.
 """
 import re
 import os
@@ -86,7 +86,7 @@ def read(file, **kwargs):
 
 
 def read_table(file, **kwargs):
-    """Read tabular data from a file.
+    """Read data in a table format from a file.
 
     A *table* has the following properties:
 

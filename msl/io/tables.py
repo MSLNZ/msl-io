@@ -1,5 +1,5 @@
 """
-Read tabular data from a file.
+Read a data table from a file.
 """
 import re
 
@@ -24,7 +24,9 @@ whitespace).
 
 Examples
 --------
-You can customize your own map
+You can customize your own map by adding key-value pairs
+
+.. code-block:: pycon
 
     >>> from msl.io import extension_delimiter_map
     >>> extension_delimiter_map['.txt'] = '\\t'
@@ -33,7 +35,7 @@ You can customize your own map
 
 
 def read_table_text(file, **kwargs):
-    """Read tabular data from a text-based file.
+    """Read a data table from a text-based file.
 
     A *table* has the following properties:
 
@@ -53,7 +55,8 @@ def read_table_text(file, **kwargs):
     Returns
     -------
     :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included
+        in the :class:`~msl.io.metadata.Metadata`.
     """
     if kwargs.get('unpack', False):
         raise ValueError('Cannot use the "unpack" option')
@@ -81,7 +84,7 @@ def read_table_text(file, **kwargs):
 
 
 def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
-    """Read tabular data from an Excel spreadsheet.
+    """Read a data table from an Excel spreadsheet.
 
     A *table* has the following properties:
 
@@ -111,7 +114,8 @@ def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, 
     Returns
     -------
     :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included
+        in the :class:`~msl.io.metadata.Metadata`.
     """
     match = None
     if cell is not None:

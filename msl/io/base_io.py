@@ -108,9 +108,9 @@ class Writer(Root):
         that will be passed to the :meth:`write` method by calling
         :meth:`update_context_kwargs` with the appropriate key-value pairs
         before the :ref:`context manager <with>` exits. You can call this
-        method multiple times since the key-value pairs get
-        :meth:`updated <dict.update>` to the underlying :class:`dict` that
-        contains all keyword arguments that are passed to the :meth:`write` method.
+        method multiple times since the key-value pairs get added to the
+        underlying :class:`dict` (via :meth:`dict.update`) that contains
+        all keyword arguments which are passed to the :meth:`write` method.
         """
         self._context_kwargs.update(**kwargs)
 
@@ -169,6 +169,9 @@ class Reader(Root):
         ----------
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
             The file to check whether the :class:`~msl.io.base_io.Reader` can read it.
+        **kwargs
+            Key-value pairs that the :class:`~msl.io.base_io.Reader` class may need
+            when checking if it can read the `file`.
 
         Returns
         -------
