@@ -112,17 +112,32 @@ class Dataset(Vertex):
 
            For example,
 
-           .. code-block:: pycon
+           .. invisible-code-block: pycon
 
+              >>> SKIP_IF_PYTHON_LESS_THAN_36()
               >>> from msl.io import JSONWriter
               >>> root = JSONWriter()
               >>> dset = root.create_dataset('my_data', data=[[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+
+           .. code-block:: pycon
+
+              >>> dset
+              <Dataset '/my_data' shape=(4, 3) dtype='<f8' (0 metadata)>
+              >>> dset.data
+              array([[ 0.,  1.,  2.],
+                     [ 3.,  4.,  5.],
+                     [ 6.,  7.,  8.],
+                     [ 9., 10., 11.]])
               >>> dset.size
               12
               >>> dset.tolist()
               [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
-              >>> dset.mean(axis=1)
-              array([ 1.,  4.,  7., 10.])
+              >>> dset.mean(axis=0)
+              array([4.5, 5.5, 6.5])
+              >>> dset[::2]
+              array([[0., 1., 2.],
+                     [6., 7., 8.]])
+
         """
         return self._data
 
