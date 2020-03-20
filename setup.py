@@ -129,18 +129,15 @@ def get_version():
     return init_version + '+' + suffix
 
 
-install_requires = ['xlrd']
-tests_require = ['h5py', 'pytest-cov', 'xlrd']
+install_requires = ['xlrd', 'numpy']
 
+tests_require = ['pytest-cov', 'h5py', 'xlrd', 'numpy>=1.16']
 if sys.version_info[:2] == (2, 7):
-    install_requires.append('numpy<1.17')
-    tests_require.extend(['zipp<2.0.0', 'pytest>=4.4,<5.0', 'numpy>=1.16,<1.17'])
+    tests_require.extend(['zipp<2.0.0', 'pytest>=4.4,<5.0'])
 else:
-    install_requires.append('numpy')
-
     # pytest.skip() was added in v4.4
     # the max_rows kwarg in np.loadtxt was added in v1.16
-    tests_require.extend(['pytest>=4.4', 'numpy>=1.16'])
+    tests_require.extend(['pytest>=4.4'])
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
