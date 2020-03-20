@@ -3,7 +3,6 @@
 =======
 Readers
 =======
-
 The following :class:`~msl.io.base_io.Reader`\s are available:
 
 .. toctree::
@@ -16,13 +15,14 @@ The following :class:`~msl.io.base_io.Reader`\s are available:
 
 Create a New Reader
 +++++++++++++++++++
-When adding a new MSL Reader class to the repository_ the following steps should be performed.
-Please follow the :ref:`style guide <style guide>`.
+When adding a new :class:`~msl.io.base_io.Reader` class to the repository_ the following
+steps should be performed. Please follow the :ref:`style guide <style guide>`.
 
 .. note::
-   If you do not want to upload the new MSL Reader class to the repository_ then you only need to
-   write the code found in Step 2 to use your Reader in your own program. Once you import your
-   module in your code your Reader will be available from the :func:`~msl.io.read` function.
+   If you do not want to upload the new :class:`~msl.io.base_io.Reader` class to the repository_
+   then you only need to write the code found in Step 2 to use your :class:`~msl.io.base_io.Reader`
+   in your own program. Once you import your module in your code your :class:`~msl.io.base_io.Reader`
+   will be available from the :func:`~msl.io.read` function.
 
 1. Create a fork_ of the repository_.
 2. Create a new :class:`~msl.io.base_io.Reader` by following this template and save it to
@@ -42,29 +42,35 @@ Please follow the :ref:`style guide <style guide>`.
            def can_read(file, **kwargs):
                """This method answers the following question:
 
-               Given a path-like object (a Python string, bytes or os.PathLike object)
-               that represents the location of a file or a file-like object (a Python
-               stream that has a read() and write() method) can your Reader read this
-               file?
+               Given a path-like object (e.g., a string, bytes or os.PathLike object)
+               that represents the location of a file or a file-like object (e.g., a
+               stream, socket or in-memory buffer) can your Reader read this file?
 
                You must perform all the necessary checks that *uniquely* answers this
                question. For example, checking that the file extension is ".csv" is
                not unique enough.
+
+               The optional kwargs can be passed in via the msl.io.read() method.
+
+               This method must return a boolean: True (can read) or False (cannot read)
                """
-               return True (can read) or False (cannot read)
+               return boolean
 
            def read(self, **kwargs):
                """This method reads the data file(s).
 
-               Your Reader class is a Root object.
+               Your Reader class is a Root object. The optional kwargs can be
+               passed in via the msl.io.read() method.
 
                The data file to read is available at self.file
 
-               To add metadata to Root use self.add_metadata(...)
+               To add metadata to Root use self.add_metadata()
 
-               To create a Group in Root use self.create_group(...)
+               To create a Group in Root use self.create_group()
 
-               To create a Dataset in Root use self.create_dataset(...)
+               To create a Dataset in Root use self.create_dataset()
+
+               This method should not return anything.
                """
 
 3. Add an example data file to the `tests/samples`_ directory and add a test case to the `tests/`_ directory

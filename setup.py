@@ -137,7 +137,10 @@ if sys.version_info[:2] == (2, 7):
     tests_require.extend(['zipp<2.0.0', 'pytest<5.0', 'numpy>=1.16,<1.17'])
 else:
     install_requires.append('numpy')
-    tests_require.extend(['pytest', 'numpy>=1.16'])  # the max_rows kwarg in np.loadtxt was added in v1.16
+
+    # pytest.skip() was added in v4.4
+    # the max_rows kwarg in np.loadtxt was added in v1.16
+    tests_require.extend(['pytest>=4.4', 'numpy>=1.16'])
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []

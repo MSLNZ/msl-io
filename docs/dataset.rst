@@ -3,56 +3,104 @@
 =======
 Dataset
 =======
-A :class:`~msl.io.dataset.Dataset` can be thought of as a file on your operating system and it
+A :class:`~msl.io.dataset.Dataset` is analogous to a file for an operating system. and it
 is contained within a :ref:`msl-io-group`.
 
-A :class:`~msl.io.dataset.Dataset` is essentially an :class:`~numpy.ndarray` with :ref:`msl-io-metadata`
+A :class:`~msl.io.dataset.Dataset` is essentially a :class:`numpy.ndarray` with :ref:`msl-io-metadata`
 and it can be accessed in read-only mode.
 
-Since a :class:`~msl.io.dataset.Dataset` can be thought of as an :class:`~numpy.ndarray` the attributes of
-an :class:`~numpy.ndarray` are also valid for a :class:`~msl.io.dataset.Dataset`. For example, suppose
-`my_dataset` is a :class:`~msl.io.dataset.Dataset` then you can get the shape using
+.. invisible-code-block: pycon
+
+   >>> SKIP_IF_PYTHON_LESS_THAN_36()
+   >>> from msl.io import JSONWriter
+   >>> root = JSONWriter()
+   >>> data = [(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)]
+   >>> my_dataset = root.create_dataset('my_dataset', data=data, dtype=[('x', '<f8'), ('y', '<f8')])
+   >>> my_dataset.add_metadata(temperature=20.13, humidity=45.31)
+
+Since a :class:`~msl.io.dataset.Dataset` can be thought of as an :class:`numpy.ndarray` the attributes of
+an :class:`numpy.ndarray` are also valid for a :class:`~msl.io.dataset.Dataset`. For example, suppose
+`my_dataset` is a :class:`~msl.io.dataset.Dataset`
+
+.. code-block:: pycon
+
+   >>> my_dataset
+   <Dataset '/my_dataset' shape=(5,) dtype='|V16' (2 metadata)>
+   >>> my_dataset.data
+   array([(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)],
+         dtype=[('x', '<f8'), ('y', '<f8')])
+
+You can get the :attr:`numpy.ndarray.shape` using
 
 .. code-block:: pycon
 
    >>> my_dataset.shape
+   (5,)
 
-or, convert the :class:`~msl.io.dataset.Dataset` to a Python :class:`list`, using :meth:`~numpy.ndarray.tolist`
+or convert the data in the :class:`~msl.io.dataset.Dataset` to a Python :class:`list`,
+using :meth:`numpy.ndarray.tolist`
 
 .. code-block:: pycon
 
    >>> my_dataset.tolist()
+   [(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)]
 
-or, get the maximum value in the :class:`~msl.io.dataset.Dataset`, using :meth:`~numpy.ndarray.max`
-
-.. code-block:: pycon
-
-   >>> my_dataset.max()
-
-To access the :class:`~msl.io.metadata.Metadata` for `my_dataset`, use
+To access the :class:`~msl.io.metadata.Metadata` of *my_dataset*, you access the
+:obj:`~msl.io.vertex.Vertex.metadata` attribute
 
 .. code-block:: pycon
 
    >>> my_dataset.metadata
+   <Metadata '/my_dataset' {'temperature': 20.13, 'humidity': 45.31}>
 
-Depending on the :class:`~numpy.dtype` that was used to create the underlying :class:`~numpy.ndarray` for the
-:class:`~msl.io.dataset.Dataset` the field names can be accessed as field attributes. For example, suppose
-that `dset` is a :class:`~msl.io.dataset.Dataset` that has a :class:`~numpy.dtype` equal to
-``[('x', float), ('y', float)]``.
-
-You can access the fields in `dset` as keys
+You can access values of the :ref:`msl-io-metadata` as attributes
 
 .. code-block:: pycon
 
-   >>> z = dset['x'] + dset['y']
+   >>> my_dataset.metadata.temperature
+   20.13
+
+or as keys
+
+.. code-block:: pycon
+
+   >>> my_dataset.metadata['humidity']
+   45.31
+
+Depending on the :class:`numpy.dtype` that was used to create the underlying :class:`numpy.ndarray` for the
+:class:`~msl.io.dataset.Dataset` the field names can be accessed as field attributes. For example, you can
+access the fields as keys
+
+.. code-block:: pycon
+
+   >>> my_dataset['x'] + my_dataset['y']
+   array([1.5 , 4.6 , 6.35, 7.74, 9.47])
 
 or as attributes
 
 .. code-block:: pycon
 
-   >>> z = dset.x + dset.y
+   >>> my_dataset.x + my_dataset.y
+   array([1.5 , 4.6 , 6.35, 7.74, 9.47])
+
+and you could get the maximum *y* value in the :class:`~msl.io.dataset.Dataset`,
+using the :meth:`numpy.ndarray.max` method
+
+.. code-block:: pycon
+
+   >>> my_dataset.y.max()
+   2.91
 
 See :ref:`attribute-key-limitations` for more information.
+
+Slicing the :class:`~msl.io.dataset.Dataset` is also a valid operation
+
+.. code-block:: pycon
+
+   >>> my_dataset[::2]
+   array([(0.23, 1.27), (3.44, 2.91), (8.73, 0.74)],
+          dtype=[('x', '<f8'), ('y', '<f8')])
+
 
 A Dataset for Logging Records
 -----------------------------

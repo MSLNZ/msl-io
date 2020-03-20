@@ -15,8 +15,8 @@ The following :class:`~msl.io.base_io.Writer`\s are available:
 
 Create a New Writer
 +++++++++++++++++++
-When adding a new MSL Writer class to the repository_ the following steps should be performed.
-Please follow the :ref:`style guide <style guide>`.
+When adding a new :class:`~msl.io.base_io.Writer` class to the repository_ the following
+steps should be performed. Please follow the :ref:`style guide <style guide>`.
 
 1. Create a fork_ of the repository_.
 2. Create a new :class:`~msl.io.base_io.Writer` by following this template and save it to
@@ -38,9 +38,9 @@ Please follow the :ref:`style guide <style guide>`.
                 file : path-like or file-like
                     The file to write to. If None then uses the value of
                     `file` that was specified when MyExampleWriter was instantiated.
-                root : Root object
-                    Write `root` to the file. If None then write the Groups and Datasets
-                    that were created using MyExampleWriter.
+                root : Root
+                    Write `root` to the file. If None then write the Groups
+                    and Datasets that were created using MyExampleWriter.
                 **kwargs
                     Optional key-value pairs.
                 """
