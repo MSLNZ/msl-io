@@ -3,16 +3,17 @@ MSL-IO
 
 |docs| |pypi| |travis| |appveyor|
 
-Read and write MSL data files.
-
-**MSL-IO** follows the data model used by HDF5_, where there is a Root_, Group_\s and Dataset_\s
-and these objects each have Metadata_ associated with them.
+**MSL-IO** follows the data model used by HDF5_ to read and write data files -- where there is a
+Root_, Group_\s and Dataset_\s and these objects each have Metadata_ associated with them.
 
 .. image:: https://raw.githubusercontent.com/MSLNZ/msl-io/master/docs/_static/hdf5_data_model.png
 
-The data files that can be read or created are not restricted to HDF5_ files, but any
-file format that has a Reader_ implemented can be read and data files can be created
-using any of the Writer_\s.
+The tree structure is similar to the file-system structure used by operating systems. Group_\s
+are analogous to the directories (where Root_ is the root Group_) and Dataset_\s are analogous
+to the files.
+
+The data files that can be read or created are not restricted to HDF5_ files, but any file format
+that has a Reader_ implemented can be read and data files can be created using any of the Writer_\s.
 
 Install
 -------
