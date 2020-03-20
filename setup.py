@@ -156,7 +156,7 @@ setup(
     author=fetch_init('__author__'),
     author_email='info@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-io',
-    description='Read and write MSL data files',
+    description='Read and write data files',
     long_description=read('README.rst'),
     platforms='any',
     license='MIT',
