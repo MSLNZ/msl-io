@@ -1356,3 +1356,401 @@ def test_get_ancestors():
     ancestors = tuple(root.x.ancestors())
     assert len(ancestors) == 1
     assert ancestors[0] is root
+
+
+def test_remove_same_endswith():
+    def create_new_root():
+        r = Root('')
+        r.create_dataset('dset')
+        a = r.create_group('a')
+        a.create_dataset('dset')
+        b = r.create_group('b')
+        b.create_dataset('dset')
+        c = b.create_group('c')
+        c.create_dataset('dset')
+        c.create_group('b')
+        d = r.create_group('d')
+        d.create_dataset('dset')
+        d.create_group('c')
+        d.c.create_dataset('dset')
+        e = c.create_group('e')
+        e.create_dataset('dset')
+        return r
+
+    root = create_new_root()
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 7
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    ref = root['/b/c/e/dset']
+    obj = root.remove('/b/c/e/dset')
+    assert obj is ref
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 2
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 1
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 0
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root  # does not get removed
+    assert 'a' in root
+    assert 'dset' in root.a  # does not get removed
+    assert 'b' in root
+    assert 'dset' in root.b  # does not get removed
+    assert 'c' in root.b
+    assert 'dset' in root.b.c  # does not get removed
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d  # does not get removed
+    assert 'c' in root.d
+    assert 'dset' in root.d.c  # does not get removed
+    assert 'e' in root.b.c
+    assert 'dset' not in root.b.c.e
+
+    root = create_new_root()
+    c = root.b.c
+    ref = c.dset
+    obj = c.remove('/dset')
+    assert obj is ref
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 2
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 1
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root  # does not get removed
+    assert 'a' in root
+    assert 'dset' in root.a  # does not get removed
+    assert 'b' in root
+    assert 'dset' in root.b  # does not get removed
+    assert 'c' in root.b
+    assert 'dset' not in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d  # does not get removed
+    assert 'c' in root.d
+    assert 'dset' in root.d.c  # does not get removed
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e  # does not get removed
+
+    root = create_new_root()
+    b = root.b
+    ref = b.c.dset
+    obj = b.remove('/c/dset')
+    assert obj is ref
+    assert len(list(root.groups())) == 7
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 2
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 1
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root  # does not get removed
+    assert 'a' in root
+    assert 'dset' in root.a  # does not get removed
+    assert 'b' in root
+    assert 'dset' in root.b  # does not get removed
+    assert 'c' in root.b
+    assert 'dset' not in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d  # does not get removed
+    assert 'c' in root.d
+    assert 'dset' in root.d.c  # does not get removed
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e  # does not get removed
+
+    root = create_new_root()
+    ref = root.b.c.b
+    obj = root.b.c.remove('/b')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 7
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 2
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 1
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root  # does not get removed
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' not in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    root = create_new_root()
+    ref = root.b.c.b
+    obj = root.remove('/b/c/b')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 7
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 2
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 1
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root  # does not get removed
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' not in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    root = create_new_root()
+    ref = root.b
+    obj = root.remove('/b')
+    assert obj is ref
+    assert len(list(root.groups())) == 3
+    assert len(list(root.datasets())) == 4
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' not in root
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+
+    root = create_new_root()
+    b = root.b
+    ref = root.b.c.b
+    obj = b.remove('/c/b')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 7
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 2
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 1
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' not in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    root = create_new_root()
+    ref = root.b.c.b
+    obj = root.remove('/b/c/b')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 7
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 2
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 1
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' not in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    root = create_new_root()
+    c = root.b.c
+    ref = c.e
+    obj = c.remove('e')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 2
+    assert len(list(root.b.datasets())) == 2
+    assert len(list(root.b.c.groups())) == 1
+    assert len(list(root.b.c.datasets())) == 1
+    assert len(list(root.d.groups())) == 1
+    assert len(list(root.d.datasets())) == 2
+    assert len(list(root.d.c.groups())) == 0
+    assert len(list(root.d.c.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' in root.d
+    assert 'dset' in root.d.c
+    assert 'e' not in root.b.c
+
+    root = create_new_root()
+    assert root.remove('invalid') is None
+
+    root = create_new_root()
+    ref = root.d.c
+    obj = root.remove('/d/c/')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 0
+    assert len(list(root.d.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' not in root.d
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e
+
+    root = create_new_root()
+    ref = root.d.c
+    obj = root.d.remove('c')
+    assert obj is ref
+    assert len(list(root.groups())) == 6
+    assert len(list(root.datasets())) == 6
+    assert len(list(root.a.groups())) == 0
+    assert len(list(root.a.datasets())) == 1
+    assert len(list(root.b.groups())) == 3
+    assert len(list(root.b.datasets())) == 3
+    assert len(list(root.b.c.groups())) == 2
+    assert len(list(root.b.c.datasets())) == 2
+    assert len(list(root.b.c.e.groups())) == 0
+    assert len(list(root.b.c.e.datasets())) == 1
+    assert len(list(root.d.groups())) == 0
+    assert len(list(root.d.datasets())) == 1
+    assert 'dset' in root
+    assert 'a' in root
+    assert 'dset' in root.a
+    assert 'b' in root
+    assert 'dset' in root.b
+    assert 'c' in root.b
+    assert 'dset' in root.b.c
+    assert 'b' in root.b.c
+    assert 'd' in root
+    assert 'dset' in root.d
+    assert 'c' not in root.d
+    assert 'e' in root.b.c
+    assert 'dset' in root.b.c.e

@@ -3,6 +3,8 @@ A vertex in a tree_.
 
 .. _tree: https://en.wikipedia.org/wiki/Tree_(graph_theory)
 """
+import os
+
 from .dictionary import Dictionary
 from .metadata import Metadata
 
@@ -64,27 +66,35 @@ class Vertex(Dictionary):
             item = '/' + item
 
         try:
-            del self._mapping[item]
+            popped = self._mapping.pop(item)
         except KeyError:
             pass  # raise a more detailed error message below
         else:
-            # delete all sub-vertices
-            sub_vertices = []
-            for key in list(self.keys()):
-                if key.startswith(item):
-                    del self._mapping[key]
-                    sub_vertices.append(key)
 
-            # notify all ancestors that this vertex was deleted
-            ancestor = self._parent
-            while ancestor is not None:
-                for key in list(ancestor.keys()):
-                    if key.endswith(item):  # delete this vertex
-                        del ancestor._mapping[key]
-                    for sub in sub_vertices:  # delete all sub-vertices
-                        if key.endswith(sub):
-                            del ancestor._mapping[key]
-                ancestor = ancestor._parent
+            # use recursion to delete the reference to
+            # `popped` from the head of this Vertex
+            head, tail = os.path.split(item)
+            if head != '/':
+                assert self[head].pop(tail) is popped
+
+            def notify_ancestors(obj):
+                # delete all references to `obj` from the
+                # ancestors of this Vertex
+                ancestor = self._parent
+                while ancestor is not None:
+                    for k, v in list(ancestor.items()):
+                        if obj is v:
+                            del ancestor._mapping[k]
+                    ancestor = ancestor._parent
+
+            notify_ancestors(popped)
+
+            # delete all descendant of this Vertex
+            # (this is necessary if the popped item is a Group)
+            for name, vertex in list(self.items()):
+                if vertex.name.startswith(popped.name):
+                    vertex = self._mapping.pop(name)
+                    notify_ancestors(vertex)
 
             return
 
