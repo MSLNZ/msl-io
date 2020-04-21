@@ -21,7 +21,7 @@ class Root(Group):
         Parameters
         ----------
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-            The file object that of the :class:`~msl.io.base_io.Root`.
+            The file object to associate with the :class:`~msl.io.base_io.Root`.
         **metadata
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
             for the :class:`~msl.io.base_io.Root`.
