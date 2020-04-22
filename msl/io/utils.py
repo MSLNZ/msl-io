@@ -3,6 +3,7 @@ General functions.
 """
 import re
 import os
+import hashlib
 import logging
 import subprocess
 from smtplib import SMTP
@@ -16,6 +17,61 @@ except NameError:
 logger = logging.getLogger(__package__)
 
 _readers = []
+
+__all__ = (
+    'checksum',
+    'get_basename',
+    'git_revision',
+    'register',
+    'search',
+    'send_email',
+)
+
+
+def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536):
+    """Get the checksum of a file or from a bytes object.
+
+    A checksum is a sequence of numbers and letters that can be
+    used verify the integrity and authenticity of the data.
+
+    Parameters
+    ----------
+    file_or_bytes : :term:`path-like <path-like object>`, :term:`file-like <file object>` or :term:`bytes-like <bytes-like object>` object
+        An object to get the checksum of. For example, a file path, a buffer or bytes.
+    algorithm : :class:`str`, optional
+        The hash algorithm to use to compute the checksum.
+        See :mod:`hashlib` for more details.
+    chunk_size : :class:`int`, optional
+        The number of bytes to read at a time from the file. It is useful
+        to tweak this parameter when reading a large file to improve performance.
+
+    Returns
+    -------
+    :class:`str`
+        The checksum.
+    """
+    def read(fp):
+        # read in chucks in case the file size is to large
+        # to load it into RAM all at once
+        while True:
+            data = fp.read(chunk_size)
+            if not data:
+                break
+            hash_cls.update(data)
+
+    hash_cls = getattr(hashlib, algorithm)()
+    try:
+        with open(file_or_bytes, 'rb') as f:
+            read(f)
+    except (IOError, TypeError):
+        try:
+            position = file_or_bytes.tell()
+            read(file_or_bytes)
+            file_or_bytes.seek(position)
+        except AttributeError:
+            hash_cls.update(file_or_bytes)
+
+    return hash_cls.hexdigest()
 
 
 def register(reader_class):

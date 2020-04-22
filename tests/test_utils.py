@@ -1,10 +1,8 @@
 import os
 import re
+from io import BytesIO
 
-from msl.io import (
-    search,
-    git_revision,
-)
+from msl.io.utils import *
 
 
 def test_search():
@@ -74,3 +72,50 @@ def test_git_commit():
     assert git_revision(os.path.join(root_dir, 'msl', 'examples', 'io')) == sha1
     assert git_revision(os.path.dirname(__file__)) == sha1
     assert git_revision(os.path.join(root_dir, 'docs', '_api')) == sha1
+
+
+def test_checksum():
+    path = os.path.join(os.path.dirname(__file__), 'samples', 'table.txt')
+    sha256 = 'b9a4bbbcda4a3c826f0ec9b2dffda2cdbdbe9d7c078314c77daa36487f18c9a9'
+    md5 = '371615396a440d36e29b0ec4a6a7a4f9'
+
+    # use a filename as a string
+    assert isinstance(path, str)
+    assert sha256 == checksum(path, algorithm='sha256')
+    assert md5 == checksum(path, algorithm='md5')
+
+    # use a filename as bytes
+    path_as_bytes = path.encode()
+    assert isinstance(path_as_bytes, bytes)
+    assert sha256 == checksum(path_as_bytes, algorithm='sha256')
+    assert md5 == checksum(path_as_bytes, algorithm='md5')
+
+    # use a file pointer (binary mode)
+    with open(path, 'rb') as fp:
+        assert sha256 == checksum(fp, algorithm='sha256')
+    with open(path, 'rb') as fp:
+        assert md5 == checksum(fp, algorithm='md5')
+
+    # use a byte buffer
+    with open(path, 'rb') as fp:
+        buffer = BytesIO(fp.read())
+    assert buffer.tell() == 0
+    assert sha256 == checksum(buffer, algorithm='sha256')
+    assert buffer.tell() == 0
+    assert md5 == checksum(buffer, algorithm='md5')
+    assert buffer.tell() == 0
+
+    # use a bytes object
+    data = buffer.getvalue()
+    assert isinstance(data, bytes)
+    assert sha256 == checksum(data, algorithm='sha256')
+    assert md5 == checksum(data, algorithm='md5')
+
+    # use a bytearray object
+    byte_array = bytearray(data)
+    assert sha256 == checksum(byte_array, algorithm='sha256')
+    assert md5 == checksum(byte_array, algorithm='md5')
+
+    # use a memoryview object
+    assert sha256 == checksum(memoryview(data), algorithm='sha256')
+    assert md5 == checksum(memoryview(data), algorithm='md5')
