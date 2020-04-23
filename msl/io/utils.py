@@ -20,7 +20,6 @@ _readers = []
 
 __all__ = (
     'checksum',
-    'get_basename',
     'git_revision',
     'register',
     'search',
@@ -28,15 +27,16 @@ __all__ = (
 )
 
 
-def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536):
-    """Get the checksum of a file or from a bytes object.
+def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536, shake_length=256):
+    """Get the checksum of a file.
 
-    A checksum is a sequence of numbers and letters that can be
-    used verify the integrity and authenticity of the data.
+    A checksum is a sequence of numbers and letters that act as a fingerprint
+    for a file against which later comparisons can be made to detect errors or
+    changes in the file. It can be used to verify the integrity of the data.
 
     Parameters
     ----------
-    file_or_bytes : :term:`path-like <path-like object>`, :term:`file-like <file object>` or :term:`bytes-like <bytes-like object>` object
+    file_or_bytes : :term:`path-like <path-like object>`, :term:`file <file object>` or :term:`bytes-like <bytes-like object>` object
         An object to get the checksum of. For example, a file path, a buffer or bytes.
     algorithm : :class:`str`, optional
         The hash algorithm to use to compute the checksum.
@@ -44,14 +44,17 @@ def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536):
     chunk_size : :class:`int`, optional
         The number of bytes to read at a time from the file. It is useful
         to tweak this parameter when reading a large file to improve performance.
+    shake_length : :class:`int`, optional
+        The digest length to use for the ``SHAKE`` algorithm. See
+        :meth:`hashlib.shake.hexdigest` for more details.
 
     Returns
     -------
     :class:`str`
-        The checksum.
+        The checksum containing only hexadecimal digits.
     """
     def read(fp):
-        # read in chucks in case the file size is to large
+        # read in chucks in case the file size is too large
         # to load it into RAM all at once
         while True:
             data = fp.read(chunk_size)
@@ -59,19 +62,26 @@ def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536):
                 break
             hash_cls.update(data)
 
-    hash_cls = getattr(hashlib, algorithm)()
+    hash_cls = hashlib.new(algorithm)
+
     try:
+        # first assume it's a path-like object
         with open(file_or_bytes, 'rb') as f:
             read(f)
     except (IOError, TypeError):
         try:
+            # then assume it's a file object
             position = file_or_bytes.tell()
             read(file_or_bytes)
             file_or_bytes.seek(position)
         except AttributeError:
+            # finally assume it's a bytes-like object
             hash_cls.update(file_or_bytes)
 
-    return hash_cls.hexdigest()
+    try:
+        return hash_cls.hexdigest()
+    except TypeError:
+        return hash_cls.hexdigest(shake_length)
 
 
 def register(reader_class):

@@ -1,6 +1,9 @@
 import os
 import re
+import hashlib
 from io import BytesIO
+
+import pytest
 
 from msl.io.utils import *
 
@@ -119,3 +122,16 @@ def test_checksum():
     # use a memoryview object
     assert sha256 == checksum(memoryview(data), algorithm='sha256')
     assert md5 == checksum(memoryview(data), algorithm='md5')
+
+    # ensure that all available algorithms can be used
+    for algorithm in hashlib.algorithms_available:
+        value = checksum(b'data', algorithm=algorithm)
+        assert isinstance(value, str)
+
+    # invalid type
+    with pytest.raises(TypeError):
+        checksum(None)
+
+    # unsupported algorithm
+    with pytest.raises(ValueError, match=r'unsupported'):
+        checksum(b'data', algorithm='invalid')
