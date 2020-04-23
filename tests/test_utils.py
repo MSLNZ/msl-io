@@ -1,11 +1,12 @@
 import os
 import re
 import hashlib
-from io import BytesIO
+from io import BytesIO, StringIO
 
 import pytest
 
 from msl.io.utils import *
+from msl.io.utils import get_basename
 
 
 def test_search():
@@ -135,3 +136,22 @@ def test_checksum():
     # unsupported algorithm
     with pytest.raises(ValueError, match=r'unsupported'):
         checksum(b'data', algorithm='invalid')
+
+
+def test_get_basename():
+    paths = [
+        '/a/b/c/d/e/file.dat',
+        'C:\\a\\b\\c\\d\\e\\file.dat',
+        'file.dat',
+        '/a/file.dat',
+        r'C:\a\file.dat',
+    ]
+    for path in paths:
+        assert get_basename(path) == 'file.dat'
+        assert get_basename(path.encode()) == b'file.dat'
+
+    assert get_basename(StringIO(u'hello')) == u'StringIO'
+    assert get_basename(BytesIO(b'hello')) == 'BytesIO'
+
+    with open(__file__, 'rt') as fp:
+        assert get_basename(fp) == 'test_utils.py'
