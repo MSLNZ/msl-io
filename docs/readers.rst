@@ -16,7 +16,7 @@ The following :class:`~msl.io.base_io.Reader`\s are available:
 Create a New Reader
 +++++++++++++++++++
 When adding a new :class:`~msl.io.base_io.Reader` class to the repository_ the following
-steps should be performed. Please follow the :ref:`style guide <style guide>`.
+steps should be performed. Please follow the :ref:`style guide <style-guide>`.
 
 .. note::
    If you do not want to upload the new :class:`~msl.io.base_io.Reader` class to the repository_
@@ -77,7 +77,7 @@ steps should be performed. Please follow the :ref:`style guide <style guide>`.
    to make sure that your Reader is returned by calling the :func:`~msl.io.read` function using your example
    data file as the input and that the information in the returned object is correct. Run the tests using
    ``python setup.py tests`` (ideally you would run the tests for all
-   :ref:`currently-supported versions <io-dependencies>` of Python, see also :ref:`create_readme_condatests`).
+   :ref:`currently-supported versions <io-dependencies>` of Python, see also :ref:`create-readme-condatests`).
 4. Create a new ``msl.io.readers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
    template that is used for the other ``.rst`` files in this directory.
 5. Add the new Reader, alphabetically, to the ``.. toctree::`` in `docs/readers.rst`_. Follow the

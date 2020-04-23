@@ -16,7 +16,7 @@ The following :class:`~msl.io.base_io.Writer`\s are available:
 Create a New Writer
 +++++++++++++++++++
 When adding a new :class:`~msl.io.base_io.Writer` class to the repository_ the following
-steps should be performed. Please follow the :ref:`style guide <style guide>`.
+steps should be performed. Please follow the :ref:`style guide <style-guide>`.
 
 1. Create a fork_ of the repository_.
 2. Create a new :class:`~msl.io.base_io.Writer` by following this template and save it to
@@ -50,7 +50,7 @@ steps should be performed. Please follow the :ref:`style guide <style guide>`.
    Writers that are available to verify different file-format conversions. Also, look at the test
    modules that begin with ``test_writer`` for more examples. Run the tests using ``python setup.py tests``
    (ideally you would run the tests for all :ref:`currently-supported versions <io-dependencies>` of
-   Python, see also :ref:`create_readme_condatests`).
+   Python, see also :ref:`create-readme-condatests`).
 4. Create a new ``msl.io.writers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
    template that is used for the other ``.rst`` files in this directory.
 5. Add the new Writer, alphabetically, to the ``.. toctree::`` in `docs/writers.rst`_. Follow the
