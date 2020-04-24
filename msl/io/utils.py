@@ -30,7 +30,7 @@ __all__ = (
 )
 
 
-def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536, shake_length=256):
+def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
     """Get the checksum of a file.
 
     A checksum is a sequence of numbers and letters that act as a fingerprint
@@ -39,8 +39,8 @@ def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536, shake_length=2
 
     Parameters
     ----------
-    file_or_bytes : :term:`path-like <path-like object>`, :term:`file <file object>` or :term:`bytes-like <bytes-like object>` object
-        An object to get the checksum of. For example, a file path, a buffer or bytes.
+    file : :term:`path-like <path-like object>` or :term:`file <file object>` object
+        A file to get the checksum of.
     algorithm : :class:`str`, optional
         The hash algorithm to use to compute the checksum.
         See :mod:`hashlib` for more details.
@@ -68,18 +68,14 @@ def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536, shake_length=2
     hash_cls = hashlib.new(algorithm)
 
     try:
-        # first assume it's a path-like object
-        with open(file_or_bytes, 'rb') as f:
+        with open(file, 'rb') as f:
             read(f)
     except (IOError, TypeError):
-        try:
-            # then assume it's a file object
-            position = file_or_bytes.tell()
-            read(file_or_bytes)
-            file_or_bytes.seek(position)
-        except AttributeError:
-            # finally assume it's a bytes-like object
-            hash_cls.update(file_or_bytes)
+        if not hasattr(file, 'read'):
+            raise
+        position = file.tell()
+        read(file)
+        file.seek(position)
 
     try:
         return hash_cls.hexdigest()

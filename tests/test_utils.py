@@ -112,33 +112,28 @@ def test_checksum():
     assert md5 == checksum(buffer, algorithm='md5')
     assert buffer.tell() == 0
 
-    # use a bytes object
-    data = buffer.getvalue()
-    assert isinstance(data, bytes)
-    assert sha256 == checksum(data, algorithm='sha256')
-    assert md5 == checksum(data, algorithm='md5')
-
-    # use a bytearray object
-    byte_array = bytearray(data)
-    assert sha256 == checksum(byte_array, algorithm='sha256')
-    assert md5 == checksum(byte_array, algorithm='md5')
-
-    # use a memoryview object
-    assert sha256 == checksum(memoryview(data), algorithm='sha256')
-    assert md5 == checksum(memoryview(data), algorithm='md5')
-
     # ensure that all available algorithms can be used
     for algorithm in hashlib.algorithms_available:
-        value = checksum(b'data', algorithm=algorithm)
+        value = checksum(path, algorithm=algorithm)
         assert isinstance(value, str)
+
+    # file does not exist
+    with pytest.raises(IOError, match='does_not_exist.txt'):
+        checksum('/the/file/does_not_exist.txt')
+    with pytest.raises(IOError, match='does_not_exist.txt'):
+        checksum(b'/the/file/does_not_exist.txt')
 
     # invalid type
     with pytest.raises(TypeError):
         checksum(None)
+    with pytest.raises(TypeError):
+        checksum(bytearray(buffer.getvalue()))
+    with pytest.raises(TypeError):
+        checksum(memoryview(buffer.getvalue()))
 
     # unsupported algorithm
     with pytest.raises(ValueError, match=r'unsupported'):
-        checksum(b'data', algorithm='invalid')
+        checksum(path, algorithm='invalid')
 
 
 def test_get_basename():
