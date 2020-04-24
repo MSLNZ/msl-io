@@ -82,9 +82,9 @@ def test_git_commit():
 
 
 def test_checksum():
-    path = os.path.join(os.path.dirname(__file__), 'samples', 'table.txt')
-    sha256 = 'b9a4bbbcda4a3c826f0ec9b2dffda2cdbdbe9d7c078314c77daa36487f18c9a9'
-    md5 = '371615396a440d36e29b0ec4a6a7a4f9'
+    path = os.path.join(os.path.dirname(__file__), 'samples', 'hdf5_sample.h5')
+    sha256 = 'e5dad4f15335e603fd602c22bf9ddb71b3500f862905495d3d17e6159a463d2d'
+    md5 = 'a46708df266595218db2ba06788c4695'
 
     # use a filename as a string
     assert isinstance(path, str)
