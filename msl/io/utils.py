@@ -88,19 +88,19 @@ def copy(source, destination, overwrite=False, include_metadata=True):
 
     Parameters
     ----------
-    source : :class`str`
+    source : :term:`path-like object`
         The path to a file to copy.
-    destination : :class`str`
+    destination : :term:`path-like object`
         A directory to copy the file to or a full path (i.e., includes the basename).
         If the directory does not exist then it, and all intermediate directories,
         will be created.
     overwrite : :class:`bool`, optional
         Whether to overwrite the `destination` file if it already exists.
         If `destination` already exists and `overwrite` is :data:`False` then a
-        :exc:`FileExistsError`is raised.
+        :exc:`FileExistsError` is raised.
     include_metadata : :class:`bool`, optional
-        Whether to include the information about the file permissions,
-        latest access time, latest modification time, etc.
+        Whether to also copy information such as the file permissions,
+        latest access time and latest modification time with the file.
 
     Returns
     -------
