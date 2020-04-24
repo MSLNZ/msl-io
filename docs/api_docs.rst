@@ -24,6 +24,7 @@ and general helper functions
 .. autosummary::
 
    ~msl.io.utils.checksum
+   ~msl.io.utils.copy
    ~msl.io.utils.git_revision
    ~msl.io.utils.search
    ~msl.io.utils.send_email

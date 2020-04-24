@@ -1,6 +1,9 @@
 import os
 import re
+import uuid
+import shutil
 import hashlib
+import tempfile
 from io import BytesIO, StringIO
 
 import pytest
@@ -155,3 +158,94 @@ def test_get_basename():
 
     with open(__file__, 'rt') as fp:
         assert get_basename(fp) == 'test_utils.py'
+
+
+def test_copy():
+
+    def check_stat(dest):
+        src_stat = os.stat(__file__)
+        dst_stat = os.stat(dest)
+        for attr in dir(src_stat):
+            if not attr.startswith('st_'):
+                continue
+            if attr in ['st_ino', 'st_ctime', 'st_ctime_ns']:  # these will never be equal
+                continue
+            src_value = getattr(src_stat, attr)
+            dst_value = getattr(dst_stat, attr)
+            if attr.endswith('time'):  # times can be approximate
+                if abs(src_value - dst_value) > 1e-5:
+                    return False
+            elif src_value != dst_value:
+                return False
+        return True
+
+    # make sure there is no remnant file from a previously-failed test
+    if os.path.isfile(os.path.join(tempfile.gettempdir(), 'test_utils.py')):
+        os.remove(os.path.join(tempfile.gettempdir(), 'test_utils.py'))
+
+    # source file does not exist
+    for item in [r'/the/file/does_not_exist.txt', r'/the/file/does_not_exist', r'does_not_exist']:
+        with pytest.raises(IOError, match=item):
+            copy(item, '')
+
+    # destination invalid
+    with pytest.raises(IOError, match=r"''"):
+        copy(__file__, '')
+
+    # copy (with metadata) to a directory that already exists
+    dst = copy(__file__, tempfile.gettempdir())
+    assert dst == os.path.join(tempfile.gettempdir(), 'test_utils.py')
+    assert check_stat(dst)
+    assert checksum(__file__) == checksum(dst)
+
+    # destination already exists
+    with pytest.raises(IOError, match=r'Will not overwrite'):
+        copy(__file__, dst)
+    with pytest.raises(IOError, match=r'Will not overwrite'):
+        copy(__file__, tempfile.gettempdir())
+
+    # can overwrite (with metadata), specify full path
+    dst2 = copy(__file__, dst, overwrite=True)
+    assert dst2 == dst
+    assert check_stat(dst2)
+    assert checksum(__file__) == checksum(dst2)
+
+    # can overwrite (without metadata), specify full path
+    dst3 = copy(__file__, dst, overwrite=True, include_metadata=False)
+    assert dst3 == dst
+    assert not check_stat(dst3)
+    assert checksum(__file__) == checksum(dst3)
+
+    # can overwrite (with metadata), specify directory only
+    dst4 = copy(__file__, tempfile.gettempdir(), overwrite=True)
+    assert dst4 == dst
+    assert check_stat(dst4)
+    assert checksum(__file__) == checksum(dst4)
+
+    os.remove(dst)
+
+    # copy without metadata
+    dst = copy(__file__, tempfile.gettempdir(), include_metadata=False)
+    assert dst == os.path.join(tempfile.gettempdir(), 'test_utils.py')
+    assert not check_stat(dst)
+    assert checksum(__file__) == checksum(dst)
+    os.remove(dst)
+
+    # copy (without metadata) but use a different destination basename
+    destination = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.tmp')
+    dst = copy(__file__, destination, include_metadata=False)
+    assert dst == destination
+    assert not check_stat(dst)
+    assert checksum(__file__) == checksum(dst)
+    os.remove(dst)
+
+    # copy to a directory that does not exist
+    new_dirs = str(uuid.uuid4()).split('-')
+    assert not os.path.isdir(os.path.join(tempfile.gettempdir(), new_dirs[0]))
+    destination = os.path.join(tempfile.gettempdir(), *new_dirs)
+    destination = os.path.join(destination, 'new_file.tmp')
+    dst = copy(__file__, destination)
+    assert dst == destination
+    assert check_stat(dst)
+    assert checksum(__file__) == checksum(dst)
+    shutil.rmtree(os.path.join(tempfile.gettempdir(), new_dirs[0]))

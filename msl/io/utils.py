@@ -3,6 +3,7 @@ General functions.
 """
 import re
 import os
+import shutil
 import hashlib
 import logging
 import subprocess
@@ -13,6 +14,7 @@ try:
     PermissionError
 except NameError:
     PermissionError = OSError  # for Python 2.7
+    FileExistsError = IOError
 
 logger = logging.getLogger(__package__)
 
@@ -20,6 +22,7 @@ _readers = []
 
 __all__ = (
     'checksum',
+    'copy',
     'git_revision',
     'register',
     'search',
@@ -82,6 +85,49 @@ def checksum(file_or_bytes, algorithm='sha256', chunk_size=65536, shake_length=2
         return hash_cls.hexdigest()
     except TypeError:
         return hash_cls.hexdigest(shake_length)
+
+
+def copy(source, destination, overwrite=False, include_metadata=True):
+    """Copy a file.
+
+    Parameters
+    ----------
+    source : :class`str`
+        The path to a file to copy.
+    destination : :class`str`
+        A directory to copy the file to or a full path (i.e., includes the basename).
+        If the directory does not exist then it, and all intermediate directories,
+        will be created.
+    overwrite : :class:`bool`, optional
+        Whether to overwrite the `destination` file if it already exists.
+        If `destination` already exists and `overwrite` is :data:`False` then a
+        :exc:`FileExistsError`is raised.
+    include_metadata : :class:`bool`, optional
+        Whether to include the information about the file permissions,
+        latest access time, latest modification time, etc.
+
+    Returns
+    -------
+    :class:`str`
+        The path to where the file was copied.
+    """
+    if os.path.isdir(destination):
+        destination = os.path.join(destination, os.path.basename(source))
+    else:
+        dir_name = os.path.dirname(destination)
+        if dir_name and not os.path.isdir(dir_name):
+            os.makedirs(dir_name)
+
+    if not overwrite and os.path.isfile(destination):
+        raise FileExistsError('Will not overwrite {!r}'.format(destination))
+
+    # TODO include the follow_symlinks kwarg to copyfile and copystat
+    #  when dropping support for Python 2.7
+    shutil.copyfile(source, destination)
+    if include_metadata:
+        shutil.copystat(source, destination)
+
+    return destination
 
 
 def register(reader_class):
