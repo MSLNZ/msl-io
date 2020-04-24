@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import uuid
 import shutil
 import hashlib
@@ -139,11 +140,19 @@ def test_checksum():
 def test_get_basename():
     paths = [
         '/a/b/c/d/e/file.dat',
-        'C:\\a\\b\\c\\d\\e\\file.dat',
         'file.dat',
         '/a/file.dat',
-        r'C:\a\file.dat',
+        u'/something/file.dat',
+        'file://a.b.c.d/folder/file.dat',
     ]
+    if sys.platform == 'win32':
+        paths.extend([
+            'C:\\a\\b\\c\\d\\e\\file.dat',
+            r'C:\a\file.dat',
+            u'D:/file.dat',
+            r'\\a.b.c.d\folder\file.dat',
+            '\\\\a.b.c.d\\folder\\file.dat',
+        ])
     for path in paths:
         assert get_basename(path) == 'file.dat'
         assert get_basename(path.encode()) == b'file.dat'
