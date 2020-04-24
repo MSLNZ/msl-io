@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 try:
     PermissionError
 except NameError:
-    PermissionError = OSError  # for Python 2.7
+    PermissionError = IOError  # for Python 2.7
     FileExistsError = IOError
 
 logger = logging.getLogger(__package__)
