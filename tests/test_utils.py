@@ -292,9 +292,10 @@ def test_remove_write_permissions():
         with pytest.raises(IOError):
             open(path, mode)
 
-    # cannot delete the file
-    with pytest.raises(OSError):
-        os.remove(path)
+    # cannot delete the file (only valid on Windows)
+    if sys.platform == 'win32':
+        with pytest.raises(OSError):
+            os.remove(path)
 
     # can still read it
     with open(path, 'rb') as fp:
