@@ -52,14 +52,14 @@ extensions = [
 # autodoc options
 if sphinx.version_info[:2] < (1, 8):
     # 'alphabetical', 'bysource', 'groupwise'
-    autodoc_member_order = 'bysource'
+    autodoc_member_order = 'alphabetical'
 
     # 'members', 'undoc-members', 'private-members', 'special-members', 'inherited-members', 'show-inheritance'
     autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 else:
     autodoc_default_options = {
         'members': None,
-        'member-order': 'bysource',
+        'member-order': 'alphabetical',
         'undoc-members': None,
         'show-inheritance': None,
     }
