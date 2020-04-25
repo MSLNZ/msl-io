@@ -3,6 +3,7 @@ General functions.
 """
 import re
 import os
+import stat
 import shutil
 import hashlib
 import logging
@@ -25,6 +26,7 @@ __all__ = (
     'copy',
     'git_revision',
     'register',
+    'remove_write_permissions',
     'search',
     'send_email',
 )
@@ -387,3 +389,19 @@ def git_revision(git_dir, short=False):
         cmd.insert(2, '--short')
     sha1 = subprocess.check_output(cmd, cwd=git_dir)
     return sha1.strip().decode('ascii')
+
+
+def remove_write_permissions(path):
+    """Remove all write permissions of a file.
+
+    The write permission is removed for the User, Group and Others.
+    The read and execute permissions are preserved.
+
+    Parameters
+    ----------
+    path : :term:`path-like object`
+        The path to remove the write permissions of.
+    """
+    current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
+    disable_writing = ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH
+    os.chmod(path, current_permissions & disable_writing)

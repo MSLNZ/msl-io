@@ -26,6 +26,7 @@ and general helper functions
    ~msl.io.utils.checksum
    ~msl.io.utils.copy
    ~msl.io.utils.git_revision
+   ~msl.io.utils.remove_write_permissions
    ~msl.io.utils.search
    ~msl.io.utils.send_email
 

@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import stat
 import uuid
 import shutil
 import hashlib
@@ -253,3 +254,52 @@ def test_copy():
     assert check_stat(dst)
     assert checksum(__file__) == checksum(dst)
     shutil.rmtree(os.path.join(tempfile.gettempdir(), new_dirs[0]))
+
+
+def test_remove_write_permissions():
+
+    # create a new file
+    path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.tmp')
+    with open(path, 'wb') as fp:
+        fp.write(b'hello')
+
+    # set to rwxrwxrwx
+    os.chmod(path, 0o777)
+
+    mode = stat.S_IMODE(os.lstat(path).st_mode)
+    if sys.platform == 'win32':
+        assert mode == 0o666  # Windows does not have the Execute permission
+    else:
+        assert mode == 0o777
+
+    # can still modify it
+    with open(path, 'ab') as fp:
+        fp.write(b' world')
+    with open(path, 'rb') as fp:
+        assert fp.read() == b'hello world'
+
+    remove_write_permissions(path)
+
+    # the Read and Execute permissions are preserved
+    mode = stat.S_IMODE(os.lstat(path).st_mode)
+    if sys.platform == 'win32':
+        assert mode == 0o444  # Windows does not have the Execute permission
+    else:
+        assert mode == 0o555
+
+    # cannot open the file to modify it
+    for mode in ['wb', 'ab', 'wt', 'at', 'w+', 'w+b']:
+        with pytest.raises(IOError):
+            open(path, mode)
+
+    # cannot delete the file
+    with pytest.raises(OSError):
+        os.remove(path)
+
+    # can still read it
+    with open(path, 'rb') as fp:
+        assert fp.read() == b'hello world'
+
+    # clean up by deleting the file
+    os.chmod(path, 0o777)
+    os.remove(path)
