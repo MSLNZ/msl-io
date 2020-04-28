@@ -301,6 +301,19 @@ def test_remove_write_permissions():
     with open(path, 'rb') as fp:
         assert fp.read() == b'hello world'
 
+    # set to rw--wxrw-
+    os.chmod(path, 0o636)
+    # remove and check permissions
+    remove_write_permissions(path)
+    mode = stat.S_IMODE(os.lstat(path).st_mode)
+    if sys.platform == 'win32':
+        # Windows does not have the Execute permission
+        # and if any of the Read permissions are enabled then it
+        # is enabled for the User, Group and Others
+        assert mode == 0o444
+    else:
+        assert mode == 0o414
+
     # clean up by deleting the file
     os.chmod(path, 0o777)
     os.remove(path)
