@@ -394,8 +394,10 @@ def git_revision(git_dir, short=False):
 def remove_write_permissions(path):
     """Remove all write permissions of a file.
 
-    The write permission is removed for the User, Group and Others.
-    The read and execute permissions are preserved.
+    On Windows, this function will set the file attribute to be read only.
+
+    On linux and macOS the write permission is removed for the User,
+    Group and Others. The read and execute permissions are preserved.
 
     Parameters
     ----------
