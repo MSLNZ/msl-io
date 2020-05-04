@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from msl.io import read, HDF5Writer, JSONWriter
-from msl.io.readers.hdf5 import HDF5Reader
+from msl.io.readers import HDF5Reader
 
 from helper import read_sample
 

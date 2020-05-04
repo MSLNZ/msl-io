@@ -1,4 +1,4 @@
-from msl.io.readers.detector_responsivity_system import DRSReader
+from msl.io.readers import DRSReader
 
 from helper import read_sample
 

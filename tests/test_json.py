@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from msl.io import JSONWriter, read, HDF5Writer
-from msl.io.readers.json_ import JSONReader
+from msl.io.readers import JSONReader
 
 from helper import read_sample
 

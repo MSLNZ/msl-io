@@ -73,20 +73,21 @@ steps should be performed. Please follow the :ref:`style guide <style-guide>`.
                This method should not return anything.
                """
 
-3. Add an example data file to the `tests/samples`_ directory and add a test case to the `tests/`_ directory
+3. Import your Reader in the ``msl/io/readers/__init__.py`` module.
+4. Add an example data file to the `tests/samples`_ directory and add a test case to the `tests/`_ directory
    to make sure that your Reader is returned by calling the :func:`~msl.io.read` function using your example
    data file as the input and that the information in the returned object is correct. Run the tests using
    ``python setup.py tests`` (ideally you would run the tests for all
    :ref:`currently-supported versions <io-dependencies>` of Python, see also :ref:`create-readme-condatests`).
-4. Create a new ``msl.io.readers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
+5. Create a new ``msl.io.readers.<name of your module from Step 2>.rst`` file in `docs/_api`_. Follow the
    template that is used for the other ``.rst`` files in this directory.
-5. Add the new Reader, alphabetically, to the ``.. toctree::`` in `docs/readers.rst`_. Follow the
+6. Add the new Reader, alphabetically, to the ``.. toctree::`` in `docs/readers.rst`_. Follow the
    template that is used for the other Readers.
-6. Add yourself to ``AUTHORS.rst`` and add a note in ``CHANGES.rst`` that you created this new Reader. These
+7. Add yourself to ``AUTHORS.rst`` and add a note in ``CHANGES.rst`` that you created this new Reader. These
    files are located in the root directory of the **MSL-IO** package.
-7. Build the documentation running ``python setup.py docs`` (view the documentation by opening the
+8. Build the documentation running ``python setup.py docs`` (view the documentation by opening the
    ``docs/_build/html/index.html`` file).
-8. If running the tests pass and building the documentation show no errors/warnings then create a `pull request`_.
+9. If running the tests pass and building the documentation show no errors/warnings then create a `pull request`_.
 
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-io

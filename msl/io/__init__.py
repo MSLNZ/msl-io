@@ -3,7 +3,6 @@ Read and write data files.
 """
 import re
 import os
-import importlib
 from collections import namedtuple
 
 from .utils import *
@@ -17,7 +16,7 @@ from .writers import (
     HDF5Writer,
 )
 from .base_io import Root
-from .readers.excel import ExcelReader
+from .readers import ExcelReader
 from .tables import (
     read_table_text,
     read_table_excel,
@@ -32,11 +31,6 @@ _v = re.search(r'(\d+)\.(\d+)\.(\d+)[.-]?(.*)', __version__).groups()
 
 version_info = namedtuple('version_info', 'major minor micro releaselevel')(int(_v[0]), int(_v[1]), int(_v[2]), _v[3])
 """:obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro, releaselevel) tuple."""
-
-# import all Reader classes that are in the "./readers" directory
-for module in os.listdir(os.path.dirname(__file__) + '/readers'):
-    if module.endswith('.py') and not module.startswith('_'):
-        importlib.import_module('msl.io.readers.'+module[:-3])
 
 
 def read(file, **kwargs):

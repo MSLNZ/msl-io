@@ -7,7 +7,7 @@ from io import BytesIO
 import pytest
 
 from msl.io import read, JSONWriter
-from msl.io.readers.json_ import JSONReader
+from msl.io.readers import JSONReader
 
 from helper import read_sample
 
