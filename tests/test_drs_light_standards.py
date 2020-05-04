@@ -1,11 +1,11 @@
-from msl.io.readers.detector_responsivity_system import DRS
+from msl.io.readers.detector_responsivity_system import DRSReader
 
 from helper import read_sample
 
 
 def test_drs():
     root = read_sample('Lamp_15082018_4.DAT')
-    assert isinstance(root, DRS)
+    assert isinstance(root, DRSReader)
 
     assert 'run1' in root
     assert 'scan1' in root['run1']

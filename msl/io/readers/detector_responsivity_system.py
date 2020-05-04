@@ -10,7 +10,7 @@ from msl.io import register, Reader
 
 
 @register
-class DRS(Reader):
+class DRSReader(Reader):
     """Reader for the Detector Responsivity System from Light Standards at MSL."""
 
     @staticmethod
