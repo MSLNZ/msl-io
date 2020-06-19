@@ -153,7 +153,13 @@ class JSONWriter(Writer):
             kwargs['cls'] = _NumpyEncoder
             json.encoder._make_iterencode = _make_iterencode
 
-        header = '#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__)
+        # header = '#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__)
+        #
+        # Don't use the above definition of 'header' since JSONWriter could be sub-classed
+        # and therefore the value of self.__class__.__name__ would change. The
+        # JSONReader.can_read() method expects the text 'MSL JSONWriter' to be in a
+        # specific location on the first line in the file.
+        header = '#File created with: MSL JSONWriter version 1.0\n'
 
         if is_file_like:
             if isinstance(file, BufferedIOBase):  # a bytes-like object is required
