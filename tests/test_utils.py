@@ -177,8 +177,15 @@ def test_copy():
                 continue
             src_value = getattr(src_stat, attr)
             dst_value = getattr(dst_stat, attr)
-            if attr.endswith('time'):  # times can be approximate
-                if abs(src_value - dst_value) > 1e-5:
+            if attr == 'st_file_attributes':
+                # on Windows the FILE_ATTRIBUTE_NOT_CONTENT_INDEXED attribute may not be copied
+                if (src_value != dst_value) and (src_value + 0x2000 != dst_value):
+                    return False
+            elif 'time' in attr:  # times can be approximate
+                if attr.endswith('ns'):
+                    if abs(src_value - dst_value) > 1e4:
+                        return False
+                elif abs(src_value - dst_value) > 1e-4:
                     return False
             elif src_value != dst_value:
                 return False
