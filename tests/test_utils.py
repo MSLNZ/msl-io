@@ -173,7 +173,7 @@ def test_copy():
         for attr in dir(src_stat):
             if not attr.startswith('st_'):
                 continue
-            if attr in ['st_ino', 'st_ctime', 'st_ctime_ns']:  # these will never be equal
+            if attr in ['st_ino', 'st_ctime', 'st_ctime_ns', 'st_birthtime']:  # these will never be equal
                 continue
             src_value = getattr(src_stat, attr)
             dst_value = getattr(dst_stat, attr)
