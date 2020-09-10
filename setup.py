@@ -143,7 +143,7 @@ else:
     # pytest.skip() was added in v4.4
     # the max_rows kwarg in np.loadtxt was added in v1.16
     if sys.version_info[:2] == (2, 7):
-        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy~=1.16'])
+        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy>=1.16,<1.17'])
     elif sys.version_info[:2] == (3, 5):
         tests_require.extend(['pytest>=4.4', 'numpy>=1.16,<1.19'])
     else:
