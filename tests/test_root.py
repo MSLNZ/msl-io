@@ -1033,6 +1033,8 @@ def test_add_dataset():
 
 
 def test_add_dataset_logging():
+    num_initial_handlers = len(logging.getLogger().handlers)
+
     logger = logging.getLogger('test_add_dataset_logging')
 
     root = Root('some file')
@@ -1043,7 +1045,7 @@ def test_add_dataset_logging():
 
     assert len(root) == 0
     assert len(logger.handlers) == 0
-    assert len(logging.getLogger().handlers) == 1
+    assert len(logging.getLogger().handlers) == num_initial_handlers
 
     dsetlog1 = root.create_dataset_logging('dsetlog1', level='DEBUG', attributes=['levelname', 'message'],
                                            logger=logger, date_fmt='%H-%M')
@@ -1056,14 +1058,14 @@ def test_add_dataset_logging():
     b.add_dataset_logging('x/y/dsetlog2', dsetlog1)
 
     assert len(logger.handlers) == 2
-    assert len(logging.getLogger().handlers) == 1
+    assert len(logging.getLogger().handlers) == num_initial_handlers
 
     logger.debug('hello')
     logger.info('world')
 
     dsetlog1.remove_handler()
     assert len(logger.handlers) == 1
-    assert len(logging.getLogger().handlers) == 1
+    assert len(logging.getLogger().handlers) == num_initial_handlers
 
     logger.warning('foo')
     logger.error('bar')
@@ -1108,7 +1110,7 @@ def test_add_dataset_logging():
     root2.a.b.x.y.dsetlog2.remove_handler()
 
     assert len(logger.handlers) == 0
-    assert len(logging.getLogger().handlers) == 1
+    assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
 def test_remove():
