@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import pytest
+import numpy as np
 
 from msl.io import read, HDF5Writer, JSONWriter
 from msl.io.readers import HDF5Reader
@@ -141,3 +142,24 @@ def test_url_and_root():
     with pytest.raises(TypeError) as e:
         writer.write(file='whatever', root='Root')
     assert 'Root' in str(e.value)
+
+
+def test_numpy_unicode_dtype():
+    writer = HDF5Writer()
+    writer.add_metadata(wide_chars=np.array(['1', '-4e+99', 'True'], dtype='<U6'))
+    writer.create_dataset('wide_chars', data=np.random.random(100).reshape(4, 25).astype('<U32'))
+
+    file = tempfile.gettempdir() + '/msl-hdf5-writer-temp.h5'
+    if os.path.isfile(file):
+        os.remove(file)
+    writer.save(file)
+
+    root = read(file)
+    assert np.array_equal(root.metadata.wide_chars, writer.metadata.wide_chars)
+
+    # the following array_equal assertion fails so we iterate over all elements instead
+    # assert np.array_equal(root.wide_chars.astype('<U32'), writer.wide_chars)
+    for a, b in zip(root.wide_chars.astype('<U32').flatten(), writer.wide_chars.flatten()):
+        assert a == b
+
+    os.remove(file)
