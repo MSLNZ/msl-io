@@ -4,6 +4,10 @@ import tempfile
 
 import numpy as np
 import pytest
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import JSONWriter, read, HDF5Writer
 from msl.io.readers import JSONReader
@@ -33,16 +37,21 @@ def test_sample():
     assert isinstance(array_mixed_null, np.ndarray)
     assert np.array_equal(array_mixed_null, ['a', False, 5, 72.3, 'hey', None])
     assert 'array_mixed_null' not in temp.metadata
-    hdf5_writer.write(root=temp, mode='w')
-    root_hdf5 = read(hdf5_writer.file)
-    os.remove(hdf5_writer.file)
-    writer2 = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp2.json')
-    writer2.write(root=root_hdf5, mode='w')
-    root3 = read(writer2.file)
-    assert root3.file == writer2.file
-    os.remove(writer2.file)
+    if h5py is not None:
+        hdf5_writer.write(root=temp, mode='w')
+        root_hdf5 = read(hdf5_writer.file)
+        os.remove(hdf5_writer.file)
+        writer2 = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp2.json')
+        writer2.write(root=root_hdf5, mode='w')
+        root3 = read(writer2.file)
+        assert root3.file == writer2.file
+        os.remove(writer2.file)
 
-    for root in [root1, root2, root3]:
+    roots = [root1, root2]
+    if h5py is not None:
+        roots.append(root3)
+
+    for root in roots:
         assert isinstance(root, JSONReader)
 
         assert len(list(root.groups())) == 4
@@ -57,7 +66,7 @@ def test_sample():
 
         # HDF5 does not support NULL type values
         # also, "array_mixed" gets converted to be all strings by h5py
-        if root is root3:
+        if h5py is not None and root is root3:
             assert len(root.metadata) == 9
             # use tolist() not np.array_equal
             assert root.metadata.array_mixed.tolist() == ['True', '-5', '0.002345', 'something', '49.1871524']

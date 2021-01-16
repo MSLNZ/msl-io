@@ -5,6 +5,10 @@ import threading
 from io import BytesIO
 
 import pytest
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import read, JSONWriter
 from msl.io.readers import JSONReader
@@ -34,16 +38,17 @@ def test_unicode_filename():
         read_sample(u'uñicödé')
     assert 'No Reader exists' in str(e.value)
 
-    root = read_sample(u'uñicödé.h5')
-    assert root.metadata.is_unicode
-    assert root.file.endswith(u'uñicödé.h5')
-    assert u'café' in root
-    assert u'/café' in root
-    assert u'café/caña' in root
-    assert u'/café/caña' in root
-    assert u'caña' in root[u'café']
-    assert u'/caña' in root[u'/café']
-    assert u'cafécaña' not in root
+    if h5py is not None:
+        root = read_sample(u'uñicödé.h5')
+        assert root.metadata.is_unicode
+        assert root.file.endswith(u'uñicödé.h5')
+        assert u'café' in root
+        assert u'/café' in root
+        assert u'café/caña' in root
+        assert u'/café/caña' in root
+        assert u'caña' in root[u'café']
+        assert u'/caña' in root[u'/café']
+        assert u'cafécaña' not in root
 
 
 def test_read_from_socket():

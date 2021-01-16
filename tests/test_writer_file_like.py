@@ -6,6 +6,10 @@ import tempfile
 from io import BytesIO, StringIO, TextIOWrapper, BufferedWriter
 
 import numpy as np
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import read, JSONWriter, HDF5Writer
 from msl.io.constants import IS_PYTHON2
@@ -68,6 +72,8 @@ def test_string_io():
 def test_bytes_io():
     # write Root to a BytesIO stream and then read it back
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with BytesIO() as buf:
             with writer(buf) as root:
                 assert isinstance(root.file, BytesIO)
@@ -117,6 +123,8 @@ def test_open_binary():
         os.remove(path)
 
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with open(path, 'wb') as fp:
             with writer(fp) as root:
                 if IS_PYTHON2:

@@ -7,6 +7,10 @@ from io import StringIO
 
 import pytest
 import numpy as np
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import read, JSONWriter, HDF5Writer
 
@@ -47,6 +51,8 @@ def assert_root_data(root):
 
 def test_none_type():
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with pytest.raises(ValueError) as err:
             with writer() as root:
                 assert root.file is None
@@ -61,6 +67,8 @@ def test_file_path():
         os.remove(path)
 
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with writer(path) as root:
             assert root.file == path
             fill_root_with_data(root)
@@ -80,6 +88,8 @@ def test_exception_raised():
         os.remove(path)
 
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with pytest.raises(ZeroDivisionError):
             with writer(path) as root:
                 assert root.file == path
@@ -94,6 +104,8 @@ def test_exception_raised():
         os.remove(path)
 
     for writer in writers:
+        if writer is HDF5Writer and h5py is None:
+            continue
         with pytest.raises(ZeroDivisionError):
             with writer(path) as root:
                 assert root.file == path

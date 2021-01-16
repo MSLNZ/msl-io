@@ -27,7 +27,7 @@ Getting Started
 
 .. invisible-code-block: pycon
 
-   >>> SKIP_IF_PYTHON_LESS_THAN_36()
+   >>> SKIP_IF_PYTHON_LESS_THAN_36() or SKIP_IF_NO_H5PY()
 
 .. _msl-io-write:
 

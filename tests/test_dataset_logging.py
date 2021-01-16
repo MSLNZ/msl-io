@@ -4,7 +4,10 @@ import tempfile
 
 import pytest
 import numpy as np
-import h5py
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import JSONWriter, HDF5Writer, read
 from msl.io.dataset_logging import DatasetLogging
@@ -205,27 +208,34 @@ def test_save_then_read():
     logger.warning('foo')
 
     json.write(mode='w')
-    h5.write(mode='w')
+    if h5py is not None:
+        h5.write(mode='w')
 
     json_2 = read(json.file)
-    h5_2 = read(h5.file)
+    if h5py is not None:
+        h5_2 = read(h5.file)
+        os.remove(h5.file)
     os.remove(json.file)
-    os.remove(h5.file)
 
     # when a file is read, what was once a DatasetLogging object is loaded as a regular Dataset
     # but can be turned back into a DatasetLogging by calling require_dataset_logging()
     assert not isinstance(json_2.log, DatasetLogging)
-    assert not isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
+    if h5py is not None:
+        assert not isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
     assert json_2.is_dataset(json_2.log)
-    assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
+    if h5py is not None:
+        assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
 
     # convert the Dataset to DatasetLogging
     json_2.require_dataset_logging(json_2.log.name)
-    h5_2.a.b.c.require_dataset_logging('/d/e/log')
+    if h5py is not None:
+        h5_2.a.b.c.require_dataset_logging('/d/e/log')
     assert isinstance(json_2.log, DatasetLogging)
-    assert isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
+    if h5py is not None:
+        assert isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
     assert json_2.is_dataset(json_2.log)
-    assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
+    if h5py is not None:
+        assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
 
     assert len(json_2.log.metadata) == 4
     assert json_2.log.metadata['extra'] == 'ABC'
@@ -233,22 +243,24 @@ def test_save_then_read():
     assert json_2.log.metadata.logging_level_name == 'INFO'
     assert json_2.log.metadata.logging_date_format == '%H:%M:%S'
 
-    assert len(h5_2.a.b.c.d.e.log.metadata) == 3
-    assert h5_2.a.b.c.d.e.log.metadata['logging_level'] == logging.INFO
-    assert h5_2.a.b.c.d.e.log.metadata.logging_level_name == 'INFO'
-    assert h5_2.a.b.c.d.e.log.metadata.logging_date_format == '%Y-%m-%dT%H:%M:%S.%f'
+    if h5py is not None:
+        assert len(h5_2.a.b.c.d.e.log.metadata) == 3
+        assert h5_2.a.b.c.d.e.log.metadata['logging_level'] == logging.INFO
+        assert h5_2.a.b.c.d.e.log.metadata.logging_level_name == 'INFO'
+        assert h5_2.a.b.c.d.e.log.metadata.logging_date_format == '%Y-%m-%dT%H:%M:%S.%f'
 
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo'])
-    if h5py.version.version_tuple.major < 3:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'],
-            ['hello world', 'foo']
-        )
-    else:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'],
-            [b'hello world', b'foo']
-        )
+    if h5py is not None:
+        if h5py.version.version_tuple.major < 3:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'],
+                ['hello world', 'foo']
+            )
+        else:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'],
+                [b'hello world', b'foo']
+            )
 
     json.log.remove_handler()
 
@@ -256,16 +268,17 @@ def test_save_then_read():
     assert np.array_equal(json.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz'])
-    if h5py.version.version_tuple.major < 3:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'],
-            ['hello world', 'foo', 'baz']
-        )
-    else:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'].tolist(),
-            [b'hello world', b'foo', 'baz']
-        )
+    if h5py is not None:
+        if h5py.version.version_tuple.major < 3:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'],
+                ['hello world', 'foo', 'baz']
+            )
+        else:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'].tolist(),
+                [b'hello world', b'foo', 'baz']
+            )
 
     h5.a.b.c.d.e.log.remove_handler()
 
@@ -274,19 +287,21 @@ def test_save_then_read():
     assert np.array_equal(json.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!'])
-    if h5py.version.version_tuple.major < 3:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'],
-            ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!']
-        )
-    else:
-        assert np.array_equal(
-            h5_2.a.b.c.d.e.log['message'].tolist(),
-            [b'hello world', b'foo', 'baz', 'ooops...', 'YIKES!']
-        )
+    if h5py is not None:
+        if h5py.version.version_tuple.major < 3:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'],
+                ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!']
+            )
+        else:
+            assert np.array_equal(
+                h5_2.a.b.c.d.e.log['message'].tolist(),
+                [b'hello world', b'foo', 'baz', 'ooops...', 'YIKES!']
+            )
 
     json_2.log.remove_handler()
-    h5_2.a.b.c.d.e.log.remove_handler()
+    if h5py is not None:
+        h5_2.a.b.c.d.e.log.remove_handler()
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 

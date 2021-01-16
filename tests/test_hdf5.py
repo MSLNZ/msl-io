@@ -3,6 +3,10 @@ import tempfile
 
 import pytest
 import numpy as np
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 from msl.io import read, HDF5Writer, JSONWriter
 from msl.io.readers import HDF5Reader
@@ -10,6 +14,7 @@ from msl.io.readers import HDF5Reader
 from helper import read_sample
 
 
+@pytest.mark.skipif(h5py is None, reason='h5py not installed')
 def test_hdf5():
     root1 = read_sample('hdf5_sample.h5')
 
@@ -110,6 +115,7 @@ def test_hdf5():
         assert g2.metadata['hello'] == 'world'
 
 
+@pytest.mark.skipif(h5py is None, reason='h5py not installed')
 def test_url_and_root():
     root = read_sample('hdf5_sample.h5')
 
@@ -144,6 +150,7 @@ def test_url_and_root():
     assert 'Root' in str(e.value)
 
 
+@pytest.mark.skipif(h5py is None, reason='h5py not installed')
 def test_numpy_unicode_dtype():
     writer = HDF5Writer()
     writer.add_metadata(wide_chars=np.array(['1', '-4e+99', 'True'], dtype='<U6'))

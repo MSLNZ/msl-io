@@ -140,9 +140,14 @@ install_requires = [
 tests_require = [
     'pytest>=4.4',  # pytest.skip() was added in v4.4
     'pytest-cov',
-    'h5py',
     'numpy>=1.16',  # the max_rows kwarg in np.loadtxt was added in v1.16
 ]
+if sys.maxsize > 2**32:
+    tests_require.append('h5py')
+else:
+    # 32-bit wheels for h5py are not available for Python 3.9+
+    if sys.version_info[:2] < (3, 9):
+        tests_require.append('h5py<3.0')
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []

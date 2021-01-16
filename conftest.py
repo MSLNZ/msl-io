@@ -1,5 +1,10 @@
 import sys
+
 import pytest
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 
 @pytest.fixture(autouse=True)
@@ -22,10 +27,16 @@ def doctest_skipif(doctest_namespace):
     #     <Metadata '/' {'one': 1, 'two': 2}>
     # Got:
     #     <Metadata '/' {'two': 2, 'one': 1}>
-
     if sys.version_info[:2] < (3, 6):
-        obj = lambda: pytest.skip()
+        ver = lambda: pytest.skip(msg='Python < 3.6')
     else:
-        obj = lambda: None
+        ver = lambda: None
 
-    doctest_namespace['SKIP_IF_PYTHON_LESS_THAN_36'] = obj
+    # 32-bit wheels for h5py are not available for Python 3.9+
+    if h5py is None:
+        h5 = lambda: pytest.skip(msg='h5py not installed')
+    else:
+        h5 = lambda: None
+
+    doctest_namespace['SKIP_IF_PYTHON_LESS_THAN_36'] = ver
+    doctest_namespace['SKIP_IF_NO_H5PY'] = h5
