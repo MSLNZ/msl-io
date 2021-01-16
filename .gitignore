@@ -45,6 +45,3 @@ my_file.h5
 my_file.json
 my_table.csv
 example.json
-
-# ignore all scripts in the junk/ folder
-junk/
