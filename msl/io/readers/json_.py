@@ -7,7 +7,7 @@ from io import BufferedIOBase
 
 import numpy as np
 
-from msl.io import (
+from .. import (
     register,
     Reader,
 )

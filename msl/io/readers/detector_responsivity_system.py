@@ -6,7 +6,10 @@ from datetime import datetime
 
 import numpy as np
 
-from msl.io import register, Reader
+from .. import (
+    register,
+    Reader,
+)
 
 
 @register
