@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 import numpy as np
+import h5py
 
 from msl.io import JSONWriter, HDF5Writer, read
 from msl.io.dataset_logging import DatasetLogging
@@ -238,7 +239,16 @@ def test_save_then_read():
     assert h5_2.a.b.c.d.e.log.metadata.logging_date_format == '%Y-%m-%dT%H:%M:%S.%f'
 
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo'])
-    assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo'])
+    if h5py.version.version_tuple.major < 3:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'],
+            ['hello world', 'foo']
+        )
+    else:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'],
+            [b'hello world', b'foo']
+        )
 
     json.log.remove_handler()
 
@@ -246,7 +256,16 @@ def test_save_then_read():
     assert np.array_equal(json.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz'])
-    assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
+    if h5py.version.version_tuple.major < 3:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'],
+            ['hello world', 'foo', 'baz']
+        )
+    else:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'].tolist(),
+            [b'hello world', b'foo', 'baz']
+        )
 
     h5.a.b.c.d.e.log.remove_handler()
 
@@ -255,7 +274,16 @@ def test_save_then_read():
     assert np.array_equal(json.log['message'], ['hello world', 'foo'])
     assert np.array_equal(h5.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz'])
     assert np.array_equal(json_2.log['message'], ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!'])
-    assert np.array_equal(h5_2.a.b.c.d.e.log['message'], ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!'])
+    if h5py.version.version_tuple.major < 3:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'],
+            ['hello world', 'foo', 'baz', 'ooops...', 'YIKES!']
+        )
+    else:
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log['message'].tolist(),
+            [b'hello world', b'foo', 'baz', 'ooops...', 'YIKES!']
+        )
 
     json_2.log.remove_handler()
     h5_2.a.b.c.d.e.log.remove_handler()

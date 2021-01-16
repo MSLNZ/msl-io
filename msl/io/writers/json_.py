@@ -192,6 +192,8 @@ class _NumpyEncoder(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.bool_):
             return bool(obj)
+        elif isinstance(obj, bytes):
+            return obj.decode(encoding='utf-8')
 
         # Let the base class raise the TypeError
         return json.JSONEncoder.default(self, obj)

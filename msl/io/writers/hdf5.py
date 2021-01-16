@@ -87,13 +87,13 @@ class HDF5Writer(Writer):
                 if convert:
                     return obj.astype(dtype=dtype)
                 return obj
-            elif obj.dtype.str == '|U':
+            elif obj.dtype.char == 'U':
                 return obj.astype(dtype=vstr)
-            elif obj.dtype.str == '|O':
+            elif obj.dtype.char == 'O':
                 has_complex = False
                 for item in obj.flat:
                     if isinstance(item, (unicode, str)):
-                        return obj.astype(dtype=vstr)
+                        return obj.astype(dtype='S')
                     elif isinstance(item, np.complexfloating):
                         has_complex = True
                     elif item is None:
