@@ -152,7 +152,7 @@ def register(reader_class):
 
 def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
            ignore_permission_error=True, ignore_hidden_folders=True, follow_symlinks=False):
-    """Search for files starting from a root folder.
+    r"""Search for files starting from a root folder.
 
     Parameters
     ----------
@@ -164,12 +164,12 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
 
         Examples:
 
-        * ``r'data'`` :math:`\\rightarrow` find all files with the word ``data``
+        * ``r'data'`` :math:`\rightarrow` find all files with the word ``data``
           in the filename
 
-        * ``r'\.png$'`` :math:`\\rightarrow` find all files with the extension ``.png``
+        * ``r'\.png$'`` :math:`\rightarrow` find all files with the extension ``.png``
 
-        * ``r'\.jpe*g$'`` :math:`\\rightarrow` find all files with the extension
+        * ``r'\.jpe*g$'`` :math:`\rightarrow` find all files with the extension
           ``.jpeg`` or ``.jpg``
 
     levels : :class:`int`, optional
@@ -183,11 +183,11 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
 
         Examples:
 
-        * ``r'bin'`` :math:`\\rightarrow` exclude all folders that contain the word ``bin``
+        * ``r'bin'`` :math:`\rightarrow` exclude all folders that contain the word ``bin``
 
-        * ``r'^My'`` :math:`\\rightarrow` exclude all folders that start with the letters ``My``
+        * ``r'^My'`` :math:`\rightarrow` exclude all folders that start with the letters ``My``
 
-        * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\\rightarrow` exclude
+        * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\rightarrow` exclude
           all folders that contain the word ``bin`` or start with the letters ``My``
 
     ignore_permission_error : :class:`bool`, optional
@@ -195,7 +195,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         the items within a folder.
     ignore_hidden_folders : :class:`bool`, optional
         Whether to ignore hidden folders from the search. A hidden folder
-        starts with a ``.``.
+        starts with a ``.`` (a dot).
     follow_symlinks : :class:`bool`, optional
         Whether to search for files by following symbolic links.
 
