@@ -132,22 +132,20 @@ def get_version():
     return init_version + '+' + suffix
 
 
+install_requires = [
+    'numpy',
+    'xlrd<2.0',  # xlrd v2.0+ will not open .xlsx files anymore
+]
+
+tests_require = [
+    'pytest>=4.4',  # pytest.skip() was added in v4.4
+    'pytest-cov',
+    'h5py',
+    'numpy>=1.16',  # the max_rows kwarg in np.loadtxt was added in v1.16
+]
+
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
-
-install_requires = ['xlrd']
-tests_require = ['pytest-cov', 'xlrd', 'h5py']
-if not testing:
-    install_requires.append('numpy')
-else:
-    # pytest.skip() was added in v4.4
-    # the max_rows kwarg in np.loadtxt was added in v1.16
-    if sys.version_info[:2] == (2, 7):
-        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy>=1.16,<1.17'])
-    elif sys.version_info[:2] == (3, 5):
-        tests_require.extend(['pytest>=4.4', 'numpy>=1.16,<1.19'])
-    else:
-        tests_require.extend(['pytest>=4.4', 'numpy>=1.16'])
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
@@ -185,6 +183,7 @@ setup(
     tests_require=tests_require,
     install_requires=install_requires,
     extras_require={
+        'tests': tests_require,
         'h5py': ['h5py'],
     },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
