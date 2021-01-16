@@ -24,7 +24,7 @@ from .tables import (
 )
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
-__copyright__ = '\xa9 2018 - 2020, ' + __author__
+__copyright__ = '\xa9 2018 - 2021, ' + __author__
 __version__ = '0.1.0.dev0'
 
 _v = re.search(r'(\d+)\.(\d+)\.(\d+)[.-]?(.*)', __version__).groups()
