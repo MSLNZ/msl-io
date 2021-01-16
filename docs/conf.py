@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
+on_rtd = os.getenv('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
 
@@ -219,8 +219,8 @@ epub_exclude_files = ['search.html']
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'h5py': ('http://docs.h5py.org/en/latest/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'h5py': ('https://docs.h5py.org/en/stable/', None),
     'msl.package_manager': ('https://msl-package-manager.readthedocs.io/en/stable/', None),
     'xlrd': ('https://xlrd.readthedocs.io/en/stable/', None),
 }
