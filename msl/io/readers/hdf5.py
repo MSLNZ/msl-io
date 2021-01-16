@@ -16,7 +16,10 @@ try:
 except ImportError:
     h5py = None
 
-from msl.io import register, Reader
+from .. import (
+    register,
+    Reader,
+)
 
 
 @register
@@ -46,16 +49,11 @@ class HDF5Reader(Reader):
 
         def convert(name, obj):
             head, tail = os.path.split(name)
+            s = self['/' + head] if head else self
             if isinstance(obj, h5py.Dataset):
-                if head:
-                    self['/' + head].create_dataset(tail, data=obj[:], **obj.attrs)
-                else:
-                    self.create_dataset(tail, data=obj[:], **obj.attrs)
+                s.create_dataset(tail, data=obj[:], **obj.attrs)
             elif isinstance(obj, h5py.Group):
-                if head:
-                    self['/' + head].create_group(tail, **obj.attrs)
-                else:
-                    self.create_group(tail, **obj.attrs)
+                s.create_group(tail, **obj.attrs)
             else:
                 assert False, 'Unhandled HDF5Reader object {}'.format(obj)
 
