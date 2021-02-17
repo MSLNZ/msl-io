@@ -101,7 +101,7 @@ def get_version():
         fp.write('get_version: {}\n'.format(init_version))
         fp.write('get_version: {}\n'.format(sys.argv))
 
-    if ('develop' in sys.argv) or ('msl-io' in sys.argv[0]):
+    if ('develop' in sys.argv) or (os.path.join('msl-io', 'setup.py') in sys.argv[0]):
         # then installing in editable (develop) mode
         #   python setup.py develop
         #   pip install -e .
