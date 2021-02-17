@@ -96,6 +96,11 @@ def get_version():
     if 'dev' not in init_version:
         return init_version
 
+    import tempfile
+    with open(tempfile.gettempdir() + '/args.txt', 'a') as fp:
+        fp.write('get_version: {}\n'.format(init_version))
+        fp.write('get_version: {}\n'.format(sys.argv))
+
     if ('develop' in sys.argv) or ('msl-io' in sys.argv[0]):
         # then installing in editable (develop) mode
         #   python setup.py develop
@@ -217,3 +222,9 @@ if 'dev' in version and not version.endswith('editable'):
             source = fp.read()
             fp.seek(0)
             fp.write(re.sub(r'__version__\s*=.*', "__version__ = '{}'".format(version), source))
+
+    import tempfile
+    with open(tempfile.gettempdir() + '/args.txt', 'a') as fp:
+        fp.write('end: {}\n'.format(sys.argv))
+        fp.write('end: {}\n'.format(init_path))
+
