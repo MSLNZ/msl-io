@@ -168,10 +168,10 @@ def test_sample():
         assert dset.metadata.fibonacci.tolist() == [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
         assert dset.shape == (2,)
         assert dset.dtype.names == ('a', 'b', 'c', 'd', 'e')
-        assert dset['a'].dtype == np.object
-        assert dset['b'].dtype == np.object
-        assert dset['c'].dtype == np.float
-        assert dset['d'].dtype == np.float
+        assert dset['a'].dtype == object
+        assert dset['b'].dtype == object
+        assert dset['c'].dtype == float
+        assert dset['d'].dtype == float
         assert dset['e'].dtype == np.int32
         assert dset['a'].tolist() == ['100', '100s']
         assert dset['b'].tolist() == ['100s', '50+50s']

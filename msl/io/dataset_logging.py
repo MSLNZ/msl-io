@@ -68,7 +68,7 @@ class DatasetLogging(Dataset, logging.Handler):
         kwargs['logging_level'] = level
         kwargs['logging_level_name'] = logging.getLevelName(level)
         kwargs['logging_date_format'] = date_fmt
-        self._dtype = np.dtype([(a, np.object) for a in attributes])
+        self._dtype = np.dtype([(a, object) for a in attributes])
 
         self._auto_resize = 'size' in kwargs or 'shape' in kwargs
         if self._auto_resize:
