@@ -34,6 +34,10 @@ Dependencies
 * Python 2.7, 3.5+
 * numpy_
 * xlrd_
+* google-api-python-client_
+* google-auth-httplib2_
+* google-auth-oauthlib_
+
 
 Documentation
 -------------
@@ -63,3 +67,7 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _numpy: https://www.numpy.org/
 .. _xlrd: https://xlrd.readthedocs.io/en/latest/
+.. _google-api-python-client: https://pypi.org/project/google-api-python-client/
+.. _google-auth-httplib2: https://pypi.org/project/google-auth-httplib2/
+.. _google-auth-oauthlib: https://pypi.org/project/google-auth-oauthlib/
+
