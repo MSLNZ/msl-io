@@ -138,6 +138,7 @@ install_requires = [
     'google-api-python-client; python_version > "2.7"',
     'google-auth-httplib2; python_version > "2.7"',
     'google-auth-oauthlib; python_version > "2.7"',
+    'enum34; python_version < "3.4"',
 ]
 
 tests_require = [
