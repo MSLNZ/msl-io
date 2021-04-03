@@ -11,6 +11,7 @@ The following functions are available to read a file
    ~msl.io.read
    ~msl.io.read_table
    ~msl.io.readers.excel.ExcelReader
+   ~msl.io.google_api.GSheets
 
 the following classes are available as :ref:`io-writers`
 
@@ -41,6 +42,7 @@ Package Structure
    msl.io.dataset <_api/msl.io.dataset>
    msl.io.dataset_logging <_api/msl.io.dataset_logging>
    msl.io.dictionary <_api/msl.io.dictionary>
+   msl.io.google_api <_api/msl.io.google_api>
    msl.io.group <_api/msl.io.group>
    msl.io.metadata <_api/msl.io.metadata>
    msl.io.tables <_api/msl.io.tables>

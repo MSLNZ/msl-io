@@ -22,6 +22,12 @@ from .tables import (
     read_table_excel,
     extension_delimiter_map,
 )
+from .google_api import (
+    GDrive,
+    GSheets,
+    GValueOption,
+    GDateTimeOption,
+)
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2021, ' + __author__
