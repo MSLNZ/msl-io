@@ -1,6 +1,7 @@
 import os
 import io
 import sys
+import uuid
 import tempfile
 from datetime import datetime
 
@@ -163,25 +164,18 @@ def test_gdrive_create_delete_folder_personal():
 
     drive = GDrive(is_read_only=False, is_corporate_account=False)
 
-    # create
-    folders = [
-        'TEST TEST TEST',
-        'TEST-TEST-1/TEST 2/a b c',
-    ]
-    for folder in folders:
+    u1 = str(uuid.uuid4())
+    u2 = str(uuid.uuid4())
+
+    # create (relative to root)
+    for folder in [u1, u2 + '/sub-2/a b c']:
         folder_id = drive.create_folder(folder)
         assert drive.folder_id(folder) == folder_id
 
-    # delete
-    folders = [
-        'TEST TEST TEST',
-        'TEST-TEST-1/TEST 2/a b c',
-        'TEST-TEST-1/TEST 2',
-        'TEST-TEST-1',
-    ]
-    for folder in folders:
+    # delete (relative to root)
+    for folder in [u1, u2 + '/sub-2/a b c', u2 + '/sub-2', u2]:
         drive.delete(drive.folder_id(folder))
-        with pytest.raises(OSError):
+        with pytest.raises(OSError, match='Not a valid Google Drive folder'):
             drive.folder_id(folder)
 
 
@@ -215,29 +209,35 @@ def test_gdrive_is_folder_personal():
 
 @skipif_no_gdrive_personal
 def test_gdrive_upload_personal():
+    temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.py')
+    with open(temp_file, mode='w') as fp:
+        fp.write('from msl.io import GDrive')
+
     # instantiate in read-only mode
     drive = GDrive(is_read_only=True, is_corporate_account=False)
     with pytest.raises(HttpError, match='Insufficient Permission'):
-        drive.upload(__file__)
+        drive.upload(temp_file)
 
     drive = GDrive(is_read_only=False, is_corporate_account=False)
     file_id = drive.upload(
-        __file__,
+        temp_file,
         folder_id=drive.folder_id('MSL'),
         mime_type='text/x-python'
     )
 
-    path = os.path.join('MSL', os.path.basename(__file__))
+    path = os.path.join('MSL', os.path.basename(temp_file))
     assert drive.file_id(path, mime_type='text/x-python') == file_id
     assert drive.file_id(path) == file_id
     assert not drive.is_file(path, mime_type='application/x-python-code')
 
     drive.delete(file_id)
     assert not drive.is_file(path)
+    os.remove(temp_file)
 
 
 @skipif_no_gdrive_personal
 def test_gdrive_download_personal():
+    temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
 
     drive = GDrive(is_corporate_account=False)
 
@@ -257,23 +257,24 @@ def test_gdrive_download_personal():
         buffer.seek(0)
         assert buffer.read() == b'in "msl-io-testing"'
 
-    # a file in 'wb' mode
-    temp_file = os.path.join(tempfile.gettempdir(), 'msl-io-gdrive-download.txt')
+    # a file handle in 'wb' mode
     with open(temp_file, mode='wb') as fp:
         drive.download(file_id, save_as=fp)
-    with open(temp_file) as fp:
+    with open(temp_file, mode='rt') as fp:
         assert fp.read() == 'in "msl-io-testing"'
     os.remove(temp_file)  # clean up
 
     # do not specify a value for the 'save_as' kwarg
     # therefore the filename is determined from the remote filename
+    # and saved to the current working directory
     file_id = drive.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt')
     drive.download(file_id)
     with open('file.txt', mode='r') as fp:
         assert fp.read() == 'in "sub folder 3"'
     os.remove('file.txt')  # clean up
 
-    # save to a file with a different filename
+    # save to a specific file
+    assert not os.path.isfile(temp_file)
     drive.download(file_id, save_as=temp_file)
     with open(temp_file, mode='rb') as fp:
         assert fp.read() == b'in "sub folder 3"'
@@ -284,8 +285,8 @@ def test_gdrive_download_personal():
         assert file.progress() == 1.0
         assert file.total_size == 17
         assert file.resumable_progress == 17
-    drive.download(file_id, callback=handler)
-    os.remove('file.txt')  # clean up
+    drive.download(file_id, save_as=temp_file, callback=handler)
+    os.remove(temp_file)  # clean up
 
 
 @skipif_no_gdrive_personal
