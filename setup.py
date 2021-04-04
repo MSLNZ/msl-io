@@ -135,9 +135,9 @@ def get_version():
 install_requires = [
     'numpy',
     'xlrd<2.0',  # xlrd v2.0+ will not open .xlsx files anymore
-    'google-api-python-client; python_version > "2.7"',
-    'google-auth-httplib2; python_version > "2.7"',
-    'google-auth-oauthlib; python_version > "2.7"',
+    'google-api-python-client',
+    'google-auth-httplib2',
+    'google-auth-oauthlib',
     'enum34; python_version < "3.4"',
 ]
 

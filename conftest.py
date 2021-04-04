@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pytest
@@ -5,6 +6,8 @@ try:
     import h5py
 except ImportError:
     h5py = None
+
+os.environ['MSL_IO_RUNNING_TESTS'] = 'True'
 
 
 @pytest.fixture(autouse=True)

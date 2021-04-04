@@ -1,6 +1,5 @@
 import os
 import io
-import json
 import tempfile
 from datetime import datetime
 
@@ -10,58 +9,38 @@ try:
 except ImportError:
     HttpError = Exception
 
-from msl.io.constants import (
-    HOME_DIR,
-    IS_PYTHON2,
-)
+from msl.io.constants import IS_PYTHON2
 from msl.io import (
     GDrive,
     GSheets,
 )
 
+# all Google API tests require the necessary "token.json" files to be
+# available for a specific Google user's account
+try:
+    GDrive(is_read_only=True, is_corporate_account=False)
+    GDrive(is_read_only=False, is_corporate_account=False)
+    NO_GDRIVE_PERSONAL = False
+except:
+    NO_GDRIVE_PERSONAL = True
 
-def google_api_and_tokens_available():
-    """
-    All Google API tests require the necessary "token.json" files to be
-    available for a specific Google user's account and for the Google API
-    packages to be installed.
+skipif_no_gdrive_personal = pytest.mark.skipif(
+    NO_GDRIVE_PERSONAL, reason='GDrive personal tokens not available'
+)
 
-    Returns
-    -------
-    bool
-        Whether the API packages and tokens are available.
-    str
-        The reason why the tests should be skipped.
-    """
-    if IS_PYTHON2:
-        return False, 'Google API does not support Python 2.7'
+try:
+    GSheets(is_read_only=True, is_corporate_account=False)
+    GSheets(is_read_only=False, is_corporate_account=False)
+    NO_GSHEETS_PERSONAL = False
+except:
+    NO_GSHEETS_PERSONAL = True
 
-    token_files = [
-        'token-drive.json',
-        'token-drive-readonly.json',
-        'token-sheets.json',
-        'token-sheets-readonly.json',
-    ]
-    try:
-        for token in token_files:
-            with open(os.path.join(HOME_DIR, token)) as fp:
-                if '5p34etstsaog6dii' not in json.load(fp)['client_id']:
-                    raise ValueError('Invalid client ID')
-    except:
-        return False, 'token files for OAuth are not available'
-
-    return True, ''
+skipif_no_gsheets_personal = pytest.mark.skipif(
+    NO_GSHEETS_PERSONAL, reason='GSheets personal tokens not available'
+)
 
 
-available, reason = google_api_and_tokens_available()
-
-# a marker that can be and reused in another test module
-skipif_gsheets_not_available = pytest.mark.skipif(not available, reason=reason)
-
-if not available:  # then skip all tests in this module
-    pytestmark = pytest.mark.skip(reason=reason)
-
-
+@skipif_no_gdrive_personal
 def test_gdrive_folder_id_exception_personal():
     drive = GDrive(is_corporate_account=False)
 
@@ -76,8 +55,8 @@ def test_gdrive_folder_id_exception_personal():
 
     # specified a valid file (which is not a folder)
     files = {
-        'js.borbely-thesis.pdf': '0Bwab3C2ejMQdcVZqVTd0Q0tham8',
-        'MSL/msl-io-testing/unique': '1bObQP7J1nplWqtt4tZvHzehWKD8Eo_C0',
+        'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
+        'MSL/msl-io-testing/unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
     }
     for file, id_ in files.items():
         assert drive.file_id(file) == id_
@@ -85,6 +64,7 @@ def test_gdrive_folder_id_exception_personal():
             drive.folder_id(file)
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_folder_id_personal():
     drive = GDrive(is_corporate_account=False)
 
@@ -93,15 +73,15 @@ def test_gdrive_folder_id_personal():
     assert drive.folder_id(r'D:\Google Drive') == 'root'
     assert drive.folder_id('Google Drive') == 'root'
 
-    assert drive.folder_id(r'C:\Users\username\Google Drive\MSL') == '0Bwab3C2ejMQdSElkLUo5SkpTSm8'
-    assert drive.folder_id(r'Google Drive\MSL') == '0Bwab3C2ejMQdSElkLUo5SkpTSm8'
-    assert drive.folder_id('MSL') == '0Bwab3C2ejMQdSElkLUo5SkpTSm8'
-    assert drive.folder_id('MSL/msl-io-testing') == '1JNP-X8iwMWw72QiSe5-t-okUdkgdHWLK'
-    assert drive.folder_id(r'Google Drive\MSL\msl-io-testing\f 1') == '1ch7NiFFIoiJ_0W3DVnu-qwBEcHA7HRI6'
-    assert drive.folder_id('MSL/msl-io-testing/f 1/f2') == '18_VvSPeJu3U7OGmuVYbrX9rv9KnHH1EX'
-    assert drive.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1yci-IjA526PD1M2GYcSpTnrr0xKaVNBf'
+    assert drive.folder_id(r'C:\Users\username\Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert drive.folder_id(r'Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert drive.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert drive.folder_id('MSL/msl-io-testing') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
+    assert drive.folder_id(r'Google Drive\MSL\msl-io-testing\f 1') == '1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9'
+    assert drive.folder_id('MSL/msl-io-testing/f 1/f2') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert drive.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
 
-
+@skipif_no_gdrive_personal
 def test_gdrive_file_id_exception_personal():
     drive = GDrive(is_corporate_account=False)
 
@@ -116,8 +96,8 @@ def test_gdrive_file_id_exception_personal():
 
     # specified a valid folder (which is not a file)
     folders = {
-        'MSL': '0Bwab3C2ejMQdSElkLUo5SkpTSm8',
-        r'C:\Users\username\Google Drive\MSL': '0Bwab3C2ejMQdSElkLUo5SkpTSm8',
+        'MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
+        r'C:\Users\username\Google Drive\MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
     }
     for folder, id_ in folders.items():
         assert drive.folder_id(folder) == id_
@@ -125,24 +105,26 @@ def test_gdrive_file_id_exception_personal():
             drive.file_id(folder)
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_file_id_personal():
     drive = GDrive(is_corporate_account=False)
     files = {
-        'js.borbely-thesis.pdf': '0Bwab3C2ejMQdcVZqVTd0Q0tham8',
-        r'C:\Users\username\Google Drive\js.borbely-thesis.pdf': '0Bwab3C2ejMQdcVZqVTd0Q0tham8',
-        'MSL/msl-io-testing/unique': '1bObQP7J1nplWqtt4tZvHzehWKD8Eo_C0',
-        r'C:\Users\username\Google Drive\MSL\msl-io-testing\unique': '1bObQP7J1nplWqtt4tZvHzehWKD8Eo_C0',
-        r'MSL\msl-io-testing\f 1\f2\New Text Document.txt': '1sLSiot813r-LhZ99_XdVlRz0obMFZEH6',
+        'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
+        r'C:\Users\username\Google Drive\Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
+        'MSL/msl-io-testing/unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
+        r'C:\Users\username\Google Drive\MSL\msl-io-testing\unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
+        r'MSL\msl-io-testing\f 1\f2\New Text Document.txt': '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP',
     }
     for file, id_ in files.items():
         assert drive.file_id(file) == id_
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_file_id_multiple_personal():
     # multiple files with the same name in the same folder
     drive = GDrive(is_corporate_account=False)
 
-    path = 'MSL/msl-io-testing/f 1/sample.xlsx'
+    path = 'MSL/msl-io-testing/f 1/electronics.xlsx'
 
     with pytest.raises(OSError) as err:
         drive.file_id(path)
@@ -150,17 +132,18 @@ def test_gdrive_file_id_multiple_personal():
     assert GSheets.MIME_TYPE in str(err.value)
 
     mime_types = {
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '1BnW90drqwhVThBHPTxpsVsZzxyaAecKB',
-        GSheets.MIME_TYPE: '1tiuiFDSmGQMiaFWuhNynaD1MJV71MxosqoZBt6CDE_c',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '1aCSP8HU7mAz2hss8dP7IpNz0xJDzWSe1',
+        GSheets.MIME_TYPE: '1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE',
     }
     for mime, id_ in mime_types.items():
         assert drive.file_id(path , mime_type=mime) == id_
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_create_delete_folder_personal():
 
     # instantiate in read-only mode
-    drive = GDrive(is_corporate_account=False)
+    drive = GDrive(is_read_only=True, is_corporate_account=False)
     with pytest.raises(HttpError, match='Insufficient Permission'):
         drive.create_folder('TEST')
 
@@ -188,15 +171,7 @@ def test_gdrive_create_delete_folder_personal():
             drive.folder_id(folder)
 
 
-def test_gdrive_empty_trash_personal():
-    # instantiate in read-only mode
-    drive = GDrive(is_corporate_account=False)
-    with pytest.raises(HttpError, match='Insufficient Permission'):
-        drive.empty_trash()
-
-    # DO NOT implement additional tests
-
-
+@skipif_no_gdrive_personal
 def test_gdrive_is_file_personal():
     drive = GDrive(is_corporate_account=False)
     assert not drive.is_file('doesnotexist.txt')
@@ -205,34 +180,36 @@ def test_gdrive_is_file_personal():
     assert not drive.is_file(r'MSL\msl-io-testing\f 1')
     assert drive.is_file('MSL/msl-io-testing/unique')
     assert drive.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
-    assert drive.is_file('MSL/msl-io-testing/f 1/sample.xlsx')
-    assert drive.is_file('MSL/msl-io-testing/f 1/sample.xlsx', mime_type=GSheets.MIME_TYPE)
+    assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx')
+    assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx', mime_type=GSheets.MIME_TYPE)
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_is_folder_personal():
     drive = GDrive(is_corporate_account=False)
     assert not drive.is_folder('doesnotexist')
     assert not drive.is_folder('MSL/msl-io-testing/unique')
-    assert not drive.is_folder(r'MSL\msl-io-testing\f 1\sample.xlsx')
+    assert not drive.is_folder(r'MSL\msl-io-testing\f 1\electronics.xlsx')
     assert drive.is_folder('MSL')
     assert drive.is_folder(r'MSL\msl-io-testing\f 1')
     assert drive.is_folder('MSL/msl-io-testing/f 1/f2/sub folder 3')
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_upload_personal():
     # instantiate in read-only mode
-    drive = GDrive(is_corporate_account=False)
+    drive = GDrive(is_read_only=True, is_corporate_account=False)
     with pytest.raises(HttpError, match='Insufficient Permission'):
         drive.upload(__file__)
 
     drive = GDrive(is_read_only=False, is_corporate_account=False)
     file_id = drive.upload(
         __file__,
-        folder_id=drive.folder_id('MSL/msl-io-testing'),
+        folder_id=drive.folder_id('MSL'),
         mime_type='text/x-python'
     )
 
-    path = os.path.join('MSL', 'msl-io-testing', os.path.basename(__file__))
+    path = os.path.join('MSL', os.path.basename(__file__))
     assert drive.file_id(path, mime_type='text/x-python') == file_id
     assert drive.file_id(path) == file_id
     assert not drive.is_file(path, mime_type='application/x-python-code')
@@ -241,6 +218,7 @@ def test_gdrive_upload_personal():
     assert not drive.is_file(path)
 
 
+@skipif_no_gdrive_personal
 def test_gdrive_download_personal():
 
     drive = GDrive(is_corporate_account=False)
@@ -250,9 +228,10 @@ def test_gdrive_download_personal():
     # cannot be a string IO object
     with pytest.raises(TypeError):
         drive.download(file_id, save_as=io.StringIO())
-    with pytest.raises(TypeError):
-        drive.download(file_id, save_as=open('junk.txt', mode='wt'))
-    os.remove('junk.txt')  # clean up since it got created before the error was raised
+    if not IS_PYTHON2:  # in Python 2, str and bytes are the same
+        with pytest.raises(TypeError):
+            drive.download(file_id, save_as=open('junk.txt', mode='wt'))
+        os.remove('junk.txt')  # clean up since it got created before the error was raised
 
     # a BytesIO object
     with io.BytesIO() as buffer:
@@ -291,13 +270,23 @@ def test_gdrive_download_personal():
     os.remove('file.txt')  # clean up
 
 
-def test_gsheets_names_personal():
-    drive = GDrive(is_corporate_account=False)
+@skipif_no_gdrive_personal
+def test_gdrive_empty_trash_personal():
+    # instantiate in read-only mode
+    drive = GDrive(is_read_only=True, is_corporate_account=False)
+    with pytest.raises(HttpError, match='Insufficient Permission'):
+        drive.empty_trash()
+
+    drive = GDrive(is_read_only=False, is_corporate_account=False)
+    drive.empty_trash()
+
+
+@skipif_no_gsheets_personal
+def test_gsheets_sheet_names_personal():
     sheets = GSheets(is_corporate_account=False)
 
-    empty_id = drive.file_id('MSL/msl-io-testing/empty')
-    assert empty_id == '1p2-mQr54YnnKV8YCA1pWltVqOIAEpVnWLuOlggUocfQ'
-    names = sheets.sheet_names(empty_id)
+    # MSL/msl-io-testing/empty-5
+    names = sheets.sheet_names('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY')
     assert len(names) == 5
     assert 'Sheet1' in names
     assert 'Sheet2' in names
@@ -305,19 +294,21 @@ def test_gsheets_names_personal():
     assert 'Sheet4' in names
     assert 'Sheet5' in names
 
-    lab_id = drive.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment')
-    assert lab_id == '1vIpEWe6ZDBG5uUumPXjQPN7KCufx77VH9mhCplp4Mt4'
-    names = sheets.sheet_names(lab_id)
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
+    names = sheets.sheet_names('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4')
     assert len(names) == 1
     assert 'Sensor_1' in names
 
 
+@skipif_no_gsheets_personal
 def test_gsheets_values_personal():
-    drive = GDrive(is_corporate_account=False)
     sheets = GSheets(is_corporate_account=False)
 
-    empty_id = drive.file_id('MSL/msl-io-testing/empty')
-    lab_id = drive.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment')
+    # MSL/msl-io-testing/empty-5
+    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
+
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
+    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
 
     # more than 1 sheet exists
     with pytest.raises(ValueError, match=r'You must specify a sheet name:'):
@@ -353,8 +344,8 @@ def test_gsheets_values_personal():
     assert values == [[expected[r][c] for c in range(1, 3)] for r in range(1, 4)]
 
 
-def test_gsheets_lotus_to_datetime():
-    drive = GDrive(is_corporate_account=False)
+@skipif_no_gsheets_personal
+def test_gsheets_to_datetime():
     sheets = GSheets(is_corporate_account=False)
 
     expected = [
@@ -364,9 +355,10 @@ def test_gsheets_lotus_to_datetime():
         ['Humidity', 49.82, 46.06, 47.06, 48.32]
     ]
 
-    lab_id = drive.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment')
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
+    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
     values = sheets.values(lab_id, value_option='UNFORMATTED_VALUE', row_major=False)
-    values[0][1:] = [sheets.lotus_to_datetime(t) for t in values[0][1:]]
+    values[0][1:] = [sheets.to_datetime(t) for t in values[0][1:]]
     assert values == expected
 
     values = sheets.values(lab_id, value_option='UNFORMATTED_VALUE',

@@ -2,30 +2,24 @@
 Wrappers around the Google API's.
 """
 import os
+import json
 from enum import Enum
 from datetime import (
     datetime,
     timedelta,
 )
 
-from .constants import (
-    HOME_DIR,
-    IS_PYTHON2,
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from googleapiclient.http import (
+    MediaFileUpload,
+    MediaIoBaseDownload,
+    DEFAULT_CHUNK_SIZE,
 )
 
-# the Google API packages do not work in Python 2.7
-if not IS_PYTHON2:
-    from googleapiclient.discovery import build
-    from google_auth_oauthlib.flow import InstalledAppFlow
-    from google.auth.transport.requests import Request
-    from google.oauth2.credentials import Credentials
-    from googleapiclient.http import (
-        MediaFileUpload,
-        MediaIoBaseDownload,
-        DEFAULT_CHUNK_SIZE,
-    )
-else:
-    DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024
+from .constants import HOME_DIR
 
 
 def _authenticate(token, client_secrets_file, scopes):
@@ -47,26 +41,37 @@ def _authenticate(token, client_secrets_file, scopes):
     """
     credentials = None
 
+    # load the token from an environment variable if it exists
+    # ignore the '.json' extension
+    token_env_name = os.path.basename(token)[:-5].replace('-', '_').upper()
+    if token_env_name in os.environ:
+        info = json.loads(os.environ[token_env_name])
+        credentials = Credentials.from_authorized_user_info(info, scopes=scopes)
+
     # load the cached token file if it exists
-    if os.path.isfile(token):
-        credentials = Credentials.from_authorized_user_file(token, scopes)
+    if not credentials and os.path.isfile(token):
+        credentials = Credentials.from_authorized_user_file(token, scopes=scopes)
 
     # if there are no (valid) credentials available then let the user log in
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
             credentials.refresh(Request())
         else:
-            if client_secrets_file is None:
+            if not client_secrets_file:
                 raise OSError('You must specify the path to a "client secrets" file as the credentials')
             flow = InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
             credentials = flow.run_local_server(port=0)
 
-        # make sure that all parent directories exist before creating the file
-        os.makedirs(os.path.dirname(token), exist_ok=True)
-
         # save the credentials for the next run
-        with open(token, 'w') as token:
-            token.write(credentials.to_json())
+        if token_env_name in os.environ:
+            os.environ[token_env_name] = credentials.to_json()
+        else:
+            # make sure that all parent directories exist before creating the file
+            dirname = os.path.dirname(token)
+            if dirname and not os.path.isdir(dirname):
+                os.makedirs(dirname)
+            with open(token, mode='w') as fp:
+                fp.write(credentials.to_json())
 
     return credentials
 
@@ -76,12 +81,11 @@ class GoogleAPI(object):
     def __init__(self, service, version, credentials, scopes, is_read_only, is_corporate_account):
         """Base class for all Google API's."""
 
-        if IS_PYTHON2:
-            raise RuntimeError('Google API is not supported in Python 2')
-
+        testing = 'testing-' if os.getenv('MSL_IO_RUNNING_TESTS') else ''
         corporate = '-corporate' if is_corporate_account else ''
         readonly = '-readonly' if is_read_only else ''
-        token = os.path.join(HOME_DIR, 'token-{}{}{}.json'.format(service, corporate, readonly))
+        filename = '{}token-{}{}{}.json'.format(testing, service, corporate, readonly)
+        token = os.path.join(HOME_DIR, filename)
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
 
@@ -170,7 +174,10 @@ class GDrive(GoogleAPI):
         folder_id = 'root'
         names = GDrive._folder_hierarchy(folder)
         for name in names:
-            q = '{!r} in parents and name={!r} and trashed=false and mimeType={!r}'.format(
+            # TODO can update when dropping Python 2.7 support
+            #  use "{}" and not {!r} because in Python 2.7 the response string
+            #  types are unicode and therefore a u'...' gets included in the query string
+            q = '"{}" in parents and name="{}" and trashed=false and mimeType="{}"'.format(
                 folder_id, name, GDrive.MIME_TYPE_FOLDER
             )
             request = self._files.list(q=q, fields='files(id,name)')
@@ -205,11 +212,14 @@ class GDrive(GoogleAPI):
         folders, name = os.path.split(file)
         folder_id = self.folder_id(folders)
 
-        q = '{!r} in parents and name={!r} and trashed=false'.format(folder_id, name)
+        # TODO can update when dropping Python 2.7 support
+        #  use "{}" and not {!r} because in Python 2.7 the response string
+        #  types are unicode and therefore a u'...' gets included in the query string
+        q = '"{}" in parents and name="{}" and trashed=false'.format(folder_id, name)
         if not mime_type:
-            q += ' and mimeType!={!r}'.format(GDrive.MIME_TYPE_FOLDER)
+            q += ' and mimeType!="{}"'.format(GDrive.MIME_TYPE_FOLDER)
         else:
-            q += ' and mimeType={!r}'.format(mime_type)
+            q += ' and mimeType="{}"'.format(mime_type)
 
         request = self._files.list(q=q, fields='files(id,name,mimeType)')
         response = request.execute()
@@ -446,7 +456,7 @@ class GDateTimeOption(Enum):
 class GSheets(GoogleAPI):
 
     MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
-    LOTUS_ORIGIN = datetime(1899, 12, 30)
+    SERIAL_NUMBER_ORIGIN = datetime(1899, 12, 30)
 
     def __init__(self, credentials=None, is_read_only=True, is_corporate_account=True, scopes=None):
         """Interact with a user's Google Sheets.
@@ -569,13 +579,13 @@ class GSheets(GoogleAPI):
         return response.get('values', [])
 
     @staticmethod
-    def lotus_to_datetime(value):
-        """Convert a Lotus 1-2-3 date into a :class:`datetime.datetime`.
+    def to_datetime(value):
+        """Convert a "serial number" date into a :class:`datetime.datetime`.
 
         Parameters
         ----------
         value : :class:`float`
-            A date in the Lotus 1-2-3 format.
+            A date in the "serial number" format.
 
         Returns
         -------
@@ -584,4 +594,4 @@ class GSheets(GoogleAPI):
         """
         days = int(value)
         seconds = (value - days) * 86400  # 60 * 60 * 24
-        return GSheets.LOTUS_ORIGIN + timedelta(days=days, seconds=seconds)
+        return GSheets.SERIAL_NUMBER_ORIGIN + timedelta(days=days, seconds=seconds)
