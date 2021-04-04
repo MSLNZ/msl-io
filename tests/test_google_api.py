@@ -1,5 +1,6 @@
 import os
 import io
+import sys
 import tempfile
 from datetime import datetime
 
@@ -39,6 +40,8 @@ skipif_no_gsheets_personal = pytest.mark.skipif(
     NO_GSHEETS_PERSONAL, reason='GSheets personal tokens not available'
 )
 
+IS_WINDOWS = sys.platform == 'win32'
+
 
 @skipif_no_gdrive_personal
 def test_gdrive_folder_id_exception_personal():
@@ -47,8 +50,10 @@ def test_gdrive_folder_id_exception_personal():
     # the folder does not exist
     folders = [
         'DoesNotExist',
-        r'C:\Users\username\Google Drive\MSL\DoesNotExist',
+        '/Google Drive/MSL/DoesNotExist',
     ]
+    if IS_WINDOWS:
+        folders.append(r'C:\Users\username\Google Drive\MSL\DoesNotExist')
     for folder in folders:
         with pytest.raises(OSError, match=r'Not a valid Google Drive folder'):
             drive.folder_id(folder)
@@ -69,17 +74,20 @@ def test_gdrive_folder_id_personal():
     drive = GDrive(is_corporate_account=False)
 
     assert drive.folder_id('') == 'root'
-    assert drive.folder_id(r'C:\Users\username\Google Drive') == 'root'
-    assert drive.folder_id(r'D:\Google Drive') == 'root'
     assert drive.folder_id('Google Drive') == 'root'
+    if IS_WINDOWS:
+        assert drive.folder_id(r'C:\Users\username\Google Drive') == 'root'
+        assert drive.folder_id(r'D:\Google Drive') == 'root'
 
-    assert drive.folder_id(r'C:\Users\username\Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
-    assert drive.folder_id(r'Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
     assert drive.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
     assert drive.folder_id('MSL/msl-io-testing') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
-    assert drive.folder_id(r'Google Drive\MSL\msl-io-testing\f 1') == '1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9'
     assert drive.folder_id('MSL/msl-io-testing/f 1/f2') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert drive.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
+    assert drive.folder_id('/Google Drive/MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert drive.folder_id('Google Drive/MSL/msl-io-testing/f 1') == '1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9'
+    if IS_WINDOWS:
+        assert drive.folder_id(r'C:\Users\username\Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+        assert drive.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
+
 
 @skipif_no_gdrive_personal
 def test_gdrive_file_id_exception_personal():
@@ -88,8 +96,10 @@ def test_gdrive_file_id_exception_personal():
     # file does not exist
     files = [
         'DoesNotExist',
-        r'C:\Users\username\Google Drive\DoesNotExist.txt',
+        '/home/username/Google Drive/DoesNotExist.txt',
     ]
+    if IS_WINDOWS:
+        files.append(r'C:\Users\username\Google Drive\DoesNotExist.txt')
     for file in files:
         with pytest.raises(OSError, match=r'Not a valid Google Drive file'):
             drive.file_id(file)
@@ -97,8 +107,10 @@ def test_gdrive_file_id_exception_personal():
     # specified a valid folder (which is not a file)
     folders = {
         'MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
-        r'C:\Users\username\Google Drive\MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
+        '/Google Drive/MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
     }
+    if IS_WINDOWS:
+        folders[r'C:\Users\username\Google Drive\MSL'] = '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
     for folder, id_ in folders.items():
         assert drive.folder_id(folder) == id_
         with pytest.raises(OSError, match=r'Not a valid Google Drive file'):
@@ -110,11 +122,13 @@ def test_gdrive_file_id_personal():
     drive = GDrive(is_corporate_account=False)
     files = {
         'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
-        r'C:\Users\username\Google Drive\Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
         'MSL/msl-io-testing/unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
-        r'C:\Users\username\Google Drive\MSL\msl-io-testing\unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
-        r'MSL\msl-io-testing\f 1\f2\New Text Document.txt': '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP',
+        '/Google Drive/Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
     }
+    if IS_WINDOWS:
+        files[r'C:\Users\username\Google Drive\MSL\msl-io-testing\unique'] = '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+        files[r'MSL\msl-io-testing\f 1\f2\New Text Document.txt'] = '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP'
+
     for file, id_ in files.items():
         assert drive.file_id(file) == id_
 
@@ -176,12 +190,14 @@ def test_gdrive_is_file_personal():
     drive = GDrive(is_corporate_account=False)
     assert not drive.is_file('doesnotexist.txt')
     assert not drive.is_file('does/not/exist.txt')
-    assert not drive.is_file(r'MSL')
-    assert not drive.is_file(r'MSL\msl-io-testing\f 1')
+    assert not drive.is_file('MSL')
     assert drive.is_file('MSL/msl-io-testing/unique')
-    assert drive.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
     assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx')
     assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx', mime_type=GSheets.MIME_TYPE)
+
+    if IS_WINDOWS:
+        assert not drive.is_file(r'C:\Users\username\Google Drive\MSL\msl-io-testing\f 1')
+        assert drive.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
 
 
 @skipif_no_gdrive_personal
@@ -189,10 +205,12 @@ def test_gdrive_is_folder_personal():
     drive = GDrive(is_corporate_account=False)
     assert not drive.is_folder('doesnotexist')
     assert not drive.is_folder('MSL/msl-io-testing/unique')
-    assert not drive.is_folder(r'MSL\msl-io-testing\f 1\electronics.xlsx')
     assert drive.is_folder('MSL')
-    assert drive.is_folder(r'MSL\msl-io-testing\f 1')
     assert drive.is_folder('MSL/msl-io-testing/f 1/f2/sub folder 3')
+
+    if IS_WINDOWS:
+        assert not drive.is_folder(r'MSL\msl-io-testing\f 1\electronics.xlsx')
+        assert drive.is_folder(r'MSL\msl-io-testing\f 1')
 
 
 @skipif_no_gdrive_personal
