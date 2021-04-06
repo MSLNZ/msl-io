@@ -422,6 +422,32 @@ class GDrive(GoogleAPI):
         if fh is not save_as:  # then close the file that was opened
             fh.close()
 
+    def path(self, file_or_folder_id):
+        """Convert an ID to a path.
+
+        Parameters
+        ----------
+        file_or_folder_id : :class:`str`
+            The ID of a file or folder.
+
+        Returns
+        -------
+        :class:`str`
+            The corresponding path of the ID.
+        """
+        names = []
+        while True:
+            request = self._files.get(fileId=file_or_folder_id, fields='name,parents')
+            response = request.execute()
+            names.append(response['name'])
+            parents = response.get('parents', [])
+            if not parents:
+                break
+            if len(parents) > 1:
+                raise OSError('Multiple parents exist. This case has not been handled yet. Contact developers.')
+            file_or_folder_id = response['parents'][0]
+        return '/'.join(names[::-1])
+
 
 class GValueOption(Enum):
     """Determines how values should be returned."""

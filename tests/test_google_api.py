@@ -370,6 +370,26 @@ def test_gdrive_empty_trash_personal():
     drive.empty_trash()
 
 
+@skipif_no_gdrive_personal
+def test_gdrive_path_personal():
+    drive = GDrive(is_corporate_account=False)
+    assert drive.path('0AFP6574OTgaaUk9PVA') == 'My Drive'
+    assert drive.path('11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS') == 'My Drive/Single-Photon Generation and Detection.pdf'
+    assert drive.path('14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == 'My Drive/MSL'
+    assert drive.path('1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == 'My Drive/MSL/msl-io-testing'
+    assert drive.path('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY') == 'My Drive/MSL/msl-io-testing/empty-5'
+    assert drive.path('1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41') == 'My Drive/MSL/msl-io-testing/file.txt'
+    assert drive.path('1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395') == 'My Drive/MSL/msl-io-testing/unique'
+    assert drive.path('1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == 'My Drive/MSL/msl-io-testing/f 1'
+    assert drive.path('1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
+    assert drive.path('1aCSP8HU7mAz2hss8dP7IpNz0xJDzWSe1') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
+    assert drive.path('1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == 'My Drive/MSL/msl-io-testing/f 1/f2'
+    assert drive.path('1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP') == 'My Drive/MSL/msl-io-testing/f 1/f2/New Text Document.txt'
+    assert drive.path('1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3'
+    assert drive.path('1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt'
+    assert drive.path('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment'
+
+
 @skipif_no_gsheets_personal
 def test_gsheets_sheet_names_personal():
     sheets = GSheets(is_corporate_account=False)
