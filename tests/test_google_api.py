@@ -60,21 +60,27 @@ def test_gdrive_folder_id_exception_personal():
             drive.folder_id(folder)
 
     # specified a valid file (which is not a folder)
-    files = {
-        'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
-        'MSL/msl-io-testing/unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
-    }
-    for file, id_ in files.items():
-        assert drive.file_id(file) == id_
+    files = [
+        'Single-Photon Generation and Detection.pdf',
+        'MSL/msl-io-testing/unique'
+    ]
+    for file in files:
         with pytest.raises(OSError, match=r'Not a valid Google Drive folder'):
             drive.folder_id(file)
+
+    # specify an invalid parent ID
+    assert drive.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    with pytest.raises(HttpError):
+        drive.folder_id('MSL', parent_id='INVALID_Kmkjo9aCQGysOsxwkTtpoJODi')
 
 
 @skipif_no_gdrive_personal
 def test_gdrive_folder_id_personal():
     drive = GDrive(is_corporate_account=False)
 
+    # relative to the root folder
     assert drive.folder_id('') == 'root'
+    assert drive.folder_id('/') == 'root'
     assert drive.folder_id('Google Drive') == 'root'
     if IS_WINDOWS:
         assert drive.folder_id(r'C:\Users\username\Google Drive') == 'root'
@@ -88,6 +94,13 @@ def test_gdrive_folder_id_personal():
     if IS_WINDOWS:
         assert drive.folder_id(r'C:\Users\username\Google Drive\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
         assert drive.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
+
+    # relative to a parent folder
+    assert drive.folder_id('msl-io-testing', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
+    assert drive.folder_id('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert drive.folder_id('f 1/f2', parent_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert drive.folder_id('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert drive.folder_id('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
 
 
 @skipif_no_gdrive_personal
@@ -106,21 +119,27 @@ def test_gdrive_file_id_exception_personal():
             drive.file_id(file)
 
     # specified a valid folder (which is not a file)
-    folders = {
-        'MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
-        '/Google Drive/MSL': '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi',
-    }
+    folders = [
+        'MSL',
+        '/Google Drive/MSL',
+    ]
     if IS_WINDOWS:
-        folders[r'C:\Users\username\Google Drive\MSL'] = '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
-    for folder, id_ in folders.items():
-        assert drive.folder_id(folder) == id_
+        folders.append(r'C:\Users\username\Google Drive\MSL')
+    for folder in folders:
         with pytest.raises(OSError, match=r'Not a valid Google Drive file'):
             drive.file_id(folder)
+
+    # specify an invalid parent ID
+    assert drive.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    with pytest.raises(HttpError):
+        drive.file_id('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
 
 
 @skipif_no_gdrive_personal
 def test_gdrive_file_id_personal():
     drive = GDrive(is_corporate_account=False)
+
+    # relative to the root folder
     files = {
         'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
         'MSL/msl-io-testing/unique': '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395',
@@ -132,6 +151,12 @@ def test_gdrive_file_id_personal():
 
     for file, id_ in files.items():
         assert drive.file_id(file) == id_
+
+    # relative to a parent folder
+    assert drive.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    assert drive.file_id('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    assert drive.file_id('file.txt', folder_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == '1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD'
+    assert drive.file_id('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP'
 
 
 @skipif_no_gdrive_personal
@@ -151,7 +176,7 @@ def test_gdrive_file_id_multiple_personal():
         GSheets.MIME_TYPE: '1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE',
     }
     for mime, id_ in mime_types.items():
-        assert drive.file_id(path , mime_type=mime) == id_
+        assert drive.file_id(path, mime_type=mime) == id_
 
 
 @skipif_no_gdrive_personal
@@ -172,39 +197,84 @@ def test_gdrive_create_delete_folder_personal():
         folder_id = drive.create_folder(folder)
         assert drive.folder_id(folder) == folder_id
 
-    # delete (relative to root)
+    # delete
     for folder in [u1, u2 + '/sub-2/a b c', u2 + '/sub-2', u2]:
         drive.delete(drive.folder_id(folder))
         with pytest.raises(OSError, match='Not a valid Google Drive folder'):
             drive.folder_id(folder)
 
+    # create (relative to a parent folder)
+    # ID of "MSL/msl-io-testing/f 1/f2/sub folder 3" is "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
+    u3 = str(uuid.uuid4())
+    folder_id = drive.create_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert drive.folder_id('MSL/msl-io-testing/f 1/f2/sub folder 3/' + u3 + '/a/b/c') == folder_id
+
+    # these should not raise an error (do not need to assert anything)
+    u3_id = drive.folder_id(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    u3_a_id = drive.folder_id('a', parent_id=u3_id)
+    u3_a_b_id = drive.folder_id('b', parent_id=u3_a_id)
+    u3_a_b_c_id = drive.folder_id('c', parent_id=u3_a_b_id)
+
+    # deleting a folder should also delete the children folders
+    drive.delete(u3_id)
+    assert drive.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert not drive.is_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not drive.is_folder(u3 + '/a/b', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not drive.is_folder(u3 + '/a', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not drive.is_folder(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+
 
 @skipif_no_gdrive_personal
 def test_gdrive_is_file_personal():
     drive = GDrive(is_corporate_account=False)
+
+    # relative to the root folder
     assert not drive.is_file('doesnotexist.txt')
     assert not drive.is_file('does/not/exist.txt')
     assert not drive.is_file('MSL')
     assert drive.is_file('MSL/msl-io-testing/unique')
     assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx')
     assert drive.is_file('MSL/msl-io-testing/f 1/electronics.xlsx', mime_type=GSheets.MIME_TYPE)
-
     if IS_WINDOWS:
         assert not drive.is_file(r'C:\Users\username\Google Drive\MSL\msl-io-testing\f 1')
         assert drive.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
+
+    # relative to a parent folder
+    assert drive.is_file('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+    assert drive.is_file('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
+    assert drive.is_file('Single-Photon Generation and Detection.pdf', folder_id='root')
+    assert drive.is_file('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+    assert not drive.is_file('f2', folder_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
+    assert not drive.is_file('New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+
+    # relative to an invalid parent folder
+    with pytest.raises(HttpError):
+        drive.is_file('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
 
 
 @skipif_no_gdrive_personal
 def test_gdrive_is_folder_personal():
     drive = GDrive(is_corporate_account=False)
+
+    # relative to the root folder
     assert not drive.is_folder('doesnotexist')
     assert not drive.is_folder('MSL/msl-io-testing/unique')
     assert drive.is_folder('MSL')
     assert drive.is_folder('MSL/msl-io-testing/f 1/f2/sub folder 3')
-
     if IS_WINDOWS:
         assert not drive.is_folder(r'MSL\msl-io-testing\f 1\electronics.xlsx')
         assert drive.is_folder(r'MSL\msl-io-testing\f 1')
+
+    # relative to a parent folder
+    assert not drive.is_folder('doesnotexist', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert not drive.is_folder('sub folder 3xx', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert drive.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert drive.is_folder('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
+    assert drive.is_folder('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
+
+    # relative to an invalid parent folder
+    with pytest.raises(HttpError):
+        drive.is_folder('f2', parent_id='INVALID_F5AhbUb7Lq77qzuBbvZr150X9')
 
 
 @skipif_no_gdrive_personal

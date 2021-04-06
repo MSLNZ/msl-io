@@ -157,13 +157,16 @@ class GDrive(GoogleAPI):
             names.append(name)
         return names[::-1]
 
-    def folder_id(self, folder):
+    def folder_id(self, folder, parent_id=None):
         """Get the ID of a Google Drive folder.
 
         Parameters
         ----------
         folder : :class:`str`
             The path to a Google Drive file.
+        parent_id : :class:`str`, optional
+            The ID of the parent folder that the value of `folder` is relative to.
+            If not specified then `folder` is relative to the "root" folder.
 
         Returns
         -------
@@ -171,12 +174,9 @@ class GDrive(GoogleAPI):
             The folder ID.
         """
         # find the ID of the folder
-        folder_id = 'root'
+        folder_id = parent_id or 'root'
         names = GDrive._folder_hierarchy(folder)
         for name in names:
-            # TODO can update when dropping Python 2.7 support
-            #  use "{}" and not {!r} because in Python 2.7 the response string
-            #  types are unicode and therefore a u'...' gets included in the query string
             q = '"{}" in parents and name="{}" and trashed=false and mimeType="{}"'.format(
                 folder_id, name, GDrive.MIME_TYPE_FOLDER
             )
@@ -194,7 +194,7 @@ class GDrive(GoogleAPI):
 
         return folder_id
 
-    def file_id(self, file, mime_type=None):
+    def file_id(self, file, mime_type=None, folder_id=None):
         """Get the ID of a Google Drive file.
 
         Parameters
@@ -203,6 +203,9 @@ class GDrive(GoogleAPI):
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
             The mime type to use to filter the results.
+        folder_id : :class:`str`, optional
+            The ID of the folder that the value of `file` is relative to.
+            If not specified then `file` is relative to the "root" folder.
 
         Returns
         -------
@@ -210,11 +213,8 @@ class GDrive(GoogleAPI):
             The file ID.
         """
         folders, name = os.path.split(file)
-        folder_id = self.folder_id(folders)
+        folder_id = self.folder_id(folders, parent_id=folder_id)
 
-        # TODO can update when dropping Python 2.7 support
-        #  use "{}" and not {!r} because in Python 2.7 the response string
-        #  types are unicode and therefore a u'...' gets included in the query string
         q = '"{}" in parents and name="{}" and trashed=false'.format(folder_id, name)
         if not mime_type:
             q += ' and mimeType!="{}"'.format(GDrive.MIME_TYPE_FOLDER)
@@ -234,7 +234,7 @@ class GDrive(GoogleAPI):
         assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
         return first['id']
 
-    def is_file(self, file, mime_type=None):
+    def is_file(self, file, mime_type=None, folder_id=None):
         """Check if a file exists.
 
         Parameters
@@ -243,6 +243,9 @@ class GDrive(GoogleAPI):
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
             The mime type to use to filter the results.
+        folder_id : :class:`str`, optional
+            The ID of the folder that the value of `file` is relative to.
+            If not specified then `file` is relative to the "root" folder.
 
         Returns
         -------
@@ -250,19 +253,22 @@ class GDrive(GoogleAPI):
             Whether the file exists.
         """
         try:
-            self.file_id(file, mime_type=mime_type)
+            self.file_id(file, mime_type=mime_type, folder_id=folder_id)
         except OSError as err:
             return str(err).startswith('Multiple file matches')
         else:
             return True
 
-    def is_folder(self, folder):
+    def is_folder(self, folder, parent_id=None):
         """Check if a folder exists.
 
         Parameters
         ----------
         folder : :class:`str`
             The path to a Google Drive folder.
+        parent_id : :class:`str`, optional
+            The ID of the parent folder that the value of `folder` is relative to.
+            If not specified then `folder` is relative to the "root" folder.
 
         Returns
         -------
@@ -270,13 +276,13 @@ class GDrive(GoogleAPI):
             Whether the folder exists.
         """
         try:
-            self.folder_id(folder)
+            self.folder_id(folder, parent_id=parent_id)
         except OSError:
             return False
         else:
             return True
 
-    def create_folder(self, folder):
+    def create_folder(self, folder, parent_id=None):
         """Create a folder.
 
         Makes all intermediate-level folders needed to contain the leaf directory.
@@ -284,15 +290,18 @@ class GDrive(GoogleAPI):
         Parameters
         ----------
         folder : :class:`str`
-            The folder(s) to create.
+            The folder(s) to create, for example, 'folder1' or 'folder1/folder2/folder3'.
+        parent_id : :class:`str`, optional
+            The ID of the parent folder that the value of `folder` is relative to.
+            If not specified then `folder` is relative to the "root" folder.
 
         Returns
         -------
         :class:`str`
-            The ID of the last folder that was created.
+            The ID of the last (right most) folder that was created.
         """
         names = GDrive._folder_hierarchy(folder)
-        response = {'id': 'root'}
+        response = {'id': parent_id or 'root'}
         for name in names:
             request = self._files.create(
                 body={
@@ -328,7 +337,7 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The file to upload.
         folder_id : :class:`str`, optional
-            The ID of the Google Drive folder to upload the file to.
+            The ID of the folder to upload the file to.
             If not specified then uploads to the "root" folder.
         mime_type : :class:`str`, optional
             The mime type to use for the file's metadata. If not specified
@@ -383,7 +392,7 @@ class GDrive(GoogleAPI):
             If zero (default) then attempt the request only once.
         chunk_size : :class:`int`, optional
             The file will be downloaded in chunks of this many bytes.
-        callback : :class:`bool`, optional
+        callback
             The callback to call after each chunk of the file is downloaded.
             The `callback` accepts one positional argument, for example::
 
