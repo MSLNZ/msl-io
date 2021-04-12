@@ -12,6 +12,7 @@ from datetime import (
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 from google.oauth2.credentials import Credentials
 from googleapiclient.http import (
     MediaFileUpload,
@@ -19,7 +20,10 @@ from googleapiclient.http import (
     DEFAULT_CHUNK_SIZE,
 )
 
-from .constants import HOME_DIR
+from .constants import (
+    HOME_DIR,
+    IS_PYTHON2,
+)
 
 
 def _authenticate(token, client_secrets_file, scopes):
@@ -55,7 +59,20 @@ def _authenticate(token, client_secrets_file, scopes):
     # if there are no (valid) credentials available then let the user log in
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
+            try:
+                credentials.refresh(Request())
+            except RefreshError as err:
+                if os.path.isfile(token):
+                    message = '{}: {}\nDo you want to delete the token file and re-authenticate ' \
+                              '(y/[n])? '.format(err.__class__.__name__, err.args[0])
+                    if IS_PYTHON2:
+                        yes_no = raw_input(message)
+                    else:
+                        yes_no = input(message)
+                    if yes_no.lower().startswith('y'):
+                        os.remove(token)
+                        return _authenticate(token, client_secrets_file, scopes)
+                raise
         else:
             if not client_secrets_file:
                 raise OSError('You must specify the path to a "client secrets" file as the credentials')
