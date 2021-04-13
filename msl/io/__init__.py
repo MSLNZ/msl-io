@@ -27,6 +27,7 @@ from .google_api import (
     GSheets,
     GValueOption,
     GDateTimeOption,
+    GCell,
 )
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'

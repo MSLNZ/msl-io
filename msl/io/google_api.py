@@ -8,6 +8,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from collections import namedtuple
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -505,6 +506,36 @@ class GDateTimeOption(Enum):
     spreadsheet locale)."""
 
 
+GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
+"""The information about a Google Sheets cell.
+
+.. attribute:: value
+   
+   The value of the cell.
+   
+.. attribute:: type
+   
+   :class:`str`: The data type of `value`, one of:
+      
+      * BOOLEAN
+      * CURRENCY
+      * DATE
+      * DATE_TIME
+      * EMPTY
+      * ERROR
+      * NUMBER
+      * PERCENT
+      * SCIENTIFIC
+      * STRING
+      * TIME
+      * UNKNOWN
+
+.. attribute:: formatted
+   
+   :class:`str`: The formatted value (i.e., how the `value` is displayed in the cell).
+"""
+
+
 class GSheets(GoogleAPI):
 
     MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
@@ -546,7 +577,7 @@ class GSheets(GoogleAPI):
             'sheets', 'v4', credentials, scopes, is_read_only, is_corporate_account
         )
 
-        self._sheets = self._service.spreadsheets()
+        self._spreadsheets = self._service.spreadsheets()
 
     def sheet_names(self, spreadsheet_id):
         """Get the names of all sheets in a spreadsheet.
@@ -561,7 +592,7 @@ class GSheets(GoogleAPI):
         :class:`tuple` of :class:`str`
             The names of all sheets.
         """
-        request = self._sheets.get(spreadsheetId=spreadsheet_id)
+        request = self._spreadsheets.get(spreadsheetId=spreadsheet_id)
         response = request.execute()
         return tuple(r['properties']['title'] for r in response['sheets'])
 
@@ -573,17 +604,16 @@ class GSheets(GoogleAPI):
                value_option=GValueOption.FORMATTED,
                datetime_option=GDateTimeOption.SERIAL_NUMBER
                ):
-        """Returns a range of values from a spreadsheet.
+        """Return a range of values from a spreadsheet.
 
         Parameters
         ----------
         spreadsheet_id : :class:`str`
             The ID of a Google Sheets file.
         sheet : :class:`str`, optional
-            The name of a sheet in the spreadsheet. If not specified then
-            automatically determines the sheet name. If more than one sheet
-            exists in the spreadsheet then a :exc:`ValueError` is raised
-            requesting for a `sheet` to be specified.
+            The name of a sheet in the spreadsheet. If not specified and
+            only one sheet exists in the spreadsheet then automatically
+            determines the sheet name.
         cells : :class:`str`, optional
             The A1 notation or R1C1 notation of the range to retrieve values
             from. If not specified then returns all values that are in `sheet`.
@@ -601,16 +631,9 @@ class GSheets(GoogleAPI):
         Returns
         -------
         :class:`list`
-            The values.
+            The values from the sheet.
         """
-        if not sheet:
-            names = self.sheet_names(spreadsheet_id)
-            if len(names) != 1:
-                sheets = ', '.join(repr(n) for n in names)
-                raise ValueError('You must specify a sheet name: ' + sheets)
-            sheet = names[0]
-
-        range_ = sheet
+        range_ = sheet or self._get_first_sheet_name(spreadsheet_id)
         if cells:
             range_ += '!{}'.format(cells)
 
@@ -620,7 +643,7 @@ class GSheets(GoogleAPI):
         if hasattr(datetime_option, 'value'):
             datetime_option = datetime_option.value
 
-        request =self._sheets.values().get(
+        request = self._spreadsheets.values().get(
             spreadsheetId=spreadsheet_id,
             range=range_,
             majorDimension='ROWS' if row_major else 'COLUMNS',
@@ -629,6 +652,65 @@ class GSheets(GoogleAPI):
         )
         response = request.execute()
         return response.get('values', [])
+
+    def cells(self, spreadsheet_id, sheet=None):
+        """Return the cells from a spreadsheet.
+
+        Parameters
+        ----------
+        spreadsheet_id : :class:`str`
+            The ID of a Google Sheets file.
+        sheet : :class:`str`, optional
+            The name of a sheet in the spreadsheet. If not specified and
+            only one sheet exists in the spreadsheet then automatically
+            determines the sheet name.
+
+        Returns
+        -------
+        :class:`list` of :class:`GCell`
+            The cells from the sheet.
+        """
+        sheet_name = sheet or self._get_first_sheet_name(spreadsheet_id)
+        request = self._spreadsheets.get(spreadsheetId=spreadsheet_id, includeGridData=True)
+        response = request.execute()
+
+        data = None
+        for sheet in response['sheets']:
+            if sheet['properties']['title'] == sheet_name:
+                data = sheet['data']
+
+        if data is None:
+            raise ValueError('No sheet exists with the name {!r}'.format(sheet_name))
+
+        cells = []
+        for item in data:
+            for row in item.get('rowData', []):
+                row_data = []
+                for col in row['values']:
+                    effective_value = col.get('effectiveValue', None)
+                    formatted = col.get('formattedValue', '')
+                    if effective_value is None:
+                        value = None
+                        typ = 'EMPTY'
+                    elif 'numberValue' in effective_value:
+                        value = effective_value['numberValue']
+                        typ = col.get('effectiveFormat', {}).get('numberFormat', {}).get('type', 'NUMBER')
+                    elif 'stringValue' in effective_value:
+                        value = effective_value['stringValue']
+                        typ = 'STRING'
+                    elif 'boolValue' in effective_value:
+                        value = effective_value['boolValue']
+                        typ = 'BOOLEAN'
+                    elif 'errorValue' in effective_value:
+                        msg = effective_value['errorValue']['message']
+                        value = '{} ({})'.format(col['formattedValue'], msg)
+                        typ = 'ERROR'
+                    else:
+                        value = formatted
+                        typ = 'UNKNOWN'
+                    row_data.append(GCell(value=value, type=typ, formatted=formatted))
+                cells.append(row_data)
+        return cells
 
     @staticmethod
     def to_datetime(value):
@@ -647,3 +729,10 @@ class GSheets(GoogleAPI):
         days = int(value)
         seconds = (value - days) * 86400  # 60 * 60 * 24
         return GSheets.SERIAL_NUMBER_ORIGIN + timedelta(days=days, seconds=seconds)
+
+    def _get_first_sheet_name(self, spreadsheet_id):
+        names = self.sheet_names(spreadsheet_id)
+        if len(names) != 1:
+            sheets = ', '.join(repr(n) for n in names)
+            raise ValueError('You must specify a sheet name: ' + sheets)
+        return names[0]

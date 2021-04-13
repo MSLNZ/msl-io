@@ -15,6 +15,7 @@ from msl.io.constants import IS_PYTHON2
 from msl.io import (
     GDrive,
     GSheets,
+    GCell,
 )
 
 # all Google API tests require the necessary "token.json" files to be
@@ -474,3 +475,117 @@ def test_gsheets_to_datetime():
                            datetime_option='FORMATTED_STRING', row_major=False)
     expected[0][1:] = [str(t) for t in expected[0][1:]]
     assert values == expected
+
+
+@skipif_no_gsheets_personal
+def test_gsheets_cells():
+    sheets = GSheets(is_corporate_account=False)
+
+    # MSL/msl-io-testing/empty-5
+    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
+
+    # data-types
+    datatypes_id = '1zMO4wk0IPC9I57dR5WoPTzlOX6g5-AcnwGFOEHrhIHU'
+
+    # valid spreadsheet_id, invalid sheet name
+    with pytest.raises(ValueError, match=r'No sheet exists'):
+        sheets.cells(datatypes_id, sheet='invalid')
+
+    # valid spreadsheet_id, multiple sheets
+    with pytest.raises(ValueError, match=r'You must specify a sheet name:'):
+        sheets.cells(empty_id)
+
+    assert sheets.cells(empty_id, sheet='Sheet1') == []
+
+    cells = sheets.cells(datatypes_id)
+
+    assert len(cells) == 18
+
+    assert len(cells[0]) == 6
+    assert cells[0][0] == GCell(value='Automatic', type='STRING', formatted='Automatic')
+    assert cells[0][1] == GCell(value=1.23, type='NUMBER', formatted='1.23')
+    assert cells[0][2] == GCell(value='string', type='STRING', formatted='string')
+    assert cells[0][3] == GCell(value=1, type='NUMBER', formatted='1')
+    assert cells[0][4] == GCell(value='0123456789', type='STRING', formatted='0123456789')
+    assert cells[0][5] == GCell(value=36982, type='DATE', formatted='1 April 2001')
+
+    assert len(cells[1]) == 3
+    assert cells[1][0] == GCell(value='Plain text', type='STRING', formatted='Plain text')
+    assert cells[1][1] == GCell(value='a b c d', type='STRING', formatted='a b c d')
+    assert cells[1][2] == GCell(value='34', type='STRING', formatted='34')
+
+    assert len(cells[2]) == 2
+    assert cells[2][0] == GCell(value='Number', type='STRING', formatted='Number')
+    assert cells[2][1] == GCell(value=1234.56789, type='NUMBER', formatted='1,234.57')
+
+    assert len(cells[3]) == 2
+    assert cells[3][0] == GCell(value='Percent', type='STRING', formatted='Percent')
+    assert cells[3][1] == GCell(value=0.542, type='PERCENT', formatted='54.20%')
+
+    assert len(cells[4]) == 2
+    assert cells[4][0] == GCell(value='Scientific', type='STRING', formatted='Scientific')
+    assert cells[4][1] == GCell(value=0.00321, type='SCIENTIFIC', formatted='3.21E-03')
+
+    assert len(cells[5]) == 3
+    assert cells[5][0] == GCell(value='Accounting', type='STRING', formatted='Accounting')
+    assert cells[5][1] == GCell(value=99.95, type='NUMBER', formatted=' $ 99.95 ')
+    assert cells[5][2] == GCell(value=-23.45, type='NUMBER', formatted=' $ (23.45)')
+
+    assert len(cells[6]) == 3
+    assert cells[6][0] == GCell(value='Financial', type='STRING', formatted='Financial')
+    assert cells[6][1] == GCell(value=1.23, type='NUMBER', formatted='1.23')
+    assert cells[6][2] == GCell(value=-1.23, type='NUMBER', formatted='(1.23)')
+
+    assert len(cells[7]) == 3
+    assert cells[7][0] == GCell(value='Currency', type='STRING', formatted='Currency')
+    assert cells[7][1] == GCell(value=99.95, type='CURRENCY', formatted='$99.95')
+    assert cells[7][2] == GCell(value=-1.99, type='CURRENCY', formatted='-$1.99')
+
+    assert len(cells[8]) == 3
+    assert cells[8][0] == GCell(value='Currency (rounded)', type='STRING', formatted='Currency (rounded)')
+    assert cells[8][1] == GCell(value=99.95, type='CURRENCY', formatted='$100')
+    assert cells[8][2] == GCell(value=-1.99, type='CURRENCY', formatted='-$2')
+
+    assert len(cells[9]) == 2
+    assert cells[9][0] == GCell(value='Date', type='STRING', formatted='Date')
+    assert cells[9][1] == GCell(value=17738, type='DATE', formatted='24/07/1948')
+
+    assert len(cells[10]) == 3
+    assert cells[10][0] == GCell(value='Time', type='STRING', formatted='Time')
+    assert cells[10][1] == GCell(value=0.2661689814814815, type='TIME', formatted='06:23:17')
+    assert cells[10][2] == GCell(value=0.7378356481481482, type='TIME', formatted='17:42:29')
+
+    assert len(cells[11]) == 2
+    assert cells[11][0] == GCell(value='Date time', type='STRING', formatted='Date time')
+    assert cells[11][1] == GCell(value=34736.4303472222222222, type='DATE_TIME', formatted='06/02/1995 10:19:42')
+
+    assert len(cells[12]) == 2
+    assert cells[12][0] == GCell(value='Duration', type='STRING', formatted='Duration')
+    assert cells[12][1] == GCell(value=1.000023148148148, type='TIME', formatted='24:00:02')
+
+    assert len(cells[13]) == 2
+    assert cells[13][0] == GCell(value='Formula', type='STRING', formatted='Formula')
+    assert cells[13][1] == GCell(value=6.747908247937978, type='SCIENTIFIC', formatted='6.75E+00')
+
+    assert len(cells[14]) == 3
+    assert cells[14][0] == GCell(value='Error', type='STRING', formatted='Error')
+    assert cells[14][1] == GCell(value='#DIV/0! (Function DIVIDE parameter 2 cannot be zero.)', type='ERROR',
+                                 formatted='#DIV/0!')
+    assert cells[14][2] == GCell(
+        value="#VALUE! (Function MULTIPLY parameter 2 expects number values. "
+              "But 'Currency' is a text and cannot be coerced to a number.)",
+        type='ERROR', formatted='#VALUE!')
+
+    assert len(cells[15]) == 3
+    assert cells[15][0] == GCell(value='Empty', type='STRING', formatted='Empty')
+    assert cells[15][1] == GCell(value=None, type='EMPTY', formatted='')
+    assert cells[15][2] == GCell(value='<== keep B16 empty', type='STRING', formatted='<== keep B16 empty')
+
+    assert len(cells[16]) == 3
+    assert cells[16][0] == GCell(value='Boolean', type='STRING', formatted='Boolean')
+    assert cells[16][1] == GCell(value=True, type='BOOLEAN', formatted='TRUE')
+    assert cells[16][2] == GCell(value=False, type='BOOLEAN', formatted='FALSE')
+
+    assert len(cells[17]) == 2
+    assert cells[17][0] == GCell(value='Custom', type='STRING', formatted='Custom')
+    assert cells[17][1] == GCell(value=12345.6789, type='NUMBER', formatted='12345 55/81')

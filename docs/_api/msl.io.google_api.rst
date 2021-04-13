@@ -27,3 +27,5 @@ Wrappers around the Google API's.
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. autoclass:: msl.io.google_api.GCell
