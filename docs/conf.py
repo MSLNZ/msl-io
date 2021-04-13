@@ -58,7 +58,7 @@ if sphinx.version_info[:2] < (1, 8):
     autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 else:
     autodoc_default_options = {
-        'members': None,
+        # 'members': None,
         'member-order': 'alphabetical',
         'undoc-members': None,
         'show-inheritance': None,
