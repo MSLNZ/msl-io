@@ -678,6 +678,7 @@ class GSheets(GoogleAPI):
         for sheet in response['sheets']:
             if sheet['properties']['title'] == sheet_name:
                 data = sheet['data']
+                break
 
         if data is None:
             raise ValueError('No sheet exists with the name {!r}'.format(sheet_name))
@@ -686,7 +687,7 @@ class GSheets(GoogleAPI):
         for item in data:
             for row in item.get('rowData', []):
                 row_data = []
-                for col in row['values']:
+                for col in row.get('values', []):
                     effective_value = col.get('effectiveValue', None)
                     formatted = col.get('formattedValue', '')
                     if effective_value is None:

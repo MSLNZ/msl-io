@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import os
+import warnings
 from datetime import datetime
 from io import StringIO, BytesIO
 
@@ -7,8 +8,14 @@ import pytest
 import numpy as np
 
 from msl.io import read_table
+from msl.io.tables import _google_file_id_regex
 
-# the data in the files that are tested contain the following
+from test_google_api import (
+    skipif_no_gsheets_personal,
+    skipif_no_gdrive_personal,
+)
+
+# the data in the Excel, CVS and TXT files that are tested contain the following
 header = np.asarray(['timestamp', 'val1', 'uncert1', 'val2', 'uncert2'], dtype=str)
 data = np.asarray([
     ('2019-09-11 14:06:55', -0.505382, 0.000077, 0.501073, 0.000079),
@@ -23,6 +30,21 @@ data = np.asarray([
     ('2019-09-11 14:07:31', -0.505072, 0.000142, 0.500739, 0.000149),
 ], dtype='U19,f8,f8,f8,f8')
 
+# the data in the GSheet spreadsheet
+gsheet_header = np.asarray(['Timestamp', 'Value', 'Valid', 'ID'])
+gsheet_data = np.asarray([
+    (datetime(2019, 9, 11, 14, 6, 55), 20.1, True, 'sensor 1'),
+    (datetime(2019, 9, 11, 14, 6, 59), 25.4, False, 'sensor 2'),
+    (datetime(2019, 9, 11, 14, 7, 3), 19.4, True, 'sensor 3'),
+    (datetime(2019, 9, 11, 14, 7, 7), 11.8, False, 'sensor 4'),
+    (datetime(2019, 9, 11, 14, 7, 11), 24.6, False, 'sensor 5'),
+    (datetime(2019, 9, 11, 14, 7, 15), 20.7, True, 'sensor 1'),
+    (datetime(2019, 9, 11, 14, 7, 19), 21.8, True, 'sensor 2'),
+    (datetime(2019, 9, 11, 14, 7, 23), 19.2, True, 'sensor 3'),
+    (datetime(2019, 9, 11, 14, 7, 27), 18.6, False, 'sensor 4'),
+    (datetime(2019, 9, 11, 14, 7, 31), 16.4, False, 'sensor 5'),
+])
+
 
 def get_url(extension):
     return os.path.join(os.path.dirname(__file__), 'samples', 'table' + extension)
@@ -35,15 +57,13 @@ def test_raises():
         read_table('does not exist')
 
     # the unpack argument is not supported for text-based files
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match='unpack'):
         read_table(get_url('.csv'), unpack=True)
-    assert 'unpack' in str(e.value)
 
-    # invalid range of cells
+    # invalid range of cells for Excel
     for c in ['A-B', 'A:B', ':', '', 'A2', 'A2:', 'A2:B']:
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(ValueError, match=r'You must specify a valid cell range'):
             read_table(get_url('.xls'), cell=c)
-        assert 'You must specify a range of cells' in str(e.value)
 
 
 def test_fetch_all_data():
@@ -231,7 +251,7 @@ def test_text_file_like():
             assert_dataset(dset)
 
 
-def test_excel_open():
+def test_excel_file_pointer():
     params = [
         ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
         ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
@@ -249,3 +269,126 @@ def test_excel_open():
     # checks the file path extension to decide how to read the table
     # and a StringIO and a BytesIO object do not have an extension to check
     # so read_table_excel will not be called, also xlrd cannot load a file stream
+
+
+def test_google_file_id_regex():
+    assert _google_file_id_regex.search('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
+    assert _google_file_id_regex.search('1IemLij3ggB_S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
+
+    # does not start with 1
+    assert not _google_file_id_regex.search('IemLij3ggB_S5ASO7qyPSIQUmvhWgBfemePn7gu_Je41')
+
+    # not 44 characters
+    for n in [0, 10, 40, 42, 43, 45, 50, 100]:
+        assert not _google_file_id_regex.search('1' * n)
+
+    # contains a "space", "/", "\", ":"
+    assert not _google_file_id_regex.search('1IemLij3ggB S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
+    assert not _google_file_id_regex.search('1IemLij3ggB/S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
+    assert not _google_file_id_regex.search('1IemLij3ggB:S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
+    assert not _google_file_id_regex.search(r'1IemLij3ggB\S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
+
+
+@skipif_no_gsheets_personal
+def test_gsheets():
+    # ID of the table.gsheet file
+    table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', cell='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', cell='A2')
+    assert np.array_equal(dset.metadata.header, [str(item) for item in gsheet_data[0]])
+    assert np.array_equal(dset, gsheet_data[1:])
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', cell='A4:C7')
+    assert np.array_equal(dset.metadata.header, ['2019-09-11 14:07:03', '19.4', 'True'])
+    assert np.array_equal(dset, gsheet_data[3:6, :3])
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', as_datetime=False)
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset.data, gsheet_data.astype(str))
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', as_datetime=False, dtype=object)
+    data2 = gsheet_data.copy()
+    data2[:, 0] = [str(item) for item in gsheet_data[:, 0]]
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, data2)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', cell='B1:B11')
+    assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
+    assert np.array_equal(dset, gsheet_data[:, 1])
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='A1', cell='A$1:D$2')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data[0])
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', category=np.VisibleDeprecationWarning)
+        dset = read_table(table_id, is_corporate_account=False, sheet='H22')
+        assert dset.metadata.header.size == 0
+        assert dset.shape == (31,)
+        for i in range(20):
+            assert dset[i] == ()
+        assert np.array_equal(dset[20][:7], [None] * 7)
+        assert np.array_equal(dset[20][7:], gsheet_header)
+        for i, row in enumerate(gsheet_data, start=21):
+            assert np.array_equal(dset[i][:7], [None] * 7)
+            assert np.array_equal(dset[i][7:], row)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='H22', cell='H22')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='H22', cell='$h$22:$k$32')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='header only')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert dset.size == 0
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='empty')
+    assert dset.metadata.header.size == 0
+    assert dset.size == 0
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='column')
+    assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
+    assert np.array_equal(dset, gsheet_data[:, 1])
+
+    dset = read_table(table_id, is_corporate_account=False, sheet='row')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data[0])
+
+    # ID of MSL/msl-io-testing/Copy of table.gsheet
+    dset = read_table('1NfDUZzHk71CPAfhIoE8l9h4NJ8oeqKfqGAUM81Vyc88.gsheet', is_corporate_account=False, sheet='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+
+@skipif_no_gdrive_personal
+@skipif_no_gsheets_personal
+def test_gsheet_file_path():
+    dset = read_table('table.gsheet', is_corporate_account=False, sheet='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', is_corporate_account=False, sheet='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    # this is a way to pass in a pointer to a Google Sheets file
+    # that does not exist on the computer running the tests
+    filename = 'table.gsheet'
+    with open(filename, mode='w'):
+        pass
+    with open(filename, mode='r') as fp:
+        dset = read_table(fp, is_corporate_account=False, sheet='A1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+    os.remove(filename)

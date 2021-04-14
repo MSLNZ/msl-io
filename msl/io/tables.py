@@ -1,18 +1,23 @@
 """
 Read a data table from a file.
 """
+import os
 import re
 
+import xlrd
 import numpy as np
 
 from . import (
     Reader,
     ExcelReader,
+    GDrive,
+    GSheets,
 )
 from .dataset import Dataset
 from .utils import get_basename
 
 _excel_range_regex = re.compile(r'([a-zA-Z]+)(\d+):([a-zA-Z]+)(\d+)')
+_google_file_id_regex = re.compile(r'^1[a-zA-Z0-9_-]{43}$')
 
 extension_delimiter_map = {'.csv': ','}
 """:class:`dict`: The delimiter to use to separate columns in a table based on the file extension.
@@ -121,7 +126,7 @@ def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, 
     if cell is not None:
         match = _excel_range_regex.match(str(cell).replace('$', ''))
         if not match:
-            raise ValueError('You must specify a range of cells, for example, "C3:M25"')
+            raise ValueError('You must specify a valid cell range, for example, "C3:M25"')
 
     excel = ExcelReader(file, **kwargs)
     table = excel.read(cell=cell, sheet=sheet, as_datetime=as_datetime)
@@ -150,4 +155,94 @@ def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, 
                 data = data[0]
 
     excel.close()
+    return Dataset(get_basename(file), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))
+
+
+def read_table_gsheets(file, cell=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
+    """Read a data table from a Google Sheets spreadsheet.
+
+    .. attention::
+       You must have already performed the instructions specified in
+       :class:`.GDrive` and in :class:`.GSheets` to be able to use this function.
+
+    A *table* has the following properties:
+
+    1. The first row is a header.
+    2. All rows have the same number of columns.
+    3. All data values in a column have the same data type.
+
+    Parameters
+    ----------
+    file : :class:`str`
+        The file to read. Can be the ID of the Google Sheet or the file path.
+    cell : :class:`str`, optional
+        The cells to read (for example, ``'C9'`` means start from cell C9 and
+        ``'C9:G20'`` means to use only the specified cells). If not
+        specified then reads all data in the specified `sheet`.
+    sheet : :class:`str`, optional
+        The name of the sheet to read the data from. If there is only one sheet
+        in the spreadsheet then you do not need to specify the name of the sheet.
+    as_datetime : :class:`bool`, optional
+        Whether dates should be returned as :class:`~datetime.datetime` or
+        :class:`~datetime.date` objects. If :data:`False` then dates are returned
+        as a :class:`str`.
+    dtype : :class:`object`, optional
+        If specified then it must be able to be converted to a :class:`~numpy.dtype` object.
+    **kwargs
+        All additional keyword arguments are passed to :func:`msl.io.google_api.GSheet`.
+
+    Returns
+    -------
+    :class:`~msl.io.dataset.Dataset`
+        The table as a :class:`~msl.io.dataset.Dataset`. The header is included
+        in the :class:`~msl.io.metadata.Metadata`.
+    """
+    # get the spreadsheet ID
+    path, ext = os.path.splitext(file)
+    folders, _ = os.path.split(path)
+    if ext or folders or not _google_file_id_regex.match(path):
+        spreadsheet_id = GDrive(**kwargs).file_id(path, mime_type=GSheets.MIME_TYPE)
+    else:
+        spreadsheet_id = path
+
+    # build the table
+    table = []
+    for row in GSheets(**kwargs).cells(spreadsheet_id, sheet=sheet):
+        row_values = []
+        for item in row:
+            if item.type == 'DATE':
+                value = GSheets.to_datetime(item.value).date() if as_datetime else item.formatted
+            elif item.type == 'DATE_TIME':
+                value = GSheets.to_datetime(item.value) if as_datetime else item.formatted
+            else:
+                value = item.value
+            row_values.append(value)
+        table.append(tuple(row_values))
+
+    # slice the table based on the cell range
+    if cell is not None:
+        cells = str(cell).upper().replace('$', '').split(':')
+        if len(cells) == 1:
+            row, col = xlrd.xlsx.cell_name_to_rowx_colx(cells[0])
+            row_slice = slice(row, None)
+            col_slice = slice(col, None)
+        else:
+            start_row, start_col = xlrd.xlsx.cell_name_to_rowx_colx(cells[0])
+            end_row, end_col = xlrd.xlsx.cell_name_to_rowx_colx(cells[1])
+            row_slice = slice(start_row, end_row+1)
+            col_slice = slice(start_col, end_col+1)
+        table = [row[col_slice] for row in table[row_slice]]
+
+    # determine the header and the data for the Dataset
+    if not table:
+        header, data = [], []
+    elif len(table) == 1:
+        header, data = table[0], []
+    elif len(table[0]) == 1:  # a single column
+        header, data = table[0], [row[0] for row in table[1:]]
+    else:
+        header, data = table[0], table[1:]
+        if len(data) == 1:  # a single row
+            data = data[0]
+
     return Dataset(get_basename(file), None, True, data=data, dtype=dtype, header=np.asarray(header, dtype=str))

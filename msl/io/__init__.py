@@ -16,18 +16,19 @@ from .writers import (
     HDF5Writer,
 )
 from .base_io import Root
-from .readers import ExcelReader
-from .tables import (
-    read_table_text,
-    read_table_excel,
-    extension_delimiter_map,
-)
 from .google_api import (
     GDrive,
     GSheets,
     GValueOption,
     GDateTimeOption,
     GCell,
+)
+from .readers import ExcelReader
+from .tables import (
+    read_table_text,
+    read_table_excel,
+    read_table_gsheets,
+    extension_delimiter_map,
 )
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
@@ -94,11 +95,14 @@ def read_table(file, **kwargs):
     ----------
     file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
         The file to read. For example, it could be a :class:`str` representing
-        a file system path or a stream.
+        a file system path or a stream. If `file` is a Google Sheets spreadsheet
+        then `file` must end with ``.gsheet`` even if the ID of the spreadsheet
+        is specified.
     **kwargs
         If the file is an Excel spreadsheet then the keyword arguments are passed to
-        :func:`~msl.io.tables.read_table_excel` otherwise all keyword arguments are passed
-        to :func:`~msl.io.tables.read_table_text`.
+        :func:`~msl.io.tables.read_table_excel`. If a Google Sheets spreadsheet then
+        the keyword arguments are passed to :func:`~msl.io.tables.read_table_gsheets`.
+        Otherwise all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
 
     Returns
     -------
@@ -107,8 +111,12 @@ def read_table(file, **kwargs):
     """
     extn = Reader.get_extension(file).lower()
     if extn.startswith('.xls'):
-        if hasattr(file, 'name'):  # a TextIOWrapper object that was created by calling open()
+        if hasattr(file, 'name'):  # a TextIOWrapper object
             file = file.name
         return read_table_excel(file, **kwargs)
+    elif extn == '.gsheet':
+        if hasattr(file, 'name'):  # a TextIOWrapper object
+            file = file.name
+        return read_table_gsheets(file[:-7], **kwargs)  # ignore the extension
     else:
         return read_table_text(file, **kwargs)
