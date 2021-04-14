@@ -176,8 +176,8 @@ def read_table_gsheets(file, cell=None, sheet=None, as_datetime=True, dtype=None
 
     Parameters
     ----------
-    file : :class:`str`
-        The file to read. Can be the ID of the Google Sheet or the file path.
+    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
+        The file to read. Can be the ID of a Google Sheets spreadsheet.
     cell : :class:`str`, optional
         The cells to read (for example, ``'C9'`` means start from cell C9 and
         ``'C9:G20'`` means to use only the specified cells). If not
@@ -192,7 +192,7 @@ def read_table_gsheets(file, cell=None, sheet=None, as_datetime=True, dtype=None
     dtype : :class:`object`, optional
         If specified then it must be able to be converted to a :class:`~numpy.dtype` object.
     **kwargs
-        All additional keyword arguments are passed to :func:`msl.io.google_api.GSheet`.
+        All additional keyword arguments are passed to :func:`msl.io.google_api.GSheets`.
 
     Returns
     -------
@@ -200,6 +200,9 @@ def read_table_gsheets(file, cell=None, sheet=None, as_datetime=True, dtype=None
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
+    if hasattr(file, 'name'):  # a TextIOWrapper object
+        file = file.name
+
     # get the spreadsheet ID
     path, ext = os.path.splitext(file)
     folders, _ = os.path.split(path)
