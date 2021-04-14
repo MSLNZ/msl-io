@@ -122,6 +122,9 @@ def read_table_excel(file, cell=None, sheet=None, as_datetime=True, dtype=None, 
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
+    if hasattr(file, 'name'):  # a TextIOWrapper object
+        file = file.name
+
     match = None
     if cell is not None:
         match = _excel_range_regex.match(str(cell).replace('$', ''))

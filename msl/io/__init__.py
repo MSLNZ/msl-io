@@ -111,8 +111,6 @@ def read_table(file, **kwargs):
     """
     extn = Reader.get_extension(file).lower()
     if extn.startswith('.xls'):
-        if hasattr(file, 'name'):  # a TextIOWrapper object
-            file = file.name
         return read_table_excel(file, **kwargs)
     elif extn == '.gsheet':
         if hasattr(file, 'name'):  # a TextIOWrapper object
