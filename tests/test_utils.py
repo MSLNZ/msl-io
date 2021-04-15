@@ -324,3 +324,28 @@ def test_remove_write_permissions():
     # clean up by deleting the file
     os.chmod(path, 0o777)
     os.remove(path)
+
+
+def test_spreadsheet_range_to_indices():
+
+    # invalid syntax
+    for s in ['', '23', 'A', 'A23::C30', 'A:C', 'A1-C2', 'A1:F', '1A1:F4G', 'A$4:D$10', '$A$4:$D$10']:
+        with pytest.raises(ValueError, match='Invalid spreadsheet range'):
+            spreadsheet_range_to_indices(s)
+
+    # bottom-right cell is invalid relative to top-left cell
+    for s in ['C10:A20', 'C20:G10']:
+        with pytest.raises(ValueError, match='Invalid spreadsheet range'):
+            spreadsheet_range_to_indices(s)
+
+    assert spreadsheet_range_to_indices('A1') == (0, 0, None, None)
+    assert spreadsheet_range_to_indices('a1') == (0, 0, None, None)
+    assert spreadsheet_range_to_indices('A1:A1') == (0, 0, 0, 0)
+    assert spreadsheet_range_to_indices('A1:A10') == (0, 0, 9, 0)
+    assert spreadsheet_range_to_indices('C6:H10') == (5, 2, 9, 7)
+    assert spreadsheet_range_to_indices('c6:h10') == (5, 2, 9, 7)
+    assert spreadsheet_range_to_indices('C6:H6') == (5, 2, 5, 7)
+    assert spreadsheet_range_to_indices('AA123:BH130') == (122, 26, 129, 59)
+    assert spreadsheet_range_to_indices('K100:MX1000') == (99, 10, 999, 361)
+    assert spreadsheet_range_to_indices('QR1:QR10') == (0, 459, 9, 459)
+    assert spreadsheet_range_to_indices('AEX154041:AFB154099') == (154040, 829, 154098, 833)

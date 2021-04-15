@@ -17,9 +17,15 @@ except NameError:
     PermissionError = IOError  # for Python 2.7
     FileExistsError = IOError
 
+from xlrd.xlsx import cell_name_to_rowx_colx
+
 logger = logging.getLogger(__package__)
 
 _readers = []
+
+_spreadsheet_range_regex = re.compile(
+    r'^([A-Z]+\d+)(:([A-Z]+\d+))?$'
+)
 
 __all__ = (
     'checksum',
@@ -29,6 +35,7 @@ __all__ = (
     'remove_write_permissions',
     'search',
     'send_email',
+    'spreadsheet_range_to_indices',
 )
 
 
@@ -407,3 +414,47 @@ def remove_write_permissions(path):
     current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
     disable_writing = ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH
     os.chmod(path, current_permissions & disable_writing)
+
+
+def spreadsheet_range_to_indices(string):
+    """Determine the row and column indices of the range.
+
+    Parameters
+    ----------
+    string : :class:`str`
+        The range of cells (e.g., A2, A2:H8, AF10:ZZ500)
+
+    Returns
+    -------
+    :class:`tuple`
+        The row and column index of the top-left cell and of
+        the bottom-right cell for the specified range, e.g.,
+        ``(top_left_row, top_left_column, bottom_right_row, bottom_right_column)``.
+        The indices of the bottom-right cell will both be :data:`None`
+        if no bottom-right cell was specified (so this function always
+        returns a 4-element :class:`tuple`). Indices are zero based
+        (i.e., ``A1`` corresponds to row=0 and column=0).
+
+    Examples
+    --------
+    >>> from msl.io import spreadsheet_range_to_indices
+    >>> spreadsheet_range_to_indices('A1')
+    (0, 0, None, None)
+    >>> spreadsheet_range_to_indices('C6:H10')
+    (5, 2, 9, 7)
+    """
+    match = _spreadsheet_range_regex.match(string.upper())
+    if not match:
+        raise ValueError('Invalid spreadsheet range {!r}'.format(string))
+
+    top_left, _, bottom_right = match.groups()
+
+    top_row, top_col = cell_name_to_rowx_colx(top_left)
+    if not bottom_right:
+        return top_row, top_col, None, None
+
+    bottom_row, bottom_col = cell_name_to_rowx_colx(bottom_right)
+    if bottom_row < top_row or bottom_col < top_col:
+        raise ValueError('Invalid spreadsheet range {!r}'.format(string))
+
+    return top_row, top_col, bottom_row, bottom_col
