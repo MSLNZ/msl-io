@@ -508,6 +508,23 @@ class GDateTimeOption(Enum):
     spreadsheet locale)."""
 
 
+class GCellType(Enum):
+    """The data type of a spreadsheet cell."""
+
+    BOOLEAN = 'BOOLEAN'
+    CURRENCY = 'CURRENCY'
+    DATE = 'DATE'
+    DATE_TIME = 'DATE_TIME'
+    EMPTY = 'EMPTY'
+    ERROR = 'ERROR'
+    NUMBER = 'NUMBER'
+    PERCENT = 'PERCENT'
+    SCIENTIFIC = 'SCIENTIFIC'
+    STRING = 'STRING'
+    TIME = 'TIME'
+    UNKNOWN = 'UNKNOWN'
+
+
 GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
 """The information about a Google Sheets cell.
 
@@ -517,20 +534,7 @@ GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
    
 .. attribute:: type
    
-   :class:`str`: The data type of `value`, one of:
-      
-      * BOOLEAN
-      * CURRENCY
-      * DATE
-      * DATE_TIME
-      * EMPTY
-      * ERROR
-      * NUMBER
-      * PERCENT
-      * SCIENTIFIC
-      * STRING
-      * TIME
-      * UNKNOWN
+   :class:`GCellType`: The data type of `value`.
 
 .. attribute:: formatted
    
@@ -630,7 +634,7 @@ class GSheets(GoogleAPI):
             How dates, times, and durations should be represented in the
             output. If a string then it must be equal to one of the values
             in :class:`GDateTimeOption`. This argument is ignored if
-            `value_option` is ``FORMATTED_VALUE``.
+            `value_option` is :attr:`GValueOption.FORMATTED`.
 
         Returns
         -------
@@ -657,64 +661,69 @@ class GSheets(GoogleAPI):
         response = request.execute()
         return response.get('values', [])
 
-    def cells(self, spreadsheet_id, sheet=None):
-        """Return the cells from a spreadsheet.
+    def cells(self, spreadsheet_id, ranges=None):
+        """Return cells from a spreadsheet.
 
         Parameters
         ----------
         spreadsheet_id : :class:`str`
             The ID of a Google Sheets file.
-        sheet : :class:`str`, optional
-            The name of a sheet in the spreadsheet. If not specified and
-            only one sheet exists in the spreadsheet then automatically
-            determines the sheet name.
+        ranges : :class:`str` or :class:`list` of :class:`str`, optional
+            The ranges to retrieve from the spreadsheet. Examples:
+
+                * ``'Sheet1'`` :math:`\\rightarrow` return all cells from
+                  the sheet named Sheet1
+                * ``'Sheet1!A1:H5'`` :math:`\\rightarrow` return cells A1:H5
+                  from the sheet named Sheet1
+                * ``['Sheet1!A1:H5', 'Data', 'Devices!B4:B9']`` :math:`\\rightarrow`
+                  return cells A1:H5 from the sheet named Sheet1, all cells from the
+                  sheet named Data and cells B4:B9 from the sheet named Devices
+
+            If not specified then return all cells from all sheets.
 
         Returns
         -------
-        :class:`list` of :class:`GCell`
-            The cells from the sheet.
+        :class:`dict`
+            The cells from the spreadsheet. The keys are the names of the
+            sheets and the values are a :class:`list` of :class:`GCell`
+            objects for the specified range of each sheet.
         """
-        sheet_name = sheet or self._get_first_sheet_name(spreadsheet_id)
-        request = self._spreadsheets.get(spreadsheetId=spreadsheet_id, includeGridData=True)
+        request = self._spreadsheets.get(
+            spreadsheetId=spreadsheet_id, includeGridData=True, ranges=ranges
+        )
         response = request.execute()
-
-        data = None
+        cells = {}
         for sheet in response['sheets']:
-            if sheet['properties']['title'] == sheet_name:
-                data = sheet['data']
-                break
-
-        if data is None:
-            raise ValueError('No sheet exists with the name {!r}'.format(sheet_name))
-
-        cells = []
-        for item in data:
-            for row in item.get('rowData', []):
-                row_data = []
-                for col in row.get('values', []):
-                    effective_value = col.get('effectiveValue', None)
-                    formatted = col.get('formattedValue', '')
-                    if effective_value is None:
-                        value = None
-                        typ = 'EMPTY'
-                    elif 'numberValue' in effective_value:
-                        value = effective_value['numberValue']
-                        typ = col.get('effectiveFormat', {}).get('numberFormat', {}).get('type', 'NUMBER')
-                    elif 'stringValue' in effective_value:
-                        value = effective_value['stringValue']
-                        typ = 'STRING'
-                    elif 'boolValue' in effective_value:
-                        value = effective_value['boolValue']
-                        typ = 'BOOLEAN'
-                    elif 'errorValue' in effective_value:
-                        msg = effective_value['errorValue']['message']
-                        value = '{} ({})'.format(col['formattedValue'], msg)
-                        typ = 'ERROR'
-                    else:
-                        value = formatted
-                        typ = 'UNKNOWN'
-                    row_data.append(GCell(value=value, type=typ, formatted=formatted))
-                cells.append(row_data)
+            data = []
+            for item in sheet['data']:
+                for row in item.get('rowData', []):
+                    row_data = []
+                    for col in row.get('values', []):
+                        effective_value = col.get('effectiveValue', None)
+                        formatted = col.get('formattedValue', '')
+                        if effective_value is None:
+                            value = None
+                            typ = GCellType.EMPTY
+                        elif 'numberValue' in effective_value:
+                            value = effective_value['numberValue']
+                            t = col.get('effectiveFormat', {}).get('numberFormat', {}).get('type', 'NUMBER')
+                            typ = GCellType(t)
+                        elif 'stringValue' in effective_value:
+                            value = effective_value['stringValue']
+                            typ = GCellType.STRING
+                        elif 'boolValue' in effective_value:
+                            value = effective_value['boolValue']
+                            typ = GCellType.BOOLEAN
+                        elif 'errorValue' in effective_value:
+                            msg = effective_value['errorValue']['message']
+                            value = '{} ({})'.format(col['formattedValue'], msg)
+                            typ = GCellType.ERROR
+                        else:
+                            value = formatted
+                            typ = GCellType.UNKNOWN
+                        row_data.append(GCell(value=value, type=typ, formatted=formatted))
+                    data.append(row_data)
+                cells[sheet['properties']['title']] = data
         return cells
 
     @staticmethod

@@ -20,12 +20,11 @@ Wrappers around the Google API's.
 
 .. autoclass:: msl.io.google_api.GValueOption
    :members:
-   :undoc-members:
-   :show-inheritance:
 
 .. autoclass:: msl.io.google_api.GDateTimeOption
    :members:
-   :undoc-members:
-   :show-inheritance:
+
+.. autoclass:: msl.io.google_api.GCellType
+   :members:
 
 .. autoclass:: msl.io.google_api.GCell
