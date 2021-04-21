@@ -34,7 +34,7 @@ def test_raises():
         GSheetsReader('does-not-matter', is_read_only=False)
 
     table_gsheet_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
-    with pytest.raises(ValueError, match=r'You must specify a sheet name'):
+    with pytest.raises(ValueError, match=r'You must specify the name of the sheet to read'):
         GSheetsReader(table_gsheet_id, is_corporate_account=False).read()
 
 

@@ -117,8 +117,9 @@ class GSheetsReader(Spreadsheet):
             else:
                 names = self.sheet_names()
                 if len(names) != 1:
-                    sheets = ', '.join(repr(n) for n in names)
-                    raise ValueError('You must specify a sheet name: ' + sheets)
+                    raise ValueError('{!r} contains the following sheets:\n  {}\n'
+                                     'You must specify the name of the sheet to read'
+                                     .format(self._file, ', '.join(repr(n) for n in names)))
                 sheet = names[0]
                 self._cached_sheet_name = sheet
 
