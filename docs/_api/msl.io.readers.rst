@@ -15,3 +15,4 @@ Submodules
    msl.io.readers.excel
    msl.io.readers.hdf5
    msl.io.readers.json_
+   msl.io.readers.spreadsheet
