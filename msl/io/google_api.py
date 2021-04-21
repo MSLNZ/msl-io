@@ -641,7 +641,15 @@ class GSheets(GoogleAPI):
         :class:`list`
             The values from the sheet.
         """
-        range_ = sheet or self._get_first_sheet_name(spreadsheet_id)
+        if not sheet:
+            names = self.sheet_names(spreadsheet_id)
+            if len(names) != 1:
+                sheets = ', '.join(repr(n) for n in names)
+                raise ValueError('You must specify a sheet name: ' + sheets)
+            range_ = names[0]
+        else:
+            range_ = sheet
+
         if cells:
             range_ += '!{}'.format(cells)
 
@@ -743,10 +751,3 @@ class GSheets(GoogleAPI):
         days = int(value)
         seconds = (value - days) * 86400  # 60 * 60 * 24
         return GSheets.SERIAL_NUMBER_ORIGIN + timedelta(days=days, seconds=seconds)
-
-    def _get_first_sheet_name(self, spreadsheet_id):
-        names = self.sheet_names(spreadsheet_id)
-        if len(names) != 1:
-            sheets = ', '.join(repr(n) for n in names)
-            raise ValueError('You must specify a sheet name: ' + sheets)
-        return names[0]
