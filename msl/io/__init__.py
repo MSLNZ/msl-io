@@ -21,9 +21,12 @@ from .google_api import (
     GSheets,
     GValueOption,
     GDateTimeOption,
-    GCell,
+    GCellType,
 )
-from .readers import ExcelReader
+from .readers import (
+    ExcelReader,
+    GSheetsReader,
+)
 from .tables import (
     read_table_text,
     read_table_excel,

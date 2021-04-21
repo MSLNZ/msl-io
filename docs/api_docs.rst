@@ -11,7 +11,7 @@ The following functions are available to read a file
    ~msl.io.read
    ~msl.io.read_table
    ~msl.io.readers.excel.ExcelReader
-   ~msl.io.google_api.GSheets
+   ~msl.io.readers.gsheets.GSheetsReader
 
 the following classes are available as :ref:`io-writers`
 

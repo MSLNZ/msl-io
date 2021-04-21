@@ -7,6 +7,8 @@ try:
 except ImportError:
     h5py = None
 
+from msl.io.google_api import GSheets
+
 os.environ['MSL_IO_RUNNING_TESTS'] = 'True'
 
 
@@ -41,5 +43,13 @@ def doctest_skipif(doctest_namespace):
     else:
         h5 = lambda: None
 
+    try:
+        GSheets(is_read_only=True, is_corporate_account=False)
+    except:
+        sheets_read_token = lambda: pytest.skip(msg='Google API tokens not available')
+    else:
+        sheets_read_token = lambda: None
+
     doctest_namespace['SKIP_IF_PYTHON_LESS_THAN_36'] = ver
     doctest_namespace['SKIP_IF_NO_H5PY'] = h5
+    doctest_namespace['SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN'] = sheets_read_token
