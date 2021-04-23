@@ -178,7 +178,7 @@ def read_table_gsheets(file, cells=None, sheet=None, as_datetime=True, dtype=Non
     dtype : :class:`object`, optional
         If specified then it must be able to be converted to a :class:`~numpy.dtype` object.
     **kwargs
-        All additional keyword arguments are passed to :func:`msl.io.google_api.GSheets`.
+        All additional keyword arguments are passed to :class:`~msl.io.readers.gsheets.GSheetsReader`.
 
     Returns
     -------
