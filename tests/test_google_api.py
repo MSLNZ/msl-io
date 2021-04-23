@@ -65,6 +65,234 @@ skipif_no_sheets_personal_writeable = pytest.mark.skipif(
 IS_WINDOWS = sys.platform == 'win32'
 
 
+@skipif_no_sheets_personal_readonly
+def test_gsheets_sheet_names_personal():
+    # MSL/msl-io-testing/empty-5.gsheet
+    names = spr.sheet_names('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY')
+    assert len(names) == 5
+    assert 'Sheet1' in names
+    assert 'Sheet2' in names
+    assert 'Sheet3' in names
+    assert 'Sheet4' in names
+    assert 'Sheet5' in names
+
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment.gsheet
+    names = spr.sheet_names('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4')
+    assert len(names) == 1
+    assert 'Sensor_1' in names
+
+    # table.gsheet
+    names = spr.sheet_names('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
+    assert len(names) == 6
+    assert 'StartA1' in names
+    assert 'StartH22' in names
+    assert 'header only' in names
+    assert 'empty' in names
+    assert 'column' in names
+    assert 'row' in names
+
+
+@skipif_no_sheets_personal_readonly
+def test_gsheets_values_personal():
+    # MSL/msl-io-testing/empty-5
+    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
+
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
+    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
+
+    # more than 1 sheet exists
+    with pytest.raises(ValueError, match=r'You must specify a sheet name:'):
+        spr.values(empty_id)
+
+    # empty sheets are okay
+    for name in spr.sheet_names(empty_id):
+        values = spr.values(empty_id, sheet=name)
+        assert isinstance(values, list)
+        assert not values
+
+        # specifying the cells in an empty sheet is okay
+        values = spr.values(empty_id, sheet=name, cells='A2:Z10')
+        assert isinstance(values, list)
+        assert not values
+
+    # only 1 sheet exists, therefore we do not need to specify
+    # a value for the 'sheet' kwarg since it is determined automatically
+    expected = [
+        ['Timestamp', 'Temperature', 'Humidity'],
+        ['2021-04-03 12:36:10', '20.33', '49.82'],
+        ['2021-04-03 12:37:10', '20.23', '46.06'],
+        ['2021-04-03 12:38:10', '20.41', '47.06'],
+        ['2021-04-03 12:39:10', '20.29', '48.32']
+    ]
+    values = spr.values(lab_id)
+    assert values == expected
+
+    values = spr.values(lab_id, row_major=False)
+    assert values == [
+        ['Timestamp', '2021-04-03 12:36:10', '2021-04-03 12:37:10', '2021-04-03 12:38:10', '2021-04-03 12:39:10'],
+        ['Temperature', '20.33', '20.23', '20.41', '20.29'],
+        ['Humidity', '49.82', '46.06', '47.06', '48.32']
+    ]
+
+    values = spr.values(lab_id, cells='B2:C4', value_option='FORMATTED_VALUE')
+    assert values == [['20.33', '49.82'], ['20.23', '46.06'], ['20.41', '47.06']]
+
+    values = spr.values(lab_id, cells='B:B', value_option='UNFORMATTED_VALUE')
+    assert values == [['Temperature'], [20.33], [20.23], [20.41], [20.29]]
+
+    values = spr.values(lab_id, cells='B:C', value_option=GValueOption.UNFORMATTED)
+    assert values == [['Temperature', 'Humidity'], [20.33, 49.82], [20.23, 46.06], [20.41, 47.06], [20.29, 48.32]]
+
+    values = spr.values(lab_id, cells='A2:C2')
+    assert values == [expected[1]]
+
+
+@skipif_no_sheets_personal_readonly
+def test_gsheets_to_datetime():
+    expected = [
+        ['Timestamp', datetime(2021, 4, 3, 12, 36, 10), datetime(2021, 4, 3, 12, 37, 10),
+         datetime(2021, 4, 3, 12, 38, 10), datetime(2021, 4, 3, 12, 39, 10)],
+        ['Temperature', 20.33, 20.23, 20.41, 20.29],
+        ['Humidity', 49.82, 46.06, 47.06, 48.32]
+    ]
+
+    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
+    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
+    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE', row_major=False)
+    values[0][1:] = [spr.to_datetime(t) for t in values[0][1:]]
+    assert values == expected
+
+    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE',
+                        datetime_option='FORMATTED_STRING', row_major=False)
+    expected[0][1:] = [str(t) for t in expected[0][1:]]
+    assert values == expected
+
+
+@skipif_no_sheets_personal_readonly
+def test_gsheets_cells():
+    # MSL/msl-io-testing/empty-5
+    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
+
+    # data-types
+    datatypes_id = '1zMO4wk0IPC9I57dR5WoPTzlOX6g5-AcnwGFOEHrhIHU'
+
+    # invalid spreadsheet_id
+    with pytest.raises(HttpError):
+        spr.cells(empty_id[:-1]+'A')
+
+    # valid spreadsheet_id, invalid sheet name
+    with pytest.raises(HttpError):
+        spr.cells(datatypes_id, ranges='invalid')
+    with pytest.raises(HttpError):
+        spr.cells(datatypes_id, ranges=['invalid'])
+
+    assert spr.cells(empty_id) == {'Sheet1': [], 'Sheet2': [], 'Sheet3': [], 'Sheet4': [], 'Sheet5': []}
+
+    assert spr.cells(empty_id, ranges='Sheet1') == {'Sheet1': []}
+    assert spr.cells(empty_id, ranges=['Sheet1']) == {'Sheet1': []}
+    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet5']) == {'Sheet1': [], 'Sheet5': []}
+    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet3!B7:ZZ99']) == {'Sheet1': [], 'Sheet3': []}
+
+    cells = spr.cells(datatypes_id)
+    values = cells['Data Types']
+    assert len(values) == 18
+
+    assert len(values[0]) == 6
+    assert values[0][0] == GCell(value='Automatic', type=GCellType.STRING, formatted='Automatic')
+    assert values[0][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted='1.23')
+    assert values[0][2] == GCell(value='string', type=GCellType.STRING, formatted='string')
+    assert values[0][3] == GCell(value=1, type=GCellType.NUMBER, formatted='1')
+    assert values[0][4] == GCell(value='0123456789', type=GCellType.STRING, formatted='0123456789')
+    assert values[0][5] == GCell(value=36982, type=GCellType.DATE, formatted='1 April 2001')
+
+    assert len(values[1]) == 3
+    assert values[1][0] == GCell(value='Plain text', type=GCellType.STRING, formatted='Plain text')
+    assert values[1][1] == GCell(value='a b c d', type=GCellType.STRING, formatted='a b c d')
+    assert values[1][2] == GCell(value='34', type=GCellType.STRING, formatted='34')
+
+    assert len(values[2]) == 2
+    assert values[2][0] == GCell(value='Number', type=GCellType.STRING, formatted='Number')
+    assert values[2][1] == GCell(value=1234.56789, type=GCellType.NUMBER, formatted='1,234.57')
+
+    assert len(values[3]) == 2
+    assert values[3][0] == GCell(value='Percent', type=GCellType.STRING, formatted='Percent')
+    assert values[3][1] == GCell(value=0.542, type=GCellType.PERCENT, formatted='54.20%')
+
+    assert len(values[4]) == 2
+    assert values[4][0] == GCell(value='Scientific', type=GCellType.STRING, formatted='Scientific')
+    assert values[4][1] == GCell(value=0.00321, type=GCellType.SCIENTIFIC, formatted='3.21E-03')
+
+    assert len(values[5]) == 3
+    assert values[5][0] == GCell(value='Accounting', type=GCellType.STRING, formatted='Accounting')
+    assert values[5][1] == GCell(value=99.95, type=GCellType.NUMBER, formatted=' $ 99.95 ')
+    assert values[5][2] == GCell(value=-23.45, type=GCellType.NUMBER, formatted=' $ (23.45)')
+
+    assert len(values[6]) == 3
+    assert values[6][0] == GCell(value='Financial', type=GCellType.STRING, formatted='Financial')
+    assert values[6][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted='1.23')
+    assert values[6][2] == GCell(value=-1.23, type=GCellType.NUMBER, formatted='(1.23)')
+
+    assert len(values[7]) == 3
+    assert values[7][0] == GCell(value='Currency', type=GCellType.STRING, formatted='Currency')
+    assert values[7][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted='$99.95')
+    assert values[7][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted='-$1.99')
+
+    assert len(values[8]) == 3
+    assert values[8][0] == GCell(
+        value='Currency (rounded)', type=GCellType.STRING, formatted='Currency (rounded)')
+    assert values[8][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted='$100')
+    assert values[8][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted='-$2')
+
+    assert len(values[9]) == 2
+    assert values[9][0] == GCell(value='Date', type=GCellType.STRING, formatted='Date')
+    assert values[9][1] == GCell(value=17738, type=GCellType.DATE, formatted='24/07/1948')
+
+    assert len(values[10]) == 3
+    assert values[10][0] == GCell(value='Time', type=GCellType.STRING, formatted='Time')
+    assert values[10][1] == GCell(value=0.2661689814814815, type=GCellType.TIME, formatted='06:23:17')
+    assert values[10][2] == GCell(value=0.7378356481481482, type=GCellType.TIME, formatted='17:42:29')
+
+    assert len(values[11]) == 2
+    assert values[11][0] == GCell(value='Date time', type=GCellType.STRING, formatted='Date time')
+    assert values[11][1] == GCell(
+        value=34736.4303472222222222, type=GCellType.DATE_TIME, formatted='06/02/1995 10:19:42')
+
+    assert len(values[12]) == 2
+    assert values[12][0] == GCell(value='Duration', type=GCellType.STRING, formatted='Duration')
+    assert values[12][1] == GCell(value=1.000023148148148, type=GCellType.TIME, formatted='24:00:02')
+
+    assert len(values[13]) == 2
+    assert values[13][0] == GCell(value='Formula', type=GCellType.STRING, formatted='Formula')
+    assert values[13][1] == GCell(value=6.747908247937978, type=GCellType.SCIENTIFIC, formatted='6.75E+00')
+
+    assert len(values[14]) == 3
+    assert values[14][0] == GCell(value='Error', type=GCellType.STRING, formatted='Error')
+    assert values[14][1] == GCell(
+        value='#DIV/0! (Function DIVIDE parameter 2 cannot be zero.)',
+        type=GCellType.ERROR,
+        formatted='#DIV/0!')
+    assert values[14][2] == GCell(
+        value="#VALUE! (Function MULTIPLY parameter 2 expects number values. "
+              "But 'Currency' is a text and cannot be coerced to a number.)",
+        type=GCellType.ERROR,
+        formatted='#VALUE!')
+
+    assert len(values[15]) == 3
+    assert values[15][0] == GCell(value='Empty', type=GCellType.STRING, formatted='Empty')
+    assert values[15][1] == GCell(value=None, type=GCellType.EMPTY, formatted='')
+    assert values[15][2] == GCell(
+        value='<== keep B16 empty', type=GCellType.STRING, formatted='<== keep B16 empty')
+
+    assert len(values[16]) == 3
+    assert values[16][0] == GCell(value='Boolean', type=GCellType.STRING, formatted='Boolean')
+    assert values[16][1] == GCell(value=True, type=GCellType.BOOLEAN, formatted='TRUE')
+    assert values[16][2] == GCell(value=False, type=GCellType.BOOLEAN, formatted='FALSE')
+
+    assert len(values[17]) == 2
+    assert values[17][0] == GCell(value='Custom', type=GCellType.STRING, formatted='Custom')
+    assert values[17][1] == GCell(value=12345.6789, type=GCellType.NUMBER, formatted='12345 55/81')
+
+
 @skipif_no_gdrive_personal_readonly
 def test_gdrive_folder_id_exception_personal():
     # the folder does not exist
@@ -387,231 +615,3 @@ def test_gdrive_path_personal():
     assert dpr.path('1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3'
     assert dpr.path('1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt'
     assert dpr.path('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment'
-
-
-@skipif_no_sheets_personal_readonly
-def test_gsheets_sheet_names_personal():
-    # MSL/msl-io-testing/empty-5.gsheet
-    names = spr.sheet_names('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY')
-    assert len(names) == 5
-    assert 'Sheet1' in names
-    assert 'Sheet2' in names
-    assert 'Sheet3' in names
-    assert 'Sheet4' in names
-    assert 'Sheet5' in names
-
-    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment.gsheet
-    names = spr.sheet_names('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4')
-    assert len(names) == 1
-    assert 'Sensor_1' in names
-
-    # table.gsheet
-    names = spr.sheet_names('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
-    assert len(names) == 6
-    assert 'StartA1' in names
-    assert 'StartH22' in names
-    assert 'header only' in names
-    assert 'empty' in names
-    assert 'column' in names
-    assert 'row' in names
-
-
-@skipif_no_sheets_personal_readonly
-def test_gsheets_values_personal():
-    # MSL/msl-io-testing/empty-5
-    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
-
-    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
-    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
-
-    # more than 1 sheet exists
-    with pytest.raises(ValueError, match=r'You must specify a sheet name:'):
-        spr.values(empty_id)
-
-    # empty sheets are okay
-    for name in spr.sheet_names(empty_id):
-        values = spr.values(empty_id, sheet=name)
-        assert isinstance(values, list)
-        assert not values
-
-        # specifying the cells in an empty sheet is okay
-        values = spr.values(empty_id, sheet=name, cells='A2:Z10')
-        assert isinstance(values, list)
-        assert not values
-
-    # only 1 sheet exists, therefore we do not need to specify
-    # a value for the 'sheet' kwarg since it is determined automatically
-    expected = [
-        ['Timestamp', 'Temperature', 'Humidity'],
-        ['2021-04-03 12:36:10', '20.33', '49.82'],
-        ['2021-04-03 12:37:10', '20.23', '46.06'],
-        ['2021-04-03 12:38:10', '20.41', '47.06'],
-        ['2021-04-03 12:39:10', '20.29', '48.32']
-    ]
-    values = spr.values(lab_id)
-    assert values == expected
-
-    values = spr.values(lab_id, row_major=False)
-    assert values == [
-        ['Timestamp', '2021-04-03 12:36:10', '2021-04-03 12:37:10', '2021-04-03 12:38:10', '2021-04-03 12:39:10'],
-        ['Temperature', '20.33', '20.23', '20.41', '20.29'],
-        ['Humidity', '49.82', '46.06', '47.06', '48.32']
-    ]
-
-    values = spr.values(lab_id, cells='B2:C4', value_option='FORMATTED_VALUE')
-    assert values == [['20.33', '49.82'], ['20.23', '46.06'], ['20.41', '47.06']]
-
-    values = spr.values(lab_id, cells='B:B', value_option='UNFORMATTED_VALUE')
-    assert values == [['Temperature'], [20.33], [20.23], [20.41], [20.29]]
-
-    values = spr.values(lab_id, cells='B:C', value_option=GValueOption.UNFORMATTED)
-    assert values == [['Temperature', 'Humidity'], [20.33, 49.82], [20.23, 46.06], [20.41, 47.06], [20.29, 48.32]]
-
-    values = spr.values(lab_id, cells='A2:C2')
-    assert values == [expected[1]]
-
-
-@skipif_no_sheets_personal_readonly
-def test_gsheets_to_datetime():
-    expected = [
-        ['Timestamp', datetime(2021, 4, 3, 12, 36, 10), datetime(2021, 4, 3, 12, 37, 10),
-         datetime(2021, 4, 3, 12, 38, 10), datetime(2021, 4, 3, 12, 39, 10)],
-        ['Temperature', 20.33, 20.23, 20.41, 20.29],
-        ['Humidity', 49.82, 46.06, 47.06, 48.32]
-    ]
-
-    # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
-    lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
-    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE', row_major=False)
-    values[0][1:] = [spr.to_datetime(t) for t in values[0][1:]]
-    assert values == expected
-
-    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE',
-                        datetime_option='FORMATTED_STRING', row_major=False)
-    expected[0][1:] = [str(t) for t in expected[0][1:]]
-    assert values == expected
-
-
-@skipif_no_sheets_personal_readonly
-def test_gsheets_cells():
-    # MSL/msl-io-testing/empty-5
-    empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
-
-    # data-types
-    datatypes_id = '1zMO4wk0IPC9I57dR5WoPTzlOX6g5-AcnwGFOEHrhIHU'
-
-    # invalid spreadsheet_id
-    with pytest.raises(HttpError):
-        spr.cells(empty_id[:-1]+'A')
-
-    # valid spreadsheet_id, invalid sheet name
-    with pytest.raises(HttpError):
-        spr.cells(datatypes_id, ranges='invalid')
-    with pytest.raises(HttpError):
-        spr.cells(datatypes_id, ranges=['invalid'])
-
-    assert spr.cells(empty_id) == {'Sheet1': [], 'Sheet2': [], 'Sheet3': [], 'Sheet4': [], 'Sheet5': []}
-
-    assert spr.cells(empty_id, ranges='Sheet1') == {'Sheet1': []}
-    assert spr.cells(empty_id, ranges=['Sheet1']) == {'Sheet1': []}
-    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet5']) == {'Sheet1': [], 'Sheet5': []}
-    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet3!B7:ZZ99']) == {'Sheet1': [], 'Sheet3': []}
-
-    cells = spr.cells(datatypes_id)
-    values = cells['Data Types']
-    assert len(values) == 18
-
-    assert len(values[0]) == 6
-    assert values[0][0] == GCell(value='Automatic', type=GCellType.STRING, formatted='Automatic')
-    assert values[0][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted='1.23')
-    assert values[0][2] == GCell(value='string', type=GCellType.STRING, formatted='string')
-    assert values[0][3] == GCell(value=1, type=GCellType.NUMBER, formatted='1')
-    assert values[0][4] == GCell(value='0123456789', type=GCellType.STRING, formatted='0123456789')
-    assert values[0][5] == GCell(value=36982, type=GCellType.DATE, formatted='1 April 2001')
-
-    assert len(values[1]) == 3
-    assert values[1][0] == GCell(value='Plain text', type=GCellType.STRING, formatted='Plain text')
-    assert values[1][1] == GCell(value='a b c d', type=GCellType.STRING, formatted='a b c d')
-    assert values[1][2] == GCell(value='34', type=GCellType.STRING, formatted='34')
-
-    assert len(values[2]) == 2
-    assert values[2][0] == GCell(value='Number', type=GCellType.STRING, formatted='Number')
-    assert values[2][1] == GCell(value=1234.56789, type=GCellType.NUMBER, formatted='1,234.57')
-
-    assert len(values[3]) == 2
-    assert values[3][0] == GCell(value='Percent', type=GCellType.STRING, formatted='Percent')
-    assert values[3][1] == GCell(value=0.542, type=GCellType.PERCENT, formatted='54.20%')
-
-    assert len(values[4]) == 2
-    assert values[4][0] == GCell(value='Scientific', type=GCellType.STRING, formatted='Scientific')
-    assert values[4][1] == GCell(value=0.00321, type=GCellType.SCIENTIFIC, formatted='3.21E-03')
-
-    assert len(values[5]) == 3
-    assert values[5][0] == GCell(value='Accounting', type=GCellType.STRING, formatted='Accounting')
-    assert values[5][1] == GCell(value=99.95, type=GCellType.NUMBER, formatted=' $ 99.95 ')
-    assert values[5][2] == GCell(value=-23.45, type=GCellType.NUMBER, formatted=' $ (23.45)')
-
-    assert len(values[6]) == 3
-    assert values[6][0] == GCell(value='Financial', type=GCellType.STRING, formatted='Financial')
-    assert values[6][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted='1.23')
-    assert values[6][2] == GCell(value=-1.23, type=GCellType.NUMBER, formatted='(1.23)')
-
-    assert len(values[7]) == 3
-    assert values[7][0] == GCell(value='Currency', type=GCellType.STRING, formatted='Currency')
-    assert values[7][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted='$99.95')
-    assert values[7][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted='-$1.99')
-
-    assert len(values[8]) == 3
-    assert values[8][0] == GCell(
-        value='Currency (rounded)', type=GCellType.STRING, formatted='Currency (rounded)')
-    assert values[8][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted='$100')
-    assert values[8][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted='-$2')
-
-    assert len(values[9]) == 2
-    assert values[9][0] == GCell(value='Date', type=GCellType.STRING, formatted='Date')
-    assert values[9][1] == GCell(value=17738, type=GCellType.DATE, formatted='24/07/1948')
-
-    assert len(values[10]) == 3
-    assert values[10][0] == GCell(value='Time', type=GCellType.STRING, formatted='Time')
-    assert values[10][1] == GCell(value=0.2661689814814815, type=GCellType.TIME, formatted='06:23:17')
-    assert values[10][2] == GCell(value=0.7378356481481482, type=GCellType.TIME, formatted='17:42:29')
-
-    assert len(values[11]) == 2
-    assert values[11][0] == GCell(value='Date time', type=GCellType.STRING, formatted='Date time')
-    assert values[11][1] == GCell(
-        value=34736.4303472222222222, type=GCellType.DATE_TIME, formatted='06/02/1995 10:19:42')
-
-    assert len(values[12]) == 2
-    assert values[12][0] == GCell(value='Duration', type=GCellType.STRING, formatted='Duration')
-    assert values[12][1] == GCell(value=1.000023148148148, type=GCellType.TIME, formatted='24:00:02')
-
-    assert len(values[13]) == 2
-    assert values[13][0] == GCell(value='Formula', type=GCellType.STRING, formatted='Formula')
-    assert values[13][1] == GCell(value=6.747908247937978, type=GCellType.SCIENTIFIC, formatted='6.75E+00')
-
-    assert len(values[14]) == 3
-    assert values[14][0] == GCell(value='Error', type=GCellType.STRING, formatted='Error')
-    assert values[14][1] == GCell(
-        value='#DIV/0! (Function DIVIDE parameter 2 cannot be zero.)',
-        type=GCellType.ERROR,
-        formatted='#DIV/0!')
-    assert values[14][2] == GCell(
-        value="#VALUE! (Function MULTIPLY parameter 2 expects number values. "
-              "But 'Currency' is a text and cannot be coerced to a number.)",
-        type=GCellType.ERROR,
-        formatted='#VALUE!')
-
-    assert len(values[15]) == 3
-    assert values[15][0] == GCell(value='Empty', type=GCellType.STRING, formatted='Empty')
-    assert values[15][1] == GCell(value=None, type=GCellType.EMPTY, formatted='')
-    assert values[15][2] == GCell(
-        value='<== keep B16 empty', type=GCellType.STRING, formatted='<== keep B16 empty')
-
-    assert len(values[16]) == 3
-    assert values[16][0] == GCell(value='Boolean', type=GCellType.STRING, formatted='Boolean')
-    assert values[16][1] == GCell(value=True, type=GCellType.BOOLEAN, formatted='TRUE')
-    assert values[16][2] == GCell(value=False, type=GCellType.BOOLEAN, formatted='FALSE')
-
-    assert len(values[17]) == 2
-    assert values[17][0] == GCell(value='Custom', type=GCellType.STRING, formatted='Custom')
-    assert values[17][1] == GCell(value=12345.6789, type=GCellType.NUMBER, formatted='12345 55/81')
