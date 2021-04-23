@@ -55,7 +55,7 @@ class GSheetsReader(Spreadsheet):
         self._cached_sheet_name = None
 
     def read(self, cell=None, sheet=None, as_datetime=True):
-        """Read values from the Google spreadsheet.
+        """Read values from the Google Sheets spreadsheet.
 
         Parameters
         ----------
@@ -89,9 +89,9 @@ class GSheetsReader(Spreadsheet):
         >>> sheets.read('B2')
         49.82
         >>> sheets.read('A:A')
-        ('temperature', 20.33, 20.23, 20.41, 20.29)
+        [('temperature',), (20.33,), (20.23,), (20.41,), (20.29,)]
         >>> sheets.read('A1:B1')
-        ('temperature', 'humidity')
+        [('temperature', 'humidity')]
         >>> sheets.read('A2:B4')
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
         """
@@ -114,6 +114,9 @@ class GSheetsReader(Spreadsheet):
 
         cells = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
+        if sheet not in cells:
+            raise ValueError('There is no sheet named {!r} in {!r}'.format(sheet, self._file))
+
         values = []
         for row in cells[sheet]:
             row_values = []
@@ -130,21 +133,10 @@ class GSheetsReader(Spreadsheet):
         if not cell:
             return values
 
-        split = cell.split(':')
-        r1, c1 = self.to_indices(split[0])
-        if len(split) == 1:
+        if ':' not in cell:
             if values:
                 return values[0][0]
             return
-
-        r2, c2 = self.to_indices(split[1])
-        if c1 == c2:
-            return tuple(row[0] for row in values)
-
-        if r1 is not None and r1 == r2:
-            if values:
-                return values[0]
-            return tuple()
 
         return values
 

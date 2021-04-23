@@ -9,14 +9,13 @@ import numpy as np
 
 from msl.io import read_table
 from msl.io.tables import (
-    _google_file_id_regex,
     read_table_gsheets,
     read_table_excel,
 )
 
 from test_google_api import (
-    skipif_no_gsheets_personal,
-    skipif_no_gdrive_personal,
+    skipif_no_gdrive_personal_readonly,
+    skipif_no_sheets_personal_readonly,
 )
 
 # the data in the Excel, CVS and TXT files that are tested contain the following
@@ -50,6 +49,9 @@ gsheet_data = np.asarray([
 ])
 
 
+INVALID_CELL_RANGES = ['', ':', 'A', 'A:', '1', 'ZZ', 'AB', 'A-B', 'A1D10', 'A1-D10']
+
+
 def get_url(extension):
     return os.path.join(os.path.dirname(__file__), 'samples', 'table' + extension)
 
@@ -64,10 +66,21 @@ def test_raises():
     with pytest.raises(ValueError, match='unpack'):
         read_table(get_url('.csv'), unpack=True)
 
-    # invalid range of cells for Excel
-    for c in ['A-B', 'A:B', ':', '', 'A2', 'A2:', 'A2:B']:
-        with pytest.raises(ValueError, match=r'You must specify a valid cell range'):
-            read_table(get_url('.xls'), cell=c)
+    # invalid cell range
+    for c in INVALID_CELL_RANGES:
+        with pytest.raises(ValueError, match=r'Invalid cell'):
+            read_table(get_url('.xls'), cells=c, sheet='A1')
+
+
+def test_excel_range_out_of_bounds():
+    for c in ['A100', 'J1:M10']:
+        dset = read_table(get_url('.xls'), cells=c, sheet='A1')
+        assert dset.metadata.header.size == 0
+        assert dset.size == 0
+
+    dset = read_table(get_url('.xls'), cells='A1:Z100', sheet='A1', as_datetime=False, dtype=data.dtype)
+    assert np.array_equal(dset.metadata.header, header)
+    assert np.array_equal(dset.data, data)
 
 
 def test_fetch_all_data():
@@ -75,12 +88,10 @@ def test_fetch_all_data():
         ('.csv', dict(dtype=data.dtype)),
         ('.txt', dict(dtype=data.dtype, delimiter='\t')),
         ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='BH11:BL21')),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='$BH$11:$BL$21')),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='bh11:bl21')),
+        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
         ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='BH11:BL21')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cell='AEX154041:AFB154051')),
+        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
+        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154051')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -94,11 +105,11 @@ def test_ignore_timestamp_column():
     params = [
         ('.csv', dict(usecols=(1, 2, 3, 4))),
         ('.txt', dict(usecols=(1, 2, 3, 4), delimiter='\t')),
-        ('.xls', dict(sheet='A1', cell='B1:E11')),
-        ('.xls', dict(sheet='BH11', cell='BI11:BL21')),
-        ('.xlsx', dict(sheet='A1', cell='B1:E11')),
-        ('.xlsx', dict(sheet='BH11', cell='BI11:BL21')),
-        ('.xlsx', dict(sheet='AEX154041', cell='AEY154041:AFB154051')),
+        ('.xls', dict(sheet='A1', cells='B1:E11')),
+        ('.xls', dict(sheet='BH11', cells='BI11:BL21')),
+        ('.xlsx', dict(sheet='A1', cells='B1:E11')),
+        ('.xlsx', dict(sheet='BH11', cells='BI11:BL21')),
+        ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AFB154051')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -111,11 +122,11 @@ def test_single_column():
     params = [
         ('.csv', dict(usecols=1)),
         ('.txt', dict(usecols=1, delimiter='\t')),
-        ('.xls', dict(sheet='A1', cell='B1:B11')),
-        ('.xls', dict(sheet='BH11', cell='BI11:BI21')),
-        ('.xlsx', dict(sheet='A1', cell='B1:B11')),
-        ('.xlsx', dict(sheet='BH11', cell='BI11:BI21')),
-        ('.xlsx', dict(sheet='AEX154041', cell='AEY154041:AEY154051')),
+        ('.xls', dict(sheet='A1', cells='B1:B11')),
+        ('.xls', dict(sheet='BH11', cells='BI11:BI21')),
+        ('.xlsx', dict(sheet='A1', cells='B1:B11')),
+        ('.xlsx', dict(sheet='BH11', cells='BI11:BI21')),
+        ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AEY154051')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -128,11 +139,11 @@ def test_single_row():
     params = [
         ('.csv', dict(dtype=data.dtype, max_rows=1)),
         ('.txt', dict(dtype=data.dtype, max_rows=1, delimiter='\t')),
-        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cell='A1:E2')),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='BH11:BL12')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cell='A1:E2')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cell='BH11:BL12')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cell='AEX154041:AFB154042')),
+        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
+        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
+        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
+        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
+        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154042')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -144,11 +155,11 @@ def test_header_only():
     params = [
         ('.csv', dict(dtype=str, max_rows=0)),
         ('.txt', dict(dtype=str, max_rows=0, delimiter='\t')),
-        ('.xls', dict(sheet='A1', as_datetime=False, cell='A1:E1')),
-        ('.xls', dict(sheet='BH11', as_datetime=False, cell='BH11:BL11')),
-        ('.xlsx', dict(sheet='A1', as_datetime=False, cell='A1:E1')),
-        ('.xlsx', dict(sheet='BH11', as_datetime=False, cell='BH11:BL11')),
-        ('.xlsx', dict(sheet='AEX154041', as_datetime=False, cell='AEX154041:AFB154041')),
+        ('.xls', dict(sheet='A1', cells='A1:E1')),
+        ('.xls', dict(sheet='BH11', cells='BH11:BL11')),
+        ('.xlsx', dict(sheet='A1', cells='A1:E1')),
+        ('.xlsx', dict(sheet='BH11', cells='BH11:BL11')),
+        ('.xlsx', dict(sheet='AEX154041', cells='AEX154041:AFB154041')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -170,10 +181,10 @@ def test_datetime_objects():
         ('.csv', dict(dtype=dt, converters={0: to_datetime})),
         ('.txt', dict(dtype=dt, converters={0: to_datetime}, delimiter='\t')),
         ('.xls', dict(dtype=dt, sheet='A1')),
-        ('.xls', dict(dtype=dt, sheet='BH11', cell='BH11:BL21')),
+        ('.xls', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
         ('.xlsx', dict(dtype=dt, sheet='A1')),
-        ('.xlsx', dict(dtype=dt, sheet='BH11', cell='BH11:BL21')),
-        ('.xlsx', dict(dtype=dt, sheet='AEX154041', cell='AEX154041:AFB154051')),
+        ('.xlsx', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
+        ('.xlsx', dict(dtype=dt, sheet='AEX154041', cells='AEX154041:AFB154051')),
     ]
     for extn, kwargs in params:
         dset = read_table(get_url(extn), **kwargs)
@@ -280,40 +291,20 @@ def test_excel_file_pointer():
     # so read_table_excel will not be called, also xlrd cannot load a file stream
 
 
-def test_google_file_id_regex():
-    assert _google_file_id_regex.search('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
-    assert _google_file_id_regex.search('1IemLij3ggB_S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4')
-
-    # does not start with 1
-    assert not _google_file_id_regex.search('IemLij3ggB_S5ASO7qyPSIQUmvhWgBfemePn7gu_Je41')
-
-    # not 44 characters
-    for n in [0, 10, 40, 42, 43, 45, 50, 100]:
-        assert not _google_file_id_regex.search('1' * n)
-
-    # contains an invalid character
-    for c in ' /\\~`!@#$%^&*()+=[{]}|;:\'",<.>?':
-        assert not _google_file_id_regex.search('1IemLij3ggB{}S5ASO7qyPSIQUmvhWgBfemePn7gu_Je4'.format(c))
-
-
-@skipif_no_gdrive_personal
-@skipif_no_gsheets_personal
+@skipif_no_gdrive_personal_readonly
+@skipif_no_sheets_personal_readonly
 def test_gsheet_file_path():
-    dset = read_table('table.gsheet', is_corporate_account=False, sheet='A1')
+    dset = read_table('table.gsheet', is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', is_corporate_account=False, sheet='A1')
-    assert np.array_equal(dset.metadata.header, gsheet_header)
-    assert np.array_equal(dset, gsheet_data)
-
-    dset = read_table_gsheets('table.gsheet', is_corporate_account=False, sheet='A1')
+    dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
 
-@skipif_no_gdrive_personal
-@skipif_no_gsheets_personal
+@skipif_no_gdrive_personal_readonly
+@skipif_no_sheets_personal_readonly
 def test_gsheet_file_pointer():
     filename = 'table.gsheet'
     with open(filename, mode='w'):
@@ -321,12 +312,12 @@ def test_gsheet_file_pointer():
 
     for m in ['rt', 'rb']:
         with open(filename, mode=m) as fp:
-            dset = read_table(fp, is_corporate_account=False, sheet='A1')
+            dset = read_table(fp, is_corporate_account=False, sheet='StartA1')
         assert np.array_equal(dset.metadata.header, gsheet_header)
         assert np.array_equal(dset, gsheet_data)
 
         with open(filename, mode=m) as fp:
-            dset = read_table_gsheets(fp, is_corporate_account=False, sheet='A1')
+            dset = read_table_gsheets(fp, is_corporate_account=False, sheet='StartA1')
         assert np.array_equal(dset.metadata.header, gsheet_header)
         assert np.array_equal(dset, gsheet_data)
 
@@ -338,38 +329,38 @@ def test_gsheet_file_pointer():
     # so read_table_gsheets will not be called, also GSheets cannot load a file stream
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_as_datetime():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
 
-    dset = read_table(table_id, is_corporate_account=False, sheet='A1', as_datetime=False)
+    dset = read_table(table_id, is_corporate_account=False, sheet='StartA1', as_datetime=False)
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset.data, gsheet_data.astype(str))
 
-    dset = read_table(table_id, is_corporate_account=False, sheet='A1', as_datetime=False, dtype=object)
+    dset = read_table(table_id, is_corporate_account=False, sheet='StartA1', as_datetime=False, dtype=object)
     data2 = gsheet_data.copy()
     data2[:, 0] = [str(item) for item in gsheet_data[:, 0]]
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, data2)
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_all_data():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
 
-    dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='A1')
+    dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table_gsheets(table_id, is_corporate_account=False, sheet='A1')
+    dset = read_table_gsheets(table_id, is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', category=np.VisibleDeprecationWarning)
-        dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='H22')
+        dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='StartH22')
         assert dset.metadata.header.size == 0
         assert dset.shape == (31,)
         for i in range(20):
@@ -382,12 +373,12 @@ def test_gsheets_all_data():
 
     # ID of MSL/msl-io-testing/Copy of table.gsheet
     file = '1NfDUZzHk71CPAfhIoE8l9h4NJ8oeqKfqGAUM81Vyc88.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='A1')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_one_row():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -396,7 +387,7 @@ def test_gsheets_one_row():
     assert np.array_equal(dset, gsheet_data[0])
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_one_column():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -405,7 +396,7 @@ def test_gsheets_one_column():
     assert np.array_equal(dset, gsheet_data[:, 1])
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_header_only():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -414,7 +405,7 @@ def test_gsheets_header_only():
     assert dset.size == 0
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_empty():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -423,35 +414,60 @@ def test_gsheets_empty():
     assert dset.size == 0
 
 
-@skipif_no_gsheets_personal
+@skipif_no_sheets_personal_readonly
 def test_gsheets_cell_range():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
 
-    dset = read_table(file, is_corporate_account=False, sheet='H22', cell='H22')
+    dset = read_table(file, is_corporate_account=False, sheet='StartH22', cells='H22')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='H22', cell='$h$22:$k$32')
+    dset = read_table(file, is_corporate_account=False, sheet='StartH22', cells='H22:K32')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='A1', cell='A1')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='A1', cell='A2')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A2')
     assert np.array_equal(dset.metadata.header, [str(item) for item in gsheet_data[0]])
     assert np.array_equal(dset, gsheet_data[1:])
 
-    dset = read_table(file, is_corporate_account=False, sheet='A1', cell='A4:C7')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A4:C7')
     assert np.array_equal(dset.metadata.header, ['2019-09-11 14:07:03', '19.4', 'True'])
     assert np.array_equal(dset, gsheet_data[3:6, :3])
 
-    dset = read_table(file, is_corporate_account=False, sheet='A1', cell='B1:B11')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='B1:B11')
     assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
     assert np.array_equal(dset, gsheet_data[:, 1])
 
-    dset = read_table(file, is_corporate_account=False, sheet='A1', cell='A$1:D$2')
+    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A1:D2')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data[0])
+
+
+@skipif_no_sheets_personal_readonly
+def test_gsheet_range_out_of_bounds():
+    for c in ['A100', 'J1:M10']:
+        dset = read_table('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet',
+                          cells=c, is_corporate_account=False, sheet='StartA1')
+        assert dset.metadata.header.size == 0
+        assert dset.size == 0
+
+    dset = read_table('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet',
+                      cells='A1:Z100', is_corporate_account=False, sheet='StartA1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset.data, gsheet_data)
+
+
+@skipif_no_sheets_personal_readonly
+def test_gsheet_raises():
+
+    ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
+
+    # invalid cell range
+    for c in INVALID_CELL_RANGES:
+        with pytest.raises(ValueError, match=r'Invalid cell'):
+            read_table(ssid, cells=c, sheet='StartA1')

@@ -89,14 +89,14 @@ class ExcelReader(Spreadsheet):
         >>> excel.read('B2')
         49.82
         >>> excel.read('A:A')
-        ('temperature', 20.33, 20.23, 20.41, 20.29)
+        [('temperature',), (20.33,), (20.23,), (20.41,), (20.29,)]
         >>> excel.read('A1:B1')
-        ('temperature', 'humidity')
+        [('temperature', 'humidity')]
         >>> excel.read('A2:B4')
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
         """
         if not sheet:
-            names = self._workbook.sheet_names()
+            names = self.sheet_names()
             if len(names) > 1:
                 raise ValueError('{!r} contains the following sheets:\n  {}\n'
                                  'You must specify the name of the sheet to read'
@@ -130,25 +130,11 @@ class ExcelReader(Spreadsheet):
             except IndexError:
                 return
 
+        if r1 >= sheet.nrows or c1 >= sheet.ncols:
+            return []
+
         r2, c2 = self.to_indices(split[1])
-        if r2 is None:
-            r2 = sheet.nrows - 1
-
-        if c1 == c2:
-            if c1 >= sheet.ncols:
-                return tuple()
-            return tuple(self._value(sheet, r, c1, as_datetime)
-                         for r in range(r1, min(sheet.nrows, r2+1)))
-
-        if r1 == r2:
-            if r1 >= sheet.nrows:
-                return tuple()
-            return tuple(self._value(sheet, r1, c, as_datetime)
-                         for c in range(c1, min(sheet.ncols, c2+1)))
-
-        r1 = min(r1, sheet.nrows-1)
-        r2 = min(r2+1, sheet.nrows)
-        c1 = min(c1, sheet.ncols-1)
+        r2 = sheet.nrows if r2 is None else min(r2+1, sheet.nrows)
         c2 = min(c2+1, sheet.ncols)
         return [tuple(self._value(sheet, r, c, as_datetime) for c in range(c1, c2))
                 for r in range(r1, r2)]
