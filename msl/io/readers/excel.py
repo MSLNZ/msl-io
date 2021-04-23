@@ -33,6 +33,8 @@ class ExcelReader(Spreadsheet):
         >>> from msl.io import ExcelReader  # doctest: +SKIP
         >>> excel = ExcelReader('lab_environment.xlsx')  # doctest: +SKIP
         """
+        super(ExcelReader, self).__init__(file)
+
         # change the default on_demand value
         if 'on_demand' not in kwargs:
             kwargs['on_demand'] = True
@@ -42,13 +44,7 @@ class ExcelReader(Spreadsheet):
         if encoding is not None:
             kwargs['encoding_override'] = encoding
 
-        self._file = file
         self._workbook = xlrd.open_workbook(file, **kwargs)
-
-    @property
-    def file(self):
-        """:class:`str`: The location of the Excel spreadsheet on a local hard drive or on a network."""
-        return self._file
 
     @property
     def workbook(self):
@@ -156,6 +152,16 @@ class ExcelReader(Spreadsheet):
         c2 = min(c2+1, sheet.ncols)
         return [tuple(self._value(sheet, r, c, as_datetime) for c in range(c1, c2))
                 for r in range(r1, r2)]
+
+    def sheet_names(self):
+        """Get the names of all sheets in the Excel spreadsheet.
+
+        Returns
+        -------
+        :class:`tuple` of :class:`str`
+            The names of all sheets.
+        """
+        return tuple(self._workbook.sheet_names())
 
     def _value(self, sheet, row, col, as_datetime):
         """Get the value of a cell."""

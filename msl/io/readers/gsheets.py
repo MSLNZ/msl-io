@@ -39,7 +39,7 @@ class GSheetsReader(Spreadsheet):
         >>> sheets = GSheetsReader('Google Drive/registers/equipment.gsheet')  # doctest: +SKIP
         >>> sheets = GSheetsReader('1TI3pM-534SZ5DQTEZ-7HCI04648f8ZpLGbfHWJu9FSo')  # doctest: +SKIP
         """
-        super(GSheetsReader, self).__init__()
+        super(GSheetsReader, self).__init__(file)
 
         if not kwargs.get('is_read_only', True):
             raise ValueError('Must instantiate {} in read-only mode'.format(self.__class__.__name__))
@@ -51,24 +51,8 @@ class GSheetsReader(Spreadsheet):
         else:
             self._spreadsheet_id = path
 
-        self._file = file
         self._gsheets = GSheets(**kwargs)
         self._cached_sheet_name = None
-
-    @property
-    def file(self):
-        """:class:`str`: The file ID or path of the spreadsheet."""
-        return self._file
-
-    def sheet_names(self):
-        """Get the names of all sheets in a spreadsheet.
-
-        Returns
-        -------
-        :class:`tuple` of :class:`str`
-            The names of all sheets.
-        """
-        return self._gsheets.sheet_names(self._spreadsheet_id)
 
     def read(self, cell=None, sheet=None, as_datetime=True):
         """Read values from the Google spreadsheet.
@@ -163,3 +147,13 @@ class GSheetsReader(Spreadsheet):
             return tuple()
 
         return values
+
+    def sheet_names(self):
+        """Get the names of all sheets in the Google Sheets spreadsheet.
+
+        Returns
+        -------
+        :class:`tuple` of :class:`str`
+            The names of all sheets.
+        """
+        return self._gsheets.sheet_names(self._spreadsheet_id)

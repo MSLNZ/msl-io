@@ -1,3 +1,6 @@
+"""
+Generic class for spreadsheets.
+"""
 import re
 import string
 
@@ -5,7 +8,55 @@ _cell_regex = re.compile(r'^([A-Z]+)(\d*)$')
 
 
 class Spreadsheet(object):
-    """Generic helper class for spreadsheets."""
+
+    def __init__(self, file):
+        """Generic class for spreadsheets.
+
+        Parameters
+        ----------
+        file : :class:`str`
+            The location of the spreadsheet on a local hard drive or on a network.
+        """
+        self._file = file
+
+    @property
+    def file(self):
+        """:class:`str`: The location of the spreadsheet on a local hard drive or on a network."""
+        return self._file
+
+    def read(self, cell=None, sheet=None, as_datetime=True):
+        """Read values from the spreadsheet.
+
+        Parameters
+        ----------
+        cell : :class:`str`, optional
+            The cell(s) to read. For example, ``C9`` will return a single value
+            and ``C9:G20`` will return all values in the specified range. If not
+            specified then returns all values in the specified `sheet`.
+        sheet : :class:`str`, optional
+            The name of the sheet to read the value(s) from. If there is only
+            one sheet in the spreadsheet then you do not need to specify the name
+            of the sheet.
+        as_datetime : :class:`bool`, optional
+            Whether dates should be returned as :class:`~datetime.datetime` or
+            :class:`~datetime.date` objects. If :data:`False` then dates are
+            returned as a string.
+
+        Returns
+        -------
+        The value(s) of the requested cell(s).
+        """
+        raise NotImplementedError
+
+    def sheet_names(self):
+        """Get the names of all sheets in the spreadsheet.
+
+        Returns
+        -------
+        :class:`tuple` of :class:`str`
+            The names of all sheets.
+        """
+        raise NotImplementedError
 
     @staticmethod
     def to_letters(index):
