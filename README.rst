@@ -6,7 +6,7 @@ MSL-IO
 **MSL-IO** follows the data model used by HDF5_ to read and write data files -- where there is a
 Root_, Group_\s and Dataset_\s and these objects each have Metadata_ associated with them.
 
-.. image:: https://raw.githubusercontent.com/MSLNZ/msl-io/master/docs/_static/hdf5_data_model.png
+.. image:: https://raw.githubusercontent.com/MSLNZ/msl-io/main/docs/_static/hdf5_data_model.png
 
 The tree structure is similar to the file-system structure used by operating systems. Group_\s
 are analogous to the directories (where Root_ is the root Group_) and Dataset_\s are analogous
@@ -38,7 +38,6 @@ Dependencies
 * google-auth-httplib2_
 * google-auth-oauthlib_
 
-
 Documentation
 -------------
 The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.io/en/latest/index.html>`_.
@@ -51,11 +50,11 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
 .. |pypi| image:: https://badge.fury.io/py/msl-io.svg
    :target: https://badge.fury.io/py/msl-io
 
-.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-io/master.svg?label=Travis-CI
+.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-io/main.svg?label=Travis-CI
    :target: https://travis-ci.org/MSLNZ/msl-io
 
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-io/master.svg?label=AppVeyor
-   :target: https://ci.appveyor.com/project/jborbely/msl-io/branch/master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-io/main.svg?label=AppVeyor
+   :target: https://ci.appveyor.com/project/jborbely/msl-io/branch/main
 
 .. _HDF5: https://www.hdfgroup.org/
 .. _Root: https://msl-io.readthedocs.io/en/latest/_api/msl.io.base_io.html#msl.io.base_io.Root
@@ -70,4 +69,3 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
 .. _google-api-python-client: https://pypi.org/project/google-api-python-client/
 .. _google-auth-httplib2: https://pypi.org/project/google-auth-httplib2/
 .. _google-auth-oauthlib: https://pypi.org/project/google-auth-oauthlib/
-

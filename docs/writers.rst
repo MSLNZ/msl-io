@@ -65,9 +65,9 @@ steps should be performed. Please follow the :ref:`style guide <style-guide>`.
 
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-io
-.. _tests/: https://github.com/MSLNZ/msl-io/blob/master/tests/
-.. _docs/_api: https://github.com/MSLNZ/msl-io/tree/master/docs/_api
-.. _docs/writers.rst: https://github.com/MSLNZ/msl-io/blob/master/docs/writers.rst
-.. _docs/api_docs.rst: https://github.com/MSLNZ/msl-io/blob/master/docs/api_docs.rst
-.. _msl/io/writers/: https://github.com/MSLNZ/msl-io/tree/master/msl/io/writers
+.. _tests/: https://github.com/MSLNZ/msl-io/blob/main/tests/
+.. _docs/_api: https://github.com/MSLNZ/msl-io/tree/main/docs/_api
+.. _docs/writers.rst: https://github.com/MSLNZ/msl-io/blob/main/docs/writers.rst
+.. _docs/api_docs.rst: https://github.com/MSLNZ/msl-io/blob/main/docs/api_docs.rst
+.. _msl/io/writers/: https://github.com/MSLNZ/msl-io/tree/main/msl/io/writers
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
