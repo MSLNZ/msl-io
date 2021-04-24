@@ -89,8 +89,8 @@ templates_path = ['_templates']
 # The suffix of source filenames.
 source_suffix = '.rst'
 
-# The main toctree document.
-main_doc = 'index'
+# The master toctree document.
+master_doc = 'index'
 
 # General information about the project.
 project = 'MSL-IO'
@@ -169,7 +169,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (main_doc, 'MSL-IO.tex', 'MSL-IO Documentation',
+    (master_doc, 'MSL-IO.tex', 'MSL-IO Documentation',
      'Measurement Standards Laboratory of New Zealand', 'manual'),
 ]
 
@@ -179,7 +179,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (main_doc, 'MSL-IO', 'MSL-IO Documentation',
+    (master_doc, 'MSL-IO', 'MSL-IO Documentation',
      [author], 1)
 ]
 
@@ -190,7 +190,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (main_doc, 'MSL-IO', 'MSL-IO Documentation',
+    (master_doc, 'MSL-IO', 'MSL-IO Documentation',
      author, 'MSL-IO', 'MSL-IO',
      'Miscellaneous'),
 ]
