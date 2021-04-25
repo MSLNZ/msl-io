@@ -92,6 +92,12 @@ def fetch_init(key):
 
 
 def get_version():
+    with open(os.path.expanduser('~/output.txt'), 'a') as fp:
+        import subprocess
+        v = subprocess.check_output([sys.executable, '-m', 'pip', '--version'])
+        fp.write('pip: {}\n'.format(v.rstrip()))
+        fp.write('get_version(): {}\n'.format(sys.argv))
+
     init_version = fetch_init('__version__')
     if 'dev' not in init_version:
         return init_version
@@ -202,6 +208,9 @@ setup(
 )
 
 if 'dev' in version and not version.endswith('editable'):
+    with open(os.path.expanduser('~/output.txt'), 'a') as fp:
+        fp.write('if statement: {}\n'.format(sys.argv))
+
     # ensure that the value of __version__ is correct if installing the package from an unreleased code base
     init_path = ''
     if sys.argv[0] == 'setup.py' and 'install' in sys.argv and not {'--help', '-h'}.intersection(sys.argv):
