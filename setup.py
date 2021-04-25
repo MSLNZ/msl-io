@@ -97,7 +97,7 @@ def get_version():
     if 'dev' not in init_version:
         return init_version
 
-    if 'develop' in sys.argv or not __file__.startswith(tempfile.gettempdir()):
+    if 'develop' in sys.argv or not __file__.startswith(os.path.realpath(tempfile.gettempdir())):
         # then installing in editable (develop) mode
         #   python setup.py develop
         #   pip install -e .
