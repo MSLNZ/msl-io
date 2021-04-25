@@ -97,6 +97,7 @@ def get_version():
         v = subprocess.check_output([sys.executable, '-m', 'pip', '--version'])
         fp.write('pip: {}\n'.format(v.rstrip()))
         fp.write('get_version(): {}\n'.format(sys.argv))
+        fp.write('get_version(): {}\n'.format(__file__))
 
     init_version = fetch_init('__version__')
     if 'dev' not in init_version:
@@ -210,6 +211,7 @@ setup(
 if 'dev' in version and not version.endswith('editable'):
     with open(os.path.expanduser('~/output.txt'), 'a') as fp:
         fp.write('if statement: {}\n'.format(sys.argv))
+        fp.write('if statement: {}\n'.format(__file__))
 
     # ensure that the value of __version__ is correct if installing the package from an unreleased code base
     init_path = ''
