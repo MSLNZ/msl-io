@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import tempfile
 import subprocess
 from setuptools import (
     setup,
@@ -98,12 +99,14 @@ def get_version():
         fp.write('pip: {}\n'.format(v.rstrip()))
         fp.write('get_version(): {}\n'.format(sys.argv))
         fp.write('get_version(): {}\n'.format(__file__))
+        fp.write('get_version(): {}\n'.format(sys.argv[0].startswith(tempfile.gettempdir())))
+        fp.write('get_version(): {}\n'.format(__file__.startswith(tempfile.gettempdir())))
 
     init_version = fetch_init('__version__')
     if 'dev' not in init_version:
         return init_version
 
-    if ('develop' in sys.argv) or (os.path.join('msl-io', 'setup.py') in sys.argv[0]):
+    if 'develop' in sys.argv or not __file__.startswith(tempfile.gettempdir()):
         # then installing in editable (develop) mode
         #   python setup.py develop
         #   pip install -e .
