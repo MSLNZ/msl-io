@@ -172,7 +172,7 @@ testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
+sphinx = docs_require + install_requires if needs_sphinx else []
 
 init_original = 'msl/io/__init__.py'
 init_backup = init_original + '.backup'
