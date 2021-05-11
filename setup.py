@@ -148,6 +148,9 @@ def get_version():
 install_requires = [
     'numpy',
     'xlrd<2.0',  # xlrd v2.0+ will not open .xlsx files anymore
+]
+
+google_requires = [
     'google-api-python-client',
     'google-auth-httplib2',
     'google-auth-oauthlib',
@@ -165,6 +168,8 @@ else:
     # 32-bit wheels for h5py are not available for Python 3.9+
     if sys.version_info[:2] < (3, 9):
         tests_require.append('h5py<3.0')
+
+tests_require.extend(google_requires)
 
 docs_require = ['sphinx', 'sphinx_rtd_theme']
 
@@ -211,6 +216,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'h5py': ['h5py'],
+        'google': google_requires,
         'tests': tests_require,
         'docs': docs_require,
     },

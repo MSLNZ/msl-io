@@ -3,23 +3,34 @@ Wrappers around the Google API's.
 """
 import os
 import json
-from enum import Enum
 from datetime import (
     datetime,
     timedelta,
 )
 from collections import namedtuple
+try:
+    # this is only an issue with Python 2.7 and if the
+    # Google-API packages were not installed with msl-io
+    from enum import Enum
+except ImportError:
+    Enum = object
 
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.auth.exceptions import RefreshError
-from google.oauth2.credentials import Credentials
-from googleapiclient.http import (
-    MediaFileUpload,
-    MediaIoBaseDownload,
-    DEFAULT_CHUNK_SIZE,
-)
+# having the Google-API packages are optional
+try:
+    from googleapiclient.discovery import build
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.transport.requests import Request
+    from google.auth.exceptions import RefreshError
+    from google.oauth2.credentials import Credentials
+    from googleapiclient.http import (
+        MediaFileUpload,
+        MediaIoBaseDownload,
+        DEFAULT_CHUNK_SIZE,
+    )
+    HAS_GOOGLE_API = True
+except ImportError:
+    DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024
+    HAS_GOOGLE_API = False
 
 from .constants import (
     HOME_DIR,
@@ -44,6 +55,12 @@ def _authenticate(token, client_secrets_file, scopes):
     :class:`google.oauth2.credentials.Credentials`
         The OAuth 2.0 credentials for the user.
     """
+    if not HAS_GOOGLE_API:
+        raise RuntimeError(
+            'You must install the Google-API packages, run\n'
+            '  pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib'
+        )
+
     credentials = None
 
     # load the token from an environment variable if it exists

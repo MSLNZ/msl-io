@@ -3,13 +3,13 @@
 Install MSL-IO
 ==============
 
-To install **MSL-IO** run:
+To install **MSL-IO** run
 
 .. code-block:: console
 
    pip install msl-io
 
-Alternatively, using the `MSL Package Manager`_ run:
+Alternatively, using the `MSL Package Manager`_ run
 
 .. code-block:: console
 
@@ -22,17 +22,28 @@ Dependencies
 * Python 2.7, 3.5+
 * numpy_
 * xlrd_
+
+Optional Dependencies
+---------------------
+The following packages are not automatically installed when **MSL-IO**
+is installed but may be required to read some data files.
+
+* h5py_
 * google-api-python-client_
 * google-auth-httplib2_
 * google-auth-oauthlib_
 
-Optional Dependencies
----------------------
-The following packages are not automatically installed when **MSL-IO** is installed but may be
-required to read some data files.
+To include h5py when installing **MSL-IO** run
 
-* h5py_ -- to include it automatically when installing **MSL-IO** run ``msl install io[h5py]``
+.. code-block:: console
 
+   msl install io[h5py]
+
+To include the Google-API packages when installing **MSL-IO** run
+
+.. code-block:: console
+
+   msl install io[google]
 
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _numpy: https://www.numpy.org/
