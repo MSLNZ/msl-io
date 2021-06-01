@@ -144,7 +144,7 @@ Arithmetic Operations
 Arithmetic operations are valid with a :class:`~msl.io.dataset.Dataset`, however,
 the returned object will be a :class:`numpy.ndarray` and therefore all
 :class:`~msl.io.metadata.Metadata` of the :class:`~msl.io.dataset.Dataset`\s
-that are involved in the operation are no longer included in the returned object.
+that are involved in the operation are not included in the returned object.
 
 For example, suppose you have two :class:`~msl.io.dataset.Dataset`\s that
 contain the following information
@@ -166,8 +166,7 @@ contain the following information
    <Metadata '/dset2' {'temperature': 21.7}>
 
 You can directly add the :class:`~msl.io.dataset.Dataset`\s, but the *temperature*
-values in :class:`~msl.io.metadata.Metadata` are no longer included in the
-returned object
+values in :class:`~msl.io.metadata.Metadata` are not included in the returned object
 
 .. code-block:: pycon
 
