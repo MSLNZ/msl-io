@@ -167,3 +167,109 @@ class Dataset(Vertex):
 
     def __iter__(self):
         return iter(self._data)
+
+    def __add__(self, rhs):
+        return self._data + rhs
+
+    def __radd__(self, lhs):
+        return lhs + self._data
+
+    def __sub__(self, rhs):
+        return self._data - rhs
+
+    def __rsub__(self, lhs):
+        return lhs - self._data
+
+    def __mul__(self, rhs):
+        return self._data * rhs
+
+    def __rmul__(self, lhs):
+        return lhs * self._data
+
+    def __matmul__(self, rhs):
+        # TODO could use the @ operator when dropping support for Python 2
+        return np.matmul(self._data, rhs)
+
+    def __rmatmul__(self, lhs):
+        # TODO could use the @ operator when dropping support for Python 2
+        return np.matmul(lhs, self._data)
+
+    def __truediv__(self, rhs):
+        return self._data / rhs
+
+    def __rtruediv__(self, lhs):
+        return lhs / self._data
+
+    def __div__(self, rhs):
+        # TODO could remove this method when dropping support for Python 2
+        return self._data / rhs
+
+    def __rdiv__(self, lhs):
+        # TODO could remove this method when dropping support for Python 2
+        return lhs / self._data
+
+    def __floordiv__(self, rhs):
+        return self._data // rhs
+
+    def __rfloordiv__(self, lhs):
+        return lhs // self._data
+
+    def __mod__(self, rhs):
+        return self._data % rhs
+
+    def __rmod__(self, lhs):
+        return lhs % self._data
+
+    def __divmod__(self, rhs):
+        return np.divmod(self._data, rhs)
+
+    def __rdivmod__(self, lhs):
+        return np.divmod(lhs, self._data)
+
+    def __pow__(self, rhs):
+        return self._data ** rhs
+
+    def __rpow__(self, lhs):
+        return lhs ** self._data
+
+    def __lshift__(self, rhs):
+        return self._data << rhs
+
+    def __rlshift__(self, lhs):
+        return lhs << self._data
+
+    def __rshift__(self, rhs):
+        return self._data >> rhs
+
+    def __rrshift__(self, lhs):
+        return lhs >> self._data
+
+    def __and__(self, rhs):
+        return self._data & rhs
+
+    def __rand__(self, lhs):
+        return lhs & self._data
+
+    def __xor__(self, rhs):
+        return self._data ^ rhs
+
+    def __rxor__(self, lhs):
+        return lhs ^ self._data
+
+    def __or__(self, rhs):
+        return self._data | rhs
+
+    def __ror__(self, lhs):
+        return lhs | self._data
+
+    def __neg__(self):
+        return -self._data
+
+    def __pos__(self):
+        return self._data
+
+    def __abs__(self):
+        return abs(self._data)
+
+    def __invert__(self):
+        return ~self._data

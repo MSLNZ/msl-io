@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 import numpy as np
 
@@ -209,3 +211,390 @@ def test_scalar():
     assert dset.shape == ()
     assert dset.size == 1
     assert dset.data == 5.0
+
+
+def test_add():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    for rhs in ([4, 5, 6], d2):
+        result = d1 + rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([5., 7., 9.]))
+
+    for lhs in ([4, 5, 6], d2):
+        result = lhs + d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([5., 7., 9.]))
+
+
+def test_sub():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    for rhs in ([4, 5, 6], d2):
+        result = d1 - rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([-3., -3., -3.]))
+
+    for lhs in ([4, 5, 6], d2):
+        result = lhs - d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([3., 3., 3.]))
+
+
+def test_mul():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    for rhs in ([4, 5, 6], d2):
+        result = d1 * rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([4., 10., 18.]))
+
+    for lhs in ([4, 5, 6], d2):
+        result = lhs * d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([4., 10., 18.]))
+
+
+def test_truediv():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 1])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 4, 10])
+
+    for rhs in ([4., 4., 10.], d2):
+        result = d1 / rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0.25, 0.5, 0.1]))
+
+    for lhs in ([4., 4., 10.], d2):
+        result = lhs / d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([4., 2., 10.]))
+
+
+def test_floordiv():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1e3, 1e4, 1e5])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[1e2, 1e3, 1e4])
+
+    for rhs in ([1e2, 1e3, 1e4], d2):
+        result = d1 // rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([10., 10., 10.]))
+
+    for lhs in ([1e2, 1e3, 1e4], d2):
+        result = lhs // d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0., 0., 0.]))
+
+
+def test_pow():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    result = d1 ** 3
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([1., 8., 27.]))
+
+    result = pow(d1, 3)
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([1., 8., 27.]))
+
+    result = 3 ** d1
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([3., 9., 27.]))
+
+    result = pow(3, d1)
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([3., 9., 27.]))
+
+    for rhs in ([4., 5., 6.], d2):
+        result = d1 ** rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([1., 32., 729.]))
+
+        result = pow(d1, rhs)
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([1., 32., 729.]))
+
+    for lhs in ([4., 5., 6.], d2):
+        result = lhs ** d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([4., 25., 216.]))
+
+        result = pow(lhs, d1)
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([4., 25., 216.]))
+
+
+@pytest.mark.skipif(sys.version_info[:2] < (3, 5), reason='the @ operator requires Python 3.5+')
+def test_matmul():
+    import dataset_matmul
+    dataset_matmul.run()
+
+
+def test_mod():
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=list(range(7)))
+
+    result = d % 5
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([0, 1, 2, 3, 4, 0, 1]))
+
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[4, 7])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[2, 3])
+
+    for rhs in ([2, 3], d2):
+        result = d1 % rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0, 1]))
+
+    for lhs in ([2, 3], d2):
+        result = lhs % d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([2, 3]))
+
+
+def test_divmod():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[3, 7, 12, 52, 62])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(1, 6))
+
+    for rhs in ([1, 2, 3, 4, 5], d2):
+        div, mod = divmod(d1, rhs)
+        assert isinstance(div, np.ndarray)
+        assert np.array_equal(div, np.array([3,  3,  4, 13, 12]))
+        assert isinstance(mod, np.ndarray)
+        assert np.array_equal(mod, np.array([0, 1, 0, 0, 2]))
+
+    for lhs in ([1, 2, 3, 4, 5], d2):
+        div, mod = divmod(lhs, d1)
+        assert isinstance(div, np.ndarray)
+        assert np.array_equal(div, np.array([0, 0, 0, 0, 0]))
+        assert isinstance(mod, np.ndarray)
+        assert np.array_equal(mod, np.array([1, 2, 3, 4, 5]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.arange(5))
+    div, mod = divmod(d, 3)
+    assert isinstance(div, np.ndarray)
+    assert np.array_equal(div, np.array([0, 0, 0, 1, 1]))
+    assert isinstance(mod, np.ndarray)
+    assert np.array_equal(mod, np.array([0, 1, 2, 0, 1]))
+
+
+def test_lshift():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.array([1, 2, 3, 4, 5]))
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.array([3, 7, 11, 15, 19]))
+
+    result = d1 << 1
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([2, 4, 6, 8, 10]))
+
+    result = 1 << d1
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([2, 4, 8, 16, 32]))
+
+    for rhs in ([3, 7, 11, 15, 19], d2):
+        result = d1 << rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([8, 256, 6144, 131072, 2621440]))
+
+    for lhs in ([3, 7, 11, 15, 19], d2):
+        result = lhs << d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([6, 28, 88, 240, 608]))
+
+
+def test_rshift():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.array([1, 2, 3, 4, 5]))
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.array([3, 7, 12, 52, 62]))
+
+    result = d1 >> 10
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([0, 0, 0, 0, 0]))
+
+    result = 10 >> d1
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([5, 2, 1, 0, 0]))
+
+    for rhs in ([3, 7, 12, 52, 62], d2):
+        result = d1 >> rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0, 0, 0, 0, 0]))
+
+    for lhs in ([3, 7, 12, 52, 62], d2):
+        result = lhs >> d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([1, 1, 1, 3, 1]))
+
+
+def test_and():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+
+    for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = d1 & rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0, 1, 0, 1, 4, 5, 0, 1, 0]))
+
+    for lhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = lhs & d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([0, 1, 0, 1, 4, 5, 0, 1, 0]))
+
+
+def test_xor():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+
+    for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = d1 ^ rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([10, 10, 14, 14, 10, 10, 22, 22, 26]))
+
+    for lhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = lhs ^ d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([10, 10, 14, 14, 10, 10, 22, 22, 26]))
+
+
+def test_or():
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+
+    for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = d1 | rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([10, 11, 14, 15, 14, 15, 22, 23, 26]))
+
+    for lhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
+        result = lhs | d1
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([10, 11, 14, 15, 14, 15, 22, 23, 26]))
+
+
+def test_neg():
+    # unary "-"
+
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    for rhs in [[4, 5, 6], d2]:
+        result = -d1 + rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([3, 3, 3]))
+
+
+def test_pos():
+    # unary "+"
+
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+
+    for rhs in [[4, 5, 6], d2]:
+        result = +d1 - rhs
+        assert isinstance(result, np.ndarray)
+        assert np.array_equal(result, np.array([-3, -3, -3]))
+
+
+def test_abs():
+    # unary "abs()"
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=[1, -2, 3, -4])
+
+    result = abs(d)
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([1, 2, 3, 4]))
+
+
+def test_invert():
+    # unary "~"
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, -2, 3, -4]))
+
+    result = ~d
+    assert isinstance(result, np.ndarray)
+    assert np.array_equal(result, np.array([-2, 1, -4, 3]))
+
+
+def test_assignments():
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d += 1
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([2, 3, 4]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d -= 1
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([0, 1, 2]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d *= 10
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([10, 20, 30]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d /= 10
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([1, 2, 3]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d //= 5
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([2, 4, 6]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d %= 15
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([10, 5, 0]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d **= 3
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([1, 8, 27]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d <<= 3
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([8, 16, 24]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d >>= 2
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([2, 5, 7]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d &= 2
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([0, 2, 2]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d ^= 2
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([3, 0, 1]))
+
+    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d |= 2
+    assert isinstance(d, np.ndarray)
+    assert np.array_equal(d, np.array([3, 2, 3]))
+
+
+def test_numpy_function():
+    # np.xxx() is also valid syntax with a Dataset
+
+    array = np.array([1, 2, 3])
+    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+
+    cos = np.cos(d1)
+    assert isinstance(cos, np.ndarray)
+    assert np.array_equal(cos, np.cos(array))
+
+    sqrt = np.sqrt(d1)
+    assert isinstance(sqrt, np.ndarray)
+    assert np.array_equal(sqrt, np.sqrt(array))
+
+    abs_ = np.abs(d1)
+    assert isinstance(abs_, np.ndarray)
+    assert np.array_equal(abs_, np.abs(array))
+
+    max_ = np.max(d1)
+    assert isinstance(max_, float)
+    assert np.array_equal(max_, np.max(array))
