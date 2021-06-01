@@ -1,7 +1,7 @@
 MSL-IO
 ======
 
-|docs| |pypi| |travis| |appveyor|
+|docs| |github tests|
 
 **MSL-IO** follows the data model used by HDF5_ to read and write data files -- where there is a
 Root_, Group_\s and Dataset_\s and these objects each have Metadata_ associated with them.
@@ -21,7 +21,7 @@ To install **MSL-IO** run:
 
 .. code-block:: console
 
-   pip install msl-io
+   pip install https://github.com/MSLNZ/msl-io/archive/main.zip
 
 Alternatively, using the `MSL Package Manager`_ run:
 
@@ -34,9 +34,6 @@ Dependencies
 * Python 2.7, 3.5+
 * numpy_
 * xlrd_
-* google-api-python-client_
-* google-auth-httplib2_
-* google-auth-oauthlib_
 
 Documentation
 -------------
@@ -47,14 +44,8 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
    :alt: Documentation Status
    :scale: 100%
 
-.. |pypi| image:: https://badge.fury.io/py/msl-io.svg
-   :target: https://badge.fury.io/py/msl-io
-
-.. |travis| image:: https://img.shields.io/travis/MSLNZ/msl-io/main.svg?label=Travis-CI
-   :target: https://travis-ci.org/MSLNZ/msl-io
-
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/jborbely/msl-io/main.svg?label=AppVeyor
-   :target: https://ci.appveyor.com/project/jborbely/msl-io/branch/main
+.. |github tests| image:: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml/badge.svg
+   :target: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml
 
 .. _HDF5: https://www.hdfgroup.org/
 .. _Root: https://msl-io.readthedocs.io/en/latest/_api/msl.io.base_io.html#msl.io.base_io.Root
@@ -66,6 +57,3 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _numpy: https://www.numpy.org/
 .. _xlrd: https://xlrd.readthedocs.io/en/latest/
-.. _google-api-python-client: https://pypi.org/project/google-api-python-client/
-.. _google-auth-httplib2: https://pypi.org/project/google-auth-httplib2/
-.. _google-auth-oauthlib: https://pypi.org/project/google-auth-oauthlib/
