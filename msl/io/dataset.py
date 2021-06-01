@@ -149,9 +149,13 @@ class Dataset(Vertex):
 
     def __getattr__(self, item):
         try:
-            return self._data[item]
-        except (IndexError, ValueError):
             return getattr(self._data, item)
+        except AttributeError as err:
+            try:
+                return self._data[item]
+            except (IndexError, ValueError):
+                pass
+            raise err
 
     def __len__(self):
         # if the ndarray is a scalar then the following exception is raised
