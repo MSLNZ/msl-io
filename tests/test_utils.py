@@ -187,6 +187,10 @@ def test_copy():
                         return False
                 elif abs(src_value - dst_value) > 1e-4:
                     return False
+            elif attr == 'st_dev' and sys.platform == 'win32' and os.getenv('GITHUB_ACTIONS'):
+                # the ST_DEV values are not equal if the tests are run
+                # via GitHub Actions and the OS is Windows
+                pass
             elif src_value != dst_value:
                 return False
         return True
