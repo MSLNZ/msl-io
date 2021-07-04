@@ -381,13 +381,18 @@ def git_revision(git_dir, short=False):
 
     Returns
     -------
-    :class:`str`
+    :class:`str` or :data:`None`
         The SHA-1 hash value of the currently checked-out commit.
+        If `git_dir` is not a directory that is under version then
+        returns :data:`None`.
     """
     cmd = ['git', 'rev-parse', 'HEAD']
     if short:
         cmd.insert(2, '--short')
-    sha1 = subprocess.check_output(cmd, cwd=git_dir)
+    try:
+        sha1 = subprocess.check_output(cmd, cwd=git_dir, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        return None
     return sha1.strip().decode('ascii')
 
 

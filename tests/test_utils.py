@@ -82,6 +82,9 @@ def test_git_commit():
     assert git_revision(os.path.dirname(__file__)) == sha1
     assert git_revision(os.path.join(root_dir, 'docs', '_api')) == sha1
 
+    # a directory not under version control
+    assert git_revision(tempfile.gettempdir()) is None
+
 
 def test_checksum():
     path = os.path.join(os.path.dirname(__file__), 'samples', 'hdf5_sample.h5')
