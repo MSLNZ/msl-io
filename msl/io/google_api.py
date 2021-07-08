@@ -80,7 +80,7 @@ def _authenticate(token, client_secrets_file, scopes):
             try:
                 credentials.refresh(Request())
             except RefreshError as err:
-                if os.path.isfile(token):
+                if os.path.isfile(token) and not os.getenv('MSL_IO_RUNNING_TESTS'):
                     message = '{}: {}\nDo you want to delete the token file and re-authenticate ' \
                               '(y/[n])? '.format(err.__class__.__name__, err.args[0])
                     if IS_PYTHON2:
