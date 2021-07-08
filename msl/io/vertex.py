@@ -33,7 +33,7 @@ class Vertex(Dictionary):
 
         if parent is not None:
             if '/' in name:
-                raise ValueError('The vertex name cannot cannot contain the "/" character')
+                raise ValueError('The vertex name cannot contain the "/" character')
 
             # use a path name similar to a UNIX file system
             if parent.name.endswith('/'):
