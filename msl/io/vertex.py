@@ -28,15 +28,12 @@ class Vertex(Dictionary):
         """
         super(Vertex, self).__init__(is_read_only)
 
-        if name is None:
-            raise ValueError('The vertex name cannot be None')
+        if not name:
+            raise ValueError('The vertex name must be a non-empty string')
 
         if parent is not None:
-            # the name cannot contain '/' or '.' since these are special characters
-            name = name.replace('/', '').replace('.', '')
-
-            if not name:
-                raise ValueError('The vertex name must be a non-empty string')
+            if '/' in name:
+                raise ValueError('The vertex name cannot cannot contain the "/" character')
 
             # use a path name similar to a UNIX file system
             if parent.name.endswith('/'):

@@ -7,7 +7,7 @@ from msl.io.vertex import Vertex
 def test_instantiation():
     root = Root('')
 
-    v = Vertex(name='this is ok', is_read_only=True, parent=root)
+    v = Vertex(name='this is ok', parent=root, is_read_only=True)
     assert v.is_read_only
 
     # must specify a name
@@ -15,30 +15,15 @@ def test_instantiation():
         Vertex(parent=root, is_read_only=True)
 
     # the name must be a non-empty string
-    with pytest.raises(ValueError):
-        Vertex(name='', parent=root, is_read_only=True)
+    for n in [None, '']:
+        with pytest.raises(ValueError, match=r'non-empty string'):
+            Vertex(name=n, parent=root, is_read_only=True)
 
-    # the name cannot be the root name
-    with pytest.raises(ValueError):
-        Vertex(name='/', parent=root, is_read_only=True)
-
-    # '.' character is removed -> equivalent to name=''
-    with pytest.raises(ValueError):
-        Vertex(name='.', parent=root, is_read_only=True)
-
-    # name cannot be None
-    with pytest.raises(ValueError):
-        Vertex(name=None, parent=root, is_read_only=True)
-
-    # '/' and '.' characters are removed
-    v = Vertex(name='//hello/wor.ld', is_read_only=False, parent=root)
-    assert v.name == '/helloworld'
-    assert not v.is_read_only
-
-    v = Vertex(name='/h/e/llo.universe', parent=root, is_read_only=True)
-    assert v.name == '/hellouniverse'
-    assert v.is_read_only
+    # the name cannot contain a '/'
+    for n in ['/', '/a', 'a/b']:
+        with pytest.raises(ValueError, match=r'cannot contain the "/" character'):
+            Vertex(name=n, parent=root, is_read_only=True)
 
     # check that the name is forced to be unique
-    with pytest.raises(ValueError):
-        Vertex(name='this is ok', is_read_only=True, parent=root)
+    with pytest.raises(ValueError, match=r'is not unique'):
+        Vertex(name='this is ok', parent=root, is_read_only=True)
