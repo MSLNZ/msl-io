@@ -67,8 +67,12 @@ def read(file, **kwargs):
         If the file does not exist or if no :class:`~msl.io.base_io.Reader` exists
         to be able to read the specified file.
     """
-    if not hasattr(file, 'read') and not os.path.isfile(file):
-        raise IOError('File does not exist {!r}'.format(file))
+    if not hasattr(file, 'read'):
+        # Make sure that the file exist so that each Reader does not need to.
+        # Do not use os.path.isfile(file) since this function can
+        # return False for a file on a mapped network drive
+        with open(file, mode='r'):
+            pass
 
     for rdr in _readers:
         try:
