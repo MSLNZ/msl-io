@@ -160,13 +160,11 @@ def test_requires_failures():
     root.create_dataset_logging('logging')
 
     assert np.array_equal(root.logging.dtype.names, ['asctime', 'levelname', 'name', 'message'])
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r"does not equal \('lineno', 'filename'\)"):
         root.require_dataset_logging('logging', attributes=['lineno', 'filename'])
-    assert str(err.value).endswith("does not equal ('lineno', 'filename')")
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'not used for logging'):
         root.require_dataset_logging('regular')
-    assert str(err.value).endswith('not used for logging')
 
     root.logging.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers
@@ -527,25 +525,20 @@ def test_initial_index_value():
 def test_invalid_shape_or_size():
     root = JSONWriter()
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'Invalid shape'):
         root.create_dataset_logging('log', shape=())
-    assert str(err.value).startswith('Invalid shape')
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'Invalid shape'):
         root.create_dataset_logging('log', shape=[])
-    assert str(err.value).startswith('Invalid shape')
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'Invalid shape'):
         root.create_dataset_logging('log', shape=(10, 5))
-    assert str(err.value).startswith('Invalid shape')
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'Invalid shape'):
         root.create_dataset_logging('log', shape=(-1,))
-    assert str(err.value).startswith('Invalid shape')
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'Invalid shape'):
         root.create_dataset_logging('log', size=-1)
-    assert str(err.value).startswith('Invalid shape')
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
@@ -557,9 +550,8 @@ def test_set_logger():
     root.create_dataset_logging('log')
 
     for obj in [None, 'no', JSONWriter, logging.INFO, logging.Formatter, logging.Handler]:
-        with pytest.raises(TypeError) as err:
+        with pytest.raises(TypeError, match=r'Must be a logging.Logger object'):
             root.log.set_logger(obj)
-        assert str(err.value) == 'Must be a logging.Logger object'
 
     root.log.set_logger(logger)
     root.log.remove_handler()
