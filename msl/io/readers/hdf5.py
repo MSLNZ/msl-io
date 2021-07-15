@@ -60,7 +60,13 @@ class HDF5Reader(Reader):
             else:
                 assert False, 'Unhandled HDF5Reader object {}'.format(obj)
 
-        h5 = h5py.File(self.file, mode='r', **kwargs)
-        self.add_metadata(**h5.attrs)
-        h5.visititems(convert)
-        h5.close()
+        def h5_open(name):
+            with h5py.File(name, mode='r', **kwargs) as h5:
+                self.add_metadata(**h5.attrs)
+                h5.visititems(convert)
+
+        if hasattr(self.file, 'read'):
+            h5_open(self.file)
+        else:
+            with open(self.file, mode='rb') as fp:
+                h5_open(fp)
