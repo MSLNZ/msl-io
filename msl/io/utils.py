@@ -72,8 +72,8 @@ def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
     try:
         with open(file, 'rb') as f:
             read(f)
-    except (IOError, TypeError):
-        if not hasattr(file, 'read'):
+    except TypeError:
+        if not hasattr(file, 'tell'):
             raise
         position = file.tell()
         read(file)
