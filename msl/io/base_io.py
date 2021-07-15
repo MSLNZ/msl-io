@@ -349,7 +349,7 @@ class Reader(Root):
         :class:`bytes`
             The bytes from the file.
         """
-        is_file_like = hasattr(file, 'read')
+        is_file_like = hasattr(file, 'tell')
         if is_file_like:
             position = file.tell()
             file.seek(0, os.SEEK_END)
@@ -357,6 +357,10 @@ class Reader(Root):
             file.seek(position)
         else:
             size = os.path.getsize(file)
+            if size == 0:  # a file on a mapped network drive could return 0
+                with open(file) as fp:
+                    fp.seek(0, os.SEEK_END)
+                    size = fp.tell()
 
         if not args:
             start, stop, step = 0, size, 1
