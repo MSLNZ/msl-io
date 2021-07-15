@@ -2,7 +2,6 @@
 Read and write data files.
 """
 import re
-import os
 from collections import namedtuple
 
 from .utils import *
