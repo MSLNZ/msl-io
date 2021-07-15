@@ -16,27 +16,23 @@ from msl.io.readers import JSONReader
 from helper import read_sample
 
 
-def test_raises_ioerror():
+def test_raises():
 
     # file does not exist
-    with pytest.raises(IOError) as e:
+    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
         read('does_not.exist')
-    assert 'File does not exist' in str(e.value)
 
     # no Reader class exists to read this test_read.py file
-    with pytest.raises(IOError) as e:
+    with pytest.raises(OSError, match=r'No Reader exists'):
         read(__file__)
-    assert 'No Reader exists' in str(e.value)
 
 
 def test_unicode_filename():
-    with pytest.raises(IOError) as e:
+    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
         read_sample(u'Filé döes ñot éxist')
-    assert 'File does not exist' in str(e.value)
 
-    with pytest.raises(IOError) as e:
+    with pytest.raises(OSError, match=r'No Reader exists'):
         read_sample(u'uñicödé')
-    assert 'No Reader exists' in str(e.value)
 
     if h5py is not None:
         root = read_sample(u'uñicödé.h5')

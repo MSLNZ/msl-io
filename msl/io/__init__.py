@@ -63,9 +63,9 @@ def read(file, **kwargs):
 
     Raises
     ------
-    IOError
-        If the file does not exist or if no :class:`~msl.io.base_io.Reader` exists
-        to be able to read the specified file.
+    OSError
+        If no :class:`~msl.io.base_io.Reader` exists to be able to read
+        the specified file.
     """
     if not hasattr(file, 'read'):
         # Make sure that the file exist so that each Reader does not need to.
@@ -86,7 +86,7 @@ def read(file, **kwargs):
             root.is_read_only = True
             return root
 
-    raise IOError('No Reader exists to read {!r}'.format(file))
+    raise OSError('No Reader exists to read {!r}'.format(file))
 
 
 def read_table(file, **kwargs):

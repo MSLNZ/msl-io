@@ -215,9 +215,8 @@ def test_url_and_root():
     file = tempfile.gettempdir() + '/msl-json-writer-temp.json'
     with open(file, 'wt') as fp:
         fp.write('Hi')
-    with pytest.raises(IOError) as e:
+    with pytest.raises(OSError, match=r'exists'):
         writer.write(file=file, root=root)
-    assert 'exists' in str(e.value)
 
     # by specifying the mode one can overwrite a file
     writer.write(file=file, root=root, mode='w')

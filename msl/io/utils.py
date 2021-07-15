@@ -14,8 +14,8 @@ from email.mime.text import MIMEText
 try:
     PermissionError
 except NameError:
-    PermissionError = IOError  # for Python 2.7
-    FileExistsError = IOError
+    PermissionError = OSError  # for Python 2.7
+    FileExistsError = OSError
 
 logger = logging.getLogger(__package__)
 

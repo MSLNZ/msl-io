@@ -144,8 +144,10 @@ class JSONWriter(Writer):
         if not open_kwargs['mode']:
             open_kwargs['mode'] = 'w'
             if not is_file_like and os.path.isfile(file):
-                raise IOError("A {!r} file already exists.\n"
-                              "Specify mode='w' if you want to overwrite it.".format(file))
+                raise OSError(
+                    "A {!r} file already exists.\n"
+                    "Specify mode='w' if you want to overwrite it.".format(file)
+                )
 
         if 'indent' not in kwargs:
             kwargs['indent'] = 2

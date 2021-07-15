@@ -123,9 +123,9 @@ def test_checksum():
         assert isinstance(value, str)
 
     # file does not exist
-    with pytest.raises(IOError, match='does_not_exist.txt'):
+    with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
         checksum('/the/file/does_not_exist.txt')
-    with pytest.raises(IOError, match='does_not_exist.txt'):
+    with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
         checksum(b'/the/file/does_not_exist.txt')
 
     # invalid type
@@ -204,11 +204,11 @@ def test_copy():
 
     # source file does not exist
     for item in [r'/the/file/does_not_exist.txt', r'/the/file/does_not_exist', r'does_not_exist']:
-        with pytest.raises(IOError, match=item):
+        with pytest.raises((IOError, OSError), match=item):
             copy(item, '')
 
     # destination invalid
-    with pytest.raises(IOError, match=r"''"):
+    with pytest.raises((IOError, OSError), match=r"''"):
         copy(__file__, '')
 
     # copy (with metadata) to a directory that already exists
@@ -218,9 +218,9 @@ def test_copy():
     assert checksum(__file__) == checksum(dst)
 
     # destination already exists
-    with pytest.raises(IOError, match=r'Will not overwrite'):
+    with pytest.raises(OSError, match=r'Will not overwrite'):
         copy(__file__, dst)
-    with pytest.raises(IOError, match=r'Will not overwrite'):
+    with pytest.raises(OSError, match=r'Will not overwrite'):
         copy(__file__, tempfile.gettempdir())
 
     # can overwrite (with metadata), specify full path
@@ -303,7 +303,7 @@ def test_remove_write_permissions():
 
     # cannot open the file to modify it
     for mode in ['wb', 'ab', 'wt', 'at', 'w+', 'w+b']:
-        with pytest.raises(IOError):
+        with pytest.raises((IOError, OSError)):
             open(path, mode)
 
     # cannot delete the file (only valid on Windows)

@@ -65,7 +65,7 @@ def get_url(extension):
 def test_raises():
 
     # file does not exist
-    with pytest.raises(IOError):
+    with pytest.raises((IOError, OSError)):
         read_table('does not exist')
 
     # the unpack argument is not supported for text-based files
