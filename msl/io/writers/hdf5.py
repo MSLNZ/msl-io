@@ -53,7 +53,10 @@ class HDF5Writer(Writer):
             All key-value pairs are passed to :class:`~h5py.File`.
         """
         if h5py is None:
-            raise ImportError('You must install h5py to write HDF5 files.\nRun: pip install h5py')
+            raise ImportError(
+                'You must install h5py to write HDF5 files, run\n'
+                '  pip install h5py'
+            )
 
         if file is None:
             file = self.file

@@ -45,7 +45,10 @@ class HDF5Reader(Reader):
             All key-value pairs are passed to :class:`~h5py.File`.
         """
         if h5py is None:
-            raise ImportError('You must install h5py to read HDF5 files.\nRun: pip install h5py')
+            raise ImportError(
+                'You must install h5py to read HDF5 files, run\n'
+                '  pip install h5py'
+            )
 
         def convert(name, obj):
             head, tail = os.path.split(name)
