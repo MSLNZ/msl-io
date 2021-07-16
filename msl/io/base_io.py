@@ -271,7 +271,7 @@ class Reader(Root):
         if (len(args) > 1) and (args[0] is not None) and (args[0] > 0):
             args = (args[0] - 1,) + args[1:]
 
-        is_file_like = hasattr(file, 'read')
+        is_file_like = hasattr(file, 'tell')
 
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
