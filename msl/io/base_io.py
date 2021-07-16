@@ -356,9 +356,19 @@ class Reader(Root):
             size = file.tell()
             file.seek(position)
         else:
-            size = os.path.getsize(file)
-            if size == 0:  # a file on a mapped network drive could return 0
-                with open(file) as fp:
+            try:
+                size = os.path.getsize(file)
+            except OSError:
+                # A file on a mapped network drive can raise the following:
+                #   [WinError 87] The parameter is incorrect
+                # for Python 3.5, 3.6 and 3.7. Also, calling os.path.getsize
+                # on a file on a mapped network drive could return 0
+                # (without raising OSError) on Python 3.8 and 3.9, which is
+                # why we set size=0 on an OSError
+                size = 0
+
+            if size == 0:
+                with open(file, mode='r') as fp:
                     fp.seek(0, os.SEEK_END)
                     size = fp.tell()
 
