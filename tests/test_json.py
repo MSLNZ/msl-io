@@ -15,7 +15,7 @@ from msl.io.readers import JSONReader
 from helper import read_sample, roots_equal
 
 
-def test_sample():
+def test_read_write_convert():
     root1 = read_sample('json_sample.json')
 
     # write as JSON then read
@@ -203,37 +203,52 @@ def test_sample():
             dset['a'][0] = 'foo'
 
 
-def test_url_and_root():
+def test_raises():
     root = read_sample('json_sample.json')
 
     writer = JSONWriter()
+    assert writer.file is None
 
     # no file was specified
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match=r'must specify a file'):
         writer.write(root=root)
-    assert 'must specify a file' in str(e.value)
+
+    # root must be a Root
+    with pytest.raises(TypeError, match=r'Root'):
+        writer.write(file='whatever', root=list(root.datasets())[0])
+    with pytest.raises(TypeError, match=r'Root'):
+        writer.write(file='whatever', root=list(root.groups())[0])
+    with pytest.raises(TypeError, match=r'Root'):
+        writer.write(file='whatever', root='Root')
 
     # cannot overwrite a file by default
     file = tempfile.gettempdir() + '/msl-json-writer-temp.json'
-    with open(file, 'wt') as fp:
+    with open(file, mode='wt') as fp:
         fp.write('Hi')
-    with pytest.raises(OSError, match=r'exists'):
+    with pytest.raises(OSError, match=r'File exists'):
         writer.write(file=file, root=root)
+    with pytest.raises(OSError, match=r'File exists'):
+        writer.write(file=file, root=root, mode='x')
+
+    # invalid mode
+    for m in ['r', 'z']:
+        with pytest.raises(ValueError, match=r'([i|I]nvalid\s)?mode'):
+            writer.write(file=file, root=root, mode=m)
+
+    # r+ is a valid mode, but the file must already exist
+    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
+        writer.write(file='does_not.exist', root=root, mode='r+')
 
     # by specifying the mode one can overwrite a file
     writer.write(file=file, root=root, mode='w')
+    assert roots_equal(root, read(file))
+    writer.write(file=file, root=root, mode='w+')
+    assert roots_equal(root, read(file))
+    writer.write(file=file, root=root, mode='r+')
+    assert roots_equal(root, read(file))
+    writer.write(file=file, root=root, mode='a')
+    assert roots_equal(root, read(file))
     os.remove(file)
-
-    # root must be a Root
-    with pytest.raises(TypeError) as e:
-        writer.write(file='whatever', root=list(root.datasets())[0])
-    assert 'Root' in str(e.value)
-    with pytest.raises(TypeError) as e:
-        writer.write(file='whatever', root=list(root.groups())[0])
-    assert 'Root' in str(e.value)
-    with pytest.raises(TypeError) as e:
-        writer.write(file='whatever', root='Root')
-    assert 'Root' in str(e.value)
 
 
 def test_pretty_printing():

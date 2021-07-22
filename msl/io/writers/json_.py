@@ -15,6 +15,7 @@ from .. import Writer
 from ..metadata import Metadata
 from ..base_io import Root
 from ..constants import IS_PYTHON2
+from ..utils import is_file_readable
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.
 if IS_PYTHON2:
@@ -141,13 +142,18 @@ class JSONWriter(Writer):
 
         is_file_like = hasattr(file, 'write')
 
-        if not open_kwargs['mode']:
-            open_kwargs['mode'] = 'w'
-            if not is_file_like and os.path.isfile(file):
-                raise OSError(
-                    "A {!r} file already exists.\n"
-                    "Specify mode='w' if you want to overwrite it.".format(file)
-                )
+        if not is_file_like:
+            if not open_kwargs['mode'] or (open_kwargs['mode'] == 'x' and IS_PYTHON2):
+                open_kwargs['mode'] = 'w'
+                if os.path.isfile(file) or is_file_readable(file):
+                    raise OSError(
+                        "File exists {!r}\n"
+                        "Specify mode='w' if you want to overwrite it.".format(file)
+                    )
+            elif open_kwargs['mode'] == 'r':
+                raise ValueError('Invalid mode {!r}'.format(open_kwargs['mode']))
+            elif open_kwargs['mode'] == 'a':
+                open_kwargs['mode'] = 'w'
 
         if 'indent' not in kwargs:
             kwargs['indent'] = 2
