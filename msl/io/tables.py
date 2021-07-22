@@ -76,7 +76,16 @@ def read_table_text(file, **kwargs):
         header, data = [], []
     else:
         header = first_line[0].split(kwargs['delimiter'])
-        data = np.loadtxt(file, **kwargs)
+        # Calling np.loadtxt (on Python 3.5, 3.6 and 3.7) on a file
+        # on a mapped drive could raise an OSError. This occurred
+        # when a local folder was shared and then mapped on the same
+        # computer. Opening the file using open() and then passing
+        # in the file handle to np.loadtxt is more universal
+        if hasattr(file, 'read'):  # already a file-like object
+            data = np.loadtxt(file, **kwargs)
+        else:
+            with open(file, mode='rt') as fp:
+                data = np.loadtxt(fp, **kwargs)
         use_cols = kwargs.get('usecols')
         if use_cols:
             if isinstance(use_cols, int):
