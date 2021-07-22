@@ -18,37 +18,38 @@ from helper import read_sample, roots_equal
 
 
 def test_raises():
-
     # file does not exist
-    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
+    with pytest.raises((IOError, OSError), match=r'No such file'):
         read('does_not.exist')
+
+    # unicode filename
+    with pytest.raises((IOError, OSError), match=r'No such file'):
+        read(u'Filé döes ñot éxist')
 
     # no Reader class exists to read this test_read.py file
     with pytest.raises(OSError, match=r'No Reader exists'):
         read(__file__)
 
-
-def test_unicode_filename():
-    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
-        read_sample(u'Filé döes ñot éxist')
-
+    # unicode filename
     with pytest.raises(OSError, match=r'No Reader exists'):
         read_sample(u'uñicödé')
 
-    if h5py is not None:
-        root = read_sample(u'uñicödé.h5')
-        assert root.metadata.is_unicode
-        assert root.file.endswith(u'uñicödé.h5')
-        assert u'café' in root
-        assert u'/café' in root
-        assert u'café/caña' in root
-        assert u'/café/caña' in root
-        assert u'caña' in root[u'café']
-        assert u'/caña' in root[u'/café']
-        assert u'cafécaña' not in root
+
+@pytest.mark.skipif(h5py is None, reason='h5py is not installed')
+def test_unicode_filename():
+    root = read_sample(u'uñicödé.h5')
+    assert root.metadata.is_unicode
+    assert root.file.endswith(u'uñicödé.h5')
+    assert u'café' in root
+    assert u'/café' in root
+    assert u'café/caña' in root
+    assert u'/café/caña' in root
+    assert u'caña' in root[u'café']
+    assert u'/caña' in root[u'/café']
+    assert u'cafécaña' not in root
 
 
-def test_read_from_socket():
+def test_socket():
     # test that we can read/write a Root object from a socket stream
 
     # get any available port
