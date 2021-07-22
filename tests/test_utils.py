@@ -10,14 +10,13 @@ from io import BytesIO, StringIO
 
 import pytest
 
-from msl.io.utils import *
-from msl.io.utils import get_basename
+from msl.io import utils
 
 
 def test_search():
 
     def s(**kwargs):
-        return list(search(base, **kwargs))
+        return list(utils.search(base, **kwargs))
 
     # the msl-io folder
     base = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -67,23 +66,23 @@ def test_search():
 def test_git_commit():
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
-    sha1 = git_revision(root_dir)
+    sha1 = utils.git_revision(root_dir)
     assert len(sha1) == 40
     assert all(char.isalnum() for char in sha1)
 
-    sha1_short = git_revision(root_dir, short=True)
+    sha1_short = utils.git_revision(root_dir, short=True)
     assert len(sha1_short) > 0
     assert len(sha1_short) < len(sha1)
     assert sha1.startswith(sha1_short)
 
     # can specify any directory within the version control hierarchy
-    assert git_revision(os.path.join(root_dir, '.git')) == sha1
-    assert git_revision(os.path.join(root_dir, 'msl', 'examples', 'io')) == sha1
-    assert git_revision(os.path.dirname(__file__)) == sha1
-    assert git_revision(os.path.join(root_dir, 'docs', '_api')) == sha1
+    assert utils.git_revision(os.path.join(root_dir, '.git')) == sha1
+    assert utils.git_revision(os.path.join(root_dir, 'msl', 'examples', 'io')) == sha1
+    assert utils.git_revision(os.path.dirname(__file__)) == sha1
+    assert utils.git_revision(os.path.join(root_dir, 'docs', '_api')) == sha1
 
     # a directory not under version control
-    assert git_revision(tempfile.gettempdir()) is None
+    assert utils.git_revision(tempfile.gettempdir()) is None
 
 
 def test_checksum():
@@ -93,52 +92,52 @@ def test_checksum():
 
     # use a filename as a string
     assert isinstance(path, str)
-    assert sha256 == checksum(path, algorithm='sha256')
-    assert md5 == checksum(path, algorithm='md5')
+    assert sha256 == utils.checksum(path, algorithm='sha256')
+    assert md5 == utils.checksum(path, algorithm='md5')
 
     # use a filename as bytes
     path_as_bytes = path.encode()
     assert isinstance(path_as_bytes, bytes)
-    assert sha256 == checksum(path_as_bytes, algorithm='sha256')
-    assert md5 == checksum(path_as_bytes, algorithm='md5')
+    assert sha256 == utils.checksum(path_as_bytes, algorithm='sha256')
+    assert md5 == utils.checksum(path_as_bytes, algorithm='md5')
 
     # use a file pointer (binary mode)
     with open(path, 'rb') as fp:
-        assert sha256 == checksum(fp, algorithm='sha256')
+        assert sha256 == utils.checksum(fp, algorithm='sha256')
     with open(path, 'rb') as fp:
-        assert md5 == checksum(fp, algorithm='md5')
+        assert md5 == utils.checksum(fp, algorithm='md5')
 
     # use a byte buffer
     with open(path, 'rb') as fp:
         buffer = BytesIO(fp.read())
     assert buffer.tell() == 0
-    assert sha256 == checksum(buffer, algorithm='sha256')
+    assert sha256 == utils.checksum(buffer, algorithm='sha256')
     assert buffer.tell() == 0
-    assert md5 == checksum(buffer, algorithm='md5')
+    assert md5 == utils.checksum(buffer, algorithm='md5')
     assert buffer.tell() == 0
 
     # ensure that all available algorithms can be used
     for algorithm in hashlib.algorithms_available:
-        value = checksum(path, algorithm=algorithm)
+        value = utils.checksum(path, algorithm=algorithm)
         assert isinstance(value, str)
 
     # file does not exist
     with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
-        checksum('/the/file/does_not_exist.txt')
+        utils.checksum('/the/file/does_not_exist.txt')
     with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
-        checksum(b'/the/file/does_not_exist.txt')
+        utils.checksum(b'/the/file/does_not_exist.txt')
 
     # invalid type
     with pytest.raises(TypeError):
-        checksum(None)
+        utils.checksum(None)
     with pytest.raises(TypeError):
-        checksum(bytearray(buffer.getvalue()))
+        utils.checksum(bytearray(buffer.getvalue()))
     with pytest.raises(TypeError):
-        checksum(memoryview(buffer.getvalue()))
+        utils.checksum(memoryview(buffer.getvalue()))
 
     # unsupported algorithm
     with pytest.raises(ValueError, match=r'unsupported'):
-        checksum(path, algorithm='invalid')
+        utils.checksum(path, algorithm='invalid')
 
 
 def test_get_basename():
@@ -158,14 +157,14 @@ def test_get_basename():
             '\\\\a.b.c.d\\folder\\file.dat',
         ])
     for path in paths:
-        assert get_basename(path) == 'file.dat'
-        assert get_basename(path.encode()) == b'file.dat'
+        assert utils.get_basename(path) == 'file.dat'
+        assert utils.get_basename(path.encode()) == b'file.dat'
 
-    assert get_basename(StringIO(u'hello')) == u'StringIO'
-    assert get_basename(BytesIO(b'hello')) == 'BytesIO'
+    assert utils.get_basename(StringIO(u'hello')) == u'StringIO'
+    assert utils.get_basename(BytesIO(b'hello')) == 'BytesIO'
 
     with open(__file__, 'rt') as fp:
-        assert get_basename(fp) == 'test_utils.py'
+        assert utils.get_basename(fp) == 'test_utils.py'
 
 
 def test_copy():
@@ -205,57 +204,57 @@ def test_copy():
     # source file does not exist
     for item in [r'/the/file/does_not_exist.txt', r'/the/file/does_not_exist', r'does_not_exist']:
         with pytest.raises((IOError, OSError), match=item):
-            copy(item, '')
+            utils.copy(item, '')
 
     # destination invalid
     with pytest.raises((IOError, OSError), match=r"''"):
-        copy(__file__, '')
+        utils.copy(__file__, '')
 
     # copy (with metadata) to a directory that already exists
-    dst = copy(__file__, tempfile.gettempdir())
+    dst = utils.copy(__file__, tempfile.gettempdir())
     assert dst == os.path.join(tempfile.gettempdir(), 'test_utils.py')
     assert check_stat(dst)
-    assert checksum(__file__) == checksum(dst)
+    assert utils.checksum(__file__) == utils.checksum(dst)
 
     # destination already exists
     with pytest.raises(OSError, match=r'Will not overwrite'):
-        copy(__file__, dst)
+        utils.copy(__file__, dst)
     with pytest.raises(OSError, match=r'Will not overwrite'):
-        copy(__file__, tempfile.gettempdir())
+        utils.copy(__file__, tempfile.gettempdir())
 
     # can overwrite (with metadata), specify full path
-    dst2 = copy(__file__, dst, overwrite=True)
+    dst2 = utils.copy(__file__, dst, overwrite=True)
     assert dst2 == dst
     assert check_stat(dst2)
-    assert checksum(__file__) == checksum(dst2)
+    assert utils.checksum(__file__) == utils.checksum(dst2)
 
     # can overwrite (without metadata), specify full path
-    dst3 = copy(__file__, dst, overwrite=True, include_metadata=False)
+    dst3 = utils.copy(__file__, dst, overwrite=True, include_metadata=False)
     assert dst3 == dst
     assert not check_stat(dst3)
-    assert checksum(__file__) == checksum(dst3)
+    assert utils.checksum(__file__) == utils.checksum(dst3)
 
     # can overwrite (with metadata), specify directory only
-    dst4 = copy(__file__, tempfile.gettempdir(), overwrite=True)
+    dst4 = utils.copy(__file__, tempfile.gettempdir(), overwrite=True)
     assert dst4 == dst
     assert check_stat(dst4)
-    assert checksum(__file__) == checksum(dst4)
+    assert utils.checksum(__file__) == utils.checksum(dst4)
 
     os.remove(dst)
 
     # copy without metadata
-    dst = copy(__file__, tempfile.gettempdir(), include_metadata=False)
+    dst = utils.copy(__file__, tempfile.gettempdir(), include_metadata=False)
     assert dst == os.path.join(tempfile.gettempdir(), 'test_utils.py')
     assert not check_stat(dst)
-    assert checksum(__file__) == checksum(dst)
+    assert utils.checksum(__file__) == utils.checksum(dst)
     os.remove(dst)
 
     # copy (without metadata) but use a different destination basename
     destination = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.tmp')
-    dst = copy(__file__, destination, include_metadata=False)
+    dst = utils.copy(__file__, destination, include_metadata=False)
     assert dst == destination
     assert not check_stat(dst)
-    assert checksum(__file__) == checksum(dst)
+    assert utils.checksum(__file__) == utils.checksum(dst)
     os.remove(dst)
 
     # copy to a directory that does not exist
@@ -263,10 +262,10 @@ def test_copy():
     assert not os.path.isdir(os.path.join(tempfile.gettempdir(), new_dirs[0]))
     destination = os.path.join(tempfile.gettempdir(), *new_dirs)
     destination = os.path.join(destination, 'new_file.tmp')
-    dst = copy(__file__, destination)
+    dst = utils.copy(__file__, destination)
     assert dst == destination
     assert check_stat(dst)
-    assert checksum(__file__) == checksum(dst)
+    assert utils.checksum(__file__) == utils.checksum(dst)
     shutil.rmtree(os.path.join(tempfile.gettempdir(), new_dirs[0]))
 
 
@@ -292,7 +291,7 @@ def test_remove_write_permissions():
     with open(path, 'rb') as fp:
         assert fp.read() == b'hello world'
 
-    remove_write_permissions(path)
+    utils.remove_write_permissions(path)
 
     # the Read and Execute permissions are preserved
     mode = stat.S_IMODE(os.lstat(path).st_mode)
@@ -318,7 +317,7 @@ def test_remove_write_permissions():
     # set to rw--wxrw-
     os.chmod(path, 0o636)
     # remove and check permissions
-    remove_write_permissions(path)
+    utils.remove_write_permissions(path)
     mode = stat.S_IMODE(os.lstat(path).st_mode)
     if sys.platform == 'win32':
         # Windows does not have the Execute permission
