@@ -102,9 +102,12 @@ def copy(source, destination, overwrite=False, include_metadata=True):
     if os.path.isdir(destination) or is_dir_accessible(destination):
         destination = os.path.join(destination, os.path.basename(source))
     else:
-        dir_name = os.path.dirname(destination)
-        if dir_name and not os.path.isdir(dir_name):
-            os.makedirs(dir_name)
+        # TODO include the exist_ok kwarg to makedirs
+        #  when dropping support for Python 2.7
+        try:
+            os.makedirs(os.path.dirname(destination))
+        except OSError:
+            pass
 
     if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
         raise FileExistsError('Will not overwrite {!r}'.format(destination))
