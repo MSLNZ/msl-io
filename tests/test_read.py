@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 import socket
+import pathlib
 import threading
 from io import BytesIO
 
@@ -96,3 +97,9 @@ def test_read_from_socket():
     # cleanup
     client.close()
     thread.join()
+
+
+def test_pathlib():
+    root1 = read_sample('json_sample.json')
+    root2 = read(pathlib.Path(root1.file))
+    assert roots_equal(root1, root2)

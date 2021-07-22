@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import os
 import sys
+import pathlib
 import warnings
 from datetime import datetime
 from io import StringIO, BytesIO
@@ -18,6 +19,9 @@ from test_google_api import (
     skipif_no_gdrive_personal_readonly,
     skipif_no_sheets_personal_readonly,
 )
+
+from helper import datasets_equal
+
 
 skipif_32bit_py27 = pytest.mark.skipif(
     sys.maxsize < 2**32 and sys.version_info[:2] == (2, 7),
@@ -297,6 +301,18 @@ def test_excel_file_pointer():
     # so read_table_excel will not be called, also xlrd cannot load a file stream
 
 
+def test_pathlib():
+    string = os.path.join(os.path.dirname(__file__), 'samples', 'table.csv')
+    dset1 = read_table(string, dtype=object)
+    dset2 = read_table(pathlib.Path(string), dtype=object)
+    assert datasets_equal(dset1, dset2)
+
+    string = os.path.join(os.path.dirname(__file__), 'samples', 'table.xls')
+    dset1 = read_table(string, sheet='A1')
+    dset2 = read_table(pathlib.Path(string), sheet='A1')
+    assert datasets_equal(dset1, dset2)
+
+
 @skipif_32bit_py27
 @skipif_no_gdrive_personal_readonly
 @skipif_no_sheets_personal_readonly
@@ -306,6 +322,24 @@ def test_gsheet_file_path():
     assert np.array_equal(dset, gsheet_data)
 
     dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', is_corporate_account=False, sheet='StartA1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+
+@skipif_32bit_py27
+@skipif_no_gdrive_personal_readonly
+@skipif_no_sheets_personal_readonly
+def test_gsheet_pathlib():
+    dset = read_table(pathlib.Path('table.gsheet'), is_corporate_account=False, sheet='StartA1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    path = pathlib.Path('MSL/msl-io-testing/Copy of table.gsheet')
+    dset = read_table(path, is_corporate_account=False, sheet='StartA1')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
+
+    dset = read_table_gsheets(path, is_corporate_account=False, sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 

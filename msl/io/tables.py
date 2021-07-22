@@ -64,6 +64,9 @@ def read_table_text(file, **kwargs):
     if kwargs.get('unpack', False):
         raise ValueError('Cannot use the "unpack" option')
 
+    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+        file = str(file)
+
     if 'delimiter' not in kwargs:
         extn = Reader.get_extension(file).lower()
         kwargs['delimiter'] = extension_delimiter_map.get(extn)
@@ -133,7 +136,9 @@ def read_table_excel(file, cells=None, sheet=None, as_datetime=True, dtype=None,
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
-    if hasattr(file, 'name'):  # a TextIOWrapper object
+    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+        file = str(file)
+    elif hasattr(file, 'name'):  # a TextIOWrapper object
         file = file.name
 
     excel = ExcelReader(file, **kwargs)
@@ -195,7 +200,9 @@ def read_table_gsheets(file, cells=None, sheet=None, as_datetime=True, dtype=Non
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
-    if hasattr(file, 'name'):  # a TextIOWrapper object
+    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+        file = str(file)
+    elif hasattr(file, 'name'):  # a TextIOWrapper object
         file = file.name
 
     sheets = GSheetsReader(file, **kwargs)

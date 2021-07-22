@@ -76,6 +76,9 @@ def read(file, **kwargs):
         If no :class:`~msl.io.base_io.Reader` exists to be able to read
         the specified file.
     """
+    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+        file = str(file)
+
     if hasattr(file, 'read') or is_file_readable(file, strict=True):
         pass
 
@@ -125,7 +128,9 @@ def read_table(file, **kwargs):
     if extn.startswith('.xls'):
         return read_table_excel(file, **kwargs)
     elif extn == '.gsheet':
-        if hasattr(file, 'name'):  # a TextIOWrapper object
+        if hasattr(file, 'as_posix'):  # a pathlib.Path object
+            file = str(file)
+        elif hasattr(file, 'name'):  # a TextIOWrapper object
             file = file.name
         return read_table_gsheets(file[:-7], **kwargs)  # ignore the extension
     else:

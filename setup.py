@@ -161,6 +161,7 @@ tests_require = [
     'pytest>=4.4',  # >=4.4 to support the "-p conftest" option
     'pytest-cov',
     'numpy>=1.16',  # the max_rows kwarg in np.loadtxt was added in v1.16
+    'pathlib; python_version < "3.4"',
 ]
 if sys.maxsize > 2**32:
     tests_require.append('h5py')

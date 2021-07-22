@@ -1,4 +1,5 @@
 import os
+import pathlib
 from io import StringIO, BytesIO
 
 import pytest
@@ -183,6 +184,10 @@ def test_get_extension():
     assert Reader.get_extension('/home/msl/filename.with.dots.dat') == '.dat'
     assert Reader.get_extension(StringIO()) == ''
     assert Reader.get_extension(BytesIO()) == ''
+    assert Reader.get_extension(pathlib.Path('')) == ''
+    assert Reader.get_extension(pathlib.Path('a.x')) == '.x'
+    assert Reader.get_extension(pathlib.Path(r'C:\folder\hello.world')) == '.world'
+    assert Reader.get_extension(pathlib.Path('filename.with.dots.dat')) == '.dat'
 
     path = os.path.join(os.path.dirname(__file__), 'samples', 'excel_datatypes.xlsx')
     with open(path, 'r') as fp:
