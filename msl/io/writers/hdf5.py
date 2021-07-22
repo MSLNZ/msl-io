@@ -7,6 +7,8 @@ Writer for the HDF5_ file format.
 .. _HDF5: https://www.hdfgroup.org/
 .. _h5py: https://www.h5py.org/
 """
+import os
+
 import numpy as np
 try:
     import h5py
@@ -17,6 +19,7 @@ from .. import Writer
 from ..metadata import Metadata
 from ..base_io import Root
 from ..constants import IS_PYTHON2
+from ..utils import is_file_readable
 
 if not IS_PYTHON2:
     unicode = str
@@ -111,14 +114,38 @@ class HDF5Writer(Writer):
             return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v))
                         for k, v in metadata.items())
 
-        with h5py.File(file, **kwargs) as h5:
-            h5.attrs.update(**meta_to_dict(root.metadata))
-            for name, value in root.items():
-                if self.is_dataset(value):
-                    try:
-                        vertex = h5.create_dataset(name, data=value.data)
-                    except TypeError:
-                        vertex = h5.create_dataset(name, data=check_ndarray_dtype(value.data))
-                else:
-                    vertex = h5.create_group(name)
-                vertex.attrs.update(**meta_to_dict(value.metadata))
+        def h5_open(name):
+            with h5py.File(name, **kwargs) as h5:
+                h5.attrs.update(**meta_to_dict(root.metadata))
+                for name, value in root.items():
+                    if self.is_dataset(value):
+                        try:
+                            vertex = h5.create_dataset(name, data=value.data)
+                        except TypeError:
+                            vertex = h5.create_dataset(name, data=check_ndarray_dtype(value.data))
+                    else:
+                        vertex = h5.create_group(name)
+                    vertex.attrs.update(**meta_to_dict(value.metadata))
+
+        # Calling h5py.File to write to a file on a mapped drive could raise
+        # an OSError. This occurred when a local folder was shared and then
+        # mapped on the same computer. Opening the file using open() and then
+        # passing in the file handle to h5py.File is more universal
+        if hasattr(file, 'write'):  # already a file-like object
+            h5_open(file)
+        else:
+            m = kwargs['mode']
+            if m in ['x', 'w-']:
+                if os.path.isfile(file) or is_file_readable(file):
+                    raise OSError(
+                        "File exists {!r}\n"
+                        "Specify mode='w' if you want to overwrite it.".format(file)
+                    )
+            elif m == 'r+':
+                if not (os.path.isfile(file) or is_file_readable(file)):
+                    raise OSError('File does not exist {!r}'.format(file))
+            elif m not in ['w', 'a']:
+                raise ValueError('Invalid mode {!r}'.format(m))
+
+            with open(file, mode='w+b') as fp:
+                h5_open(fp)

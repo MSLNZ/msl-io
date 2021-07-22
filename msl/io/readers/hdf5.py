@@ -65,7 +65,12 @@ class HDF5Reader(Reader):
                 self.add_metadata(**h5.attrs)
                 h5.visititems(convert)
 
-        if hasattr(self.file, 'read'):
+        # Calling h5py.File on a file on a mapped drive could raise
+        # an OSError. This occurred when a local folder was shared
+        # and then mapped on the same computer. Opening the file
+        # using open() and then passing in the file handle to
+        # h5py.File is more universal
+        if hasattr(self.file, 'read'):  # already a file-like object
             h5_open(self.file)
         else:
             with open(self.file, mode='rb') as fp:
