@@ -12,7 +12,7 @@ except ImportError:
 from msl.io import JSONWriter, read, HDF5Writer
 from msl.io.readers import JSONReader
 
-from helper import read_sample
+from helper import read_sample, roots_equal
 
 
 def test_sample():
@@ -23,6 +23,7 @@ def test_sample():
     writer.write(root=root1, mode='w')
     root2 = read(writer.file)
     assert root2.file == writer.file
+    assert roots_equal(root1, root2)
     os.remove(writer.file)
 
     # convert to HDF5 then back to JSON
@@ -30,6 +31,7 @@ def test_sample():
     # HDF5 does not support "null". So, reload the JSON file and pop the metadata
     # that contain "null" before writing the HDF5 file
     temp = read_sample('json_sample.json')
+    assert roots_equal(root1, temp)
     temp.is_read_only = False
     assert temp.metadata.pop('null') is None
     assert 'null' not in temp.metadata
@@ -364,5 +366,6 @@ def test_unicode():
 
         root2 = read(writer.file)
         do_asserts(root2)
+        assert roots_equal(root, root2)
 
         os.remove(writer.file)

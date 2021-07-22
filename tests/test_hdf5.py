@@ -11,7 +11,7 @@ except ImportError:
 from msl.io import read, HDF5Writer, JSONWriter
 from msl.io.readers import HDF5Reader
 
-from helper import read_sample
+from helper import read_sample, roots_equal
 
 
 @pytest.mark.skipif(h5py is None, reason='h5py not installed')
@@ -23,17 +23,21 @@ def test_hdf5():
     writer.write(root=root1, mode='w')
     root2 = read(writer.file)
     assert root2.file == writer.file
+    assert roots_equal(root1, root2)
     os.remove(writer.file)
 
     # convert to JSON then back to HDF5
     json_writer = JSONWriter(tempfile.gettempdir() + '/msl-json-writer-temp.json')
     json_writer.write(root=root1, mode='w')
     root_json = read(json_writer.file)
+    assert root_json.file == json_writer.file
+    assert roots_equal(root1, root_json)
     os.remove(json_writer.file)
     writer2 = HDF5Writer(tempfile.gettempdir() + '/msl-hdf5-writer-temp2.h5')
     writer2.write(root=root_json, mode='w')
     root3 = read(writer2.file)
     assert root3.file == writer2.file
+    assert roots_equal(root1, root3)
     os.remove(writer2.file)
 
     for root in [root1, root2, root3]:

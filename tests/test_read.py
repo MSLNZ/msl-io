@@ -13,7 +13,7 @@ except ImportError:
 from msl.io import read, JSONWriter
 from msl.io.readers import JSONReader
 
-from helper import read_sample
+from helper import read_sample, roots_equal
 
 
 def test_raises():
@@ -77,7 +77,8 @@ def test_read_from_socket():
     # read the sample file into a BytesIO stream
     client_send_buf = BytesIO()
     with JSONWriter(client_send_buf) as json:
-        json.set_root(read_sample('json_sample.json'))
+        root_client = read_sample('json_sample.json')
+        json.set_root(root_client)
 
     # send the bytes to the server
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,7 +88,10 @@ def test_read_from_socket():
 
     # get the bytes back from the server
     with BytesIO(client.recv(2**18)) as client_recv_buf:
-        assert isinstance(read(client_recv_buf), JSONReader)
+        root_server = read(client_recv_buf)
+        assert isinstance(root_server, JSONReader)
+
+    assert roots_equal(root_client, root_server)
 
     # cleanup
     client.close()
