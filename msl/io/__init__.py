@@ -7,6 +7,7 @@ from collections import namedtuple
 from .utils import *
 from .utils import _readers
 from .base_io import (
+    Root,
     Reader,
     Writer,
 )
@@ -14,7 +15,6 @@ from .writers import (
     JSONWriter,
     HDF5Writer,
 )
-from .base_io import Root
 from .google_api import (
     GDrive,
     GSheets,
