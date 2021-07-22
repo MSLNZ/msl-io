@@ -21,16 +21,6 @@ logger = logging.getLogger(__package__)
 
 _readers = []
 
-__all__ = (
-    'checksum',
-    'copy',
-    'git_revision',
-    'register',
-    'remove_write_permissions',
-    'search',
-    'send_email',
-)
-
 
 def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
     """Get the checksum of a file.
@@ -109,23 +99,77 @@ def copy(source, destination, overwrite=False, include_metadata=True):
     :class:`str`
         The path to where the file was copied.
     """
-    if os.path.isdir(destination):
+    if os.path.isdir(destination) or is_dir_accessible(destination):
         destination = os.path.join(destination, os.path.basename(source))
     else:
         dir_name = os.path.dirname(destination)
         if dir_name and not os.path.isdir(dir_name):
             os.makedirs(dir_name)
 
-    if not overwrite and os.path.isfile(destination):
+    if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
         raise FileExistsError('Will not overwrite {!r}'.format(destination))
 
     # TODO include the follow_symlinks kwarg to copyfile and copystat
-    #  when dropping support for Python 2.7
+    #  (and to this "copy" function) when dropping support for Python 2.7
     shutil.copyfile(source, destination)
     if include_metadata:
         shutil.copystat(source, destination)
 
     return destination
+
+
+def is_dir_accessible(path, strict=False):
+    """Check if a directory exists and is accessible.
+
+    An accessible directory is one that the user has
+    permission to access.
+
+    Parameters
+    ----------
+    path : :class:`str`
+        The directory to check.
+    strict : :class:`bool`, optional
+        Whether to raise the exception (if one occurs).
+
+    Returns
+    -------
+    :class:`bool`
+        Whether the directory exists and is accessible.
+    """
+    cwd = os.getcwd()
+    try:
+        os.chdir(path)
+    except:
+        if strict:
+            raise
+        return False
+    else:
+        os.chdir(cwd)
+        return True
+
+
+def is_file_readable(file, strict=False):
+    """Check if a file exists and is readable.
+
+    Parameters
+    ----------
+    file : :class:`str`
+        The file to check.
+    strict : :class:`bool`, optional
+        Whether to raise the exception (if one occurs).
+
+    Returns
+    -------
+    :class:`bool`
+        Whether the file exists and is readable.
+    """
+    try:
+        with open(file, mode='rb'):
+            return True
+    except:
+        if strict:
+            raise
+        return False
 
 
 def register(reader_class):
@@ -244,7 +288,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
 
     for name in names:
         path = folder + '/' + name
-        if os.path.isfile(path):
+        if os.path.isfile(path) or is_file_readable(path):
             if regex is None or regex.search(name):
                 yield path
         elif os.path.isdir(path) or (follow_symlinks and os.path.islink(path)):

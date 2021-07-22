@@ -330,3 +330,35 @@ def test_remove_write_permissions():
     # clean up by deleting the file
     os.chmod(path, 0o777)
     os.remove(path)
+
+
+def test_is_file_readable():
+    assert utils.is_file_readable(__file__)
+
+    for item in [None, '', __file__+'py', dict()]:
+        assert not utils.is_file_readable(item)
+
+    with pytest.raises(TypeError):
+        utils.is_file_readable(None, strict=True)
+
+    with pytest.raises((IOError, OSError)):
+        utils.is_file_readable('', strict=True)
+
+    with pytest.raises((IOError, OSError)):
+        utils.is_file_readable(__file__+'py', strict=True)
+
+
+def test_is_dir_accessible():
+    assert utils.is_dir_accessible(os.path.dirname(__file__))
+
+    for item in [None, '', __file__, dict()]:
+        assert not utils.is_dir_accessible(item)
+
+    with pytest.raises(TypeError):
+        utils.is_dir_accessible(None, strict=True)
+
+    with pytest.raises(OSError):
+        utils.is_dir_accessible('', strict=True)
+
+    with pytest.raises(OSError):
+        utils.is_dir_accessible(__file__, strict=True)

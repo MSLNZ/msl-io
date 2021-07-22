@@ -4,8 +4,18 @@ Read and write data files.
 import re
 from collections import namedtuple
 
-from .utils import *
-from .utils import _readers
+from .utils import (
+    _readers,
+    checksum,
+    copy,
+    git_revision,
+    is_dir_accessible,
+    is_file_readable,
+    register,
+    remove_write_permissions,
+    search,
+    send_email,
+)
 from .base_io import (
     Root,
     Reader,
@@ -66,12 +76,8 @@ def read(file, **kwargs):
         If no :class:`~msl.io.base_io.Reader` exists to be able to read
         the specified file.
     """
-    if not hasattr(file, 'read'):
-        # Make sure that the file exist so that each Reader does not need to.
-        # Do not use os.path.isfile(file) since this function can
-        # return False for a file on a mapped network drive
-        with open(file, mode='r'):
-            pass
+    if hasattr(file, 'read') or is_file_readable(file, strict=True):
+        pass
 
     for rdr in _readers:
         try:
