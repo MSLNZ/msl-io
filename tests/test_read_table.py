@@ -14,6 +14,7 @@ from msl.io.tables import (
     read_table_gsheets,
     read_table_excel,
 )
+from msl.io.constants import IS_PYTHON2
 
 from test_google_api import (
     skipif_no_gdrive_personal_readonly,
@@ -24,7 +25,7 @@ from helper import datasets_equal
 
 
 skipif_32bit_py27 = pytest.mark.skipif(
-    sys.maxsize < 2**32 and sys.version_info[:2] == (2, 7),
+    sys.maxsize < 2**32 and IS_PYTHON2,
     reason='Avoid Google API MemoryError on 32-bit Python 2.7'
 )
 
