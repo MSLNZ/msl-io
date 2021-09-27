@@ -374,6 +374,7 @@ def test_is_admin():
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='non-Windows OS')
+@pytest.mark.skipif(utils.is_admin(), reason='don\'t run if already an admin')
 def test_run_as_admin():
     # Using verb=None as a keyword argument allows for testing the
     # 'run_as_admin' function without getting the UAC prompt,
