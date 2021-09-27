@@ -9,10 +9,12 @@ from .utils import (
     checksum,
     copy,
     git_revision,
+    is_admin,
     is_dir_accessible,
     is_file_readable,
     register,
     remove_write_permissions,
+    run_as_admin,
     search,
     send_email,
 )

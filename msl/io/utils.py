@@ -3,7 +3,9 @@ General functions.
 """
 import re
 import os
+import sys
 import stat
+import ctypes
 import shutil
 import hashlib
 import logging
@@ -119,6 +121,23 @@ def copy(source, destination, overwrite=False, include_metadata=True):
         shutil.copystat(source, destination)
 
     return destination
+
+
+def is_admin():
+    """Check if the current process is being run as an administrator.
+
+    Returns
+    -------
+    :class:`bool`
+        Whether the current process is being run as an administrator.
+    """
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin() == 1
+    except AttributeError:
+        try:
+            return os.geteuid() == 0
+        except AttributeError:
+            return False
 
 
 def is_dir_accessible(path, strict=False):
@@ -455,3 +474,210 @@ def remove_write_permissions(path):
     current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
     disable_writing = ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH
     os.chmod(path, current_permissions & disable_writing)
+
+
+def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
+                 blocking=True, show=False, **kwargs):
+    """Run a process as an administrator and return its output.
+
+    Parameters
+    ----------
+    args : :class:`str` or :class:`list` of :class:`str`, optional
+        A sequence of program arguments or else a single string. Providing a
+        sequence of arguments is generally preferred, as it allows the module
+        to take care of any required escaping and quoting of arguments
+        (e.g., to permit spaces in file names).
+    executable : :class:`str`, optional
+        The executable to pass the `args` to.
+    cwd : :class:`str`, optional
+        The working directory for the elevated process.
+    capture_stderr : :class:`bool`, optional
+        Whether to send the stderr stream to stdout.
+    blocking : :class:`bool`, optional
+        Whether to wait for the process to finish before returning to the
+        calling program.
+    show : :class:`bool`, optional
+        Whether to show the elevated console (Windows only). If
+        :data:`True` then the stdout stream of the process is not captured.
+    kwargs
+        If the current process already has admin privileges or if the operating
+        system is not Windows then all additional keyword arguments are passed
+        to :func:`subprocess.check_output`. Otherwise only a `timeout` keyword
+        argument is used (Windows).
+
+    Returns
+    -------
+    :class:`bytes`, :class:`int` or :class:`~subprocess.Popen`
+        The returned object depends on whether the process is executed in blocking
+        or non-blocking mode. If blocking then :class:`bytes` are returned (the
+        stdout stream of the process). If non-blocking, then the returned object
+        will either be the :class:`~subprocess.Popen` instance that is running the
+        process (posix) or an :class:`int` which is the process ID (Windows).
+
+    Examples
+    --------
+    .. invisible-code-block: pycon
+
+       >>> SKIP_RUN_AS_ADMIN()
+
+    Import the modules
+
+    >>> import sys
+    >>> from msl.io import run_as_admin
+
+    Run a shell script
+
+    >>> run_as_admin(args=['./script.sh', '--message', 'hello world'])
+
+    Run a Python script
+
+    >>> run_as_admin(args=[sys.executable, 'script.py', '--verbose'], cwd='D:/My Scripts')
+
+    Create a service in the Windows registry and in the Service Control Manager database
+
+    >>> run_as_admin(args=['sc', 'create', 'Log', 'binPath=', 'C:/logger.exe', 'start=', 'auto'])
+    """
+    if not args and not executable:
+        raise ValueError('Must specify the args and/or an executable')
+
+    stderr = subprocess.STDOUT if capture_stderr else None
+    process = subprocess.check_output if blocking else subprocess.Popen
+
+    if is_admin():
+        return process(args, executable=executable, cwd=cwd,
+                       stderr=stderr, **kwargs)
+
+    if cwd is None:
+        cwd = os.getcwd()
+
+    if os.name != 'nt':
+        if not args:
+            command = ['sudo', executable]
+        elif isinstance(args, str):
+            exe = executable or ''
+            command = 'sudo {} {}'.format(exe, args)
+        else:
+            exe = [executable] if executable else []
+            command = ['sudo'] + exe + list(args)
+        return process(command, cwd=cwd, stderr=stderr, **kwargs)
+
+    # Windows is more complicated
+
+    if args is None:
+        args = ''
+
+    if not isinstance(args, str):
+        args = subprocess.list2cmdline(args)
+
+    if executable is None:
+        executable = ''
+    else:
+        executable = subprocess.list2cmdline([executable])
+
+    # the 'runas' verb starts in C:\WINDOWS\system32
+    cd = subprocess.list2cmdline(['cd', '/d', cwd, '&&'])
+
+    # check if a Python environment needs to be activated
+    activate = ''
+    conda = os.getenv('CONDA_PREFIX')
+    if conda and (executable == sys.executable or args.startswith(sys.executable)):
+        env = os.getenv('CONDA_DEFAULT_ENV')
+        assert env, 'CONDA_DEFAULT_ENV environment variable does not exist'
+        if env == 'base':
+            bat = os.path.join(conda, 'Scripts', 'activate.bat')
+        else:
+            bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
+                                               'Scripts', 'activate.bat'))
+        assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
+        activate = subprocess.list2cmdline([bat, env, '&&'])
+
+    # redirect stdout (stderr) to a file
+    redirect = ''
+    stdout_file = None
+    if not show:
+        import uuid
+        import tempfile
+        stdout_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+        r = ['>', stdout_file]
+        if capture_stderr:
+            r.append('2>&1')
+        redirect = subprocess.list2cmdline(r)
+        if re.search(r'\d$', args):
+            # this number is also considered as a file handle, so add a space
+            redirect = ' ' + redirect
+
+    # the string that is passed to cmd.exe
+    params = '/S /C "{cd} {activate} {executable} {args}"{redirect}'.format(
+        cd=cd, activate=activate, executable=executable, args=args, redirect=redirect)
+
+    from ctypes.wintypes import DWORD, ULONG, HWND, LPCWSTR, INT, HINSTANCE, HKEY, HANDLE
+
+    class ShellExecuteInfoW(ctypes.Structure):
+        _fields_ = [
+            ('cbSize', DWORD),
+            ('fMask', ULONG),
+            ('hwnd', HWND),
+            ('lpVerb', LPCWSTR),
+            ('lpFile', LPCWSTR),
+            ('lpParameters', LPCWSTR),
+            ('lpDirectory', LPCWSTR),
+            ('nShow', INT),
+            ('hInstApp', HINSTANCE),
+            ('lpIDList', ctypes.c_void_p),
+            ('lpClass', LPCWSTR),
+            ('hkeyClass', HKEY),
+            ('dwHotKey', DWORD),
+            ('hIcon', HANDLE),
+            ('hProcess', HANDLE)]
+
+    sei = ShellExecuteInfoW()
+    sei.fMask = 0x00000040 | 0x00008000  # SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NO_CONSOLE
+    sei.lpVerb = kwargs.get('verb', u'runas')  # change the verb when running the tests
+    sei.lpFile = u'cmd.exe'
+    sei.lpParameters = params
+    sei.lpDirectory = u'{}'.format(cwd) if cwd else None
+    sei.nShow = int(show)
+    sei.cbSize = ctypes.sizeof(sei)
+    if not ctypes.windll.Shell32.ShellExecuteExW(ctypes.byref(sei)):
+        raise ctypes.WinError()
+
+    if not blocking:
+        return sei.hProcess
+
+    kernel32 = ctypes.windll.kernel32
+    timeout = kwargs.get('timeout', -1)  # INFINITE = -1
+    milliseconds = int(timeout * 1e3) if timeout > 0 else timeout
+
+    ret = kernel32.WaitForSingleObject(sei.hProcess, milliseconds)
+    if ret == 0:
+        ret = DWORD()
+        if not kernel32.GetExitCodeProcess(sei.hProcess, ctypes.byref(ret)):
+            raise ctypes.WinError()
+        if ret.value != 0:
+            raise ctypes.WinError(code=ret.value)
+        kernel32.CloseHandle(sei.hProcess)
+
+        stdout = b''
+        if stdout_file and os.path.isfile(stdout_file):
+            with open(stdout_file, mode='rb') as fp:
+                stdout = fp.read()
+            os.remove(stdout_file)
+        return stdout
+
+    if ret == 0xFFFFFFFF:
+        raise ctypes.WinError()
+
+    if ret == 0x00000080:
+        msg = 'The specified object is a mutex object that was not ' \
+              'released by the thread that owned the mutex object before ' \
+              'the owning thread terminated. Ownership of the mutex ' \
+              'object is granted to the calling thread and the mutex state ' \
+              'is set to non-signaled. If the mutex was protecting persistent ' \
+              'state information, you should check it for consistency.'
+    elif ret == 0x00000102:
+        msg = "The timeout interval elapsed after {} second(s) and the " \
+              "object's state is non-signaled.".format(timeout)
+    else:
+        msg = 'Unknown return value 0x{:x}'.format(ret)
+
+    raise WindowsError('WaitForSingleObject: ' + msg)

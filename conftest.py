@@ -53,3 +53,4 @@ def doctest_skipif(doctest_namespace):
     doctest_namespace['SKIP_IF_PYTHON_LESS_THAN_36'] = ver
     doctest_namespace['SKIP_IF_NO_H5PY'] = h5
     doctest_namespace['SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN'] = sheets_read_token
+    doctest_namespace['SKIP_RUN_AS_ADMIN'] = lambda: pytest.skip(msg='Illustrative examples')

@@ -6,7 +6,12 @@ import uuid
 import shutil
 import hashlib
 import tempfile
+import subprocess
 from io import BytesIO, StringIO
+try:
+    PermissionError
+except NameError:
+    PermissionError = OSError  # for Python 2.7
 
 import pytest
 
@@ -362,3 +367,144 @@ def test_is_dir_accessible():
 
     with pytest.raises(OSError):
         utils.is_dir_accessible(__file__, strict=True)
+
+
+def test_is_admin():
+    assert isinstance(utils.is_admin(), bool)
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='non-Windows OS')
+def test_run_as_admin():
+    # Using verb=None as a keyword argument allows for testing the
+    # 'run_as_admin' function without getting the UAC prompt,
+    # but the test command must not require admin privileges.
+    # Only test on Windows because the other cases:
+    #   1) already and admin
+    #   2) running on POSIX
+    # are fairly straightforward implementations.
+
+    with pytest.raises(ValueError, match=r'args and/or an executable$'):
+        utils.run_as_admin()
+
+    # Don't want Windows to return b'ECHO is on.\r\n'
+    out = utils.run_as_admin(args='echo 1', verb=None)
+    assert out == b'1 \r\n'
+    out = utils.run_as_admin(args=['echo', '1'], verb=None)
+    assert out == b'1 \r\n'
+
+    # no extra space after "hi"
+    out = utils.run_as_admin(args='echo hi', verb=None)
+    assert out == b'hi\r\n'
+
+    # run a batch file with spaces in the file path and in the arguments
+    file = os.path.join(tempfile.gettempdir(), 'msl io batch script.bat')
+    with open(file, mode='w') as fp:
+        fp.write('@ECHO OFF\r\n')
+        for i in range(1, 6):
+            fp.write('echo %{}\r\n'.format(i))
+
+    expected = b'ECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\n'
+    out = utils.run_as_admin(args='"{}"'.format(file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file], verb=None)
+    assert out == expected
+    out = utils.run_as_admin(executable=file, verb=None)
+    assert out == expected
+
+    expected = b'pi\r\n-p\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\n'
+    out = utils.run_as_admin(args='"{}" pi -p'.format(file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file, 'pi', '-p'], verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=['pi', '-p'], executable=file, verb=None)
+    assert out == expected
+
+    expected = b'pi\r\n-p\r\n"hel lo"\r\nECHO is off.\r\nECHO is off.\r\n'
+    out = utils.run_as_admin(args='"{}" pi -p "hel lo"'.format(file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file, 'pi', '-p', 'hel lo'], verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=['pi', '-p', 'hel lo'], executable=file, verb=None)
+    assert out == expected
+
+    expected = b'pi\r\n-p\r\n"hel lo"\r\n6\r\n"last parameter received"\r\n'
+    out = utils.run_as_admin(args='"{}" pi -p "hel lo" 6 "last parameter received"'.format(file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file, 'pi', '-p', 'hel lo', '6', 'last parameter received'], verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=['pi', '-p', 'hel lo', '6', 'last parameter received'], executable=file, verb=None)
+    assert out == expected
+
+    # change directory
+    out = utils.run_as_admin(
+        args=[os.path.basename(file), 'pi', '-p', 'hel lo', '6', 'last parameter received'],
+        cwd=os.path.dirname(file),
+        verb=None
+    )
+    assert out == expected
+
+    os.remove(file)
+
+    # call the Python interpreter
+    expected = subprocess.check_output([sys.executable, '-VV'])
+    out = utils.run_as_admin(args='-VV', executable=sys.executable, verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args='{} -VV'.format(sys.executable), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[sys.executable, '-VV'], verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=['-VV'], executable=sys.executable, verb=None)
+    assert out == expected
+
+    # run a python script
+    file = os.path.join(tempfile.gettempdir(), 'msl_io_admin_test.py')
+    with open(file, mode='w') as fp:
+        fp.write('from __future__ import print_function\r\n')
+        fp.write('import sys\r\n')
+        # additional packages must be available since msl-io depends on them
+        fp.write('import numpy\r\n')
+        fp.write('import xlrd\r\n')
+        fp.write('print(sys.executable)\r\n')
+        fp.write('print(sys.argv[1:])\r\n')
+        fp.write('print("written to stderr", file=sys.stderr)\r\n')
+
+    # no arguments
+    expected = '{}\r\n[]\r\n'.format(sys.executable).encode()
+    out = utils.run_as_admin(args=file, executable=sys.executable, verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args='{} {}'.format(sys.executable, file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file], executable=sys.executable, verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[sys.executable, file], verb=None)
+    assert out == expected
+
+    # with arguments
+    expected = "{}\r\n['1', 'x=5', 'a b c d', 'e']\r\n".format(sys.executable).encode()
+    out = utils.run_as_admin(args='{} 1 x=5 "a b c d" e'.format(file), executable=sys.executable, verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args='{} {} 1 x=5 "a b c d" e'.format(sys.executable, file), verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[file, '1', 'x=5', 'a b c d', 'e'], executable=sys.executable, verb=None)
+    assert out == expected
+    out = utils.run_as_admin(args=[sys.executable, file, '1', 'x=5', 'a b c d', 'e'], verb=None)
+    assert out == expected
+
+    # change directory
+    expected = "{}\r\n['1']\r\n".format(sys.executable).encode()
+    out = utils.run_as_admin(args=[sys.executable, os.path.basename(file), '1'], cwd=os.path.dirname(file), verb=None)
+    assert out == expected
+
+    # capture_stderr=True
+    out = utils.run_as_admin(args=[sys.executable, file], capture_stderr=True, verb=None)
+    assert b'written to stderr' in out
+
+    os.remove(file)
+
+    # raise some exceptions
+    with pytest.raises(PermissionError):
+        utils.run_as_admin(args='sc create MSL-IO-TEST binPath= "C:\\hello world\\dummy.exe"', verb=None)
+    with pytest.raises(PermissionError):
+        utils.run_as_admin(args=['sc', 'create', 'MSL-IO-TEST', 'binPath=', 'C:\\hello world\\dummy.exe'], verb=None)
+    with pytest.raises(OSError):
+        utils.run_as_admin(args='doesnotexist.exe', verb=None)
