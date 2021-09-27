@@ -527,15 +527,15 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
     Run a shell script
 
-    >>> run_as_admin(args=['./script.sh', '--message', 'hello world'])
+    >>> run_as_admin(['./script.sh', '--message', 'hello world'])
 
     Run a Python script
 
-    >>> run_as_admin(args=[sys.executable, 'script.py', '--verbose'], cwd='D:/My Scripts')
+    >>> run_as_admin([sys.executable, 'script.py', '--verbose'], cwd='D:\\\\My Scripts')
 
     Create a service in the Windows registry and in the Service Control Manager database
 
-    >>> run_as_admin(args=['sc', 'create', 'Log', 'binPath=', 'C:/logger.exe', 'start=', 'auto'])
+    >>> run_as_admin(['sc', 'create', 'MyLogger', 'binPath=', 'C:\\\\logger.exe', 'start=', 'auto'])
     """
     if not args and not executable:
         raise ValueError('Must specify the args and/or an executable')
