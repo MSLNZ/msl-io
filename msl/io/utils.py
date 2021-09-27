@@ -512,7 +512,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
         or non-blocking mode. If blocking then :class:`bytes` are returned (the
         stdout stream of the process). If non-blocking, then the returned object
         will either be the :class:`~subprocess.Popen` instance that is running the
-        process (posix) or an :class:`int` which is the process ID (Windows).
+        process (POSIX) or an :class:`int` which is the process ID (Windows).
 
     Examples
     --------
