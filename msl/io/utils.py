@@ -207,17 +207,15 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         The root folder to begin searching for files.
     pattern : :class:`str`, optional
         A regex string to use to filter the filenames. If :data:`None` then no
-        filtering is applied and all files are yielded.
+        filtering is applied and all files are yielded. Examples:
 
-        Examples:
+            * ``r'data'`` :math:`\rightarrow` find all files with the word ``data``
+              in the filename
 
-        * ``r'data'`` :math:`\rightarrow` find all files with the word ``data``
-          in the filename
+            * ``r'\.png$'`` :math:`\rightarrow` find all files with the extension ``.png``
 
-        * ``r'\.png$'`` :math:`\rightarrow` find all files with the extension ``.png``
-
-        * ``r'\.jpe*g$'`` :math:`\rightarrow` find all files with the extension
-          ``.jpeg`` or ``.jpg``
+            * ``r'\.jpe*g$'`` :math:`\rightarrow` find all files with the extension
+              ``.jpeg`` or ``.jpg``
 
     levels : :class:`int`, optional
         The number of sub-folder levels to recursively search for files.
@@ -226,16 +224,14 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         The flags to use to compile regex strings.
     exclude_folders : :class:`str` or :class:`list` of :class:`str`, optional
         The pattern of folder names to exclude from the search. Can be a regex
-        string. If :data:`None` then include all folders in the search.
+        string. If :data:`None` then include all folders in the search. Examples:
 
-        Examples:
+            * ``r'bin'`` :math:`\rightarrow` exclude all folders that contain the word ``bin``
 
-        * ``r'bin'`` :math:`\rightarrow` exclude all folders that contain the word ``bin``
+            * ``r'^My'`` :math:`\rightarrow` exclude all folders that start with the letters ``My``
 
-        * ``r'^My'`` :math:`\rightarrow` exclude all folders that start with the letters ``My``
-
-        * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\rightarrow` exclude
-          all folders that contain the word ``bin`` or start with the letters ``My``
+            * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\rightarrow` exclude
+              all folders that contain the word ``bin`` or start with the letters ``My``
 
     ignore_permission_error : :class:`bool`, optional
         Whether to ignore :exc:`PermissionError` exceptions when reading
