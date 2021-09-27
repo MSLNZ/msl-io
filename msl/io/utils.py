@@ -579,17 +579,23 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
     # check if a Python environment needs to be activated
     activate = ''
-    conda = os.getenv('CONDA_PREFIX')
-    if conda and (executable == sys.executable or args.startswith(sys.executable)):
-        env = os.getenv('CONDA_DEFAULT_ENV')
-        assert env, 'CONDA_DEFAULT_ENV environment variable does not exist'
-        if env == 'base':
-            bat = os.path.join(conda, 'Scripts', 'activate.bat')
-        else:
-            bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
-                                               'Scripts', 'activate.bat'))
-        assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
-        activate = subprocess.list2cmdline([bat, env, '&&'])
+    if executable == sys.executable or args.startswith(sys.executable):
+        conda = os.getenv('CONDA_PREFIX')  # conda
+        venv = os.getenv('VIRTUAL_ENV')  # venv
+        if conda:
+            env = os.getenv('CONDA_DEFAULT_ENV')
+            assert env, 'CONDA_DEFAULT_ENV environment variable does not exist'
+            if env == 'base':
+                bat = os.path.join(conda, 'Scripts', 'activate.bat')
+            else:
+                bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
+                                                   'Scripts', 'activate.bat'))
+            assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
+            activate = subprocess.list2cmdline([bat, env, '&&'])
+        elif venv:
+            bat = os.path.join(venv, 'Scripts', 'activate.bat')
+            assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
+            activate = subprocess.list2cmdline([bat, '&&'])
 
     # redirect stdout (stderr) to a file
     redirect = ''

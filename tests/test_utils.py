@@ -37,13 +37,13 @@ def test_search():
     files = s(pattern=r'__init__\.py(?!c)', levels=2)
     assert len(files) == 3
 
-    files = s(pattern=r'__init__\.py(?!c)', levels=None)
+    files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=r'v?env')
     assert len(files) == 6
 
-    files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders='readers')
+    files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=['readers', 'v?env'])
     assert len(files) == 5
 
-    files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=['readers', 'writers'])
+    files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=['readers', 'writers', 'v?env'])
     assert len(files) == 4
 
     files = s(pattern=r'authors')
@@ -55,10 +55,11 @@ def test_search():
     files = s(pattern=r'setup')
     assert len(files) == 2
 
-    files = s(pattern=r'README', levels=None)
+    files = s(pattern=r'README', levels=None, exclude_folders='v?env')
     assert len(files) == 1
 
-    files = s(pattern=r'README', levels=None, ignore_hidden_folders=False, exclude_folders=['.eggs', '.pytest_cache', '.cache'])
+    files = s(pattern=r'README', levels=None, ignore_hidden_folders=False,
+              exclude_folders=['.eggs', '.pytest_cache', '.cache', 'v?env'])
     assert len(files) == 1
 
     files = s(pattern=r'(^in|^auth)', levels=1, exclude_folders='htmlcov')
