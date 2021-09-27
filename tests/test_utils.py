@@ -399,6 +399,10 @@ def test_run_as_admin():
     out = utils.run_as_admin(args='echo hi', verb=None)
     assert out == b'hi\r\n'
 
+    # pass in the keyword argument "args=" as a positional argument
+    out = utils.run_as_admin('echo hi', verb=None)
+    assert out == b'hi\r\n'
+
     # run a batch file with spaces in the file path and in the arguments
     file = os.path.join(tempfile.gettempdir(), 'msl io batch script.bat')
     with open(file, mode='w') as fp:
