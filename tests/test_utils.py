@@ -374,16 +374,17 @@ def test_is_admin():
     assert isinstance(utils.is_admin(), bool)
 
 
-@pytest.mark.skipif(os.name != 'nt', reason='non-Windows OS')
 @pytest.mark.skipif(utils.is_admin(), reason='don\'t run if already an admin')
+@pytest.mark.skipif(os.name != 'nt', reason='non-Windows OS')
 def test_run_as_admin():
     # Using verb=None as a keyword argument allows for testing the
     # 'run_as_admin' function without getting the UAC prompt,
     # but the test command must not require admin privileges.
-    # Only test on Windows because the other cases:
-    #   1) already and admin
+    # Only test on a non-admin Windows session because the other cases:
+    #   1) already an admin
     #   2) running on POSIX
-    # are fairly straightforward implementations.
+    # are straightforward implementations and we don't want to test
+    # the subprocess.check_output internals.
 
     with pytest.raises(ValueError, match=r'args and/or an executable$'):
         utils.run_as_admin()
@@ -505,8 +506,25 @@ def test_run_as_admin():
 
     # raise some exceptions
     with pytest.raises(PermissionError):
-        utils.run_as_admin(args='sc create MSL-IO-TEST binPath= "C:\\hello world\\dummy.exe"', verb=None)
+        utils.run_as_admin('sc create MSL-IO-TEST binPath= "C:\\hello world\\dummy.exe"', verb=None)
+
     with pytest.raises(PermissionError):
-        utils.run_as_admin(args=['sc', 'create', 'MSL-IO-TEST', 'binPath=', 'C:\\hello world\\dummy.exe'], verb=None)
-    with pytest.raises(OSError):
-        utils.run_as_admin(args='doesnotexist.exe', verb=None)
+        utils.run_as_admin(['sc', 'create', 'MSL-IO-TEST', 'binPath=', 'C:\\hello world\\dummy.exe'], verb=None)
+
+    with pytest.raises(OSError, match=r'Set capture_stderr=True to see if more information is available.$'):
+        utils.run_as_admin('doesnotexist.exe', verb=None)
+
+    with pytest.raises(OSError, match=r"'doesnotexist.exe' is not recognized as an internal or external command"):
+        utils.run_as_admin('doesnotexist.exe', capture_stderr=True, verb=None)
+
+    with pytest.raises(OSError, match=r'Set show=False to capture the stdout stream.$'):
+        utils.run_as_admin([sys.executable, '-c', '1/0'], show=True, verb=None)
+
+    with pytest.raises(OSError, match=r'Set capture_stderr=True to see if more information is available.$'):
+        utils.run_as_admin([sys.executable, '-c', '1/0'], verb=None)
+
+    with pytest.raises(OSError, match=r'Set capture_stderr=True to see if more information is available.\nHello!$'):
+        utils.run_as_admin([sys.executable, '-c', 'print("Hello!");1/0'], verb=None)
+
+    with pytest.raises(OSError, match=r'ZeroDivisionError:'):
+        utils.run_as_admin([sys.executable, '-c', '1/0'], capture_stderr=True, verb=None)

@@ -599,7 +599,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
     # redirect stdout (stderr) to a file
     redirect = ''
-    stdout_file = None
+    stdout_file = ''
     if not show:
         import uuid
         import tempfile
@@ -655,32 +655,44 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     milliseconds = int(timeout * 1e3) if timeout > 0 else timeout
 
     ret = kernel32.WaitForSingleObject(sei.hProcess, milliseconds)
-    if ret == 0:
-        ret = DWORD()
-        if not kernel32.GetExitCodeProcess(sei.hProcess, ctypes.byref(ret)):
-            raise ctypes.WinError()
-        if ret.value != 0:
-            raise ctypes.WinError(code=ret.value)
-        kernel32.CloseHandle(sei.hProcess)
-
+    if ret == 0:  # WAIT_OBJECT_0
         stdout = b''
         if stdout_file and os.path.isfile(stdout_file):
             with open(stdout_file, mode='rb') as fp:
                 stdout = fp.read()
             os.remove(stdout_file)
+
+        code = DWORD()
+        if not kernel32.GetExitCodeProcess(sei.hProcess, ctypes.byref(code)):
+            raise ctypes.WinError()
+
+        if code.value != 0:
+            msg = ctypes.FormatError(code.value)
+            out_str = stdout.decode('utf-8', 'ignore').rstrip()
+            if show:
+                msg += '\nSet show=False to capture the stdout stream.'
+            else:
+                if not capture_stderr:
+                    msg += '\nSet capture_stderr=True to see if ' \
+                           'more information is available.'
+                if out_str:
+                    msg += '\n{}'.format(out_str)
+            raise ctypes.WinError(code=code.value, descr=msg)
+
+        kernel32.CloseHandle(sei.hProcess)
         return stdout
 
-    if ret == 0xFFFFFFFF:
+    if ret == 0xFFFFFFFF:  # WAIT_FAILED
         raise ctypes.WinError()
 
-    if ret == 0x00000080:
+    if ret == 0x00000080:  # WAIT_ABANDONED
         msg = 'The specified object is a mutex object that was not ' \
               'released by the thread that owned the mutex object before ' \
               'the owning thread terminated. Ownership of the mutex ' \
               'object is granted to the calling thread and the mutex state ' \
               'is set to non-signaled. If the mutex was protecting persistent ' \
               'state information, you should check it for consistency.'
-    elif ret == 0x00000102:
+    elif ret == 0x00000102:  # WAIT_TIMEOUT
         msg = "The timeout interval elapsed after {} second(s) and the " \
               "object's state is non-signaled.".format(timeout)
     else:
