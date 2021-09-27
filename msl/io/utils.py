@@ -502,7 +502,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     kwargs
         If the current process already has admin privileges or if the operating
         system is not Windows then all additional keyword arguments are passed
-        to :func:`subprocess.check_output`. Otherwise only a `timeout` keyword
+        to :func:`~subprocess.check_output`. Otherwise only a `timeout` keyword
         argument is used (Windows).
 
     Returns
