@@ -5,6 +5,7 @@ import stat
 import uuid
 import shutil
 import hashlib
+import datetime
 import tempfile
 import subprocess
 from io import BytesIO, StringIO
@@ -69,23 +70,27 @@ def test_search():
     assert len(files) == 4
 
 
-def test_git_commit():
+def test_git_revision():
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
-    sha1 = utils.git_revision(root_dir)
+    git = utils.git_revision(root_dir)
+    sha1 = git['hash']
     assert len(sha1) == 40
     assert all(char.isalnum() for char in sha1)
+    if sys.version_info.major > 2:
+        assert isinstance(git['hash'], str)
+    assert isinstance(git['datetime'], datetime.datetime)
 
-    sha1_short = utils.git_revision(root_dir, short=True)
-    assert len(sha1_short) > 0
-    assert len(sha1_short) < len(sha1)
+    git = utils.git_revision(root_dir, short=True)
+    sha1_short = git['hash']
+    assert len(sha1_short) == 7
     assert sha1.startswith(sha1_short)
 
     # can specify any directory within the version control hierarchy
-    assert utils.git_revision(os.path.join(root_dir, '.git')) == sha1
-    assert utils.git_revision(os.path.join(root_dir, 'msl', 'examples', 'io')) == sha1
-    assert utils.git_revision(os.path.dirname(__file__)) == sha1
-    assert utils.git_revision(os.path.join(root_dir, 'docs', '_api')) == sha1
+    assert utils.git_revision(os.path.join(root_dir, '.git'))['hash'] == sha1
+    assert utils.git_revision(os.path.join(root_dir, 'msl', 'examples', 'io'))['hash'] == sha1
+    assert utils.git_revision(os.path.dirname(__file__))['hash'] == sha1
+    assert utils.git_revision(os.path.join(root_dir, 'docs', '_api'))['hash'] == sha1
 
     # a directory not under version control
     assert utils.git_revision(tempfile.gettempdir()) is None

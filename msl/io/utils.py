@@ -11,6 +11,7 @@ import hashlib
 import logging
 import subprocess
 from smtplib import SMTP
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 try:
@@ -427,7 +428,7 @@ def get_basename(obj):
 
 
 def git_revision(git_dir, short=False):
-    """Get the SHA-1 hash value of the git revision.
+    """Get the hash value and timestamp of the git revision.
 
     This function requires that git_ is installed and that it is
     available on ``PATH``.
@@ -439,23 +440,27 @@ def git_revision(git_dir, short=False):
     git_dir : :class:`str`
         A directory that is under version control.
     short : :class:`bool`, optional
-        Whether to return the shortened version of the SHA-1 hash value.
+        Whether to return the shortened version of the hash value.
 
     Returns
     -------
-    :class:`str` or :data:`None`
-        The SHA-1 hash value of the currently checked-out commit.
+    :class:`dict` or :data:`None`
+        The hash value and timestamp of the currently checked-out commit.
         If `git_dir` is not a directory that is under version then
         returns :data:`None`.
     """
-    cmd = ['git', 'rev-parse', 'HEAD']
-    if short:
-        cmd.insert(2, '--short')
+    h = 'h' if short else 'H'
+    cmd = ['git', 'show', '-s', '--format=%{} %ct'.format(h), 'HEAD']
     try:
-        sha1 = subprocess.check_output(cmd, cwd=git_dir, stderr=subprocess.PIPE)
+        out = subprocess.check_output(cmd, cwd=git_dir, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError:
         return None
-    return sha1.strip().decode('ascii')
+
+    sha, timestamp = out.split()
+    return {
+        'hash': sha.decode('ascii'),
+        'datetime': datetime.fromtimestamp(int(timestamp))
+    }
 
 
 def remove_write_permissions(path):
