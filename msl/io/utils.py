@@ -427,32 +427,27 @@ def get_basename(obj):
             return obj.__class__.__name__
 
 
-def git_revision(git_dir, short=False):
-    """Get the hash value and timestamp of the git revision.
+def git_head(directory):
+    """Get information about the ``HEAD`` of a repository.
 
-    This function requires that git_ is installed and that it is
-    available on ``PATH``.
-
-    .. _git: https://git-scm.com/
+    This function requires that `git <https://git-scm.com/>`_ is installed
+    and that it is available on ``PATH``.
 
     Parameters
     ----------
-    git_dir : :class:`str`
+    directory : :class:`str`
         A directory that is under version control.
-    short : :class:`bool`, optional
-        Whether to return the shortened version of the hash value.
 
     Returns
     -------
     :class:`dict` or :data:`None`
-        The hash value and timestamp of the currently checked-out commit.
-        If `git_dir` is not a directory that is under version then
-        returns :data:`None`.
+        Information about the most recent commit on the current branch.
+        If `directory` is not a directory that is under version control
+        then returns :data:`None`.
     """
-    h = 'h' if short else 'H'
-    cmd = ['git', 'show', '-s', '--format=%{} %ct'.format(h), 'HEAD']
+    cmd = ['git', 'show', '-s', '--format=%H %ct', 'HEAD']
     try:
-        out = subprocess.check_output(cmd, cwd=git_dir, stderr=subprocess.PIPE)
+        out = subprocess.check_output(cmd, cwd=directory, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError:
         return None
 

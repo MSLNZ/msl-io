@@ -8,7 +8,7 @@ from .utils import (
     _readers,
     checksum,
     copy,
-    git_revision,
+    git_head,
     is_admin,
     is_dir_accessible,
     is_file_readable,

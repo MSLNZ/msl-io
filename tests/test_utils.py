@@ -70,30 +70,24 @@ def test_search():
     assert len(files) == 4
 
 
-def test_git_revision():
+def test_git_head():
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
-    git = utils.git_revision(root_dir)
-    sha1 = git['hash']
-    assert len(sha1) == 40
-    assert all(char.isalnum() for char in sha1)
+    head = utils.git_head(root_dir)
+    assert len(head['hash']) == 40
+    assert all(char.isalnum() for char in head['hash'])
     if sys.version_info.major > 2:
-        assert isinstance(git['hash'], str)
-    assert isinstance(git['datetime'], datetime.datetime)
-
-    git = utils.git_revision(root_dir, short=True)
-    sha1_short = git['hash']
-    assert len(sha1_short) == 7
-    assert sha1.startswith(sha1_short)
+        assert isinstance(head['hash'], str)
+    assert isinstance(head['datetime'], datetime.datetime)
 
     # can specify any directory within the version control hierarchy
-    assert utils.git_revision(os.path.join(root_dir, '.git'))['hash'] == sha1
-    assert utils.git_revision(os.path.join(root_dir, 'msl', 'examples', 'io'))['hash'] == sha1
-    assert utils.git_revision(os.path.dirname(__file__))['hash'] == sha1
-    assert utils.git_revision(os.path.join(root_dir, 'docs', '_api'))['hash'] == sha1
+    assert utils.git_head(os.path.join(root_dir, '.git')) == head
+    assert utils.git_head(os.path.join(root_dir, 'msl', 'examples', 'io')) == head
+    assert utils.git_head(os.path.dirname(__file__)) == head
+    assert utils.git_head(os.path.join(root_dir, 'docs', '_api')) == head
 
     # a directory not under version control
-    assert utils.git_revision(tempfile.gettempdir()) is None
+    assert utils.git_head(tempfile.gettempdir()) is None
 
 
 def test_checksum():
