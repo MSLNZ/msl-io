@@ -26,7 +26,7 @@ and general helper functions
 
    ~msl.io.utils.checksum
    ~msl.io.utils.copy
-   ~msl.io.utils.git_revision
+   ~msl.io.utils.git_head
    ~msl.io.utils.is_admin
    ~msl.io.utils.is_dir_accessible
    ~msl.io.utils.is_file_readable
