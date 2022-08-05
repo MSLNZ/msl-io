@@ -73,7 +73,7 @@ def test_raises():
     with pytest.raises((IOError, OSError)):
         read_table('does not exist')
 
-    # the unpack argument is not supported for text-based files
+    # the 'unpack' argument is not supported for text-based files
     with pytest.raises(ValueError, match='unpack'):
         read_table(get_url('.csv'), unpack=True)
 
@@ -94,207 +94,208 @@ def test_excel_range_out_of_bounds():
     assert np.array_equal(dset.data, data)
 
 
-def test_fetch_all_data():
-    params = [
-        ('.csv', dict(dtype=data.dtype)),
-        ('.txt', dict(dtype=data.dtype, delimiter='\t')),
-        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154051')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, header)
-        assert np.array_equal(dset.data, data)
-        assert dset.shape == (10,)
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(dtype=data.dtype)),
+     ('.txt', dict(dtype=data.dtype, delimiter='\t')),
+     ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
+     ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
+     ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
+     ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL21')),
+     ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154051'))]
+)
+def test_fetch_all_data(extn, kwargs):
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, header)
+    assert np.array_equal(dset.data, data)
+    assert dset.shape == (10,)
 
 
-def test_ignore_timestamp_column():
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(usecols=(1, 2, 3, 4))),
+     ('.txt', dict(usecols=(1, 2, 3, 4), delimiter='\t')),
+     ('.xls', dict(sheet='A1', cells='B1:E11')),
+     ('.xls', dict(sheet='BH11', cells='BI11:BL21')),
+     ('.xlsx', dict(sheet='A1', cells='B1:E11')),
+     ('.xlsx', dict(sheet='BH11', cells='BI11:BL21')),
+     ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AFB154051'))]
+)
+def test_ignore_timestamp_column(extn, kwargs):
     floats = np.asarray([[e['f1'], e['f2'], e['f3'], e['f4']] for e in data])
-    params = [
-        ('.csv', dict(usecols=(1, 2, 3, 4))),
-        ('.txt', dict(usecols=(1, 2, 3, 4), delimiter='\t')),
-        ('.xls', dict(sheet='A1', cells='B1:E11')),
-        ('.xls', dict(sheet='BH11', cells='BI11:BL21')),
-        ('.xlsx', dict(sheet='A1', cells='B1:E11')),
-        ('.xlsx', dict(sheet='BH11', cells='BI11:BL21')),
-        ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AFB154051')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, header[1:])
-        assert np.array_equal(dset.data, floats)
-        assert dset.shape == (10, 4)
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, header[1:])
+    assert np.array_equal(dset.data, floats)
+    assert dset.shape == (10, 4)
 
 
-def test_single_column():
-    params = [
-        ('.csv', dict(usecols=1)),
-        ('.txt', dict(usecols=1, delimiter='\t')),
-        ('.xls', dict(sheet='A1', cells='B1:B11')),
-        ('.xls', dict(sheet='BH11', cells='BI11:BI21')),
-        ('.xlsx', dict(sheet='A1', cells='B1:B11')),
-        ('.xlsx', dict(sheet='BH11', cells='BI11:BI21')),
-        ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AEY154051')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, [header[1]])
-        assert np.array_equal(dset.data, data['f1'])
-        assert dset.shape == (10,)
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(usecols=1)),
+     ('.txt', dict(usecols=1, delimiter='\t')),
+     ('.xls', dict(sheet='A1', cells='B1:B11')),
+     ('.xls', dict(sheet='BH11', cells='BI11:BI21')),
+     ('.xlsx', dict(sheet='A1', cells='B1:B11')),
+     ('.xlsx', dict(sheet='BH11', cells='BI11:BI21')),
+     ('.xlsx', dict(sheet='AEX154041', cells='AEY154041:AEY154051'))]
+)
+def test_single_column(extn, kwargs):
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, [header[1]])
+    assert np.array_equal(dset.data, data['f1'])
+    assert dset.shape == (10,)
 
 
-def test_single_row():
-    params = [
-        ('.csv', dict(dtype=data.dtype, max_rows=1)),
-        ('.txt', dict(dtype=data.dtype, max_rows=1, delimiter='\t')),
-        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
-        ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
-        ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154042')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, header)
-        assert np.array_equal(dset.data, data[0])
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(dtype=data.dtype, max_rows=1)),
+     ('.txt', dict(dtype=data.dtype, max_rows=1, delimiter='\t')),
+     ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
+     ('.xls', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
+     ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False, cells='A1:E2')),
+     ('.xlsx', dict(dtype=data.dtype, sheet='BH11', as_datetime=False, cells='BH11:BL12')),
+     ('.xlsx', dict(dtype=data.dtype, sheet='AEX154041', as_datetime=False, cells='AEX154041:AFB154042'))]
+)
+def test_single_row(extn, kwargs):
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, header)
+    assert np.array_equal(dset.data, data[0])
 
 
-def test_header_only():
-    params = [
-        ('.csv', dict(dtype=str, max_rows=0)),
-        ('.txt', dict(dtype=str, max_rows=0, delimiter='\t')),
-        ('.xls', dict(sheet='A1', cells='A1:E1')),
-        ('.xls', dict(sheet='BH11', cells='BH11:BL11')),
-        ('.xlsx', dict(sheet='A1', cells='A1:E1')),
-        ('.xlsx', dict(sheet='BH11', cells='BH11:BL11')),
-        ('.xlsx', dict(sheet='AEX154041', cells='AEX154041:AFB154041')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, header)
-        assert dset.data.size == 0
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.xls', dict(sheet='A1', cells='A1:E1')),
+     ('.xls', dict(sheet='BH11', cells='BH11:BL11')),
+     ('.xlsx', dict(sheet='A1', cells='A1:E1')),
+     ('.xlsx', dict(sheet='BH11', cells='BH11:BL11')),
+     ('.xlsx', dict(sheet='AEX154041', cells='AEX154041:AFB154041'))]
+)
+def test_header_only(extn, kwargs):
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, header)
+    assert dset.data.size == 0
 
 
-def test_datetime_objects():
-    def to_datetime(string):
-        return datetime.strptime(string.decode(), '%Y-%m-%d %H:%M:%S')
+def to_datetime(string):
+    return datetime.strptime(string.decode(), '%Y-%m-%d %H:%M:%S')
 
-    dt = {'names': header, 'formats': [object, float, float, float, float]}
+
+dt = {'names': header, 'formats': [object, float, float, float, float]}
+
+
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(dtype=dt, converters={0: to_datetime})),
+     ('.txt', dict(dtype=dt, converters={0: to_datetime}, delimiter='\t')),
+     ('.xls', dict(dtype=dt, sheet='A1')),
+     ('.xls', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
+     ('.xlsx', dict(dtype=dt, sheet='A1')),
+     ('.xlsx', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
+     ('.xlsx', dict(dtype=dt, sheet='AEX154041', cells='AEX154041:AFB154051'))]
+)
+def test_datetime_objects(extn, kwargs):
     datetimes = np.asarray([to_datetime(item.encode()) for item in data['f0']], dtype=object)
     data_datetimes = np.asarray([
         (a, b, c, d, e) for a, b, c, d, e in zip(datetimes, data['f1'], data['f2'], data['f3'], data['f4'])
     ], dtype=dt)
 
-    params = [
-        ('.csv', dict(dtype=dt, converters={0: to_datetime})),
-        ('.txt', dict(dtype=dt, converters={0: to_datetime}, delimiter='\t')),
-        ('.xls', dict(dtype=dt, sheet='A1')),
-        ('.xls', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
-        ('.xlsx', dict(dtype=dt, sheet='A1')),
-        ('.xlsx', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
-        ('.xlsx', dict(dtype=dt, sheet='AEX154041', cells='AEX154041:AFB154051')),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, header)
-        for h in header:
-            assert np.array_equal(dset[h], data_datetimes[h])
-        assert dset.shape == (10,)
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, header)
+    for h in header:
+        assert np.array_equal(dset[h], data_datetimes[h])
+    assert dset.shape == (10,)
 
 
-def test_skip_rows():
-    params = [
-        ('.csv', dict(dtype=data.dtype, skiprows=5)),
-        ('.txt', dict(dtype=data.dtype, delimiter='\t', skiprows=5)),
-    ]
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(dtype=data.dtype, skiprows=5)),
+     ('.txt', dict(dtype=data.dtype, delimiter='\t', skiprows=5))]
+)
+def test_skip_rows_5(extn, kwargs):
     new_header = ['2019-09-11 14:07:07', '-0.505250', '0.000119', '0.500923', '0.000120']
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert np.array_equal(dset.metadata.header, new_header)
-        assert np.array_equal(dset.data, data[4:])
-        assert dset.shape == (6,)
-
-    params = [
-        ('.csv', dict(skiprows=100)),
-        ('.txt', dict(skiprows=100)),
-    ]
-    for extn, kwargs in params:
-        dset = read_table(get_url(extn), **kwargs)
-        assert dset.metadata.header.size == 0
-        assert dset.size == 0
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, new_header)
+    assert np.array_equal(dset.data, data[4:])
+    assert dset.shape == (6,)
 
 
-def test_text_file_like():
-    params = [
-        ('.csv', dict(dtype=data.dtype, delimiter=',')),
-        ('.txt', dict(dtype=data.dtype, delimiter='\t')),
-    ]
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(skiprows=100)),
+     ('.txt', dict(skiprows=100))]
+)
+def test_skip_rows_100(extn, kwargs):
+    dset = read_table(get_url(extn), **kwargs)
+    assert dset.metadata.header.size == 0
+    assert dset.size == 0
 
+
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(dtype=data.dtype, delimiter=',')),
+     ('.txt', dict(dtype=data.dtype, delimiter='\t'))]
+)
+def test_text_file_like(extn, kwargs):
     def assert_dataset(dataset):
         assert np.array_equal(dataset.metadata.header, header)
         assert np.array_equal(dataset.data, data)
         assert dataset.shape == (10,)
 
-    for extn, kwargs in params:
-        # first, load it using the file path to get it into a Dataset object
-        dset_temp = read_table(get_url(extn), **kwargs)
+    # first, load it using the file path to get it into a Dataset object
+    dset_temp = read_table(get_url(extn), **kwargs)
 
-        with StringIO() as buf:
-            delim = kwargs['delimiter']
-            buf.write(delim.join(h for h in dset_temp.metadata.header) + '\n')
-            for row in dset_temp:
-                buf.write(delim.join(str(val) for val in row) + '\n')
+    with StringIO() as buf:
+        delim = kwargs['delimiter']
+        buf.write(delim.join(h for h in dset_temp.metadata.header) + '\n')
+        for row in dset_temp:
+            buf.write(delim.join(str(val) for val in row) + '\n')
 
-            buf.seek(0)
-            dset = read_table(buf, **kwargs)
-            assert dset.name == 'StringIO'
-            assert_dataset(dset)
+        buf.seek(0)
+        dset = read_table(buf, **kwargs)
+        assert dset.name == 'StringIO'
+        assert_dataset(dset)
 
-        with open(get_url(extn), mode='rt') as fp:
-            dset = read_table(fp, **kwargs)
-            assert dset.name == 'table' + extn
-            assert_dataset(dset)
+    with open(get_url(extn), mode='rt') as fp:
+        dset = read_table(fp, **kwargs)
+        assert dset.name == 'table' + extn
+        assert_dataset(dset)
 
-        kwargs['delimiter'] = kwargs['delimiter'].encode()
+    kwargs['delimiter'] = kwargs['delimiter'].encode()
 
-        with BytesIO() as buf:
-            delim = kwargs['delimiter']
-            buf.write(delim.join(h.encode() for h in dset_temp.metadata.header) + b'\n')
-            for row in dset_temp:
-                buf.write(delim.join(str(val).encode() for val in row) + b'\n')
+    with BytesIO() as buf:
+        delim = kwargs['delimiter']
+        buf.write(delim.join(h.encode() for h in dset_temp.metadata.header) + b'\n')
+        for row in dset_temp:
+            buf.write(delim.join(str(val).encode() for val in row) + b'\n')
 
-            buf.seek(0)
-            dset = read_table(buf, **kwargs)
-            assert dset.name == 'BytesIO'
-            assert_dataset(dset)
+        buf.seek(0)
+        dset = read_table(buf, **kwargs)
+        assert dset.name == 'BytesIO'
+        assert_dataset(dset)
 
-        with open(get_url(extn), mode='rb') as fp:
-            dset = read_table(fp, **kwargs)
-            assert dset.name == 'table' + extn
-            assert_dataset(dset)
+    with open(get_url(extn), mode='rb') as fp:
+        dset = read_table(fp, **kwargs)
+        assert dset.name == 'table' + extn
+        assert_dataset(dset)
 
 
-def test_excel_file_pointer():
-    params = [
-        ('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-        ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
-    ]
-
-    for extn, kwargs in params:
-        for mode in ['rt', 'rb']:
-            with open(get_url(extn), mode=mode) as fp:
-                dataset = read_table(fp, **kwargs)
-                assert np.array_equal(dataset.metadata.header, header)
-                assert np.array_equal(dataset.data, data)
-                assert dataset.shape == (10,)
-            with open(get_url(extn), mode=mode) as fp:
-                dataset = read_table_excel(fp, **kwargs)
-                assert np.array_equal(dataset.metadata.header, header)
-                assert np.array_equal(dataset.data, data)
-                assert dataset.shape == (10,)
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.xls', dict(dtype=data.dtype, sheet='A1', as_datetime=False)),
+     ('.xlsx', dict(dtype=data.dtype, sheet='A1', as_datetime=False))]
+)
+def test_excel_file_pointer(extn, kwargs):
+    for mode in ['rt', 'rb']:
+        with open(get_url(extn), mode=mode) as fp:
+            dataset = read_table(fp, **kwargs)
+            assert np.array_equal(dataset.metadata.header, header)
+            assert np.array_equal(dataset.data, data)
+            assert dataset.shape == (10,)
+        with open(get_url(extn), mode=mode) as fp:
+            dataset = read_table_excel(fp, **kwargs)
+            assert np.array_equal(dataset.metadata.header, header)
+            assert np.array_equal(dataset.data, data)
+            assert dataset.shape == (10,)
 
     # there is no point to test StringIO nor BytesIO because `read_table`
     # checks the file path extension to decide how to read the table
