@@ -368,7 +368,7 @@ class Reader(Root):
                 size = 0
 
             if size == 0:
-                with open(file, mode='r') as fp:
+                with open(file, mode='rt') as fp:
                     fp.seek(0, os.SEEK_END)
                     size = fp.tell()
 
@@ -401,7 +401,7 @@ class Reader(Root):
             position = file.tell()
             _file = file
         else:
-            _file = open(file, 'rb')
+            _file = open(file, mode='rb')
 
         _file.seek(start)
         data = _file.read(max(0, stop - start))

@@ -253,7 +253,7 @@ def test_text_file_like():
             assert dset.name == 'StringIO'
             assert_dataset(dset)
 
-        with open(get_url(extn), 'r') as fp:
+        with open(get_url(extn), mode='rt') as fp:
             dset = read_table(fp, **kwargs)
             assert dset.name == 'table' + extn
             assert_dataset(dset)
@@ -271,7 +271,7 @@ def test_text_file_like():
             assert dset.name == 'BytesIO'
             assert_dataset(dset)
 
-        with open(get_url(extn), 'rb') as fp:
+        with open(get_url(extn), mode='rb') as fp:
             dset = read_table(fp, **kwargs)
             assert dset.name == 'table' + extn
             assert_dataset(dset)

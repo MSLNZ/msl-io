@@ -105,7 +105,7 @@ def _authenticate(token, client_secrets_file, scopes):
             dirname = os.path.dirname(token)
             if dirname and not os.path.isdir(dirname):
                 os.makedirs(dirname)
-            with open(token, mode='w') as fp:
+            with open(token, mode='wt') as fp:
                 fp.write(credentials.to_json())
 
     return credentials

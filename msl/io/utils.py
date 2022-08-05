@@ -63,7 +63,7 @@ def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
     hash_cls = hashlib.new(algorithm)
 
     try:
-        with open(file, 'rb') as f:
+        with open(file, mode='rb') as f:
             read(f)
     except TypeError:
         if not hasattr(file, 'tell'):
@@ -359,7 +359,7 @@ def send_email(to, config, subject='', body='', frm=None):
         Who is sending the email? If not specified then equals the `to` value.
     """
     cfg = dict()
-    with open(config, 'r') as fp:
+    with open(config, mode='rt') as fp:
         for line in fp:
             if line.startswith('#'):
                 continue

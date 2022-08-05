@@ -514,7 +514,7 @@ def test_gdrive_is_folder_personal():
 @skipif_no_gdrive_personal_writeable
 def test_gdrive_upload_personal():
     temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.py')
-    with open(temp_file, mode='w') as fp:
+    with open(temp_file, mode='wt') as fp:
         fp.write('from msl.io import GDrive')
 
     # instantiated in read-only mode
@@ -569,7 +569,7 @@ def test_gdrive_download_personal():
     # and saved to the current working directory
     file_id = dpr.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt')
     dpr.download(file_id)
-    with open('file.txt', mode='r') as fp:
+    with open('file.txt', mode='rt') as fp:
         assert fp.read() == 'in "sub folder 3"'
     os.remove('file.txt')  # clean up
 

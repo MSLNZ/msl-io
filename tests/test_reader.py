@@ -24,18 +24,18 @@ def test_get_lines():
     path = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_lines')
 
     # the file contains 26 lines
-    with open(path, 'rt') as fp:
+    with open(path, mode='rt') as fp:
         all_lines = fp.read().split('\n')
 
     string_io = StringIO()
-    with open(path, 'rt') as fp:
+    with open(path, mode='rt') as fp:
         data = fp.read()
         if IS_PYTHON2:
             data = unicode(data)
         string_io.write(data)
     string_io.seek(0)
 
-    open_ = open(path, 'rt')
+    open_ = open(path, mode='rt')
 
     for obj in [path, string_io, open_]:
         assert len(Reader.get_lines(obj)) == 26
@@ -100,15 +100,15 @@ def test_get_bytes():
     path = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_bytes')
 
     # the file contains 184 bytes
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         all_bytes = fp.read()
 
     bytes_io = BytesIO()
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         bytes_io.write(fp.read())
     bytes_io.seek(0)
 
-    open_ = open(path, 'rb')
+    open_ = open(path, mode='rb')
 
     for obj in [path, bytes_io, open_]:
         assert Reader.get_bytes(obj) == all_bytes
@@ -190,11 +190,11 @@ def test_get_extension():
     assert Reader.get_extension(pathlib.Path('filename.with.dots.dat')) == '.dat'
 
     path = os.path.join(os.path.dirname(__file__), 'samples', 'excel_datatypes.xlsx')
-    with open(path, 'r') as fp:
+    with open(path, mode='rt') as fp:
         assert Reader.get_extension(fp) == '.xlsx'
 
     path = os.path.join(os.path.dirname(__file__), 'samples', 'test_file_for_static_Reader_lines')
-    with open(path, 'r') as fp:
+    with open(path, mode='rt') as fp:
         assert Reader.get_extension(fp) == ''
 
 

@@ -331,7 +331,7 @@ def test_pretty_printing():
 }
 """.splitlines()
 
-    with open(w.file, 'rt') as fp:
+    with open(w.file, mode='rt') as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
 
     assert len(expected) == len(written)
@@ -343,7 +343,7 @@ def test_pretty_printing():
 
     # change the indentation to be 0
     w.save(root=root, mode='w', sort_keys=True, indent=0, separators=(', ', ': '))
-    with open(w.file, 'rt') as fp:
+    with open(w.file, mode='rt') as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
     assert len(expected) == len(written)
     for i in range(len(expected)):
@@ -351,7 +351,7 @@ def test_pretty_printing():
 
     # change the indentation to be None
     w.save(root=root, mode='w', sort_keys=True, indent=None, separators=(',', ':'))
-    with open(w.file, 'rt') as fp:
+    with open(w.file, mode='rt') as fp:
         written = fp.read().splitlines()
     assert len(written) == 2
     assert written[0] == '#File created with: MSL JSONWriter version 1.0'

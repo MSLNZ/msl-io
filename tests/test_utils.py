@@ -107,13 +107,13 @@ def test_checksum():
     assert md5 == utils.checksum(path_as_bytes, algorithm='md5')
 
     # use a file pointer (binary mode)
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         assert sha256 == utils.checksum(fp, algorithm='sha256')
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         assert md5 == utils.checksum(fp, algorithm='md5')
 
     # use a byte buffer
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         buffer = BytesIO(fp.read())
     assert buffer.tell() == 0
     assert sha256 == utils.checksum(buffer, algorithm='sha256')
@@ -168,7 +168,7 @@ def test_get_basename():
     assert utils.get_basename(StringIO(u'hello')) == u'StringIO'
     assert utils.get_basename(BytesIO(b'hello')) == 'BytesIO'
 
-    with open(__file__, 'rt') as fp:
+    with open(__file__, mode='rt') as fp:
         assert utils.get_basename(fp) == 'test_utils.py'
 
 
@@ -278,7 +278,7 @@ def test_remove_write_permissions():
 
     # create a new file
     path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.tmp')
-    with open(path, 'wb') as fp:
+    with open(path, mode='wb') as fp:
         fp.write(b'hello')
 
     # set to rwxrwxrwx
@@ -291,9 +291,9 @@ def test_remove_write_permissions():
         assert mode == 0o777
 
     # can still modify it
-    with open(path, 'ab') as fp:
+    with open(path, mode='ab') as fp:
         fp.write(b' world')
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         assert fp.read() == b'hello world'
 
     utils.remove_write_permissions(path)
@@ -306,9 +306,9 @@ def test_remove_write_permissions():
         assert mode == 0o555
 
     # cannot open the file to modify it
-    for mode in ['wb', 'ab', 'wt', 'at', 'w+', 'w+b']:
+    for m in ['wb', 'ab', 'wt', 'at', 'w+', 'w+b']:
         with pytest.raises((IOError, OSError)):
-            open(path, mode)
+            open(path, mode=m)
 
     # cannot delete the file (only valid on Windows)
     if sys.platform == 'win32':
@@ -316,7 +316,7 @@ def test_remove_write_permissions():
             os.remove(path)
 
     # can still read it
-    with open(path, 'rb') as fp:
+    with open(path, mode='rb') as fp:
         assert fp.read() == b'hello world'
 
     # set to rw--wxrw-
@@ -404,7 +404,7 @@ def test_run_as_admin():
 
     # run a batch file with spaces in the file path and in the arguments
     file = os.path.join(tempfile.gettempdir(), 'msl io batch script.bat')
-    with open(file, mode='w') as fp:
+    with open(file, mode='wt') as fp:
         fp.write('@ECHO OFF\r\n')
         for i in range(1, 6):
             fp.write('echo %{}\r\n'.format(i))
@@ -464,7 +464,7 @@ def test_run_as_admin():
 
     # run a python script
     file = os.path.join(tempfile.gettempdir(), 'msl_io_admin_test.py')
-    with open(file, mode='w') as fp:
+    with open(file, mode='wt') as fp:
         fp.write('from __future__ import print_function\r\n')
         fp.write('import sys\r\n')
         # additional packages must be available since msl-io depends on them

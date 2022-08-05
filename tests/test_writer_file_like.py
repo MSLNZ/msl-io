@@ -98,7 +98,7 @@ def test_open_text():
         if writer is HDF5Writer:
             continue  # The HDF5Writer cannot write to a text-based stream
 
-        with open(path, 'wt') as fp:
+        with open(path, mode='wt') as fp:
             with writer(fp) as root:
                 if IS_PYTHON2:
                     assert isinstance(root.file, file)
@@ -125,7 +125,7 @@ def test_open_binary():
     for writer in writers:
         if writer is HDF5Writer and h5py is None:
             continue
-        with open(path, 'wb') as fp:
+        with open(path, mode='wb') as fp:
             with writer(fp) as root:
                 if IS_PYTHON2:
                     assert isinstance(root.file, file)
