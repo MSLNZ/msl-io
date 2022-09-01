@@ -140,7 +140,7 @@ class GDrive(GoogleAPI):
 
         .. attention::
            You must follow the instructions in the prerequisites section for setting up the
-           `Drive API <https://developers.google.com/drive/api/v3/quickstart/python#prerequisites>`_
+           `Drive API <https://developers.google.com/drive/api/quickstart/python#prerequisites>`_
            before you can use this class. It is also useful to be aware of the
            `refresh token expiration <https://developers.google.com/identity/protocols/oauth2#expiration>`_
            policy.
