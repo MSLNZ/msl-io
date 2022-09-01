@@ -29,7 +29,7 @@ except:
     dpr = None
 
 try:
-    # dpr -> drive, personal, writable
+    # dpw -> drive, personal, writable
     dpw = GDrive(is_read_only=False, is_corporate_account=False)
 except:
     dpw = None
@@ -41,7 +41,7 @@ except:
     spr = None
 
 try:
-    # spr -> sheets, personal, writeable
+    # spw -> sheets, personal, writeable
     spw = GSheets(is_read_only=False, is_corporate_account=False)
 except:
     spw = None
