@@ -690,3 +690,23 @@ def test_gdrive_copy():
     dpw.delete(cid)
     assert not dpw.is_file('abc', folder_id=f2_id)
     assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+
+
+@skipif_no_gdrive_personal_writeable
+def test_gdrive_rename():
+    # rename a folder
+    fid = dpw.create_folder('My Folder')
+    assert dpw.path(fid) == 'My Drive/My Folder'
+    dpw.rename(fid, 'Renamed Folder')
+    assert dpw.path(fid) == 'My Drive/Renamed Folder'
+
+    # rename a file
+    file_txt_id = '1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41'
+    assert dpw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
+    cid = dpw.copy(file_txt_id, fid)
+    assert dpw.path(cid) == 'My Drive/Renamed Folder/file.txt'
+    dpw.rename(cid, 'renamed file.txt')
+    assert dpw.path(cid) == 'My Drive/Renamed Folder/renamed file.txt'
+
+    # cleanup
+    dpw.delete(fid)

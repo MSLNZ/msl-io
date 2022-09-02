@@ -602,6 +602,24 @@ class GDrive(GoogleAPI):
         ).execute()
         return response['id']
 
+    def rename(self, file_or_folder_id, new_name):
+        """Rename a file or folder.
+
+        Renaming a file or folder does not change its ID.
+
+        Parameters
+        ----------
+        file_or_folder_id : :class:`str`
+            The ID of a file or folder.
+        new_name : :class:`str`
+            The new name of the file or folder.
+        """
+        self._files.update(
+            fileId=file_or_folder_id,
+            supportsAllDrives=True,
+            body={'name': new_name},
+        ).execute()
+
 
 class GValueOption(Enum):
     """Determines how values should be returned."""
