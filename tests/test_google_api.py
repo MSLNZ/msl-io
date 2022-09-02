@@ -646,3 +646,47 @@ def test_gdrive_path_personal():
     assert dpr.path('1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3'
     assert dpr.path('1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt'
     assert dpr.path('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment'
+
+
+@skipif_no_gdrive_personal_writeable
+def test_gdrive_copy():
+    msl_io_testing_id = '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
+    assert dpw.path(msl_io_testing_id) == 'My Drive/MSL/msl-io-testing'
+
+    file_txt_id = '1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41'
+    assert dpw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
+
+    f2_id = '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert dpw.path(f2_id) == 'My Drive/MSL/msl-io-testing/f 1/f2'
+
+    # copy to the same folder (do not specify the destination folder)
+    cid = dpw.copy(file_txt_id)
+    assert cid != file_txt_id
+    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/file.txt'
+    with pytest.raises(OSError, match='Multiple file matches'):
+        dpw.file_id('file.txt', folder_id=msl_io_testing_id)
+    dpw.delete(cid)
+    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+
+    # copy to a different folder
+    cid = dpw.copy(file_txt_id, f2_id)
+    assert cid != file_txt_id
+    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/file.txt'
+    dpw.delete(cid)
+    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+
+    # copy to the same folder (but specify it) and rename
+    cid = dpw.copy(file_txt_id, msl_io_testing_id, name='new-file.dat')
+    assert cid != file_txt_id
+    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/new-file.dat'
+    dpw.delete(cid)
+    assert not dpw.is_file('new-file.dat', folder_id=msl_io_testing_id)
+    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+
+    # copy to a different folder and rename (do not specify an extension)
+    cid = dpw.copy(file_txt_id, f2_id, name='abc')
+    assert cid != file_txt_id
+    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/abc'
+    dpw.delete(cid)
+    assert not dpw.is_file('abc', folder_id=f2_id)
+    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)

@@ -573,6 +573,35 @@ class GDrive(GoogleAPI):
         response = self._drives.list().execute()
         return dict((d['id'], d['name']) for d in response['drives'])
 
+    def copy(self, file_id, folder_id=None, name=None):
+        """Copy a file.
+
+        Parameters
+        ----------
+        file_id : :class:`str`
+            The ID of a file to copy. Folders cannot be copied.
+        folder_id : :class:`str`, optional
+            The ID of the destination folder. If not specified then creates
+            a copy in the same folder that the original file is located in.
+        name : :class:`str`, optional
+            The filename of the destination file.
+
+        Returns
+        -------
+        :class:`str`
+            The ID of the destination file.
+        """
+        response = self._files.copy(
+            fileId=file_id,
+            fields='id',
+            supportsAllDrives=True,
+            body={
+                'name': name,
+                'parents': [folder_id] if folder_id else None,
+            },
+        ).execute()
+        return response['id']
+
 
 class GValueOption(Enum):
     """Determines how values should be returned."""
