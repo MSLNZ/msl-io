@@ -487,7 +487,7 @@ class GDrive(GoogleAPI):
                     save_to = name
             fh = open(save_to, mode='wb')
 
-        request = self._files.get_media(fileId=file_id)
+        request = self._files.get_media(fileId=file_id, supportsAllDrives=True)
         downloader = MediaIoBaseDownload(fh, request, chunksize=chunk_size)
         done = False
         while not done:
