@@ -377,9 +377,10 @@ class GDrive(GoogleAPI):
         """Delete a file or a folder.
 
         .. danger::
-           Permanently deletes the file or folder without moving it to the trash.
-           If the target is a folder, then all files and sub-folders contained
-           within the folder are also permanently deleted.
+           Permanently deletes the file or folder owned by the user without
+           moving it to the trash. If the target is a folder, then all files
+           and sub-folders contained within the folder (that are owned by the
+           user) are also permanently deleted.
 
         Parameters
         ----------
