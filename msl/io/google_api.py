@@ -328,10 +328,11 @@ class GDrive(GoogleAPI):
         Parameters
         ----------
         folder : :class:`str`
-            The folder(s) to create, for example, 'folder1' or 'folder1/folder2/folder3'.
+            The folder(s) to create, for example, ``'folder1'`` or
+            ``'folder1/folder2/folder3'``.
         parent_id : :class:`str`, optional
             The ID of the parent folder that the value of `folder` is relative to.
-            If not specified then `folder` is relative to the "root" folder.
+            If not specified then `folder` is relative to the ``"root"`` folder.
 
         Returns
         -------
@@ -356,6 +357,11 @@ class GDrive(GoogleAPI):
     def delete(self, file_or_folder_id):
         """Delete a file or a folder.
 
+        .. danger::
+           Permanently deletes the file or folder without moving it to the trash.
+           If the target is a folder, then all files and sub-folders contained
+           within the folder are also permanently deleted.
+
         Parameters
         ----------
         file_or_folder_id : :class:`str`
@@ -364,7 +370,7 @@ class GDrive(GoogleAPI):
         self._files.delete(fileId=file_or_folder_id).execute()
 
     def empty_trash(self):
-        """Permanently delete all of the user's trashed files."""
+        """Permanently delete all files in the trash."""
         self._files.emptyTrash().execute()
 
     def upload(self, file, folder_id=None, mime_type=None, resumable=False, chunk_size=DEFAULT_CHUNK_SIZE):
