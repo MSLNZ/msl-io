@@ -213,7 +213,6 @@ class GDrive(GoogleAPI):
         :class:`str`
             The folder ID.
         """
-        # find the ID of the folder
         folder_id = parent_id or 'root'
         names = GDrive._folder_hierarchy(folder)
         for name in names:
@@ -544,7 +543,8 @@ class GDrive(GoogleAPI):
         source_id : :class:`str`
             The ID of a file or folder to move.
         destination_id : :class:`str`
-            The ID of the destination folder.
+            The ID of the destination folder. To move the file or folder to the
+            `My Drive` root folder then specify ``'root'` as the `destination_id`.
         """
         params = {'fileId': source_id, 'supportsAllDrives': True}
         try:
@@ -583,6 +583,8 @@ class GDrive(GoogleAPI):
         folder_id : :class:`str`, optional
             The ID of the destination folder. If not specified then creates
             a copy in the same folder that the original file is located in.
+            To copy the file to the `My Drive` root folder then specify
+            ``'root'` as the `folder_id`.
         name : :class:`str`, optional
             The filename of the destination file.
 
