@@ -523,6 +523,18 @@ class GDrive(GoogleAPI):
                 removeParents=','.join(response['parents']),
                 **params).execute()
 
+    def shared_drives(self):
+        """Returns the IDs and names of all `Shared drives`.
+
+        Returns
+        -------
+        :class:`dict`
+            The keys are the IDs of the shared drives and the values are the
+            names of the shared drives.
+        """
+        response = self._drives.list().execute()
+        return dict((d['id'], d['name']) for d in response['drives'])
+
 
 class GValueOption(Enum):
     """Determines how values should be returned."""

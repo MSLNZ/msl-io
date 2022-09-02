@@ -310,6 +310,11 @@ def test_gsheets_create_move_delete():
 
 
 @skipif_no_gdrive_personal_readonly
+def test_gdrive_shared_drives():
+    assert dpr.shared_drives() == {}
+
+
+@skipif_no_gdrive_personal_readonly
 def test_gdrive_folder_id_exception_personal():
     # the folder does not exist
     folders = [
