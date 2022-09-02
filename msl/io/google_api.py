@@ -528,7 +528,7 @@ class GDrive(GoogleAPI):
             file_or_folder_id = response['parents'][0]
         return '/'.join(names[::-1])
 
-    def move(self, source_id, destination_id, all_drives=False):
+    def move(self, source_id, destination_id):
         """Move a file or a folder.
 
         When moving a file between `My Drive` and `Shared drives` the access
@@ -540,11 +540,8 @@ class GDrive(GoogleAPI):
             The ID of a file or folder to move.
         destination_id : :class:`str`
             The ID of the destination folder.
-        all_drives : :class:`bool`, optional
-            Whether to access both `My Drive` and `Shared drives`. Only
-            files can be moved between drives. Default is to access `My Drive`.
         """
-        params = {'fileId': source_id, 'supportsAllDrives': all_drives}
+        params = {'fileId': source_id, 'supportsAllDrives': True}
         try:
             self._files.update(addParents=destination_id, **params).execute()
         except HttpError as e:
