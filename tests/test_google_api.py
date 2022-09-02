@@ -710,3 +710,23 @@ def test_gdrive_rename():
 
     # cleanup
     dpw.delete(fid)
+
+
+@skipif_no_gdrive_personal_writeable
+def test_gdrive_move():
+    # move a folder
+    fid = dpw.create_folder('X/Y/Z')
+    assert dpw.path(fid) == 'My Drive/X/Y/Z'
+    dpw.move(fid, 'root')
+    assert dpw.path(fid) == 'My Drive/Z'
+    dpw.move(fid, dpw.folder_id('My Drive/X'))
+    assert dpw.path(fid) == 'My Drive/X/Z'
+
+    # move a file (first create a copy)
+    cid = dpw.copy(dpw.file_id('MSL/msl-io-testing/file.txt'), folder_id='root', name='copied.txt')
+    assert dpw.path(cid) == 'My Drive/copied.txt'
+    dpw.move(cid, fid)
+    assert dpw.path(cid) == 'My Drive/X/Z/copied.txt'
+
+    # cleanup
+    dpw.delete(dpw.folder_id('X'))
