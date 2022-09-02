@@ -566,26 +566,26 @@ def test_gdrive_download_personal():
 
     # cannot be a string IO object
     with pytest.raises(TypeError):
-        dpr.download(file_id, save_as=io.StringIO())
+        dpr.download(file_id, save_to=io.StringIO())
     if not IS_PYTHON2:  # in Python 2, str and bytes are the same
         with pytest.raises(TypeError):
-            dpr.download(file_id, save_as=open('junk.txt', mode='wt'))
+            dpr.download(file_id, save_to=open('junk.txt', mode='wt'))
         os.remove('junk.txt')  # clean up since it got created before the error was raised
 
     # a BytesIO object
     with io.BytesIO() as buffer:
-        dpr.download(file_id, save_as=buffer)
+        dpr.download(file_id, save_to=buffer)
         buffer.seek(0)
         assert buffer.read() == b'in "msl-io-testing"'
 
     # a file handle in 'wb' mode
     with open(temp_file, mode='wb') as fp:
-        dpr.download(file_id, save_as=fp)
+        dpr.download(file_id, save_to=fp)
     with open(temp_file, mode='rt') as fp:
         assert fp.read() == 'in "msl-io-testing"'
     os.remove(temp_file)  # clean up
 
-    # do not specify a value for the 'save_as' kwarg
+    # do not specify a value for the 'save_to' kwarg
     # therefore the filename is determined from the remote filename
     # and saved to the current working directory
     file_id = dpr.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt')
@@ -594,9 +594,19 @@ def test_gdrive_download_personal():
         assert fp.read() == 'in "sub folder 3"'
     os.remove('file.txt')  # clean up
 
+    # save to a specific directory, use the remote filename
+    f = os.path.join(tempfile.gettempdir(), 'file.txt')
+    if os.path.isfile(f):
+        os.remove(f)
+    assert not os.path.isfile(f)
+    dpr.download(file_id, save_to=tempfile.gettempdir())
+    with open(f, mode='rt') as fp:
+        assert fp.read() == 'in "sub folder 3"'
+    os.remove(f)  # clean up
+
     # save to a specific file
     assert not os.path.isfile(temp_file)
-    dpr.download(file_id, save_as=temp_file)
+    dpr.download(file_id, save_to=temp_file)
     with open(temp_file, mode='rb') as fp:
         assert fp.read() == b'in "sub folder 3"'
     os.remove(temp_file)  # clean up
@@ -606,7 +616,7 @@ def test_gdrive_download_personal():
         assert file.progress() == 1.0
         assert file.total_size == 17
         assert file.resumable_progress == 17
-    dpr.download(file_id, save_as=temp_file, callback=handler)
+    dpr.download(file_id, save_to=temp_file, callback=handler)
     os.remove(temp_file)  # clean up
 
 

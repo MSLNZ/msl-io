@@ -134,7 +134,7 @@ class GoogleAPI(object):
 class GDrive(GoogleAPI):
 
     MIME_TYPE_FOLDER = 'application/vnd.google-apps.folder'
-    ROOT_NAMES = ['Google Drive', 'My Drive', 'Shared drives']
+    ROOT_NAMES = ['Google Drive', 'My Drive', 'Drive']
 
     def __init__(self, credentials=None, is_read_only=True, is_corporate_account=True, scopes=None):
         """Interact with a user's Google Drive.
@@ -203,8 +203,10 @@ class GDrive(GoogleAPI):
         folder : :class:`str`
             The path to a Google Drive file.
         parent_id : :class:`str`, optional
-            The ID of the parent folder that the value of `folder` is relative to.
-            If not specified then `folder` is relative to the "root" folder.
+            The ID of the parent folder that `folder` is relative to. If not
+            specified then `folder` is relative to the `My Drive` root folder.
+            If `folder` is in a `Shared drive` then you must specify the
+            ID of a parent folder.
 
         Returns
         -------
@@ -218,13 +220,18 @@ class GDrive(GoogleAPI):
             q = '"{}" in parents and name="{}" and trashed=false and mimeType="{}"'.format(
                 folder_id, name, GDrive.MIME_TYPE_FOLDER
             )
-            request = self._files.list(q=q, fields='files(id,name)')
-            response = request.execute()
+            response = self._files.list(
+                q=q,
+                fields='files(id,name)',
+                includeItemsFromAllDrives=True,
+                supportsAllDrives=True,
+            ).execute()
             files = response['files']
             if not files:
                 raise OSError('Not a valid Google Drive folder {!r}'.format(folder))
             if len(files) > 1:
-                raise OSError('Multiple folder matches -- {}'.format(files))
+                matches = '\n  '.join(str(file) for file in files)
+                raise OSError('Multiple folders exist\n  {}'.format(matches))
 
             first = files[0]
             assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
@@ -242,8 +249,10 @@ class GDrive(GoogleAPI):
         mime_type : :class:`str`, optional
             The mime type to use to filter the results.
         folder_id : :class:`str`, optional
-            The ID of the folder that the value of `file` is relative to.
-            If not specified then `file` is relative to the "root" folder.
+            The ID of the folder that `file` is relative to. If not specified
+            then `file` is relative to the `My Drive` root folder.
+            If `file` is in a `Shared drive` then you must specify the
+            ID of a parent folder.
 
         Returns
         -------
@@ -259,8 +268,12 @@ class GDrive(GoogleAPI):
         else:
             q += ' and mimeType="{}"'.format(mime_type)
 
-        request = self._files.list(q=q, fields='files(id,name,mimeType)')
-        response = request.execute()
+        response = self._files.list(
+            q=q,
+            fields='files(id,name,mimeType)',
+            includeItemsFromAllDrives=True,
+            supportsAllDrives=True,
+        ).execute()
         files = response['files']
         if not files:
             raise OSError('Not a valid Google Drive file {!r}'.format(file))
@@ -282,8 +295,10 @@ class GDrive(GoogleAPI):
         mime_type : :class:`str`, optional
             The mime type to use to filter the results.
         folder_id : :class:`str`, optional
-            The ID of the folder that the value of `file` is relative to.
-            If not specified then `file` is relative to the "root" folder.
+            The ID of the folder that `file` is relative to. If not specified
+            then `file` is relative to the `My Drive` root folder.
+            If `file` is in a `Shared drive` then you must specify the
+            ID of a parent folder.
 
         Returns
         -------
@@ -305,8 +320,10 @@ class GDrive(GoogleAPI):
         folder : :class:`str`
             The path to a Google Drive folder.
         parent_id : :class:`str`, optional
-            The ID of the parent folder that the value of `folder` is relative to.
-            If not specified then `folder` is relative to the "root" folder.
+            The ID of the parent folder that `folder` is relative to. If not
+            specified then `folder` is relative to the `My Drive` root folder.
+            If `folder` is in a `Shared drive` then you must specify the
+            ID of a parent folder.
 
         Returns
         -------
@@ -331,8 +348,10 @@ class GDrive(GoogleAPI):
             The folder(s) to create, for example, ``'folder1'`` or
             ``'folder1/folder2/folder3'``.
         parent_id : :class:`str`, optional
-            The ID of the parent folder that the value of `folder` is relative to.
-            If not specified then `folder` is relative to the ``"root"`` folder.
+            The ID of the parent folder that `folder` is relative to. If not
+            specified then `folder` is relative to the `My Drive` root folder.
+            If `folder` is in a `Shared drive` then you must specify the
+            ID of a parent folder.
 
         Returns
         -------
@@ -349,7 +368,7 @@ class GDrive(GoogleAPI):
                     'parents': [response['id']],
                 },
                 fields='id',
-                supportsAllDrives=True,  # ability to create in shared drives
+                supportsAllDrives=True,
             )
             response = request.execute()
         return response['id']
@@ -367,7 +386,10 @@ class GDrive(GoogleAPI):
         file_or_folder_id : :class:`str`
             The ID of the file or folder to delete.
         """
-        self._files.delete(fileId=file_or_folder_id).execute()
+        self._files.delete(
+            fileId=file_or_folder_id,
+            supportsAllDrives=True,
+        ).execute()
 
     def empty_trash(self):
         """Permanently delete all files in the trash."""
@@ -381,8 +403,8 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The file to upload.
         folder_id : :class:`str`, optional
-            The ID of the folder to upload the file to.
-            If not specified then uploads to the "root" folder.
+            The ID of the folder to upload the file to. If not specified then
+            uploads to the `My Drive` root folder.
         mime_type : :class:`str`, optional
             The mime type to use for the file's metadata. If not specified
             then a value will be guessed from the file extension.
@@ -416,21 +438,24 @@ class GDrive(GoogleAPI):
                 resumable=resumable
             ),
             fields='id',
-            supportsAllDrives=True,  # ability to upload to shared drives
+            supportsAllDrives=True,
         )
         response = request.execute()
         return response['id']
 
-    def download(self, file_id, save_as=None, num_retries=0, chunk_size=DEFAULT_CHUNK_SIZE, callback=None):
+    def download(self, file_id, save_to=None, num_retries=0, chunk_size=DEFAULT_CHUNK_SIZE, callback=None):
         """Download a file.
 
         Parameters
         ----------
         file_id : :class:`str`
             The ID of the file to download.
-        save_as : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
-            The location to save the file to.
-            Default is in the current working directory.
+        save_to : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
+            The location to save the file to. If a directory is specified
+            then the file will be saved to that directory using the filename
+            of the remote file. To save the file with a new filename, specify
+            the new filename in `save_to`. Default is to save the file to the
+            current working directory using the remote filename.
         num_retries : :class:`int`, optional
             The number of times to retry the download.
             If zero (default) then attempt the request only once.
@@ -446,14 +471,21 @@ class GDrive(GoogleAPI):
                 drive.download('0Bwab3C2ejYSdM190b2psXy1C50P', callback=handler)
 
         """
-        if hasattr(save_as, 'write'):
-            fh = save_as
+        if hasattr(save_to, 'write'):
+            fh = save_to
         else:
-            if not save_as:
-                request = self._files.get(fileId=file_id, fields='name')
-                response = request.execute()
-                save_as = response['name']
-            fh = open(save_as, mode='wb')
+            if not save_to or os.path.isdir(save_to):
+                response = self._files.get(
+                    fileId=file_id,
+                    fields='name',
+                    supportsAllDrives=True,
+                ).execute()
+                name = response['name']
+                if save_to and os.path.isdir(save_to):
+                    save_to = os.path.join(save_to, name)
+                else:
+                    save_to = name
+            fh = open(save_to, mode='wb')
 
         request = self._files.get_media(fileId=file_id)
         downloader = MediaIoBaseDownload(fh, request, chunksize=chunk_size)
@@ -463,7 +495,7 @@ class GDrive(GoogleAPI):
             if callback:
                 callback(status)
 
-        if fh is not save_as:  # then close the file that was opened
+        if fh is not save_to:  # then close the file that was opened
             fh.close()
 
     def path(self, file_or_folder_id):
@@ -481,7 +513,11 @@ class GDrive(GoogleAPI):
         """
         names = []
         while True:
-            request = self._files.get(fileId=file_or_folder_id, fields='name,parents')
+            request = self._files.get(
+                fileId=file_or_folder_id,
+                fields='name,parents',
+                supportsAllDrives=True,
+            )
             response = request.execute()
             names.append(response['name'])
             parents = response.get('parents', [])
