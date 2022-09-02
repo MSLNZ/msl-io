@@ -22,6 +22,7 @@ try:
     from google.auth.transport.requests import Request
     from google.auth.exceptions import RefreshError
     from google.oauth2.credentials import Credentials
+    from googleapiclient.errors import HttpError
     from googleapiclient.http import (
         MediaFileUpload,
         MediaIoBaseDownload,
@@ -485,6 +486,37 @@ class GDrive(GoogleAPI):
             file_or_folder_id = response['parents'][0]
         return '/'.join(names[::-1])
 
+    def move(self, source_id, destination_id, all_drives=False):
+        """Move a file or a folder.
+
+        When moving a file between `My Drive` and `Shared drives` the access
+        permissions of the file will change.
+
+        Parameters
+        ----------
+        source_id : :class:`str`
+            The ID of a file or folder to move.
+        destination_id : :class:`str`
+            The ID of the destination folder.
+        all_drives : :class:`bool`, optional
+            Whether to access both `My Drive` and `Shared drives`. Only
+            files can be moved between drives. Default is to access `My Drive`.
+        """
+        params = {'fileId': source_id, 'supportsAllDrives': all_drives}
+        try:
+            self._files.update(addParents=destination_id, **params).execute()
+        except HttpError as e:
+            if 'exactly one parent' not in e.reason:
+                raise
+
+            # Handle the following error:
+            #   A shared drive item must have exactly one parent
+            response = self._files.get(fields='parents', **params).execute()
+            self._files.update(
+                addParents=destination_id,
+                removeParents=','.join(response['parents']),
+                **params).execute()
+
 
 class GValueOption(Enum):
     """Determines how values should be returned."""
@@ -603,6 +635,34 @@ class GSheets(GoogleAPI):
         )
 
         self._spreadsheets = self._service.spreadsheets()
+
+    def create(self, name, sheet_names=None):
+        """Create a new spreadsheet.
+
+        The spreadsheet will be created in the `My Drive` root folder.
+        To move it to a different folder use :meth:`GDrive.create_folder`
+        and/or :meth:`GDrive.move`.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the spreadsheet.
+        sheet_names : :class:`list` of :class:`str`, optional
+            The names of the sheets that are in the spreadsheet.
+
+        Returns
+        -------
+        :class:`str`
+            The ID of the spreadsheet that was created.
+        """
+        body = {'properties': {'title': name}}
+        if sheet_names:
+            body['sheets'] = [{
+                'properties': {'title': sn}
+            } for sn in sheet_names]
+        request = self._spreadsheets.create(body=body)
+        response = request.execute()
+        return response['spreadsheetId']
 
     def sheet_names(self, spreadsheet_id):
         """Get the names of all sheets in a spreadsheet.

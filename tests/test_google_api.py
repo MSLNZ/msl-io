@@ -293,6 +293,22 @@ def test_gsheets_cells():
     assert values[17][1] == GCell(value=12345.6789, type=GCellType.NUMBER, formatted='12345 55/81')
 
 
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_create_move_delete():
+    sid = spw.create('no-sheet-names')
+    assert spw.sheet_names(sid) == ('Sheet1',)
+    dpw.delete(sid)
+
+    sid = spw.create('three-sheet-names', sheet_names=['a', 'bb', 'ccc'])
+    assert dpw.path(sid) == 'My Drive/three-sheet-names'
+    assert spw.sheet_names(sid) == ('a', 'bb', 'ccc')
+    fid = dpw.create_folder('eat/more/fruit')
+    dpw.move(sid, fid)
+    assert dpw.path(sid) == 'My Drive/eat/more/fruit/three-sheet-names'
+    dpw.delete(dpw.folder_id('My Drive/eat'))
+
+
 @skipif_no_gdrive_personal_readonly
 def test_gdrive_folder_id_exception_personal():
     # the folder does not exist
