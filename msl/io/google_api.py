@@ -535,6 +535,10 @@ class GDrive(GoogleAPI):
         When moving a file between `My Drive` and `Shared drives` the access
         permissions of the file will change.
 
+        Moving a file or folder does not change its ID, only the ID of
+        its `parent` changes (i.e., `source_id` will remain the same
+        after the move).
+
         Parameters
         ----------
         source_id : :class:`str`
