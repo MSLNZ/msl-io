@@ -741,6 +741,87 @@ class GSheets(GoogleAPI):
 
         self._spreadsheets = self._service.spreadsheets()
 
+    def append(self, spreadsheet_id, values, cell=None, sheet=None, row_major=True, raw=False):
+        """Append values to a spreadsheet.
+
+        Returns
+        -------
+        spreadsheet_id : :class:`str`
+            The ID of a Google Sheets file.
+        values
+            The value(s) to append to `sheet`.
+        cell : :class:`str`, optional
+            The cell (top-left corner) to start appending the values to. If the
+            cell already contains data then new rows are inserted and the values
+            are written to the new rows. For example, ``'D100'``.
+        sheet : :class:`str`, optional
+            The name of a sheet in the spreadsheet to append the values to.
+            If not specified and only one sheet exists in the spreadsheet
+            then automatically determines the sheet name; however, it is
+            more efficient to specify the name of the sheet.
+        row_major : :class:`bool`, optional
+            Whether to append the values in row-major or column-major order.
+        raw : :class:`bool`, optional
+            Determines how the values should be interpreted. If :data:`True`,
+            the values will not be parsed and will be stored as-is. If
+            :data:`False`, the values will be parsed as if the user typed
+            them into the UI. Numbers will stay as numbers, but strings may
+            be converted to numbers, dates, etc. following the same rules
+            that are applied when entering text into a cell via the Google
+            Sheets UI.
+        """
+        self._spreadsheets.values().append(
+            spreadsheetId=spreadsheet_id,
+            range=self._get_range(sheet, cell, spreadsheet_id),
+            valueInputOption='RAW' if raw else 'USER_ENTERED',
+            insertDataOption='INSERT_ROWS',
+            body={
+                'values': self._values(values),
+                'majorDimension': 'ROWS' if row_major else 'COLUMNS',
+            },
+        ).execute()
+
+    def write(self, spreadsheet_id, values, cell, sheet=None, row_major=True, raw=False):
+        """Write values to a spreadsheet.
+
+        If a cell that is being written to already contains a value,
+        the value in that cell is overwritten with the new value.
+
+        Returns
+        -------
+        spreadsheet_id : :class:`str`
+            The ID of a Google Sheets file.
+        values
+            The value(s) to write.
+        cell : :class:`str`, optional
+            The cell (top-left corner) to start writing the values to.
+            For example, ``'C9'``.
+        sheet : :class:`str`, optional
+            The name of a sheet in the spreadsheet to write the values to.
+            If not specified and only one sheet exists in the spreadsheet
+            then automatically determines the sheet name; however, it is
+            more efficient to specify the name of the sheet.
+        row_major : :class:`bool`, optional
+            Whether to write the values in row-major or column-major order.
+        raw : :class:`bool`, optional
+            Determines how the values should be interpreted. If :data:`True`,
+            the values will not be parsed and will be stored as-is. If
+            :data:`False`, the values will be parsed as if the user typed
+            them into the UI. Numbers will stay as numbers, but strings may
+            be converted to numbers, dates, etc. following the same rules
+            that are applied when entering text into a cell via the Google
+            Sheets UI.
+        """
+        self._spreadsheets.values().update(
+            spreadsheetId=spreadsheet_id,
+            range=self._get_range(sheet, cell, spreadsheet_id),
+            valueInputOption='RAW' if raw else 'USER_ENTERED',
+            body={
+                'values': self._values(values),
+                'majorDimension': 'ROWS' if row_major else 'COLUMNS',
+            },
+        ).execute()
+
     def create(self, name, sheet_names=None):
         """Create a new spreadsheet.
 
@@ -765,8 +846,7 @@ class GSheets(GoogleAPI):
             body['sheets'] = [{
                 'properties': {'title': sn}
             } for sn in sheet_names]
-        request = self._spreadsheets.create(body=body)
-        response = request.execute()
+        response = self._spreadsheets.create(body=body).execute()
         return response['spreadsheetId']
 
     def sheet_names(self, spreadsheet_id):
@@ -801,9 +881,10 @@ class GSheets(GoogleAPI):
         spreadsheet_id : :class:`str`
             The ID of a Google Sheets file.
         sheet : :class:`str`, optional
-            The name of a sheet in the spreadsheet. If not specified and
-            only one sheet exists in the spreadsheet then automatically
-            determines the sheet name.
+            The name of a sheet in the spreadsheet to read the values from.
+            If not specified and only one sheet exists in the spreadsheet
+            then automatically determines the sheet name; however, it is
+            more efficient to specify the name of the sheet.
         cells : :class:`str`, optional
             The A1 notation or R1C1 notation of the range to retrieve values
             from. If not specified then returns all values that are in `sheet`.
@@ -823,32 +904,19 @@ class GSheets(GoogleAPI):
         :class:`list`
             The values from the sheet.
         """
-        if not sheet:
-            names = self.sheet_names(spreadsheet_id)
-            if len(names) != 1:
-                sheets = ', '.join(repr(n) for n in names)
-                raise ValueError('You must specify a sheet name: ' + sheets)
-            range_ = names[0]
-        else:
-            range_ = sheet
-
-        if cells:
-            range_ += '!{}'.format(cells)
-
         if hasattr(value_option, 'value'):
             value_option = value_option.value
 
         if hasattr(datetime_option, 'value'):
             datetime_option = datetime_option.value
 
-        request = self._spreadsheets.values().get(
+        response = self._spreadsheets.values().get(
             spreadsheetId=spreadsheet_id,
-            range=range_,
+            range=self._get_range(sheet, cells, spreadsheet_id),
             majorDimension='ROWS' if row_major else 'COLUMNS',
             valueRenderOption=value_option,
             dateTimeRenderOption=datetime_option
-        )
-        response = request.execute()
+        ).execute()
         return response.get('values', [])
 
     def cells(self, spreadsheet_id, ranges=None):
@@ -878,10 +946,11 @@ class GSheets(GoogleAPI):
             sheets and the values are a :class:`list` of :class:`GCell`
             objects for the specified range of each sheet.
         """
-        request = self._spreadsheets.get(
-            spreadsheetId=spreadsheet_id, includeGridData=True, ranges=ranges
-        )
-        response = request.execute()
+        response = self._spreadsheets.get(
+            spreadsheetId=spreadsheet_id,
+            includeGridData=True,
+            ranges=ranges,
+        ).execute()
         cells = {}
         for sheet in response['sheets']:
             data = []
@@ -933,3 +1002,27 @@ class GSheets(GoogleAPI):
         days = int(value)
         seconds = (value - days) * 86400  # 60 * 60 * 24
         return GSheets.SERIAL_NUMBER_ORIGIN + timedelta(days=days, seconds=seconds)
+
+    def _get_range(self, sheet, cells, spreadsheet_id):
+        if not sheet:
+            names = self.sheet_names(spreadsheet_id)
+            if len(names) != 1:
+                sheets = ', '.join(repr(n) for n in names)
+                raise ValueError('You must specify a sheet name: ' + sheets)
+            _range = names[0]
+        else:
+            _range = sheet
+
+        if cells:
+            _range += '!{}'.format(cells)
+
+        return _range
+
+    @staticmethod
+    def _values(values):
+        """The append() and update() API methods require a list of lists."""
+        if not isinstance(values, (list, tuple)):
+            return [[values]]
+        if values and not isinstance(values[0], (list, tuple)):
+            return [values]
+        return values

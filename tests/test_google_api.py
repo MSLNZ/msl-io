@@ -309,6 +309,89 @@ def test_gsheets_create_move_delete():
     dpw.delete(dpw.folder_id('My Drive/eat'))
 
 
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_append():
+    sid = spw.create('appending')
+    spw.append(sid, None)
+    spw.append(sid, [])
+    spw.append(sid, [[]])
+    spw.append(sid, 0)
+    spw.append(sid, [1, 2], sheet='Sheet1')
+    spw.append(sid, [[3, 4, 5, 6], [7, 8, 9]])
+    spw.append(sid, [[10, 11, 12, 13], [14, 15, 16]], row_major=False)
+    spw.append(sid, [None, 17])
+    assert spw.values(sid) == [
+        ['0'],
+        ['1', '2'],
+        ['3', '4', '5', '6'],
+        ['7', '8', '9'],
+        ['10', '14'],
+        ['11', '15'],
+        ['12', '16'],
+        ['13'],
+        ['', '17']
+    ]
+    dpw.delete(sid)
+
+    sid = spw.create('appending-2', sheet_names=['Appender'])
+    spw.append(sid, ['a', 'b', 'c'])
+    spw.append(sid, ['d', 'e', 'f', 'g'], cell='D4')
+    spw.append(sid, 'h', sheet='Appender')
+    spw.append(sid, [['i', 'j'], ['k', 'l']], cell='B7')
+    spw.append(sid, [['m', 'n', 'o'], ['p', 'q', 'r']], row_major=False, cell='A13')
+    spw.append(sid, 's', cell='A1')
+    assert spw.values(sid) == [
+        ['a', 'b', 'c'],
+        ['s'],
+        [],
+        [],
+        ['', '', '', 'd', 'e', 'f', 'g'],
+        ['', '', '', 'h'],
+        [],
+        ['', 'i', 'j'],
+        ['', 'k', 'l'],
+        [],
+        [],
+        [],
+        [],
+        ['m', 'p'],
+        ['n', 'q'],
+        ['o', 'r']
+    ]
+    dpw.delete(sid)
+
+
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_write():
+    sid = spw.create('writing')
+    spw.write(sid, None, 'A1')
+    spw.write(sid, [], 'A1')
+    spw.write(sid, [[]], 'A1')
+    spw.write(sid, 0, 'C1')
+    spw.write(sid, [1, 2], 'A2:B3', sheet='Sheet1')
+    spw.write(sid, [[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], 'A4', row_major=False)
+    assert spw.values(sid) == [
+        ['', '', '0'],
+        ['1', '2'],
+        [],
+        ['3', '7', '11'],
+        ['4', '8', '12'],
+        ['5', '9', '13'],
+        ['6', '10', '14'],
+    ]
+
+    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
+    spw.write(sid, values, 'A2')
+    expected = [['', '', 0]]
+    expected.extend(values)
+    expected.extend([[5, 9, 13], [6, 10, 14]])
+    assert spw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
+
+    dpw.delete(sid)
+
+
 @skipif_no_gdrive_personal_readonly
 def test_gdrive_shared_drives():
     assert dpr.shared_drives() == {}
