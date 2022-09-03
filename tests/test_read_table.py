@@ -319,11 +319,11 @@ def test_pathlib():
 @skipif_no_gdrive_personal_readonly
 @skipif_no_sheets_personal_readonly
 def test_gsheet_file_path():
-    dset = read_table('table.gsheet', is_corporate_account=False, sheet='StartA1')
+    dset = read_table('table.gsheet', account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', is_corporate_account=False, sheet='StartA1')
+    dset = read_table('MSL/msl-io-testing/Copy of table.gsheet', account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
@@ -332,16 +332,16 @@ def test_gsheet_file_path():
 @skipif_no_gdrive_personal_readonly
 @skipif_no_sheets_personal_readonly
 def test_gsheet_pathlib():
-    dset = read_table(pathlib.Path('table.gsheet'), is_corporate_account=False, sheet='StartA1')
+    dset = read_table(pathlib.Path('table.gsheet'), account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
     path = pathlib.Path('MSL/msl-io-testing/Copy of table.gsheet')
-    dset = read_table(path, is_corporate_account=False, sheet='StartA1')
+    dset = read_table(path, account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table_gsheets(path, is_corporate_account=False, sheet='StartA1')
+    dset = read_table_gsheets(path, account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
@@ -356,12 +356,12 @@ def test_gsheet_file_pointer():
 
     for m in ['rt', 'rb']:
         with open(filename, mode=m) as fp:
-            dset = read_table(fp, is_corporate_account=False, sheet='StartA1')
+            dset = read_table(fp, account='testing', sheet='StartA1')
         assert np.array_equal(dset.metadata.header, gsheet_header)
         assert np.array_equal(dset, gsheet_data)
 
         with open(filename, mode=m) as fp:
-            dset = read_table_gsheets(fp, is_corporate_account=False, sheet='StartA1')
+            dset = read_table_gsheets(fp, account='testing', sheet='StartA1')
         assert np.array_equal(dset.metadata.header, gsheet_header)
         assert np.array_equal(dset, gsheet_data)
 
@@ -379,11 +379,11 @@ def test_gsheets_as_datetime():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
 
-    dset = read_table(table_id, is_corporate_account=False, sheet='StartA1', as_datetime=False)
+    dset = read_table(table_id, account='testing', sheet='StartA1', as_datetime=False)
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset.data, gsheet_data.astype(str))
 
-    dset = read_table(table_id, is_corporate_account=False, sheet='StartA1', as_datetime=False, dtype=object)
+    dset = read_table(table_id, account='testing', sheet='StartA1', as_datetime=False, dtype=object)
     data2 = gsheet_data.copy()
     data2[:, 0] = [str(item) for item in gsheet_data[:, 0]]
     assert np.array_equal(dset.metadata.header, gsheet_header)
@@ -396,17 +396,17 @@ def test_gsheets_all_data():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
 
-    dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='StartA1')
+    dset = read_table(table_id+'.gsheet', account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table_gsheets(table_id, is_corporate_account=False, sheet='StartA1')
+    dset = read_table_gsheets(table_id, account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', category=np.VisibleDeprecationWarning)
-        dset = read_table(table_id+'.gsheet', is_corporate_account=False, sheet='StartH22')
+        dset = read_table(table_id+'.gsheet', account='testing', sheet='StartH22')
         assert dset.metadata.header.size == 0
         assert dset.shape == (31,)
         for i in range(20):
@@ -419,7 +419,7 @@ def test_gsheets_all_data():
 
     # ID of MSL/msl-io-testing/Copy of table.gsheet
     file = '1NfDUZzHk71CPAfhIoE8l9h4NJ8oeqKfqGAUM81Vyc88.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1')
+    dset = read_table(file, account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
@@ -429,7 +429,7 @@ def test_gsheets_all_data():
 def test_gsheets_one_row():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='row')
+    dset = read_table(file, account='testing', sheet='row')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data[0])
 
@@ -439,7 +439,7 @@ def test_gsheets_one_row():
 def test_gsheets_one_column():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='column')
+    dset = read_table(file, account='testing', sheet='column')
     assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
     assert np.array_equal(dset, gsheet_data[:, 1])
 
@@ -449,7 +449,7 @@ def test_gsheets_one_column():
 def test_gsheets_header_only():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='header only')
+    dset = read_table(file, account='testing', sheet='header only')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert dset.size == 0
 
@@ -459,7 +459,7 @@ def test_gsheets_header_only():
 def test_gsheets_empty():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
-    dset = read_table(file, is_corporate_account=False, sheet='empty')
+    dset = read_table(file, account='testing', sheet='empty')
     assert dset.metadata.header.size == 0
     assert dset.size == 0
 
@@ -470,31 +470,31 @@ def test_gsheets_cell_range():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartH22', cells='H22')
+    dset = read_table(file, account='testing', sheet='StartH22', cells='H22')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartH22', cells='H22:K32')
+    dset = read_table(file, account='testing', sheet='StartH22', cells='H22:K32')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A1')
+    dset = read_table(file, account='testing', sheet='StartA1', cells='A1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A2')
+    dset = read_table(file, account='testing', sheet='StartA1', cells='A2')
     assert np.array_equal(dset.metadata.header, [str(item) for item in gsheet_data[0]])
     assert np.array_equal(dset, gsheet_data[1:])
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A4:C7')
+    dset = read_table(file, account='testing', sheet='StartA1', cells='A4:C7')
     assert np.array_equal(dset.metadata.header, ['2019-09-11 14:07:03', '19.4', 'True'])
     assert np.array_equal(dset, gsheet_data[3:6, :3])
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='B1:B11')
+    dset = read_table(file, account='testing', sheet='StartA1', cells='B1:B11')
     assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
     assert np.array_equal(dset, gsheet_data[:, 1])
 
-    dset = read_table(file, is_corporate_account=False, sheet='StartA1', cells='A1:D2')
+    dset = read_table(file, account='testing', sheet='StartA1', cells='A1:D2')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data[0])
 
@@ -504,12 +504,12 @@ def test_gsheets_cell_range():
 def test_gsheet_range_out_of_bounds():
     for c in ['A100', 'J1:M10']:
         dset = read_table('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet',
-                          cells=c, is_corporate_account=False, sheet='StartA1')
+                          cells=c, account='testing', sheet='StartA1')
         assert dset.metadata.header.size == 0
         assert dset.size == 0
 
     dset = read_table('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet',
-                      cells='A1:Z100', is_corporate_account=False, sheet='StartA1')
+                      cells='A1:Z100', account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset.data, gsheet_data)
 
@@ -523,4 +523,4 @@ def test_gsheet_raises():
     # invalid cell range
     for c in INVALID_CELL_RANGES:
         with pytest.raises(ValueError, match=r'Invalid cell'):
-            read_table(ssid, cells=c, sheet='StartA1', read_only=True, is_corporate_account=False)
+            read_table(ssid, cells=c, sheet='StartA1', read_only=True, account='testing')

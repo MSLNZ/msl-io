@@ -82,7 +82,7 @@ class GSheetsReader(Spreadsheet):
 
            >>> SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN()
            >>> from msl.io import GSheetsReader
-           >>> sheets = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', is_corporate_account=False)
+           >>> sheets = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', account='testing')
 
         >>> sheets.read()
         [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]

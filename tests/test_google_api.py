@@ -24,25 +24,25 @@ from msl.io.google_api import (
 # available for a specific Google user's account
 try:
     # dpr -> drive, personal, readonly
-    dpr = GDrive(read_only=True, is_corporate_account=False)
+    dpr = GDrive(account='testing', read_only=True)
 except:
     dpr = None
 
 try:
     # dpw -> drive, personal, writable
-    dpw = GDrive(read_only=False, is_corporate_account=False)
+    dpw = GDrive(account='testing', read_only=False)
 except:
     dpw = None
 
 try:
     # spr -> sheets, personal, readonly
-    spr = GSheets(read_only=True, is_corporate_account=False)
+    spr = GSheets(account='testing', read_only=True)
 except:
     spr = None
 
 try:
     # spw -> sheets, personal, writeable
-    spw = GSheets(read_only=False, is_corporate_account=False)
+    spw = GSheets(account='testing', read_only=False)
 except:
     spw = None
 

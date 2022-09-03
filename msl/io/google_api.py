@@ -114,13 +114,12 @@ def _authenticate(token, client_secrets_file, scopes):
 
 class GoogleAPI(object):
 
-    def __init__(self, service, version, credentials, scopes, read_only, is_corporate_account):
-        """Base class for all Google API's."""
+    def __init__(self, service, version, credentials, scopes, read_only, account):
+        """Base class for all Google APIs."""
 
-        testing = 'testing-' if os.getenv('MSL_IO_RUNNING_TESTS') else ''
-        corporate = '-corporate' if is_corporate_account else ''
+        name = '{}-'.format(account) if account else ''
         readonly = '-readonly' if read_only else ''
-        filename = '{}token-{}{}{}.json'.format(testing, service, corporate, readonly)
+        filename = '{}token-{}{}.json'.format(name, service, readonly)
         token = os.path.join(HOME_DIR, filename)
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
@@ -136,8 +135,8 @@ class GDrive(GoogleAPI):
     MIME_TYPE_FOLDER = 'application/vnd.google-apps.folder'
     ROOT_NAMES = ['Google Drive', 'My Drive', 'Drive']
 
-    def __init__(self, credentials=None, read_only=True, is_corporate_account=True, scopes=None):
-        """Interact with a user's Google Drive.
+    def __init__(self, account=None, credentials=None, read_only=True, scopes=None):
+        """Interact with Google Drive.
 
         .. attention::
            You must follow the instructions in the prerequisites section for setting up the
@@ -151,16 +150,23 @@ class GDrive(GoogleAPI):
 
         Parameters
         ----------
+        account : :class:`str`, optional
+            Since a user can have multiple Google accounts, this parameter
+            decides which tokens to load. The value can be any text (or none)
+            that you want to associate with a particular Google account. The
+            value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access
+            that particular Google account. You can associate a different value
+            with a Google account at any time (by passing in a different
+            `account` value), but you will be asked to authenticate with your
+            `credentials` again.
         credentials : :class:`str`, optional
-            The path to the "client secrets" credential file. This file only
-            needs to be specified the first time that you interact with a
-            user's Google Drive or if you delete the token file that was
-            created when you previously authenticated using the credentials.
+            The path to the `client secrets` OAuth credential file. This
+            parameter only needs to be specified the first time that you
+            authenticate with a particular Google account or if you delete
+            the token file that was created when you previously authenticated.
         read_only : :class:`bool`, optional
-            Whether to interact with a user's Google Drive in read-only mode.
-        is_corporate_account : :class:`bool`, optional
-            Whether you want to interact with a user's Google Drive via a
-            corporate Google account or a personal Google account.
+            Whether to interact with Google Drive in read-only mode.
         scopes : :class:`list` of :class:`str`, optional
             The list of scopes to enable for the Google API. See
             `Drive scopes <https://developers.google.com/identity/protocols/oauth2/scopes#drive>`_
@@ -180,8 +186,7 @@ class GDrive(GoogleAPI):
                 ]
 
         super(GDrive, self).__init__(
-            'drive', 'v3', credentials, scopes, read_only, is_corporate_account
-        )
+            'drive', 'v3', credentials, scopes, read_only, account)
 
         self._files = self._service.files()
         self._drives = self._service.drives()
@@ -705,8 +710,8 @@ class GSheets(GoogleAPI):
     MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
     SERIAL_NUMBER_ORIGIN = datetime(1899, 12, 30)
 
-    def __init__(self, credentials=None, read_only=True, is_corporate_account=True, scopes=None):
-        """Interact with a user's Google Sheets.
+    def __init__(self, account=None, credentials=None, read_only=True, scopes=None):
+        """Interact with Google Sheets.
 
         .. attention::
            You must follow the instructions in the prerequisites section for setting up the
@@ -717,16 +722,23 @@ class GSheets(GoogleAPI):
 
         Parameters
         ----------
+        account : :class:`str`, optional
+            Since a user can have multiple Google accounts, this parameter
+            decides which tokens to load. The value can be any text (or none)
+            that you want to associate with a particular Google account. The
+            value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access
+            that particular Google account. You can associate a different value
+            with a Google account at any time (by passing in a different
+            `account` value), but you will be asked to authenticate with your
+            `credentials` again.
         credentials : :class:`str`, optional
-            The path to the "client secrets" credential file. This file only
-            needs to be specified the first time that you interact with a
-            user's Google Sheets or if you delete the token file that was
-            created when you previously authenticated using the credentials.
+            The path to the `client secrets` OAuth credential file. This
+            parameter only needs to be specified the first time that you
+            authenticate with a particular Google account or if you delete
+            the token file that was created when you previously authenticated.
         read_only : :class:`bool`, optional
-            Whether to interact with a user's Google Sheets in read-only mode.
-        is_corporate_account : :class:`bool`, optional
-            Whether you want to interact with a user's Google Sheets via a
-            corporate Google account or a personal Google account.
+            Whether to interact with Google Sheets in read-only mode.
         scopes : :class:`list` of :class:`str`, optional
             The list of scopes to enable for the Google API. See
             `Sheets scopes <https://developers.google.com/identity/protocols/oauth2/scopes#sheets>`_
@@ -740,8 +752,7 @@ class GSheets(GoogleAPI):
                 scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
         super(GSheets, self).__init__(
-            'sheets', 'v4', credentials, scopes, read_only, is_corporate_account
-        )
+            'sheets', 'v4', credentials, scopes, read_only, account)
 
         self._spreadsheets = self._service.spreadsheets()
 

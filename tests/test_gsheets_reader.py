@@ -11,13 +11,13 @@ from msl.io.readers.gsheets import _google_file_id_regex
 
 try:
     # dpr -> drive, personal, readonly
-    dpr = GDrive(read_only=True, is_corporate_account=False)
+    dpr = GDrive(account='testing', read_only=True)
 except:
     dpr = None
 
 try:
     # spr -> sheets, personal, readonly
-    spr = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', is_corporate_account=False, read_only=True)
+    spr = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', account='testing', read_only=True)
 except:
     spr = None
 
@@ -37,15 +37,15 @@ def test_raises():
 
     table_gsheet_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
     with pytest.raises(ValueError, match=r'You must specify the name of the sheet to read'):
-        GSheetsReader(table_gsheet_id, is_corporate_account=False).read()
+        GSheetsReader(table_gsheet_id, account='testing').read()
 
     table_gsheet_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
     with pytest.raises(ValueError, match=r'There is no sheet named'):
-        GSheetsReader(table_gsheet_id, is_corporate_account=False).read(sheet='A1')
+        GSheetsReader(table_gsheet_id, account='testing').read(sheet='A1')
 
     table_gsheet_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
     with pytest.raises(HttpError):
-        GSheetsReader(table_gsheet_id, is_corporate_account=False).read(sheet='SheetA1')
+        GSheetsReader(table_gsheet_id, account='testing').read(sheet='SheetA1')
 
 
 @skipif_no_sheets_personal_readonly
@@ -54,7 +54,7 @@ def test_cell():
     ssid = '1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo'
     values = [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
 
-    sheets = GSheetsReader(ssid, is_corporate_account=False, read_only=True)
+    sheets = GSheetsReader(ssid, account='testing', read_only=True)
     assert sheets.file == ssid
     assert sheets.read() == values
     assert sheets.read(cell='A1') == 'temperature'
@@ -74,7 +74,7 @@ def test_cell():
 def test_sheet():
     # table.gsheet
     ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
-    sheets = GSheetsReader(ssid, is_corporate_account=False, read_only=True)
+    sheets = GSheetsReader(ssid, account='testing', read_only=True)
     assert sheets.file == ssid
     assert sheets.sheet_names() == ('StartA1', 'StartH22', 'header only', 'empty', 'column', 'row')
     assert sheets.read(sheet='empty') == []
@@ -95,7 +95,7 @@ def test_sheet():
 def test_as_datetime():
     # table.gsheet
     ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
-    sheets = GSheetsReader(ssid, is_corporate_account=False, read_only=True)
+    sheets = GSheetsReader(ssid, account='testing', read_only=True)
     assert sheets.read(cell='A:A', sheet='StartA1', as_datetime=True) == [
         ('Timestamp',),
         (datetime(2019, 9, 11, 14, 6, 55),),
@@ -128,12 +128,12 @@ def test_as_datetime():
 @skipif_no_sheets_personal_readonly
 def test_file_path():
     path = 'My Drive/MSL/msl-io-testing/empty-5.gsheet'
-    sheets = GSheetsReader(path, is_corporate_account=False, read_only=True)
+    sheets = GSheetsReader(path, account='testing', read_only=True)
     assert sheets.file == path
     assert sheets.sheet_names() == ('Sheet1', 'Sheet2', 'Sheet3', 'Sheet4', 'Sheet5')
     assert sheets.read(sheet='Sheet1') == []
 
-    sheets = GSheetsReader('table', is_corporate_account=False, read_only=True)
+    sheets = GSheetsReader('table', account='testing', read_only=True)
     assert sheets.file == 'table'
     assert sheets.read(sheet='empty') == []
 
