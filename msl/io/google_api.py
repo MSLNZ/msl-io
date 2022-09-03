@@ -246,7 +246,8 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
-            The mime type to use to filter the results.
+            The `MIME type <https://developers.google.com/drive/api/guides/mime-types>`_
+            to use to filter the results.
         folder_id : :class:`str`, optional
             The ID of the folder that `file` is relative to. If not specified
             then `file` is relative to the `My Drive` root folder.
@@ -292,7 +293,8 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
-            The mime type to use to filter the results.
+            The `MIME type <https://developers.google.com/drive/api/guides/mime-types>`_
+            to use to filter the results.
         folder_id : :class:`str`, optional
             The ID of the folder that `file` is relative to. If not specified
             then `file` is relative to the `My Drive` root folder.
@@ -406,8 +408,9 @@ class GDrive(GoogleAPI):
             The ID of the folder to upload the file to. If not specified then
             uploads to the `My Drive` root folder.
         mime_type : :class:`str`, optional
-            The mime type to use for the file's metadata. If not specified
-            then a value will be guessed from the file extension.
+            The `Media Type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_
+            of the file (e.g., ``'text/csv'``). If not specified then a type
+            will be guessed based on the file extension.
         resumable : :class:`bool`
             Whether the upload can be resumed.
         chunk_size : :class:`int`
@@ -531,8 +534,8 @@ class GDrive(GoogleAPI):
     def move(self, source_id, destination_id):
         """Move a file or a folder.
 
-        When moving a file between `My Drive` and `Shared drives` the access
-        permissions of the file will change.
+        When moving a file or folder between `My Drive` and a `Shared drive`
+        the access permissions will change.
 
         Moving a file or folder does not change its ID, only the ID of
         its `parent` changes (i.e., `source_id` will remain the same
