@@ -13,7 +13,7 @@ from msl.io.metadata import Metadata
 
 def test_behaves_like_dict():
 
-    meta = Metadata(is_read_only=False, vertex_name='', x=1)
+    meta = Metadata(read_only=False, vertex_name='', x=1)
     assert isinstance(meta, MutableMapping)
     assert len(meta) == 1
     assert meta['x'] == 1
@@ -26,7 +26,7 @@ def test_behaves_like_dict():
     cp = meta.copy()
     assert isinstance(cp, Metadata)
     assert id(cp) != id(meta)
-    assert not cp.is_read_only
+    assert not cp.read_only
     assert cp._vertex_name == meta._vertex_name
     assert cp['x'] == 1
     cp['x'] = 2
@@ -38,7 +38,7 @@ def test_behaves_like_dict():
     d = meta.fromkeys({'a', 'b', 'c'})
     assert isinstance(d, Metadata)
     assert id(d) != id(meta)
-    assert not d.is_read_only
+    assert not d.read_only
     assert len(d) == 3
     assert d['a'] is None
     assert d['b'] is None
@@ -58,7 +58,7 @@ def test_behaves_like_dict():
     d = meta.fromkeys({'a', 'b', 'c', 'd'}, value='foo')
     assert isinstance(d, Metadata)
     assert id(d) != id(meta)
-    assert not d.is_read_only
+    assert not d.read_only
     assert len(d) == 4
     assert d['a'] == 'foo'
     assert d['b'] == 'foo'
@@ -155,7 +155,7 @@ def test_behaves_like_dict():
 
 def test_attribute_access():
 
-    meta = Metadata(is_read_only=True, vertex_name='', x=1, FOO='BaR')
+    meta = Metadata(read_only=True, vertex_name='', x=1, FOO='BaR')
     assert meta['x'] == 1
     assert meta.x == 1
     assert meta['FOO'] == 'BaR'
@@ -169,7 +169,7 @@ def test_attribute_access():
 
 
 def test_nested_dict_as_value():
-    meta = Metadata(is_read_only=True, vertex_name='', none=None, nested={'dict1': {'dict2': {'dict3': (1, 2, 3)}}})
+    meta = Metadata(read_only=True, vertex_name='', none=None, nested={'dict1': {'dict2': {'dict3': (1, 2, 3)}}})
     assert meta['none'] is None
     assert meta.none is None
     assert meta['nested']['dict1']['dict2']['dict3'] == (1, 2, 3)
@@ -177,28 +177,28 @@ def test_nested_dict_as_value():
     assert meta.nested['dict1'].dict2['dict3'] == (1, 2, 3)
 
     with pytest.raises(AttributeError):
-        _ = meta.none.is_read_only  # meta.none is not a Metadata object
+        _ = meta.none.read_only  # meta.none is not a Metadata object
     with pytest.raises(AttributeError):
-        _ = meta['none'].is_read_only  # meta['none'] is not a Metadata object
+        _ = meta['none'].read_only  # meta['none'] is not a Metadata object
 
     # test that all Metadata objects have the same read-only mode
-    assert meta.is_read_only
-    assert meta.nested.is_read_only
-    assert meta.nested.dict1.is_read_only
-    assert meta.nested.dict1.dict2.is_read_only
+    assert meta.read_only
+    assert meta.nested.read_only
+    assert meta.nested.dict1.read_only
+    assert meta.nested.dict1.dict2.read_only
 
     # test read-only mode propagates
-    meta.is_read_only = False
-    assert not meta.is_read_only
-    assert not meta.nested.is_read_only
-    assert not meta.nested.dict1.is_read_only
-    assert not meta.nested.dict1.dict2.is_read_only
+    meta.read_only = False
+    assert not meta.read_only
+    assert not meta.nested.read_only
+    assert not meta.nested.dict1.read_only
+    assert not meta.nested.dict1.dict2.read_only
 
 
 def test_read_only():
 
-    meta = Metadata(is_read_only=True, vertex_name='', foo='bar')
-    assert meta.is_read_only
+    meta = Metadata(read_only=True, vertex_name='', foo='bar')
+    assert meta.read_only
 
     # cannot modify an existing value (key access)
     with pytest.raises(ValueError):
@@ -253,8 +253,8 @@ def test_read_only():
     assert meta['foo'] == 'bar'
 
     # make it writeable
-    meta.is_read_only = False
-    assert not meta.is_read_only
+    meta.read_only = False
+    assert not meta.read_only
 
     # can modify an existing value (key access)
     meta['foo'] = 1
@@ -312,8 +312,8 @@ def test_read_only():
     assert len(meta) == 0
 
     # make it read only again
-    meta.is_read_only = True
-    assert meta.is_read_only
+    meta.read_only = True
+    assert meta.read_only
 
     # cannot create a new key-value pair (key access)
     with pytest.raises(ValueError):

@@ -18,7 +18,7 @@ having the following :class:`~msl.io.metadata.Metadata`
    >>> root = JSONWriter()
    >>> root.add_metadata(voltage=1.2)
    >>> root.add_metadata(voltage_unit='V')
-   >>> root.is_read_only = True
+   >>> root.read_only = True
 
 .. code-block:: pycon
 
@@ -49,12 +49,12 @@ you cannot modify the metadata
       ...
     ValueError: Cannot modify <Metadata '/' {'voltage': 1.2, 'voltage_unit': 'V'}>. It is accessed in read-only mode.
 
-However, you can allow *root* to be modified by setting the :obj:`~msl.io.dictionary.Dictionary.is_read_only`
+However, you can allow *root* to be modified by setting the :obj:`~msl.io.dictionary.Dictionary.read_only`
 property to be :data:`False`
 
 .. code-block:: pycon
 
-    >>> root.metadata.is_read_only = False
+    >>> root.metadata.read_only = False
     >>> root.metadata.voltage = 7.64
     >>> root.add_metadata(current=10.3, current_unit='mA')
     >>> root.metadata

@@ -93,7 +93,7 @@ def read(file, **kwargs):
         if can_read:
             root = rdr(file)
             root.read(**kwargs)
-            root.is_read_only = True
+            root.read_only = True
             return root
 
     raise OSError('No Reader exists to read {!r}'.format(file))

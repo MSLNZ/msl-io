@@ -13,17 +13,17 @@ except ImportError:
 
 class Dictionary(MutableMapping):
 
-    def __init__(self, is_read_only, **kwargs):
+    def __init__(self, read_only, **kwargs):
         """A :class:`dict` that can be made read only.
 
         Parameters
         ----------
-        is_read_only : :class:`bool`
+        read_only : :class:`bool`
             Whether the underlying :class:`dict` should be created in read-only mode.
         **kwargs
             Key-value pairs that are used to create the underlying :class:`dict` object.
         """
-        self._is_read_only = bool(is_read_only)
+        self._read_only = bool(read_only)
         self._mapping = OrderedDict(**kwargs)
 
     def __repr__(self):
@@ -47,13 +47,13 @@ class Dictionary(MutableMapping):
         self._mapping[item] = value
 
     @property
-    def is_read_only(self):
+    def read_only(self):
         """:class:`bool`: Whether the underlying :class:`dict` is in read-only mode."""
-        return self._is_read_only
+        return self._read_only
 
-    @is_read_only.setter
-    def is_read_only(self, value):
-        self._is_read_only = bool(value)
+    @read_only.setter
+    def read_only(self, value):
+        self._read_only = bool(value)
 
     def clear(self):
         """Remove all items from the dictionary."""
@@ -73,7 +73,7 @@ class Dictionary(MutableMapping):
         return ItemsView(self)
 
     def _raise_if_read_only(self):
-        if self._is_read_only:
+        if self._read_only:
             # numpy also raises ValueError if the ndarray is in read-only mode
             raise ValueError('Cannot modify {!r}. It is accessed in read-only mode.'.format(self))
 

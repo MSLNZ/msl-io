@@ -16,7 +16,7 @@ then the following naming rules must be followed:
   - copy
   - fromkeys
   - get
-  - is_read_only
+  - read_only
   - items
   - keys
   - pop

@@ -41,7 +41,7 @@ class GSheetsReader(Spreadsheet):
         """
         super(GSheetsReader, self).__init__(file)
 
-        if not kwargs.get('is_read_only', True):
+        if not kwargs.get('read_only', True):
             raise ValueError('Must instantiate {} in read-only mode'.format(self.__class__.__name__))
 
         path, ext = os.path.splitext(file)

@@ -114,12 +114,12 @@ def _authenticate(token, client_secrets_file, scopes):
 
 class GoogleAPI(object):
 
-    def __init__(self, service, version, credentials, scopes, is_read_only, is_corporate_account):
+    def __init__(self, service, version, credentials, scopes, read_only, is_corporate_account):
         """Base class for all Google API's."""
 
         testing = 'testing-' if os.getenv('MSL_IO_RUNNING_TESTS') else ''
         corporate = '-corporate' if is_corporate_account else ''
-        readonly = '-readonly' if is_read_only else ''
+        readonly = '-readonly' if read_only else ''
         filename = '{}token-{}{}{}.json'.format(testing, service, corporate, readonly)
         token = os.path.join(HOME_DIR, filename)
         oauth = _authenticate(token, credentials, scopes)
@@ -136,7 +136,7 @@ class GDrive(GoogleAPI):
     MIME_TYPE_FOLDER = 'application/vnd.google-apps.folder'
     ROOT_NAMES = ['Google Drive', 'My Drive', 'Drive']
 
-    def __init__(self, credentials=None, is_read_only=True, is_corporate_account=True, scopes=None):
+    def __init__(self, credentials=None, read_only=True, is_corporate_account=True, scopes=None):
         """Interact with a user's Google Drive.
 
         .. attention::
@@ -153,7 +153,7 @@ class GDrive(GoogleAPI):
             needs to be specified the first time that you interact with a
             user's Google Drive or if you delete the token file that was
             created when you previously authenticated using the credentials.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to interact with a user's Google Drive in read-only mode.
         is_corporate_account : :class:`bool`, optional
             Whether you want to interact with a user's Google Drive via a
@@ -162,10 +162,10 @@ class GDrive(GoogleAPI):
             The list of scopes to enable for the Google API. See
             `Drive scopes <https://developers.google.com/identity/protocols/oauth2/scopes#drive>`_
             for more details. If not specified then default scopes are chosen
-            based on the value of `is_read_only`.
+            based on the value of `read_only`.
         """
         if not scopes:
-            if is_read_only:
+            if read_only:
                 scopes = [
                     'https://www.googleapis.com/auth/drive.readonly',
                     'https://www.googleapis.com/auth/drive.metadata.readonly'
@@ -177,7 +177,7 @@ class GDrive(GoogleAPI):
                 ]
 
         super(GDrive, self).__init__(
-            'drive', 'v3', credentials, scopes, is_read_only, is_corporate_account
+            'drive', 'v3', credentials, scopes, read_only, is_corporate_account
         )
 
         self._files = self._service.files()
@@ -704,7 +704,7 @@ class GSheets(GoogleAPI):
     MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
     SERIAL_NUMBER_ORIGIN = datetime(1899, 12, 30)
 
-    def __init__(self, credentials=None, is_read_only=True, is_corporate_account=True, scopes=None):
+    def __init__(self, credentials=None, read_only=True, is_corporate_account=True, scopes=None):
         """Interact with a user's Google Sheets.
 
         .. attention::
@@ -721,7 +721,7 @@ class GSheets(GoogleAPI):
             needs to be specified the first time that you interact with a
             user's Google Sheets or if you delete the token file that was
             created when you previously authenticated using the credentials.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to interact with a user's Google Sheets in read-only mode.
         is_corporate_account : :class:`bool`, optional
             Whether you want to interact with a user's Google Sheets via a
@@ -730,16 +730,16 @@ class GSheets(GoogleAPI):
             The list of scopes to enable for the Google API. See
             `Sheets scopes <https://developers.google.com/identity/protocols/oauth2/scopes#sheets>`_
             for more details. If not specified then default scopes are chosen
-            based on the value of `is_read_only`.
+            based on the value of `read_only`.
         """
         if not scopes:
-            if is_read_only:
+            if read_only:
                 scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly']
             else:
                 scopes = ['https://www.googleapis.com/auth/spreadsheets']
 
         super(GSheets, self).__init__(
-            'sheets', 'v4', credentials, scopes, is_read_only, is_corporate_account
+            'sheets', 'v4', credentials, scopes, read_only, is_corporate_account
         )
 
         self._spreadsheets = self._service.spreadsheets()

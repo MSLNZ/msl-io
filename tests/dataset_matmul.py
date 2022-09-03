@@ -7,8 +7,8 @@ from msl.io.dataset import Dataset
 
 
 def run():
-    d1 = Dataset(name='d1', parent=None, is_read_only=True, data=[[1, 2], [3, 4]])
-    d2 = Dataset(name='d2', parent=None, is_read_only=True, data=[[5, 6], [7, 8]])
+    d1 = Dataset(name='d1', parent=None, read_only=True, data=[[1, 2], [3, 4]])
+    d2 = Dataset(name='d2', parent=None, read_only=True, data=[[5, 6], [7, 8]])
 
     for rhs in ([[5, 6], [7, 8]], d2):
         result = np.matmul(d1, rhs)

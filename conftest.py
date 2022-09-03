@@ -44,7 +44,7 @@ def doctest_skipif(doctest_namespace):
         h5 = lambda: None
 
     try:
-        GSheets(is_read_only=True, is_corporate_account=False)
+        GSheets(read_only=True, is_corporate_account=False)
     except:
         sheets_read_token = lambda: pytest.skip('Google API tokens not available')
     else:

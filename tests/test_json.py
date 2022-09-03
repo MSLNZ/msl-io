@@ -32,7 +32,7 @@ def test_read_write_convert():
     # that contain "null" before writing the HDF5 file
     temp = read_sample('json_sample.json')
     assert roots_equal(root1, temp)
-    temp.is_read_only = False
+    temp.read_only = False
     assert temp.metadata.pop('null') is None
     assert 'null' not in temp.metadata
     array_mixed_null = temp.metadata.pop('array_mixed_null')
@@ -103,7 +103,7 @@ def test_read_write_convert():
         with pytest.raises(ValueError):
             root.metadata.array_numbers[:] = [-9, -8, -7, -6]
 
-        root.is_read_only = False
+        root.read_only = False
 
         # can now modify the Metadata
         del root.metadata.foo
@@ -119,7 +119,7 @@ def test_read_write_convert():
         root.metadata.new_key = 'new value'
         assert root.metadata.new_key == 'new value'
 
-        root.is_read_only = True
+        root.read_only = True
 
         # make sure the Metadata values are read only again
         with pytest.raises(ValueError):
@@ -187,14 +187,14 @@ def test_read_write_convert():
         with pytest.raises(ValueError):
             dset['e'] = [-1, 0]
 
-        root.is_read_only = False
+        root.read_only = False
 
         dset.metadata.fibonacci[4] = -9
         assert dset.metadata.fibonacci.tolist() == [1, 1, 2, 3, -9, 8, 13, 21, 34, 55]
         dset['e'] = [-1, 0]
         assert dset['e'].tolist() == [-1, 0]
 
-        root.is_read_only = True
+        root.read_only = True
 
         # make sure the ndarray's are read only again
         with pytest.raises(ValueError):
@@ -253,7 +253,7 @@ def test_raises():
 
 def test_pretty_printing():
     root = read_sample('json_sample.json')
-    root.is_read_only = False
+    root.read_only = False
 
     root.create_dataset('aaa', data=np.ones((3, 3, 3)))
 

@@ -11,7 +11,7 @@ from .metadata import Metadata
 
 class Vertex(Dictionary):
 
-    def __init__(self, name, parent, is_read_only, **metadata):
+    def __init__(self, name, parent, read_only, **metadata):
         """A vertex in a tree_.
 
         Parameters
@@ -20,13 +20,13 @@ class Vertex(Dictionary):
             The name of this vertex.
         parent : :class:`~msl.io.group.Group`
             The parent of this vertex.
-        is_read_only : :class:`bool`
+        read_only : :class:`bool`
             Whether this vertex is in read-only mode.
         **metadata
             Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
             for this :class:`~msl.io.vertex.Vertex`.
         """
-        super(Vertex, self).__init__(is_read_only)
+        super(Vertex, self).__init__(read_only)
 
         if not name:
             raise ValueError('The vertex name must be a non-empty string')
@@ -55,7 +55,7 @@ class Vertex(Dictionary):
 
         self._name = name
         self._parent = parent
-        self._metadata = Metadata(is_read_only, name, **metadata)
+        self._metadata = Metadata(read_only, name, **metadata)
 
     def __delitem__(self, item):
         self._raise_if_read_only()
@@ -98,24 +98,24 @@ class Vertex(Dictionary):
         self._raise_key_error(item)
 
     @property
-    def is_read_only(self):
+    def read_only(self):
         """:class:`bool`: Whether this :class:`~msl.io.vertex.Vertex` is in read-only mode.
 
         Setting this value will also update all sub-:class:`~msl.io.group.Group`\\s
         and sub-:class:`~msl.io.dataset.Dataset`\\s to be in the same mode.
         """
-        return self._is_read_only
+        return self._read_only
 
-    @is_read_only.setter
-    def is_read_only(self, value):
+    @read_only.setter
+    def read_only(self, value):
         val = bool(value)
 
-        self._is_read_only = val
-        self._metadata.is_read_only = val
+        self._read_only = val
+        self._metadata.read_only = val
 
         # update all descendants of this vertex
         for obj in self._mapping.values():
-            obj.is_read_only = val
+            obj.read_only = val
 
     @property
     def name(self):

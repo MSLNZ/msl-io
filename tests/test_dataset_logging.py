@@ -69,7 +69,7 @@ def test_create_and_require():
         root.create_dataset_logging(dset.name)
     assert len(logging.getLogger().handlers) == num_initial_handlers + 1
 
-    assert not dset.is_read_only
+    assert not dset.read_only
     assert root.is_dataset(dset)
     assert len(dset.metadata) == 3
     assert dset.metadata.logging_level == logging.DEBUG

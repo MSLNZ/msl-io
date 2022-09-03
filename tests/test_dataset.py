@@ -7,21 +7,21 @@ from msl.io.dataset import Dataset
 
 
 def test_instantiate():
-    dset = Dataset(name='/data', parent=None, is_read_only=True, shape=(10, 10))
+    dset = Dataset(name='/data', parent=None, read_only=True, shape=(10, 10))
     assert dset.name == '/data'
     assert len(dset) == 10
     assert dset.size == 100
     assert dset.dtype == float
     assert dset.dtype.names is None
 
-    dset = Dataset(name='dataset 1', parent=None, is_read_only=True, shape=(100,), dtype=int)
+    dset = Dataset(name='dataset 1', parent=None, read_only=True, shape=(100,), dtype=int)
     assert dset.name == 'dataset 1'
     assert len(dset) == 100
     assert dset.size == 100
     assert dset.dtype == int
     assert dset.dtype.names is None
 
-    dset = Dataset(name='mixed', parent=None, is_read_only=True, shape=(100,), dtype=[('x', float), ('y', int), ('z', str)])
+    dset = Dataset(name='mixed', parent=None, read_only=True, shape=(100,), dtype=[('x', float), ('y', int), ('z', str)])
     assert dset.name == 'mixed'
     assert len(dset) == 100
     assert dset.size == 100
@@ -33,7 +33,7 @@ def test_instantiate():
     assert dset.dtype[2] == str
     assert dset.dtype.names == ('x', 'y', 'z')
 
-    dset = Dataset(name='xxx', parent=None, is_read_only=True, data=[1, 2, 3])
+    dset = Dataset(name='xxx', parent=None, read_only=True, data=[1, 2, 3])
     assert len(dset) == 3
     assert dset[0] == 1
     assert dset[1] == 2
@@ -50,7 +50,7 @@ def test_instantiate():
 
 
 def test_metadata():
-    dset = Dataset(name='d', parent=None, is_read_only=False, shape=(100,),
+    dset = Dataset(name='d', parent=None, read_only=False, shape=(100,),
                    dtype=int, order='F', temperature=21.3, lab='msl', x=-1)
 
     # 'name' is absorbed by Vertex
@@ -61,7 +61,7 @@ def test_metadata():
     assert dset.metadata['lab'] == 'msl'
     assert dset.metadata['x'] == -1
 
-    assert not dset.metadata.is_read_only
+    assert not dset.metadata.read_only
 
     dset.add_metadata(one=1, two=2, three=3)
     assert len(dset.metadata) == 6
@@ -72,7 +72,7 @@ def test_metadata():
 
 def test_field_access_as_attribute():
     # no names defined in the dtype
-    dset = Dataset(name='data', parent=None, is_read_only=False, shape=(3, 3))
+    dset = Dataset(name='data', parent=None, read_only=False, shape=(3, 3))
     assert len(dset) == 3
     assert dset.shape == (3, 3)
     assert dset.dtype == float
@@ -82,7 +82,7 @@ def test_field_access_as_attribute():
         _ = dset.there_are_no_field_names
 
     # names are defined in the dtype
-    dset = Dataset(name='data', parent=None, is_read_only=False, shape=(100,),
+    dset = Dataset(name='data', parent=None, read_only=False, shape=(100,),
                    dtype=[('x', float), ('y', int), ('z', str)])
     assert len(dset['x']) == 100
     assert len(dset.x) == 100
@@ -101,11 +101,11 @@ def test_field_access_as_attribute():
 
 
 def test_read_only():
-    dset = Dataset(name='my data', parent=None, is_read_only=True, shape=(100,), dtype=int)
+    dset = Dataset(name='my data', parent=None, read_only=True, shape=(100,), dtype=int)
     assert dset.name == 'my data'
     assert len(dset) == 100
-    assert dset.is_read_only
-    assert dset.metadata.is_read_only
+    assert dset.read_only
+    assert dset.metadata.read_only
 
     # cannot modify data
     with pytest.raises(ValueError):
@@ -116,57 +116,57 @@ def test_read_only():
         dset[0] = 1
 
     # make writable
-    dset.is_read_only = False
-    assert not dset.is_read_only
-    assert not dset.metadata.is_read_only
+    dset.read_only = False
+    assert not dset.read_only
+    assert not dset.metadata.read_only
 
     # can modify data
     dset[:] = 1
     assert dset[0] == 1
 
     # make read only again
-    dset.is_read_only = True
-    assert dset.is_read_only
-    assert dset.metadata.is_read_only
+    dset.read_only = True
+    assert dset.read_only
+    assert dset.metadata.read_only
 
     # cannot modify data
     with pytest.raises(ValueError):
         dset[:] = 1
 
     # can make a dataset writeable but the metadata read-only
-    dset.is_read_only = False
-    assert not dset.is_read_only
-    assert not dset.metadata.is_read_only
-    dset.metadata.is_read_only = True
-    assert not dset.is_read_only
-    assert dset.metadata.is_read_only
+    dset.read_only = False
+    assert not dset.read_only
+    assert not dset.metadata.read_only
+    dset.metadata.read_only = True
+    assert not dset.read_only
+    assert dset.metadata.read_only
     dset[:] = 1
     with pytest.raises(ValueError):
         dset.add_metadata(some_more_info=1)
 
 
 def test_copy():
-    orig = Dataset(name='abcdefg', parent=None, is_read_only=True, shape=(10,), dtype=int, voltage=1.2, current=5.3)
+    orig = Dataset(name='abcdefg', parent=None, read_only=True, shape=(10,), dtype=int, voltage=1.2, current=5.3)
 
-    assert orig.is_read_only
+    assert orig.read_only
     assert orig.name == 'abcdefg'
 
     copy = orig.copy()
     assert isinstance(copy, Dataset)
-    assert copy.is_read_only
-    assert copy.metadata.is_read_only
+    assert copy.read_only
+    assert copy.metadata.read_only
     assert copy.name == 'abcdefg'
     for i in range(10):
         assert orig[i] == copy[i]
     assert orig.metadata['voltage'] == copy.metadata['voltage']
     assert orig.metadata['current'] == copy.metadata['current']
 
-    copy.is_read_only = False
+    copy.read_only = False
 
-    assert not copy.is_read_only
-    assert not copy.metadata.is_read_only
-    assert orig.is_read_only
-    assert orig.metadata.is_read_only
+    assert not copy.read_only
+    assert not copy.metadata.read_only
+    assert orig.read_only
+    assert orig.metadata.read_only
 
     val = 7 if orig[1] != 7 else 8
     copy[1] = val
@@ -175,7 +175,7 @@ def test_copy():
 
 
 def test_string_representation():
-    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], is_read_only=True, foo='bar')
+    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], read_only=True, foo='bar')
 
     assert repr(dset) in ["<Dataset 'abcd' shape=(2, 2) dtype='<f8' (1 metadata)>",
                           "<Dataset 'abcd' shape=(2L, 2L) dtype='<f8' (1 metadata)>"]
@@ -192,7 +192,7 @@ def test_string_representation():
 
 
 def test_ndarray_attribute():
-    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], is_read_only=True)
+    dset = Dataset(name='abcd', parent=None, data=[[1, 2], [3, 4]], read_only=True)
 
     as_list = dset.tolist()
     assert isinstance(as_list, list)
@@ -206,7 +206,7 @@ def test_ndarray_attribute():
 
 
 def test_scalar():
-    dset = Dataset(name='abcd', parent=None, data=5, is_read_only=True)
+    dset = Dataset(name='abcd', parent=None, data=5, read_only=True)
     assert len(dset) == 1
     assert dset.shape == ()
     assert dset.size == 1
@@ -214,8 +214,8 @@ def test_scalar():
 
 
 def test_add():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     for rhs in ([4, 5, 6], d2):
         result = d1 + rhs
@@ -229,8 +229,8 @@ def test_add():
 
 
 def test_sub():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     for rhs in ([4, 5, 6], d2):
         result = d1 - rhs
@@ -244,8 +244,8 @@ def test_sub():
 
 
 def test_mul():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     for rhs in ([4, 5, 6], d2):
         result = d1 * rhs
@@ -259,8 +259,8 @@ def test_mul():
 
 
 def test_truediv():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 1])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 4, 10])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 1])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 4, 10])
 
     for rhs in ([4., 4., 10.], d2):
         result = d1 / rhs
@@ -274,8 +274,8 @@ def test_truediv():
 
 
 def test_floordiv():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1e3, 1e4, 1e5])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[1e2, 1e3, 1e4])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1e3, 1e4, 1e5])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[1e2, 1e3, 1e4])
 
     for rhs in ([1e2, 1e3, 1e4], d2):
         result = d1 // rhs
@@ -289,8 +289,8 @@ def test_floordiv():
 
 
 def test_pow():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     result = d1 ** 3
     assert isinstance(result, np.ndarray)
@@ -334,14 +334,14 @@ def test_matmul():
 
 
 def test_mod():
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=list(range(7)))
+    d = Dataset(name='/d', parent=None, read_only=True, data=list(range(7)))
 
     result = d % 5
     assert isinstance(result, np.ndarray)
     assert np.array_equal(result, np.array([0, 1, 2, 3, 4, 0, 1]))
 
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[4, 7])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[2, 3])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[4, 7])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[2, 3])
 
     for rhs in ([2, 3], d2):
         result = d1 % rhs
@@ -355,8 +355,8 @@ def test_mod():
 
 
 def test_divmod():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[3, 7, 12, 52, 62])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(1, 6))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[3, 7, 12, 52, 62])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.arange(1, 6))
 
     for rhs in ([1, 2, 3, 4, 5], d2):
         div, mod = divmod(d1, rhs)
@@ -372,7 +372,7 @@ def test_divmod():
         assert isinstance(mod, np.ndarray)
         assert np.array_equal(mod, np.array([1, 2, 3, 4, 5]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.arange(5))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.arange(5))
     div, mod = divmod(d, 3)
     assert isinstance(div, np.ndarray)
     assert np.array_equal(div, np.array([0, 0, 0, 1, 1]))
@@ -381,8 +381,8 @@ def test_divmod():
 
 
 def test_lshift():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.array([1, 2, 3, 4, 5]))
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.array([3, 7, 11, 15, 19]))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=np.array([1, 2, 3, 4, 5]))
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.array([3, 7, 11, 15, 19]))
 
     result = d1 << 1
     assert isinstance(result, np.ndarray)
@@ -404,8 +404,8 @@ def test_lshift():
 
 
 def test_rshift():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.array([1, 2, 3, 4, 5]))
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.array([3, 7, 12, 52, 62]))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=np.array([1, 2, 3, 4, 5]))
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.array([3, 7, 12, 52, 62]))
 
     result = d1 >> 10
     assert isinstance(result, np.ndarray)
@@ -427,8 +427,8 @@ def test_rshift():
 
 
 def test_and():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.arange(10, 19))
 
     for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
         result = d1 & rhs
@@ -442,8 +442,8 @@ def test_and():
 
 
 def test_xor():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.arange(10, 19))
 
     for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
         result = d1 ^ rhs
@@ -457,8 +457,8 @@ def test_xor():
 
 
 def test_or():
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=np.arange(9))
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=np.arange(10, 19))
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=np.arange(9))
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=np.arange(10, 19))
 
     for rhs in ([10, 11, 12, 13, 14, 15, 16, 17, 18], d2):
         result = d1 | rhs
@@ -474,8 +474,8 @@ def test_or():
 def test_neg():
     # unary "-"
 
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     for rhs in [[4, 5, 6], d2]:
         result = -d1 + rhs
@@ -486,8 +486,8 @@ def test_neg():
 def test_pos():
     # unary "+"
 
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
-    d2 = Dataset(name='/d2', parent=None, is_read_only=True, data=[4, 5, 6])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
+    d2 = Dataset(name='/d2', parent=None, read_only=True, data=[4, 5, 6])
 
     for rhs in [[4, 5, 6], d2]:
         result = +d1 - rhs
@@ -498,7 +498,7 @@ def test_pos():
 def test_abs():
     # unary "abs()"
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=[1, -2, 3, -4])
+    d = Dataset(name='/d', parent=None, read_only=True, data=[1, -2, 3, -4])
 
     result = abs(d)
     assert isinstance(result, np.ndarray)
@@ -508,7 +508,7 @@ def test_abs():
 def test_invert():
     # unary "~"
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, -2, 3, -4]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, -2, 3, -4]))
 
     result = ~d
     assert isinstance(result, np.ndarray)
@@ -516,62 +516,62 @@ def test_invert():
 
 
 def test_assignments():
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d += 1
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([2, 3, 4]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d -= 1
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([0, 1, 2]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d *= 10
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([10, 20, 30]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([10, 20, 30]))
     d /= 10
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([1, 2, 3]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([10, 20, 30]))
     d //= 5
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([2, 4, 6]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([10, 20, 30]))
     d %= 15
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([10, 5, 0]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d **= 3
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([1, 8, 27]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d <<= 3
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([8, 16, 24]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([10, 20, 30]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([10, 20, 30]))
     d >>= 2
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([2, 5, 7]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d &= 2
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([0, 2, 2]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d ^= 2
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([3, 0, 1]))
 
-    d = Dataset(name='/d', parent=None, is_read_only=True, data=np.array([1, 2, 3]))
+    d = Dataset(name='/d', parent=None, read_only=True, data=np.array([1, 2, 3]))
     d |= 2
     assert isinstance(d, np.ndarray)
     assert np.array_equal(d, np.array([3, 2, 3]))
@@ -581,7 +581,7 @@ def test_numpy_function():
     # np.xxx() is also valid syntax with a Dataset
 
     array = np.array([1, 2, 3])
-    d1 = Dataset(name='/d1', parent=None, is_read_only=True, data=[1, 2, 3])
+    d1 = Dataset(name='/d1', parent=None, read_only=True, data=[1, 2, 3])
 
     cos = np.cos(d1)
     assert isinstance(cos, np.ndarray)

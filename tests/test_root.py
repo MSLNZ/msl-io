@@ -12,8 +12,8 @@ def test_instantiation():
     root = Root('some.file')
     assert root.file == 'some.file'
     assert root.name == '/'
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert len(root) == 0
     assert len(root.metadata) == 0
     assert str(root).startswith('<Root')
@@ -29,26 +29,26 @@ def test_instantiation():
     root = Root('/home/another.xxx')
     assert root.file == '/home/another.xxx'
     assert root.name == '/'
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert len(root) == 0
     assert len(root.metadata) == 0
 
     root = Root('/home/another.xxx', one=1, two=2, three=3)
     assert root.file == '/home/another.xxx'
     assert root.name == '/'
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert len(root) == 0
     assert root.metadata == {'one': 1, 'two': 2, 'three': 3}
 
-    root.is_read_only = True
+    root.read_only = True
 
     # cannot add metadata
     with pytest.raises(ValueError):
         root.add_metadata(four=4, five=5)
 
-    root.is_read_only = False
+    root.read_only = False
     root.add_metadata(four=4, five=5)
     assert root.metadata == {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5}
 
@@ -58,37 +58,37 @@ def test_create_group():
 
     # must specify a name for the group
     with pytest.raises(TypeError):
-        root.create_group(is_read_only=True)
+        root.create_group(read_only=True)
 
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
 
-    root.is_read_only = True
+    root.read_only = True
 
     # cannot create a group since root is in read-only mode
     with pytest.raises(ValueError):
         root.create_group('xxx')
 
-    root.is_read_only = False
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    root.read_only = False
+    assert not root.read_only
+    assert not root.metadata.read_only
 
     a = root.create_group('a')
     assert root.is_group(a)
     assert a.is_group(a)
     assert isinstance(a, Group)
-    assert not a.is_read_only  # gets read-only value from root
-    assert not a.metadata.is_read_only  # gets read-only value from root
+    assert not a.read_only  # gets read-only value from root
+    assert not a.metadata.read_only  # gets read-only value from root
     assert a.name == '/a'
     assert a.parent is root
     assert 'a' in root
 
-    # set is_read_only=True to create a subgroup that is read only but root is not read only
-    b = root.create_group('b', is_read_only=True)
-    assert b.is_read_only
-    assert b.metadata.is_read_only
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    # set read_only=True to create a subgroup that is read only but root is not read only
+    b = root.create_group('b', read_only=True)
+    assert b.read_only
+    assert b.metadata.read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert b.name == '/b'
     assert b.parent is root
     assert 'b' in root
@@ -109,7 +109,7 @@ def test_create_group():
     assert d.metadata == {'one': 1, 'two': 2, 'three': 3}
 
     # check that we can make root read only again
-    root.is_read_only = True
+    root.read_only = True
     with pytest.raises(ValueError):
         root.create_group('xxx')
 
@@ -129,24 +129,24 @@ def test_create_dataset():
     with pytest.raises(TypeError):
         root.create_dataset()
 
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
 
-    root.is_read_only = True
+    root.read_only = True
 
     # cannot create a dataset if root is in read-only mode
     with pytest.raises(ValueError):
         root.create_dataset('xxx')
 
-    root.is_read_only = False
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    root.read_only = False
+    assert not root.read_only
+    assert not root.metadata.read_only
 
     # create an emtpy dataset (no data, no metadata)
     d1 = root.create_dataset('data1')
     assert root.is_dataset(d1)
     assert isinstance(d1, Dataset)
-    assert not d1.is_read_only  # gets read-only value from root
+    assert not d1.read_only  # gets read-only value from root
     assert d1.name == '/data1'
     assert d1.parent is root
     assert d1.size == 0
@@ -172,27 +172,27 @@ def test_create_dataset():
     assert 'data3' in root
 
     # creating a dataset in read-only mode doesn't change root's read mode
-    d4 = root.create_dataset('data4', is_read_only=True)
-    assert d4.is_read_only
-    assert d4.metadata.is_read_only
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    d4 = root.create_dataset('data4', read_only=True)
+    assert d4.read_only
+    assert d4.metadata.read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert 'data4' in root
 
     # check kwargs
-    d5 = root.create_dataset('data5', parent=None, is_read_only=True, order='F', one=1, two=2, three=3)
+    d5 = root.create_dataset('data5', parent=None, read_only=True, order='F', one=1, two=2, three=3)
     assert d5.name == '/data5'
     assert d5.parent is root
-    assert d5.is_read_only
-    assert d5.metadata.is_read_only
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
+    assert d5.read_only
+    assert d5.metadata.read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
     assert 'data5' in root
     assert 'order' not in d5.metadata
     assert d5.metadata == {'one': 1, 'two': 2, 'three': 3}
 
     # check that we can make root read only again
-    root.is_read_only = True
+    root.read_only = True
     with pytest.raises(ValueError):
         root.create_dataset('xxx')
 
@@ -316,54 +316,54 @@ def test_read_only_propagates():
     g4 = g3.create_group('g4')
 
     # all sub groups/datasets inherit roots read-only value
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
-    assert not g1.is_read_only
-    assert not g1.metadata.is_read_only
-    assert not d1.is_read_only
-    assert not d1.metadata.is_read_only
-    assert not g2.is_read_only
-    assert not g2.metadata.is_read_only
-    assert not g3.is_read_only
-    assert not g3.metadata.is_read_only
-    assert not d3.is_read_only
-    assert not d3.metadata.is_read_only
-    assert not g4.is_read_only
-    assert not g4.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
+    assert not g1.read_only
+    assert not g1.metadata.read_only
+    assert not d1.read_only
+    assert not d1.metadata.read_only
+    assert not g2.read_only
+    assert not g2.metadata.read_only
+    assert not g3.read_only
+    assert not g3.metadata.read_only
+    assert not d3.read_only
+    assert not d3.metadata.read_only
+    assert not g4.read_only
+    assert not g4.metadata.read_only
 
     # make all sub groups/datasets read only by only changing root
-    root.is_read_only = True
-    assert root.is_read_only
-    assert root.metadata.is_read_only
-    assert g1.is_read_only
-    assert g1.metadata.is_read_only
-    assert d1.is_read_only
-    assert d1.metadata.is_read_only
-    assert g2.is_read_only
-    assert g2.metadata.is_read_only
-    assert g3.is_read_only
-    assert g3.metadata.is_read_only
-    assert d3.is_read_only
-    assert d3.metadata.is_read_only
-    assert g4.is_read_only
-    assert g4.metadata.is_read_only
+    root.read_only = True
+    assert root.read_only
+    assert root.metadata.read_only
+    assert g1.read_only
+    assert g1.metadata.read_only
+    assert d1.read_only
+    assert d1.metadata.read_only
+    assert g2.read_only
+    assert g2.metadata.read_only
+    assert g3.read_only
+    assert g3.metadata.read_only
+    assert d3.read_only
+    assert d3.metadata.read_only
+    assert g4.read_only
+    assert g4.metadata.read_only
 
     # make all sub groups/datasets <= g2 writeable
-    g2.is_read_only = False
-    assert root.is_read_only
-    assert root.metadata.is_read_only
-    assert g1.is_read_only
-    assert g1.metadata.is_read_only
-    assert d1.is_read_only
-    assert d1.metadata.is_read_only
-    assert not g2.is_read_only
-    assert not g2.metadata.is_read_only
-    assert not g3.is_read_only
-    assert not g3.metadata.is_read_only
-    assert not d3.is_read_only
-    assert not d3.metadata.is_read_only
-    assert not g4.is_read_only
-    assert not g4.metadata.is_read_only
+    g2.read_only = False
+    assert root.read_only
+    assert root.metadata.read_only
+    assert g1.read_only
+    assert g1.metadata.read_only
+    assert d1.read_only
+    assert d1.metadata.read_only
+    assert not g2.read_only
+    assert not g2.metadata.read_only
+    assert not g3.read_only
+    assert not g3.metadata.read_only
+    assert not d3.read_only
+    assert not d3.metadata.read_only
+    assert not g4.read_only
+    assert not g4.metadata.read_only
 
 
 def test_datasets_groups():
@@ -440,7 +440,7 @@ def test_delete_vertex():
     with pytest.raises(AttributeError):  # invalid attribute
         del root.x.y
 
-    root.is_read_only = True
+    root.read_only = True
 
     with pytest.raises(ValueError):  # read-only mode
         del root['g1']
@@ -461,7 +461,7 @@ def test_delete_vertex():
     assert '/g2/c/cg3' in root
     assert '/g3' in root
 
-    root.is_read_only = False
+    root.read_only = False
 
     del root['g1']
     assert '/g1' not in root
@@ -474,7 +474,7 @@ def test_delete_vertex():
     assert '/g2/c/cg3' in root
     assert '/g3' in root
 
-    root.is_read_only = True
+    root.read_only = True
 
     with pytest.raises(ValueError):  # read-only mode
         del root['g2']
@@ -485,7 +485,7 @@ def test_delete_vertex():
     with pytest.raises(ValueError):  # read-only mode
         del root.g2.c.cg3
 
-    root.is_read_only = False
+    root.read_only = False
 
     del root['/g2/a']
     assert '/g2' in root
@@ -586,14 +586,14 @@ def test_requires():
     assert a2.metadata.one == 1
 
     # try to add Metadata to a Group that is read only
-    root.is_read_only = True
+    root.read_only = True
     with pytest.raises(ValueError):
         root.require_group('a', two=2)
     # read-only mode
     with pytest.raises(ValueError):
         a.create_group('b')
 
-    root.is_read_only = False
+    root.read_only = False
     b = a.create_group('b')
     with pytest.raises(ValueError):
         a.create_group('b')
@@ -629,35 +629,35 @@ def test_requires():
     assert d.require_group('e/') is root.a.b.c.d.e
 
     # change the read-only value of the new sub-groups that are required
-    assert not root.is_read_only
-    bb = root.require_group('aa/bb', is_read_only=True, hello='world')
+    assert not root.read_only
+    bb = root.require_group('aa/bb', read_only=True, hello='world')
     assert bb is root.aa.bb
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
-    assert root.aa.is_read_only
-    assert root.aa.metadata.is_read_only
-    assert bb.is_read_only
-    assert bb.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
+    assert root.aa.read_only
+    assert root.aa.metadata.read_only
+    assert bb.read_only
+    assert bb.metadata.read_only
     assert len(root.aa.bb.metadata) == 1
     assert root.aa.bb.metadata.hello == 'world'
     with pytest.raises(ValueError):
         bb.add_metadata(one=1)
-    bb.is_read_only = False
+    bb.read_only = False
     bb.add_metadata(one=1)
     assert len(root.aa.bb.metadata) == 2
     assert root.aa.bb.metadata.hello == 'world'
     assert root.aa.bb.metadata.one == 1
-    assert root.aa.is_read_only
-    assert root.aa.metadata.is_read_only
+    assert root.aa.read_only
+    assert root.aa.metadata.read_only
     with pytest.raises(ValueError):
         root.aa.add_metadata(two=2)
 
     # require root.aa.bb but change the read-only value
-    assert not root.aa.bb.is_read_only
-    bb2 = root.require_group('aa/bb', is_read_only=True)
+    assert not root.aa.bb.read_only
+    bb2 = root.require_group('aa/bb', read_only=True)
     assert bb2 is root.aa.bb
-    assert bb2.is_read_only
-    assert root.aa.bb.is_read_only
+    assert bb2.read_only
+    assert root.aa.bb.read_only
     with pytest.raises(ValueError):
         bb2.add_metadata(three=3)
 
@@ -690,7 +690,7 @@ def test_requires():
     assert 'order' not in w2.metadata
 
     # try to add Metadata to a Dataset that is read only
-    root.is_read_only = True
+    root.read_only = True
     with pytest.raises(ValueError):
         root.require_dataset('w', two=2)
     # read-only mode
@@ -698,7 +698,7 @@ def test_requires():
         root.create_dataset('x')
 
     # add a Dataset to the 'a' Group
-    root.is_read_only = False
+    root.read_only = False
     x = a.create_dataset('x')
     with pytest.raises(ValueError):
         a.create_dataset('x')
@@ -726,35 +726,35 @@ def test_requires():
     assert root.b.x.y.z.max() == 4
 
     # change the read-only value of the new Dataset that is required
-    assert not root.is_read_only
-    yy = root.require_dataset('xx/yy', is_read_only=True, hello='world')
+    assert not root.read_only
+    yy = root.require_dataset('xx/yy', read_only=True, hello='world')
     assert yy is root.xx.yy
-    assert not root.is_read_only
-    assert not root.metadata.is_read_only
-    assert root.xx.is_read_only
-    assert root.xx.metadata.is_read_only
-    assert yy.is_read_only
-    assert yy.metadata.is_read_only
+    assert not root.read_only
+    assert not root.metadata.read_only
+    assert root.xx.read_only
+    assert root.xx.metadata.read_only
+    assert yy.read_only
+    assert yy.metadata.read_only
     assert len(root.xx.yy.metadata) == 1
     assert root.xx.yy.metadata.hello == 'world'
     with pytest.raises(ValueError):
         yy.add_metadata(one=1)
-    yy.is_read_only = False
+    yy.read_only = False
     yy.add_metadata(one=1)
     assert len(root.xx.yy.metadata) == 2
     assert root.xx.yy.metadata.hello == 'world'
     assert root.xx.yy.metadata.one == 1
-    assert root.xx.is_read_only
-    assert root.xx.metadata.is_read_only
+    assert root.xx.read_only
+    assert root.xx.metadata.read_only
     with pytest.raises(ValueError):
         root.xx.add_metadata(two=2)
 
     # require root.xx.yy but change the read-only value
-    assert not root.xx.yy.is_read_only
-    yy2 = root.require_dataset('/xx/yy/', is_read_only=True)
+    assert not root.xx.yy.read_only
+    yy2 = root.require_dataset('/xx/yy/', read_only=True)
     assert yy2 is root.xx.yy
-    assert yy2.is_read_only
-    assert root.xx.yy.is_read_only
+    assert yy2.read_only
+    assert root.xx.yy.read_only
     with pytest.raises(ValueError):
         yy2.add_metadata(three=3)
 
@@ -1171,14 +1171,14 @@ def test_remove():
     assert '/x/y/z' not in root
 
     # cannot remove in read-only mode
-    root.is_read_only = True
+    root.read_only = True
     with pytest.raises(ValueError):
         root.remove('a')
     assert len(root) == 12
     assert 'a' in root
 
     # remove Group 'd' (which also removes the 'd5' and 'd6' Datasets)
-    root.a.b.c.is_read_only = False
+    root.a.b.c.read_only = False
     d2 = root.a.b.c.remove('d')
     assert len(root) == 9
     assert len(root.a) == 5
@@ -1205,7 +1205,7 @@ def test_remove():
         root.a.b.remove('c')
 
     # remove Group 'a'
-    root.is_read_only = False
+    root.read_only = False
     a2 = root.remove('a')
     assert len(root) == 3
     assert len(list(root.groups())) == 2

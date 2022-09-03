@@ -523,4 +523,4 @@ def test_gsheet_raises():
     # invalid cell range
     for c in INVALID_CELL_RANGES:
         with pytest.raises(ValueError, match=r'Invalid cell'):
-            read_table(ssid, cells=c, sheet='StartA1', is_read_only=True, is_corporate_account=False)
+            read_table(ssid, cells=c, sheet='StartA1', read_only=True, is_corporate_account=False)

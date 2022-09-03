@@ -8,7 +8,7 @@ from .dataset_logging import DatasetLogging
 
 class Group(Vertex):
 
-    def __init__(self, name, parent, is_read_only, **metadata):
+    def __init__(self, name, parent, read_only, **metadata):
         """A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 
         Do not instantiate directly. Create a new :class:`Group` using
@@ -23,13 +23,13 @@ class Group(Vertex):
             parent directory by the ``'/'`` character.
         parent : :class:`Group`
             The parent :class:`Group` to this :class:`Group`.
-        is_read_only : :class:`bool`
+        read_only : :class:`bool`
             Whether the :class:`Group` is to be accessed in read-only mode.
         **metadata
             Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
             for this :class:`Group`.
         """
-        super(Group, self).__init__(name, parent, is_read_only, **metadata)
+        super(Group, self).__init__(name, parent, read_only, **metadata)
 
     def __repr__(self):
         g = len(list(self.groups()))
@@ -175,13 +175,13 @@ class Group(Vertex):
         for key, vertex in group.items():
             n = name + key
             if self.is_group(vertex):
-                self.create_group(n, is_read_only=vertex.is_read_only, **vertex.metadata.copy())
+                self.create_group(n, read_only=vertex.read_only, **vertex.metadata.copy())
             else:  # must be a Dataset
                 self.create_dataset(
-                    n, is_read_only=vertex.is_read_only, data=vertex.data.copy(), **vertex.metadata.copy()
+                    n, read_only=vertex.read_only, data=vertex.data.copy(), **vertex.metadata.copy()
                 )
 
-    def create_group(self, name, is_read_only=None, **metadata):
+    def create_group(self, name, read_only=None, **metadata):
         """Create a new :class:`Group`.
 
         Automatically creates the ancestor :class:`Group`\\s if they do not exist.
@@ -190,7 +190,7 @@ class Group(Vertex):
         ----------
         name : :class:`str`
             The name of the new :class:`Group`.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to create this :class:`Group` in read-only mode.
             If :data:`None` then uses the mode for this :class:`Group`.
         **metadata
@@ -202,11 +202,11 @@ class Group(Vertex):
         :class:`Group`
             The new :class:`Group` that was created.
         """
-        is_read_only, metadata = self._check(is_read_only, **metadata)
-        name, parent = self._create_ancestors(name, is_read_only)
-        return Group(name, parent, is_read_only, **metadata)
+        read_only, metadata = self._check(read_only, **metadata)
+        name, parent = self._create_ancestors(name, read_only)
+        return Group(name, parent, read_only, **metadata)
 
-    def require_group(self, name, is_read_only=None, **metadata):
+    def require_group(self, name, read_only=None, **metadata):
         """Require that a :class:`Group` exists.
 
         If the :class:`Group` exists then it will be returned if it does not exist
@@ -218,7 +218,7 @@ class Group(Vertex):
         ----------
         name : :class:`str`
             The name of the :class:`Group`.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to return the :class:`Group` in read-only mode.
             If :data:`None` then uses the mode for this :class:`Group`.
         **metadata
@@ -234,11 +234,11 @@ class Group(Vertex):
         group_name = name if self.parent is None else self.name + name
         for group in self.groups():
             if group.name == group_name:
-                if is_read_only is not None:
-                    group.is_read_only = is_read_only
+                if read_only is not None:
+                    group.read_only = read_only
                 group.add_metadata(**metadata)
                 return group
-        return self.create_group(name, is_read_only=is_read_only, **metadata)
+        return self.create_group(name, read_only=read_only, **metadata)
 
     def add_dataset(self, name, dataset):
         """Add a :class:`~msl.io.dataset.Dataset`.
@@ -258,10 +258,10 @@ class Group(Vertex):
 
         name = '/' + name.strip('/')
         self.create_dataset(
-            name, is_read_only=dataset.is_read_only, data=dataset.data.copy(), **dataset.metadata.copy()
+            name, read_only=dataset.read_only, data=dataset.data.copy(), **dataset.metadata.copy()
         )
 
-    def create_dataset(self, name, is_read_only=None, **kwargs):
+    def create_dataset(self, name, read_only=None, **kwargs):
         """Create a new :class:`~msl.io.dataset.Dataset`.
 
         Automatically creates the ancestor :class:`Group`\\s if they do not exist.
@@ -270,7 +270,7 @@ class Group(Vertex):
         ----------
         name : :class:`str`
             The name of the new :class:`~msl.io.dataset.Dataset`.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to create this :class:`~msl.io.dataset.Dataset` in read-only mode.
             If :data:`None` then uses the mode for this :class:`Group`.
         **kwargs
@@ -281,11 +281,11 @@ class Group(Vertex):
         :class:`~msl.io.dataset.Dataset`
             The new :class:`~msl.io.dataset.Dataset` that was created.
         """
-        is_read_only, kwargs = self._check(is_read_only, **kwargs)
-        name, parent = self._create_ancestors(name, is_read_only)
-        return Dataset(name, parent, is_read_only, **kwargs)
+        read_only, kwargs = self._check(read_only, **kwargs)
+        name, parent = self._create_ancestors(name, read_only)
+        return Dataset(name, parent, read_only, **kwargs)
 
-    def require_dataset(self, name, is_read_only=None, **kwargs):
+    def require_dataset(self, name, read_only=None, **kwargs):
         """Require that a :class:`~msl.io.dataset.Dataset` exists.
 
         If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
@@ -297,7 +297,7 @@ class Group(Vertex):
         ----------
         name : :class:`str`
             The name of the :class:`~msl.io.dataset.Dataset`.
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether to create this :class:`~msl.io.dataset.Dataset` in read-only mode.
             If :data:`None` then uses the mode for this :class:`Group`.
         **kwargs
@@ -312,14 +312,14 @@ class Group(Vertex):
         dataset_name = name if self.parent is None else self.name + name
         for dataset in self.datasets():
             if dataset.name == dataset_name:
-                if is_read_only is not None:
-                    dataset.is_read_only = is_read_only
+                if read_only is not None:
+                    dataset.read_only = read_only
                 if kwargs:  # only add the kwargs that should be Metadata
                     for kw in ['shape', 'dtype', 'buffer', 'offset', 'strides', 'order', 'data']:
                         kwargs.pop(kw, None)
                 dataset.add_metadata(**kwargs)
                 return dataset
-        return self.create_dataset(name, is_read_only=is_read_only, **kwargs)
+        return self.create_dataset(name, read_only=read_only, **kwargs)
 
     def add_dataset_logging(self, name, dataset_logging):
         """Add a :class:`~msl.io.dataset_logging.DatasetLogging`.
@@ -419,8 +419,8 @@ class Group(Vertex):
 
         >>> log_dset.remove_handler()
         """
-        is_read_only, metadata = self._check(False, **kwargs)
-        name, parent = self._create_ancestors(name, is_read_only)
+        read_only, metadata = self._check(False, **kwargs)
+        name, parent = self._create_ancestors(name, read_only)
         if attributes is None:
             # if the default attribute names are changed then update the `attributes`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
@@ -516,13 +516,13 @@ class Group(Vertex):
                             del group._mapping[key]
 
                 # temporarily make this Group not in read-only mode
-                original_read_only_mode = bool(self._is_read_only)
-                self._is_read_only = False
+                original_read_only_mode = bool(self._read_only)
+                self._read_only = False
                 kwargs.update(meta)
                 dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names,
                                                    logger=logger, date_fmt=meta.logging_date_format,
                                                    data=data, **kwargs)
-                self._is_read_only = original_read_only_mode
+                self._read_only = original_read_only_mode
                 return dset
 
         return self.create_dataset_logging(name, level=level, attributes=attributes,
@@ -546,20 +546,20 @@ class Group(Vertex):
         name = '/' + name.strip('/')
         return self.pop(name, None)
 
-    def _check(self, is_read_only, **kwargs):
+    def _check(self, read_only, **kwargs):
         self._raise_if_read_only()
         kwargs.pop('parent', None)
-        if is_read_only is None:
-            return self._is_read_only, kwargs
-        return is_read_only, kwargs
+        if read_only is None:
+            return self._read_only, kwargs
+        return read_only, kwargs
 
-    def _create_ancestors(self, name, is_read_only):
+    def _create_ancestors(self, name, read_only):
         # automatically create the ancestor Groups if they do not already exist
         names = name.strip('/').split('/')
         parent = self
         for n in names[:-1]:
             if n not in parent:
-                parent = Group(n, parent, is_read_only)
+                parent = Group(n, parent, read_only)
             else:
                 parent = parent[n]
         return names[-1], parent

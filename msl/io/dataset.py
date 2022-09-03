@@ -8,7 +8,7 @@ from .vertex import Vertex
 
 class Dataset(Vertex):
 
-    def __init__(self, name, parent, is_read_only, shape=(0,), dtype=float, buffer=None,
+    def __init__(self, name, parent, read_only, shape=(0,), dtype=float, buffer=None,
                  offset=0, strides=None, order=None, data=None, **metadata):
         """A :class:`Dataset` is essentially a :class:`numpy.ndarray` with :class:`~msl.io.metadata.Metadata`.
 
@@ -21,7 +21,7 @@ class Dataset(Vertex):
             A name to associate with this :class:`Dataset`.
         parent : :class:`~msl.io.group.Group`
             The parent :class:`~msl.io.group.Group` to the :class:`Dataset`.
-        is_read_only : :class:`bool`
+        read_only : :class:`bool`
             Whether the :class:`Dataset` is to be accessed in read-only mode.
         shape
             See :class:`numpy.ndarray`
@@ -43,7 +43,7 @@ class Dataset(Vertex):
             All other key-value pairs will be used as
             :class:`~msl.io.metadata.Metadata` for this :class:`Dataset`.
         """
-        super(Dataset, self).__init__(name, parent, is_read_only, **metadata)
+        super(Dataset, self).__init__(name, parent, read_only, **metadata)
 
         if data is None:
             self._data = np.ndarray(
@@ -55,7 +55,7 @@ class Dataset(Vertex):
             else:
                 self._data = np.asarray(data, dtype=dtype, order=order)
 
-        self.is_read_only = is_read_only
+        self.read_only = read_only
 
     def __repr__(self):
         return '<{} {!r} shape={} dtype={!r} ({} metadata)>'\
@@ -65,25 +65,25 @@ class Dataset(Vertex):
         return repr(self._data)
 
     @property
-    def is_read_only(self):
+    def read_only(self):
         """:class:`bool`: Whether this :class:`Dataset` is in read-only mode.
 
         This is equivalent to setting the ``WRITEABLE`` property in :meth:`numpy.ndarray.setflags`.
         """
         return not self._data.flags.writeable
 
-    @is_read_only.setter
-    def is_read_only(self, value):
+    @read_only.setter
+    def read_only(self, value):
         val = bool(value)
-        self._metadata.is_read_only = val
+        self._metadata.read_only = val
         self._data.setflags(write=not val)
 
-    def copy(self, is_read_only=None):
+    def copy(self, read_only=None):
         """Create a copy of this :class:`Dataset`.
 
         Parameters
         ----------
-        is_read_only : :class:`bool`, optional
+        read_only : :class:`bool`, optional
             Whether the copy should be created in read-only mode. If :data:`None` then
             creates a copy using the mode for the :class:`Dataset` that is being copied.
 
@@ -95,7 +95,7 @@ class Dataset(Vertex):
         return Dataset(
             self._name,
             self._parent,
-            self._is_read_only if is_read_only is None else is_read_only,
+            self._read_only if read_only is None else read_only,
             data=self._data.copy(),
             **self._metadata.copy()
         )

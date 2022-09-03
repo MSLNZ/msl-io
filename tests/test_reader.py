@@ -12,7 +12,7 @@ from msl.io.constants import IS_PYTHON2
 def test_get_root():
     root = Reader('')
     assert isinstance(root, Root)
-    assert not root.is_read_only
+    assert not root.read_only
 
 
 def test_instantiate():

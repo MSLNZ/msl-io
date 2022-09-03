@@ -20,7 +20,7 @@ the names of :class:`~msl.io.group.Group` members, and the *values* are the memb
    >>> c = root.create_group('a/b/c')
    >>> b = root.a.b
    >>> dset = c.create_dataset('dset', data=list(range(100)))
-   >>> root.is_read_only = True
+   >>> root.read_only = True
 
 .. code-block:: pycon
 
@@ -39,7 +39,7 @@ A :class:`~msl.io.group.Group` can be in read-only mode, but can also be set to 
    Traceback (most recent call last):
      ...
    ValueError: Cannot modify <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>. It is accessed in read-only mode.
-   >>> b.is_read_only = False
+   >>> b.read_only = False
    >>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
    <Dataset '/a/b/dset_b' shape=(4,) dtype='<f8' (0 metadata)>
 

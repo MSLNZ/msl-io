@@ -159,10 +159,10 @@ When *root* is returned it is accessed in read-only mode
 
 .. code-block:: pycon
 
-    >>> root.is_read_only
+    >>> root.read_only
     True
     >>> for name, value in root.items():
-    ...     print('is {!r} in read-only mode? {}'.format(name, value.is_read_only))
+    ...     print('is {!r} in read-only mode? {}'.format(name, value.read_only))
     is '/dataset1' in read-only mode? True
     is '/my_group' in read-only mode? True
     is '/my_group/dataset2' in read-only mode? True
@@ -174,16 +174,16 @@ the object to be editable. Setting the read-only mode of *root* propagates that 
 
 .. code-block:: pycon
 
-    >>> root.is_read_only = False
+    >>> root.read_only = False
 
 will make *root* and all :ref:`msl-io-group`\s and all :ref:`msl-io-dataset`\s within *root* to be editable
 
 .. code-block:: pycon
 
-    >>> root.is_read_only
+    >>> root.read_only
     False
     >>> for name, value in root.items():
-    ...     print('is {!r} in read-only mode? {}'.format(name, value.is_read_only))
+    ...     print('is {!r} in read-only mode? {}'.format(name, value.read_only))
     is '/dataset1' in read-only mode? False
     is '/my_group' in read-only mode? False
     is '/my_group/dataset2' in read-only mode? False
@@ -194,17 +194,17 @@ like a Python :class:`dict`)
 
 .. code-block:: pycon
 
-    >>> root['my_group'].is_read_only = True
+    >>> root['my_group'].read_only = True
 
 and this will keep *root* and *dataset1* in editable mode, but change *my_group* and *dataset2*
 to be in read-only mode
 
 .. code-block:: pycon
 
-    >>> root.is_read_only
+    >>> root.read_only
     False
     >>> for name, value in root.items():
-    ...     print('is {!r} in read-only mode? {}'.format(name, value.is_read_only))
+    ...     print('is {!r} in read-only mode? {}'.format(name, value.read_only))
     is '/dataset1' in read-only mode? False
     is '/my_group' in read-only mode? True
     is '/my_group/dataset2' in read-only mode? True
