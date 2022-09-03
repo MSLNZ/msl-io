@@ -17,8 +17,8 @@ from msl.io.tables import (
 from msl.io.constants import IS_PYTHON2
 
 from test_google_api import (
-    skipif_no_gdrive_personal_readonly,
-    skipif_no_sheets_personal_readonly,
+    skipif_no_gdrive_readonly,
+    skipif_no_sheets_readonly,
 )
 
 from helper import datasets_equal
@@ -316,8 +316,8 @@ def test_pathlib():
 
 
 @skipif_32bit_py27
-@skipif_no_gdrive_personal_readonly
-@skipif_no_sheets_personal_readonly
+@skipif_no_gdrive_readonly
+@skipif_no_sheets_readonly
 def test_gsheet_file_path():
     dset = read_table('table.gsheet', account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
@@ -329,8 +329,8 @@ def test_gsheet_file_path():
 
 
 @skipif_32bit_py27
-@skipif_no_gdrive_personal_readonly
-@skipif_no_sheets_personal_readonly
+@skipif_no_gdrive_readonly
+@skipif_no_sheets_readonly
 def test_gsheet_pathlib():
     dset = read_table(pathlib.Path('table.gsheet'), account='testing', sheet='StartA1')
     assert np.array_equal(dset.metadata.header, gsheet_header)
@@ -347,8 +347,8 @@ def test_gsheet_pathlib():
 
 
 @skipif_32bit_py27
-@skipif_no_gdrive_personal_readonly
-@skipif_no_sheets_personal_readonly
+@skipif_no_gdrive_readonly
+@skipif_no_sheets_readonly
 def test_gsheet_file_pointer():
     filename = 'table.gsheet'
     with open(filename, mode='w'):
@@ -374,7 +374,7 @@ def test_gsheet_file_pointer():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_as_datetime():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -391,7 +391,7 @@ def test_gsheets_as_datetime():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_all_data():
     # ID of the table.gsheet file
     table_id = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
@@ -425,7 +425,7 @@ def test_gsheets_all_data():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_one_row():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -435,7 +435,7 @@ def test_gsheets_one_row():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_one_column():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -445,7 +445,7 @@ def test_gsheets_one_column():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_header_only():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -455,7 +455,7 @@ def test_gsheets_header_only():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_empty():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -465,7 +465,7 @@ def test_gsheets_empty():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_cell_range():
     # ID of the table.gsheet file
     file = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'
@@ -500,7 +500,7 @@ def test_gsheets_cell_range():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheet_range_out_of_bounds():
     for c in ['A100', 'J1:M10']:
         dset = read_table('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet',
@@ -515,7 +515,7 @@ def test_gsheet_range_out_of_bounds():
 
 
 @skipif_32bit_py27
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheet_raises():
 
     ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet'

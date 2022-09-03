@@ -23,52 +23,52 @@ from msl.io.google_api import (
 # all Google API tests require the necessary "token.json" file to be
 # available for a specific Google user's account
 try:
-    # dpr -> drive, personal, readonly
-    dpr = GDrive(account='testing', read_only=True)
+    # dr -> drive, readonly
+    dr = GDrive(account='testing', read_only=True)
 except:
-    dpr = None
+    dr = None
 
 try:
-    # dpw -> drive, personal, writable
-    dpw = GDrive(account='testing', read_only=False)
+    # dw -> drive, writable
+    dw = GDrive(account='testing', read_only=False)
 except:
-    dpw = None
+    dw = None
 
 try:
-    # spr -> sheets, personal, readonly
-    spr = GSheets(account='testing', read_only=True)
+    # sr -> sheets, readonly
+    sr = GSheets(account='testing', read_only=True)
 except:
-    spr = None
+    sr = None
 
 try:
-    # spw -> sheets, personal, writeable
-    spw = GSheets(account='testing', read_only=False)
+    # sw -> sheets, writeable
+    sw = GSheets(account='testing', read_only=False)
 except:
-    spw = None
+    sw = None
 
-skipif_no_gdrive_personal_readonly = pytest.mark.skipif(
-    dpr is None, reason='No GDrive personal readonly token'
+skipif_no_gdrive_readonly = pytest.mark.skipif(
+    dr is None, reason='No GDrive readonly token'
 )
 
-skipif_no_gdrive_personal_writeable = pytest.mark.skipif(
-    dpw is None, reason='No GDrive personal writable token'
+skipif_no_gdrive_writeable = pytest.mark.skipif(
+    dw is None, reason='No GDrive writable token'
 )
 
-skipif_no_sheets_personal_readonly = pytest.mark.skipif(
-    spr is None, reason='No GSheets personal readonly token'
+skipif_no_sheets_readonly = pytest.mark.skipif(
+    sr is None, reason='No GSheets readonly token'
 )
 
-skipif_no_sheets_personal_writeable = pytest.mark.skipif(
-    spw is None, reason='No GSheets personal writeable token'
+skipif_no_sheets_writeable = pytest.mark.skipif(
+    sw is None, reason='No GSheets writeable token'
 )
 
 IS_WINDOWS = sys.platform == 'win32'
 
 
-@skipif_no_sheets_personal_readonly
-def test_gsheets_sheet_names_personal():
+@skipif_no_sheets_readonly
+def test_gsheets_sheet_names():
     # MSL/msl-io-testing/empty-5.gsheet
-    names = spr.sheet_names('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY')
+    names = sr.sheet_names('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY')
     assert len(names) == 5
     assert 'Sheet1' in names
     assert 'Sheet2' in names
@@ -77,12 +77,12 @@ def test_gsheets_sheet_names_personal():
     assert 'Sheet5' in names
 
     # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment.gsheet
-    names = spr.sheet_names('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4')
+    names = sr.sheet_names('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4')
     assert len(names) == 1
     assert 'Sensor_1' in names
 
     # table.gsheet
-    names = spr.sheet_names('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
+    names = sr.sheet_names('1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ')
     assert len(names) == 6
     assert 'StartA1' in names
     assert 'StartH22' in names
@@ -92,8 +92,8 @@ def test_gsheets_sheet_names_personal():
     assert 'row' in names
 
 
-@skipif_no_sheets_personal_readonly
-def test_gsheets_values_personal():
+@skipif_no_sheets_readonly
+def test_gsheets_values():
     # MSL/msl-io-testing/empty-5
     empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
 
@@ -102,16 +102,16 @@ def test_gsheets_values_personal():
 
     # more than 1 sheet exists
     with pytest.raises(ValueError, match=r'You must specify a sheet name:'):
-        spr.values(empty_id)
+        sr.values(empty_id)
 
     # empty sheets are okay
-    for name in spr.sheet_names(empty_id):
-        values = spr.values(empty_id, sheet=name)
+    for name in sr.sheet_names(empty_id):
+        values = sr.values(empty_id, sheet=name)
         assert isinstance(values, list)
         assert not values
 
         # specifying the cells in an empty sheet is okay
-        values = spr.values(empty_id, sheet=name, cells='A2:Z10')
+        values = sr.values(empty_id, sheet=name, cells='A2:Z10')
         assert isinstance(values, list)
         assert not values
 
@@ -124,30 +124,30 @@ def test_gsheets_values_personal():
         ['2021-04-03 12:38:10', '20.41', '47.06'],
         ['2021-04-03 12:39:10', '20.29', '48.32']
     ]
-    values = spr.values(lab_id)
+    values = sr.values(lab_id)
     assert values == expected
 
-    values = spr.values(lab_id, row_major=False)
+    values = sr.values(lab_id, row_major=False)
     assert values == [
         ['Timestamp', '2021-04-03 12:36:10', '2021-04-03 12:37:10', '2021-04-03 12:38:10', '2021-04-03 12:39:10'],
         ['Temperature', '20.33', '20.23', '20.41', '20.29'],
         ['Humidity', '49.82', '46.06', '47.06', '48.32']
     ]
 
-    values = spr.values(lab_id, cells='B2:C4', value_option='FORMATTED_VALUE')
+    values = sr.values(lab_id, cells='B2:C4', value_option='FORMATTED_VALUE')
     assert values == [['20.33', '49.82'], ['20.23', '46.06'], ['20.41', '47.06']]
 
-    values = spr.values(lab_id, cells='B:B', value_option='UNFORMATTED_VALUE')
+    values = sr.values(lab_id, cells='B:B', value_option='UNFORMATTED_VALUE')
     assert values == [['Temperature'], [20.33], [20.23], [20.41], [20.29]]
 
-    values = spr.values(lab_id, cells='B:C', value_option=GValueOption.UNFORMATTED)
+    values = sr.values(lab_id, cells='B:C', value_option=GValueOption.UNFORMATTED)
     assert values == [['Temperature', 'Humidity'], [20.33, 49.82], [20.23, 46.06], [20.41, 47.06], [20.29, 48.32]]
 
-    values = spr.values(lab_id, cells='A2:C2')
+    values = sr.values(lab_id, cells='A2:C2')
     assert values == [expected[1]]
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_to_datetime():
     expected = [
         ['Timestamp', datetime(2021, 4, 3, 12, 36, 10), datetime(2021, 4, 3, 12, 37, 10),
@@ -158,17 +158,17 @@ def test_gsheets_to_datetime():
 
     # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
     lab_id = '1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4'
-    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE', row_major=False)
-    values[0][1:] = [spr.to_datetime(t) for t in values[0][1:]]
+    values = sr.values(lab_id, value_option='UNFORMATTED_VALUE', row_major=False)
+    values[0][1:] = [sr.to_datetime(t) for t in values[0][1:]]
     assert values == expected
 
-    values = spr.values(lab_id, value_option='UNFORMATTED_VALUE',
-                        datetime_option='FORMATTED_STRING', row_major=False)
+    values = sr.values(lab_id, value_option='UNFORMATTED_VALUE',
+                       datetime_option='FORMATTED_STRING', row_major=False)
     expected[0][1:] = [str(t) for t in expected[0][1:]]
     assert values == expected
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_gsheets_cells():
     # MSL/msl-io-testing/empty-5
     empty_id = '1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY'
@@ -178,22 +178,22 @@ def test_gsheets_cells():
 
     # invalid spreadsheet_id
     with pytest.raises(HttpError):
-        spr.cells(empty_id[:-1]+'A')
+        sr.cells(empty_id[:-1] + 'A')
 
     # valid spreadsheet_id, invalid sheet name
     with pytest.raises(HttpError):
-        spr.cells(datatypes_id, ranges='invalid')
+        sr.cells(datatypes_id, ranges='invalid')
     with pytest.raises(HttpError):
-        spr.cells(datatypes_id, ranges=['invalid'])
+        sr.cells(datatypes_id, ranges=['invalid'])
 
-    assert spr.cells(empty_id) == {'Sheet1': [], 'Sheet2': [], 'Sheet3': [], 'Sheet4': [], 'Sheet5': []}
+    assert sr.cells(empty_id) == {'Sheet1': [], 'Sheet2': [], 'Sheet3': [], 'Sheet4': [], 'Sheet5': []}
 
-    assert spr.cells(empty_id, ranges='Sheet1') == {'Sheet1': []}
-    assert spr.cells(empty_id, ranges=['Sheet1']) == {'Sheet1': []}
-    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet5']) == {'Sheet1': [], 'Sheet5': []}
-    assert spr.cells(empty_id, ranges=['Sheet1', 'Sheet3!B7:ZZ99']) == {'Sheet1': [], 'Sheet3': []}
+    assert sr.cells(empty_id, ranges='Sheet1') == {'Sheet1': []}
+    assert sr.cells(empty_id, ranges=['Sheet1']) == {'Sheet1': []}
+    assert sr.cells(empty_id, ranges=['Sheet1', 'Sheet5']) == {'Sheet1': [], 'Sheet5': []}
+    assert sr.cells(empty_id, ranges=['Sheet1', 'Sheet3!B7:ZZ99']) == {'Sheet1': [], 'Sheet3': []}
 
-    cells = spr.cells(datatypes_id)
+    cells = sr.cells(datatypes_id)
     values = cells['Data Types']
     assert len(values) == 18
 
@@ -293,29 +293,29 @@ def test_gsheets_cells():
     assert values[17][1] == GCell(value=12345.6789, type=GCellType.NUMBER, formatted='12345 55/81')
 
 
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
 def test_gsheets_create_move_delete():
-    sid = spw.create('no-sheet-names')
-    assert spw.sheet_names(sid) == ('Sheet1',)
-    dpw.delete(sid)
+    sid = sw.create('no-sheet-names')
+    assert sw.sheet_names(sid) == ('Sheet1',)
+    dw.delete(sid)
 
-    sid = spw.create('three-sheet-names', sheet_names=['a', 'bb', 'ccc'])
-    assert dpw.path(sid) == 'My Drive/three-sheet-names'
-    assert spw.sheet_names(sid) == ('a', 'bb', 'ccc')
-    fid = dpw.create_folder('eat/more/fruit')
-    dpw.move(sid, fid)
-    assert dpw.path(sid) == 'My Drive/eat/more/fruit/three-sheet-names'
-    dpw.delete(dpw.folder_id('My Drive/eat'))
+    sid = sw.create('three-sheet-names', sheet_names=['a', 'bb', 'ccc'])
+    assert dw.path(sid) == 'My Drive/three-sheet-names'
+    assert sw.sheet_names(sid) == ('a', 'bb', 'ccc')
+    fid = dw.create_folder('eat/more/fruit')
+    dw.move(sid, fid)
+    assert dw.path(sid) == 'My Drive/eat/more/fruit/three-sheet-names'
+    dw.delete(dw.folder_id('My Drive/eat'))
 
 
-@skipif_no_gdrive_personal_readonly
+@skipif_no_gdrive_readonly
 def test_gdrive_shared_drives():
-    assert dpr.shared_drives() == {}
+    assert dr.shared_drives() == {}
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_folder_id_exception_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_folder_id_exception():
     # the folder does not exist
     folders = [
         'DoesNotExist',
@@ -325,7 +325,7 @@ def test_gdrive_folder_id_exception_personal():
         folders.append(r'C:\Users\username\Google Drive\MSL\DoesNotExist')
     for folder in folders:
         with pytest.raises(OSError, match=r'Not a valid Google Drive folder'):
-            dpr.folder_id(folder)
+            dr.folder_id(folder)
 
     # specified a valid file (which is not a folder)
     files = [
@@ -334,43 +334,43 @@ def test_gdrive_folder_id_exception_personal():
     ]
     for file in files:
         with pytest.raises(OSError, match=r'Not a valid Google Drive folder'):
-            dpr.folder_id(file)
+            dr.folder_id(file)
 
     # specify an invalid parent ID
-    assert dpr.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert dr.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
     with pytest.raises(HttpError):
-        dpr.folder_id('MSL', parent_id='INVALID_Kmkjo9aCQGysOsxwkTtpoJODi')
+        dr.folder_id('MSL', parent_id='INVALID_Kmkjo9aCQGysOsxwkTtpoJODi')
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_folder_id_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_folder_id():
     # relative to the root folder
-    assert dpr.folder_id('') == 'root'
-    assert dpr.folder_id('/') == 'root'
-    assert dpr.folder_id('Google Drive') == 'root'
+    assert dr.folder_id('') == 'root'
+    assert dr.folder_id('/') == 'root'
+    assert dr.folder_id('Google Drive') == 'root'
     if IS_WINDOWS:
-        assert dpr.folder_id('C:\\Users\\username\\Google Drive') == 'root'
-        assert dpr.folder_id(r'D:\Google Drive') == 'root'
+        assert dr.folder_id('C:\\Users\\username\\Google Drive') == 'root'
+        assert dr.folder_id(r'D:\Google Drive') == 'root'
 
-    assert dpr.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
-    assert dpr.folder_id('MSL/msl-io-testing') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
-    assert dpr.folder_id('MSL/msl-io-testing/f 1/f2') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert dpr.folder_id('/Google Drive/MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
-    assert dpr.folder_id('Google Drive/MSL/msl-io-testing/f 1') == '1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9'
+    assert dr.folder_id('MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert dr.folder_id('MSL/msl-io-testing') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
+    assert dr.folder_id('MSL/msl-io-testing/f 1/f2') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert dr.folder_id('/Google Drive/MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+    assert dr.folder_id('Google Drive/MSL/msl-io-testing/f 1') == '1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9'
     if IS_WINDOWS:
-        assert dpr.folder_id('C:\\Users\\username\\Google Drive\\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
-        assert dpr.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
+        assert dr.folder_id('C:\\Users\\username\\Google Drive\\MSL') == '14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi'
+        assert dr.folder_id(r'MSL\msl-io-testing\f 1\f2\sub folder 3') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
 
     # relative to a parent folder
-    assert dpr.folder_id('msl-io-testing', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
-    assert dpr.folder_id('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert dpr.folder_id('f 1/f2', parent_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert dpr.folder_id('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert dpr.folder_id('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
+    assert dr.folder_id('msl-io-testing', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
+    assert dr.folder_id('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert dr.folder_id('f 1/f2', parent_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert dr.folder_id('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
+    assert dr.folder_id('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == '1wLAPHCOphcOITR37b8UB88eFW_FzeNQB'
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_file_id_exception_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_file_id_exception():
     # file does not exist
     files = [
         'DoesNotExist',
@@ -380,7 +380,7 @@ def test_gdrive_file_id_exception_personal():
         files.append(r'C:\Users\username\Google Drive\DoesNotExist.txt')
     for file in files:
         with pytest.raises(OSError, match=r'Not a valid Google Drive file'):
-            dpr.file_id(file)
+            dr.file_id(file)
 
     # specified a valid folder (which is not a file)
     folders = [
@@ -391,16 +391,16 @@ def test_gdrive_file_id_exception_personal():
         folders.append(r'C:\Users\username\Google Drive\MSL')
     for folder in folders:
         with pytest.raises(OSError, match=r'Not a valid Google Drive file'):
-            dpr.file_id(folder)
+            dr.file_id(folder)
 
     # specify an invalid parent ID
-    assert dpr.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    assert dr.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
     with pytest.raises(HttpError):
-        dpr.file_id('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
+        dr.file_id('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_file_id_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_file_id():
     # relative to the root folder
     files = {
         'Single-Photon Generation and Detection.pdf': '11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS',
@@ -412,22 +412,22 @@ def test_gdrive_file_id_personal():
         files['MSL\\msl-io-testing\\f 1\\f2\\New Text Document.txt'] = '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP'
 
     for file, id_ in files.items():
-        assert dpr.file_id(file) == id_
+        assert dr.file_id(file) == id_
 
     # relative to a parent folder
-    assert dpr.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
-    assert dpr.file_id('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
-    assert dpr.file_id('file.txt', folder_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == '1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD'
-    assert dpr.file_id('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP'
+    assert dr.file_id('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    assert dr.file_id('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == '1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395'
+    assert dr.file_id('file.txt', folder_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == '1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD'
+    assert dr.file_id('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == '1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP'
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_file_id_multiple_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_file_id_multiple():
     # multiple files with the same name in the same folder
     path = 'MSL/msl-io-testing/f 1/electronics.xlsx'
 
     with pytest.raises(OSError) as err:
-        dpr.file_id(path)
+        dr.file_id(path)
     assert 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' in str(err.value)
     assert GSheets.MIME_TYPE in str(err.value)
 
@@ -436,151 +436,151 @@ def test_gdrive_file_id_multiple_personal():
         GSheets.MIME_TYPE: '1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE',
     }
     for mime, id_ in mime_types.items():
-        assert dpr.file_id(path, mime_type=mime) == id_
+        assert dr.file_id(path, mime_type=mime) == id_
 
 
-@skipif_no_gdrive_personal_readonly
-@skipif_no_gdrive_personal_writeable
-def test_gdrive_create_delete_folder_personal():
+@skipif_no_gdrive_readonly
+@skipif_no_gdrive_writeable
+def test_gdrive_create_delete_folder():
 
     # instantiated in read-only mode
     with pytest.raises(HttpError, match='Insufficient Permission'):
-        dpr.create_folder('TEST')
+        dr.create_folder('TEST')
 
     u1 = str(uuid.uuid4())
     u2 = str(uuid.uuid4())
 
     # create (relative to root)
     for folder in [u1, u2 + '/sub-2/a b c']:
-        folder_id = dpw.create_folder(folder)
-        assert dpw.folder_id(folder) == folder_id
+        folder_id = dw.create_folder(folder)
+        assert dw.folder_id(folder) == folder_id
 
     # delete
     for folder in [u1, u2 + '/sub-2/a b c', u2 + '/sub-2', u2]:
-        dpw.delete(dpw.folder_id(folder))
+        dw.delete(dw.folder_id(folder))
         with pytest.raises(OSError, match='Not a valid Google Drive folder'):
-            dpw.folder_id(folder)
+            dw.folder_id(folder)
 
     # create (relative to a parent folder)
     # ID of "MSL/msl-io-testing/f 1/f2/sub folder 3" is "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
     u3 = str(uuid.uuid4())
-    folder_id = dpw.create_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
-    assert dpw.folder_id('MSL/msl-io-testing/f 1/f2/sub folder 3/' + u3 + '/a/b/c') == folder_id
+    folder_id = dw.create_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert dw.folder_id('MSL/msl-io-testing/f 1/f2/sub folder 3/' + u3 + '/a/b/c') == folder_id
 
     # these should not raise an error (do not need to assert anything)
-    u3_id = dpw.folder_id(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
-    u3_a_id = dpw.folder_id('a', parent_id=u3_id)
-    u3_a_b_id = dpw.folder_id('b', parent_id=u3_a_id)
-    u3_a_b_c_id = dpw.folder_id('c', parent_id=u3_a_b_id)
+    u3_id = dw.folder_id(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    u3_a_id = dw.folder_id('a', parent_id=u3_id)
+    u3_a_b_id = dw.folder_id('b', parent_id=u3_a_id)
+    u3_a_b_c_id = dw.folder_id('c', parent_id=u3_a_b_id)
 
     # deleting a folder should also delete the children folders
-    dpw.delete(u3_id)
-    assert dpw.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
-    assert not dpw.is_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
-    assert not dpw.is_folder(u3 + '/a/b', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
-    assert not dpw.is_folder(u3 + '/a', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
-    assert not dpw.is_folder(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    dw.delete(u3_id)
+    assert dw.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert not dw.is_folder(u3 + '/a/b/c', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not dw.is_folder(u3 + '/a/b', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not dw.is_folder(u3 + '/a', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
+    assert not dw.is_folder(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_is_file_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_is_file():
     # relative to the root folder
-    assert not dpr.is_file('doesnotexist.txt')
-    assert not dpr.is_file('does/not/exist.txt')
-    assert not dpr.is_file('MSL')
-    assert dpr.is_file('MSL/msl-io-testing/unique')
-    assert dpr.is_file('MSL/msl-io-testing/f 1/electronics.xlsx')
-    assert dpr.is_file('MSL/msl-io-testing/f 1/electronics.xlsx', mime_type=GSheets.MIME_TYPE)
+    assert not dr.is_file('doesnotexist.txt')
+    assert not dr.is_file('does/not/exist.txt')
+    assert not dr.is_file('MSL')
+    assert dr.is_file('MSL/msl-io-testing/unique')
+    assert dr.is_file('MSL/msl-io-testing/f 1/electronics.xlsx')
+    assert dr.is_file('MSL/msl-io-testing/f 1/electronics.xlsx', mime_type=GSheets.MIME_TYPE)
     if IS_WINDOWS:
-        assert not dpr.is_file('C:\\Users\\username\\Google Drive\\MSL\\msl-io-testing\\f 1')
-        assert dpr.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
+        assert not dr.is_file('C:\\Users\\username\\Google Drive\\MSL\\msl-io-testing\\f 1')
+        assert dr.is_file(r'MSL\msl-io-testing\f 1\f2\New Text Document.txt')
 
     # relative to a parent folder
-    assert dpr.is_file('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
-    assert dpr.is_file('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
-    assert dpr.is_file('Single-Photon Generation and Detection.pdf', folder_id='root')
-    assert dpr.is_file('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
-    assert not dpr.is_file('f2', folder_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
-    assert not dpr.is_file('New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+    assert dr.is_file('unique', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+    assert dr.is_file('msl-io-testing/unique', folder_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
+    assert dr.is_file('Single-Photon Generation and Detection.pdf', folder_id='root')
+    assert dr.is_file('f 1/f2/New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
+    assert not dr.is_file('f2', folder_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
+    assert not dr.is_file('New Text Document.txt', folder_id='1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C')
 
     # relative to an invalid parent folder
     with pytest.raises(HttpError):
-        dpr.is_file('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
+        dr.is_file('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_is_folder_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_is_folder():
     # relative to the root folder
-    assert not dpr.is_folder('doesnotexist')
-    assert not dpr.is_folder('MSL/msl-io-testing/unique')
-    assert dpr.is_folder('MSL')
-    assert dpr.is_folder('MSL/msl-io-testing/f 1/f2/sub folder 3')
+    assert not dr.is_folder('doesnotexist')
+    assert not dr.is_folder('MSL/msl-io-testing/unique')
+    assert dr.is_folder('MSL')
+    assert dr.is_folder('MSL/msl-io-testing/f 1/f2/sub folder 3')
     if IS_WINDOWS:
-        assert not dpr.is_folder('MSL\\msl-io-testing\\f 1\\electronics.xlsx')
-        assert dpr.is_folder(r'MSL\msl-io-testing\f 1')
+        assert not dr.is_folder('MSL\\msl-io-testing\\f 1\\electronics.xlsx')
+        assert dr.is_folder(r'MSL\msl-io-testing\f 1')
 
     # relative to a parent folder
-    assert not dpr.is_folder('doesnotexist', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
-    assert not dpr.is_folder('sub folder 3xx', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
-    assert dpr.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
-    assert dpr.is_folder('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
-    assert dpr.is_folder('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
+    assert not dr.is_folder('doesnotexist', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert not dr.is_folder('sub folder 3xx', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert dr.is_folder('sub folder 3', parent_id='1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN')
+    assert dr.is_folder('f2', parent_id='1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9')
+    assert dr.is_folder('msl-io-testing/f 1/f2', parent_id='14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi')
 
     # relative to an invalid parent folder
     with pytest.raises(HttpError):
-        dpr.is_folder('f2', parent_id='INVALID_F5AhbUb7Lq77qzuBbvZr150X9')
+        dr.is_folder('f2', parent_id='INVALID_F5AhbUb7Lq77qzuBbvZr150X9')
 
 
-@skipif_no_gdrive_personal_readonly
-@skipif_no_gdrive_personal_writeable
-def test_gdrive_upload_personal():
+@skipif_no_gdrive_readonly
+@skipif_no_gdrive_writeable
+def test_gdrive_upload():
     temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + '.py')
     with open(temp_file, mode='wt') as fp:
         fp.write('from msl.io import GDrive')
 
     # instantiated in read-only mode
     with pytest.raises(HttpError, match='Insufficient Permission'):
-        dpr.upload(temp_file)
+        dr.upload(temp_file)
 
-    file_id = dpw.upload(
+    file_id = dw.upload(
         temp_file,
-        folder_id=dpw.folder_id('MSL'),
+        folder_id=dw.folder_id('MSL'),
         mime_type='text/x-python'
     )
 
     path = os.path.join('MSL', os.path.basename(temp_file))
-    assert dpw.file_id(path, mime_type='text/x-python') == file_id
-    assert dpw.file_id(path) == file_id
-    assert not dpw.is_file(path, mime_type='application/x-python-code')
+    assert dw.file_id(path, mime_type='text/x-python') == file_id
+    assert dw.file_id(path) == file_id
+    assert not dw.is_file(path, mime_type='application/x-python-code')
 
-    dpw.delete(file_id)
-    assert not dpw.is_file(path)
+    dw.delete(file_id)
+    assert not dw.is_file(path)
     os.remove(temp_file)
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_download_personal():
+@skipif_no_gdrive_readonly
+def test_gdrive_download():
     temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
 
-    file_id = dpr.file_id('MSL/msl-io-testing/file.txt')
+    file_id = dr.file_id('MSL/msl-io-testing/file.txt')
 
     # cannot be a string IO object
     with pytest.raises(TypeError):
-        dpr.download(file_id, save_to=io.StringIO())
+        dr.download(file_id, save_to=io.StringIO())
     if not IS_PYTHON2:  # in Python 2, str and bytes are the same
         with pytest.raises(TypeError):
-            dpr.download(file_id, save_to=open('junk.txt', mode='wt'))
+            dr.download(file_id, save_to=open('junk.txt', mode='wt'))
         os.remove('junk.txt')  # clean up since it got created before the error was raised
 
     # a BytesIO object
     with io.BytesIO() as buffer:
-        dpr.download(file_id, save_to=buffer)
+        dr.download(file_id, save_to=buffer)
         buffer.seek(0)
         assert buffer.read() == b'in "msl-io-testing"'
 
     # a file handle in 'wb' mode
     with open(temp_file, mode='wb') as fp:
-        dpr.download(file_id, save_to=fp)
+        dr.download(file_id, save_to=fp)
     with open(temp_file, mode='rt') as fp:
         assert fp.read() == 'in "msl-io-testing"'
     os.remove(temp_file)  # clean up
@@ -588,8 +588,8 @@ def test_gdrive_download_personal():
     # do not specify a value for the 'save_to' kwarg
     # therefore the filename is determined from the remote filename
     # and saved to the current working directory
-    file_id = dpr.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt')
-    dpr.download(file_id)
+    file_id = dr.file_id('MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt')
+    dr.download(file_id)
     with open('file.txt', mode='rt') as fp:
         assert fp.read() == 'in "sub folder 3"'
     os.remove('file.txt')  # clean up
@@ -599,14 +599,14 @@ def test_gdrive_download_personal():
     if os.path.isfile(f):
         os.remove(f)
     assert not os.path.isfile(f)
-    dpr.download(file_id, save_to=tempfile.gettempdir())
+    dr.download(file_id, save_to=tempfile.gettempdir())
     with open(f, mode='rt') as fp:
         assert fp.read() == 'in "sub folder 3"'
     os.remove(f)  # clean up
 
     # save to a specific file
     assert not os.path.isfile(temp_file)
-    dpr.download(file_id, save_to=temp_file)
+    dr.download(file_id, save_to=temp_file)
     with open(temp_file, mode='rb') as fp:
         assert fp.read() == b'in "sub folder 3"'
     os.remove(temp_file)  # clean up
@@ -616,135 +616,135 @@ def test_gdrive_download_personal():
         assert file.progress() == 1.0
         assert file.total_size == 17
         assert file.resumable_progress == 17
-    dpr.download(file_id, save_to=temp_file, callback=handler)
+    dr.download(file_id, save_to=temp_file, callback=handler)
     os.remove(temp_file)  # clean up
 
 
-@skipif_no_gdrive_personal_readonly
-@skipif_no_gdrive_personal_writeable
-def test_gdrive_empty_trash_personal():
+@skipif_no_gdrive_readonly
+@skipif_no_gdrive_writeable
+def test_gdrive_empty_trash():
     # instantiated in read-only mode
     with pytest.raises(HttpError, match='Insufficient Permission'):
-        dpr.empty_trash()
-    dpw.empty_trash()
+        dr.empty_trash()
+    dw.empty_trash()
 
 
-@skipif_no_gdrive_personal_readonly
-def test_gdrive_path_personal():
-    assert dpr.path('0AFP6574OTgaaUk9PVA') == 'My Drive'
-    assert dpr.path('11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS') == 'My Drive/Single-Photon Generation and Detection.pdf'
-    assert dpr.path('14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == 'My Drive/MSL'
-    assert dpr.path('1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == 'My Drive/MSL/msl-io-testing'
-    assert dpr.path('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY') == 'My Drive/MSL/msl-io-testing/empty-5'
-    assert dpr.path('1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41') == 'My Drive/MSL/msl-io-testing/file.txt'
-    assert dpr.path('1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395') == 'My Drive/MSL/msl-io-testing/unique'
-    assert dpr.path('1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == 'My Drive/MSL/msl-io-testing/f 1'
-    assert dpr.path('1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
-    assert dpr.path('1aCSP8HU7mAz2hss8dP7IpNz0xJDzWSe1') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
-    assert dpr.path('1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == 'My Drive/MSL/msl-io-testing/f 1/f2'
-    assert dpr.path('1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP') == 'My Drive/MSL/msl-io-testing/f 1/f2/New Text Document.txt'
-    assert dpr.path('1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3'
-    assert dpr.path('1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt'
-    assert dpr.path('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment'
+@skipif_no_gdrive_readonly
+def test_gdrive_path():
+    assert dr.path('0AFP6574OTgaaUk9PVA') == 'My Drive'
+    assert dr.path('11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS') == 'My Drive/Single-Photon Generation and Detection.pdf'
+    assert dr.path('14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi') == 'My Drive/MSL'
+    assert dr.path('1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C') == 'My Drive/MSL/msl-io-testing'
+    assert dr.path('1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY') == 'My Drive/MSL/msl-io-testing/empty-5'
+    assert dr.path('1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41') == 'My Drive/MSL/msl-io-testing/file.txt'
+    assert dr.path('1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395') == 'My Drive/MSL/msl-io-testing/unique'
+    assert dr.path('1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9') == 'My Drive/MSL/msl-io-testing/f 1'
+    assert dr.path('1SdLw6tlh4EaPeDis0pPepzYRBb_mx_i8fOwgODwQKaE') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
+    assert dr.path('1aCSP8HU7mAz2hss8dP7IpNz0xJDzWSe1') == 'My Drive/MSL/msl-io-testing/f 1/electronics.xlsx'
+    assert dr.path('1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN') == 'My Drive/MSL/msl-io-testing/f 1/f2'
+    assert dr.path('1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP') == 'My Drive/MSL/msl-io-testing/f 1/f2/New Text Document.txt'
+    assert dr.path('1wLAPHCOphcOITR37b8UB88eFW_FzeNQB') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3'
+    assert dr.path('1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt'
+    assert dr.path('1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4') == 'My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment'
 
 
-@skipif_no_gdrive_personal_writeable
+@skipif_no_gdrive_writeable
 def test_gdrive_copy():
     msl_io_testing_id = '1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C'
-    assert dpw.path(msl_io_testing_id) == 'My Drive/MSL/msl-io-testing'
+    assert dw.path(msl_io_testing_id) == 'My Drive/MSL/msl-io-testing'
 
     file_txt_id = '1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41'
-    assert dpw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
+    assert dw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
 
     f2_id = '1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN'
-    assert dpw.path(f2_id) == 'My Drive/MSL/msl-io-testing/f 1/f2'
+    assert dw.path(f2_id) == 'My Drive/MSL/msl-io-testing/f 1/f2'
 
     # copy to the same folder (do not specify the destination folder)
-    cid = dpw.copy(file_txt_id)
+    cid = dw.copy(file_txt_id)
     assert cid != file_txt_id
-    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/file.txt'
+    assert dw.path(cid) == 'My Drive/MSL/msl-io-testing/file.txt'
     with pytest.raises(OSError, match='Multiple file matches'):
-        dpw.file_id('file.txt', folder_id=msl_io_testing_id)
-    dpw.delete(cid)
-    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+        dw.file_id('file.txt', folder_id=msl_io_testing_id)
+    dw.delete(cid)
+    assert dw.is_file('file.txt', folder_id=msl_io_testing_id)
 
     # copy to a different folder
-    cid = dpw.copy(file_txt_id, f2_id)
+    cid = dw.copy(file_txt_id, f2_id)
     assert cid != file_txt_id
-    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/file.txt'
-    dpw.delete(cid)
-    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+    assert dw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/file.txt'
+    dw.delete(cid)
+    assert dw.is_file('file.txt', folder_id=msl_io_testing_id)
 
     # copy to the same folder (but specify it) and rename
-    cid = dpw.copy(file_txt_id, msl_io_testing_id, name='new-file.dat')
+    cid = dw.copy(file_txt_id, msl_io_testing_id, name='new-file.dat')
     assert cid != file_txt_id
-    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/new-file.dat'
-    dpw.delete(cid)
-    assert not dpw.is_file('new-file.dat', folder_id=msl_io_testing_id)
-    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+    assert dw.path(cid) == 'My Drive/MSL/msl-io-testing/new-file.dat'
+    dw.delete(cid)
+    assert not dw.is_file('new-file.dat', folder_id=msl_io_testing_id)
+    assert dw.is_file('file.txt', folder_id=msl_io_testing_id)
 
     # copy to a different folder and rename (do not specify an extension)
-    cid = dpw.copy(file_txt_id, f2_id, name='abc')
+    cid = dw.copy(file_txt_id, f2_id, name='abc')
     assert cid != file_txt_id
-    assert dpw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/abc'
-    dpw.delete(cid)
-    assert not dpw.is_file('abc', folder_id=f2_id)
-    assert dpw.is_file('file.txt', folder_id=msl_io_testing_id)
+    assert dw.path(cid) == 'My Drive/MSL/msl-io-testing/f 1/f2/abc'
+    dw.delete(cid)
+    assert not dw.is_file('abc', folder_id=f2_id)
+    assert dw.is_file('file.txt', folder_id=msl_io_testing_id)
 
 
-@skipif_no_gdrive_personal_writeable
+@skipif_no_gdrive_writeable
 def test_gdrive_rename():
     # rename a folder
-    fid = dpw.create_folder('My Folder')
-    assert dpw.path(fid) == 'My Drive/My Folder'
-    dpw.rename(fid, 'Renamed Folder')
-    assert dpw.path(fid) == 'My Drive/Renamed Folder'
+    fid = dw.create_folder('My Folder')
+    assert dw.path(fid) == 'My Drive/My Folder'
+    dw.rename(fid, 'Renamed Folder')
+    assert dw.path(fid) == 'My Drive/Renamed Folder'
 
     # rename a file
     file_txt_id = '1HG_emhGXBGaR7oS6ftioJOF-xbl1kv41'
-    assert dpw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
-    cid = dpw.copy(file_txt_id, fid)
-    assert dpw.path(cid) == 'My Drive/Renamed Folder/file.txt'
-    dpw.rename(cid, 'renamed file.txt')
-    assert dpw.path(cid) == 'My Drive/Renamed Folder/renamed file.txt'
+    assert dw.path(file_txt_id) == 'My Drive/MSL/msl-io-testing/file.txt'
+    cid = dw.copy(file_txt_id, fid)
+    assert dw.path(cid) == 'My Drive/Renamed Folder/file.txt'
+    dw.rename(cid, 'renamed file.txt')
+    assert dw.path(cid) == 'My Drive/Renamed Folder/renamed file.txt'
 
     # cleanup
-    dpw.delete(fid)
+    dw.delete(fid)
 
 
-@skipif_no_gdrive_personal_writeable
+@skipif_no_gdrive_writeable
 def test_gdrive_move():
     # move a folder
-    fid = dpw.create_folder('X/Y/Z')
-    assert dpw.path(fid) == 'My Drive/X/Y/Z'
-    dpw.move(fid, 'root')
-    assert dpw.path(fid) == 'My Drive/Z'
-    dpw.move(fid, dpw.folder_id('My Drive/X'))
-    assert dpw.path(fid) == 'My Drive/X/Z'
+    fid = dw.create_folder('X/Y/Z')
+    assert dw.path(fid) == 'My Drive/X/Y/Z'
+    dw.move(fid, 'root')
+    assert dw.path(fid) == 'My Drive/Z'
+    dw.move(fid, dw.folder_id('My Drive/X'))
+    assert dw.path(fid) == 'My Drive/X/Z'
 
     # move a file (first create a copy)
-    cid = dpw.copy(dpw.file_id('MSL/msl-io-testing/file.txt'), folder_id='root', name='copied.txt')
-    assert dpw.path(cid) == 'My Drive/copied.txt'
-    dpw.move(cid, fid)
-    assert dpw.path(cid) == 'My Drive/X/Z/copied.txt'
+    cid = dw.copy(dw.file_id('MSL/msl-io-testing/file.txt'), folder_id='root', name='copied.txt')
+    assert dw.path(cid) == 'My Drive/copied.txt'
+    dw.move(cid, fid)
+    assert dw.path(cid) == 'My Drive/X/Z/copied.txt'
 
     # cleanup
-    dpw.delete(dpw.folder_id('X'))
+    dw.delete(dw.folder_id('X'))
 
 
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
 def test_gsheets_append():
-    sid = spw.create('appending')
-    spw.append(None, sid)
-    spw.append([], sid)
-    spw.append([[]], sid)
-    spw.append(0, sid)
-    spw.append([1, 2], sid, sheet='Sheet1')
-    spw.append([[3, 4, 5, 6], [7, 8, 9]], sid)
-    spw.append([[10, 11, 12, 13], [14, 15, 16]], sid, row_major=False)
-    spw.append([None, 17], sid)
-    assert spw.values(sid) == [
+    sid = sw.create('appending')
+    sw.append(None, sid)
+    sw.append([], sid)
+    sw.append([[]], sid)
+    sw.append(0, sid)
+    sw.append([1, 2], sid, sheet='Sheet1')
+    sw.append([[3, 4, 5, 6], [7, 8, 9]], sid)
+    sw.append([[10, 11, 12, 13], [14, 15, 16]], sid, row_major=False)
+    sw.append([None, 17], sid)
+    assert sw.values(sid) == [
         ['0'],
         ['1', '2'],
         ['3', '4', '5', '6'],
@@ -755,16 +755,16 @@ def test_gsheets_append():
         ['13'],
         ['', '17']
     ]
-    dpw.delete(sid)
+    dw.delete(sid)
 
-    sid = spw.create('appending-2', sheet_names=['Appender'])
-    spw.append(['a', 'b', 'c'], sid)
-    spw.append(['d', 'e', 'f', 'g'], sid, cell='D4')
-    spw.append('h', sid, sheet='Appender')
-    spw.append([['i', 'j'], ['k', 'l']], sid, cell='B7')
-    spw.append([['m', 'n', 'o'], ['p', 'q', 'r']], sid, row_major=False, cell='A13')
-    spw.append('s', sid, cell='A1')
-    assert spw.values(sid) == [
+    sid = sw.create('appending-2', sheet_names=['Appender'])
+    sw.append(['a', 'b', 'c'], sid)
+    sw.append(['d', 'e', 'f', 'g'], sid, cell='D4')
+    sw.append('h', sid, sheet='Appender')
+    sw.append([['i', 'j'], ['k', 'l']], sid, cell='B7')
+    sw.append([['m', 'n', 'o'], ['p', 'q', 'r']], sid, row_major=False, cell='A13')
+    sw.append('s', sid, cell='A1')
+    assert sw.values(sid) == [
         ['a', 'b', 'c'],
         ['s'],
         [],
@@ -782,20 +782,20 @@ def test_gsheets_append():
         ['n', 'q'],
         ['o', 'r']
     ]
-    dpw.delete(sid)
+    dw.delete(sid)
 
 
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
 def test_gsheets_write():
-    sid = spw.create('writing')
-    spw.write(None, sid, 'A1')
-    spw.write([], sid, 'A1')
-    spw.write([[]], sid, 'A1')
-    spw.write(0, sid, 'C1')
-    spw.write([1, 2], sid, 'A2:B3', sheet='Sheet1')
-    spw.write([[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], sid, 'A4', row_major=False)
-    assert spw.values(sid) == [
+    sid = sw.create('writing')
+    sw.write(None, sid, 'A1')
+    sw.write([], sid, 'A1')
+    sw.write([[]], sid, 'A1')
+    sw.write(0, sid, 'C1')
+    sw.write([1, 2], sid, 'A2:B3', sheet='Sheet1')
+    sw.write([[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], sid, 'A4', row_major=False)
+    assert sw.values(sid) == [
         ['', '', '0'],
         ['1', '2'],
         [],
@@ -806,52 +806,52 @@ def test_gsheets_write():
     ]
 
     values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
-    spw.write(values, sid, 'A2')
+    sw.write(values, sid, 'A2')
     expected = [['', '', 0]]
     expected.extend(values)
     expected.extend([[5, 9, 13], [6, 10, 14]])
-    assert spw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
+    assert sw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
 
-    dpw.delete(sid)
+    dw.delete(sid)
 
 
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
 def test_gsheets_copy_rename_add_delete():
-    id1 = spw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
-    id2 = spw.create('spreadsheet2')
+    id1 = sw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
+    id2 = sw.create('spreadsheet2')
 
-    d_sheet = spw.add_sheets('d', id1)
+    d_sheet = sw.add_sheets('d', id1)
     assert list(d_sheet.values()) == ['d']
-    sheets = spw.add_sheets(['e', 'f', 'g'], id1)
+    sheets = sw.add_sheets(['e', 'f', 'g'], id1)
     assert list(sheets.values()) == ['e', 'f', 'g']
-    assert spw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
+    assert sw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
 
-    assert spw.sheet_names(id2) == ('Sheet1',)
-    bid = spw.copy('b', id1, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b')
-    spw.copy(list(d_sheet.keys())[0], id1, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
+    assert sw.sheet_names(id2) == ('Sheet1',)
+    bid = sw.copy('b', id1, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b')
+    sw.copy(list(d_sheet.keys())[0], id1, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
 
-    spw.rename_sheet(bid, 'B - B', id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
+    sw.rename_sheet(bid, 'B - B', id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
 
-    spw.rename_sheet('a', 'different', id1)
-    assert spw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
+    sw.rename_sheet('a', 'different', id1)
+    assert sw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
 
-    spw.delete_sheets('different', id1)
-    assert spw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
-    spw.delete_sheets(bid, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of d')
-    spw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
-    assert spw.sheet_names(id1) == ('b', 'c', 'e', 'f')
-
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        spw.copy('invalid', id1, id2)
+    sw.delete_sheets('different', id1)
+    assert sw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
+    sw.delete_sheets(bid, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of d')
+    sw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
+    assert sw.sheet_names(id1) == ('b', 'c', 'e', 'f')
 
     with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        spw.delete_sheets('invalid', id1)
+        sw.copy('invalid', id1, id2)
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        sw.delete_sheets('invalid', id1)
 
     # cleanup
-    dpw.delete(id1)
-    dpw.delete(id2)
+    dw.delete(id1)
+    dw.delete(id2)

@@ -10,27 +10,27 @@ from msl.io import (
 from msl.io.readers.gsheets import _google_file_id_regex
 
 try:
-    # dpr -> drive, personal, readonly
-    dpr = GDrive(account='testing', read_only=True)
+    # dr -> drive, readonly
+    dr = GDrive(account='testing', read_only=True)
 except:
-    dpr = None
+    dr = None
 
 try:
-    # spr -> sheets, personal, readonly
-    spr = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', account='testing', read_only=True)
+    # sr -> sheets, readonly
+    sr = GSheetsReader('1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo', account='testing', read_only=True)
 except:
-    spr = None
+    sr = None
 
-skipif_no_gdrive_personal_readonly = pytest.mark.skipif(
-    dpr is None, reason='No GDrive personal readonly token'
+skipif_no_gdrive_readonly = pytest.mark.skipif(
+    dr is None, reason='No GDrive readonly token'
 )
 
-skipif_no_sheets_personal_readonly = pytest.mark.skipif(
-    spr is None, reason='No GSheets personal readonly token'
+skipif_no_sheets_readonly = pytest.mark.skipif(
+    sr is None, reason='No GSheets readonly token'
 )
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_raises():
     with pytest.raises(ValueError, match=r'Must instantiate GSheetsReader in read-only mode'):
         GSheetsReader('does-not-matter', read_only=False)
@@ -48,7 +48,7 @@ def test_raises():
         GSheetsReader(table_gsheet_id, account='testing').read(sheet='SheetA1')
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_cell():
     # lab_environment.gsheet
     ssid = '1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo'
@@ -70,7 +70,7 @@ def test_cell():
     assert sheets.read(cell='J1:M10') == []
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_sheet():
     # table.gsheet
     ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
@@ -91,7 +91,7 @@ def test_sheet():
     assert sheets.read('D9:D9', sheet='StartA1') == [('sensor 3',)]
 
 
-@skipif_no_sheets_personal_readonly
+@skipif_no_sheets_readonly
 def test_as_datetime():
     # table.gsheet
     ssid = '1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ'
@@ -124,8 +124,8 @@ def test_as_datetime():
     ]
 
 
-@skipif_no_gdrive_personal_readonly
-@skipif_no_sheets_personal_readonly
+@skipif_no_gdrive_readonly
+@skipif_no_sheets_readonly
 def test_file_path():
     path = 'My Drive/MSL/msl-io-testing/empty-5.gsheet'
     sheets = GSheetsReader(path, account='testing', read_only=True)
