@@ -408,7 +408,7 @@ class GDrive(GoogleAPI):
             The ID of the folder to upload the file to. If not specified then
             uploads to the `My Drive` root folder.
         mime_type : :class:`str`, optional
-            The `Media Type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_
+            The `MIME (media) type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_
             of the file (e.g., ``'text/csv'``). If not specified then a type
             will be guessed based on the file extension.
         resumable : :class:`bool`
