@@ -741,15 +741,15 @@ class GSheets(GoogleAPI):
 
         self._spreadsheets = self._service.spreadsheets()
 
-    def append(self, spreadsheet_id, values, cell=None, sheet=None, row_major=True, raw=False):
-        """Append values to a spreadsheet.
+    def append(self, values, spreadsheet_id, cell=None, sheet=None, row_major=True, raw=False):
+        """Append values to a sheet.
 
         Returns
         -------
+        values
+            The value(s) to append
         spreadsheet_id : :class:`str`
             The ID of a Google Sheets file.
-        values
-            The value(s) to append to `sheet`.
         cell : :class:`str`, optional
             The cell (top-left corner) to start appending the values to. If the
             cell already contains data then new rows are inserted and the values
@@ -781,18 +781,18 @@ class GSheets(GoogleAPI):
             },
         ).execute()
 
-    def write(self, spreadsheet_id, values, cell, sheet=None, row_major=True, raw=False):
-        """Write values to a spreadsheet.
+    def write(self, values, spreadsheet_id, cell, sheet=None, row_major=True, raw=False):
+        """Write values to a sheet.
 
         If a cell that is being written to already contains a value,
         the value in that cell is overwritten with the new value.
 
         Returns
         -------
-        spreadsheet_id : :class:`str`
-            The ID of a Google Sheets file.
         values
             The value(s) to write.
+        spreadsheet_id : :class:`str`
+            The ID of a Google Sheets file.
         cell : :class:`str`, optional
             The cell (top-left corner) to start writing the values to.
             For example, ``'C9'``.

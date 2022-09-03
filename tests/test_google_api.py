@@ -309,131 +309,6 @@ def test_gsheets_create_move_delete():
     dpw.delete(dpw.folder_id('My Drive/eat'))
 
 
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
-def test_gsheets_append():
-    sid = spw.create('appending')
-    spw.append(sid, None)
-    spw.append(sid, [])
-    spw.append(sid, [[]])
-    spw.append(sid, 0)
-    spw.append(sid, [1, 2], sheet='Sheet1')
-    spw.append(sid, [[3, 4, 5, 6], [7, 8, 9]])
-    spw.append(sid, [[10, 11, 12, 13], [14, 15, 16]], row_major=False)
-    spw.append(sid, [None, 17])
-    assert spw.values(sid) == [
-        ['0'],
-        ['1', '2'],
-        ['3', '4', '5', '6'],
-        ['7', '8', '9'],
-        ['10', '14'],
-        ['11', '15'],
-        ['12', '16'],
-        ['13'],
-        ['', '17']
-    ]
-    dpw.delete(sid)
-
-    sid = spw.create('appending-2', sheet_names=['Appender'])
-    spw.append(sid, ['a', 'b', 'c'])
-    spw.append(sid, ['d', 'e', 'f', 'g'], cell='D4')
-    spw.append(sid, 'h', sheet='Appender')
-    spw.append(sid, [['i', 'j'], ['k', 'l']], cell='B7')
-    spw.append(sid, [['m', 'n', 'o'], ['p', 'q', 'r']], row_major=False, cell='A13')
-    spw.append(sid, 's', cell='A1')
-    assert spw.values(sid) == [
-        ['a', 'b', 'c'],
-        ['s'],
-        [],
-        [],
-        ['', '', '', 'd', 'e', 'f', 'g'],
-        ['', '', '', 'h'],
-        [],
-        ['', 'i', 'j'],
-        ['', 'k', 'l'],
-        [],
-        [],
-        [],
-        [],
-        ['m', 'p'],
-        ['n', 'q'],
-        ['o', 'r']
-    ]
-    dpw.delete(sid)
-
-
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
-def test_gsheets_write():
-    sid = spw.create('writing')
-    spw.write(sid, None, 'A1')
-    spw.write(sid, [], 'A1')
-    spw.write(sid, [[]], 'A1')
-    spw.write(sid, 0, 'C1')
-    spw.write(sid, [1, 2], 'A2:B3', sheet='Sheet1')
-    spw.write(sid, [[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], 'A4', row_major=False)
-    assert spw.values(sid) == [
-        ['', '', '0'],
-        ['1', '2'],
-        [],
-        ['3', '7', '11'],
-        ['4', '8', '12'],
-        ['5', '9', '13'],
-        ['6', '10', '14'],
-    ]
-
-    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
-    spw.write(sid, values, 'A2')
-    expected = [['', '', 0]]
-    expected.extend(values)
-    expected.extend([[5, 9, 13], [6, 10, 14]])
-    assert spw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
-
-    dpw.delete(sid)
-
-
-@skipif_no_sheets_personal_writeable
-@skipif_no_gdrive_personal_writeable
-def test_gsheets_copy_rename_add_delete():
-    id1 = spw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
-    id2 = spw.create('spreadsheet2')
-
-    d_sheet = spw.add_sheets('d', id1)
-    assert list(d_sheet.values()) == ['d']
-    sheets = spw.add_sheets(['e', 'f', 'g'], id1)
-    assert list(sheets.values()) == ['e', 'f', 'g']
-    assert spw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
-
-    assert spw.sheet_names(id2) == ('Sheet1',)
-    bid = spw.copy('b', id1, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b')
-    spw.copy(list(d_sheet.keys())[0], id1, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
-
-    spw.rename_sheet(bid, 'B - B', id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
-
-    spw.rename_sheet('a', 'different', id1)
-    assert spw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
-
-    spw.delete_sheets('different', id1)
-    assert spw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
-    spw.delete_sheets(bid, id2)
-    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of d')
-    spw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
-    assert spw.sheet_names(id1) == ('b', 'c', 'e', 'f')
-
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        spw.copy('invalid', id1, id2)
-
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        spw.delete_sheets('invalid', id1)
-
-    # cleanup
-    dpw.delete(id1)
-    dpw.delete(id2)
-
-
 @skipif_no_gdrive_personal_readonly
 def test_gdrive_shared_drives():
     assert dpr.shared_drives() == {}
@@ -855,3 +730,128 @@ def test_gdrive_move():
 
     # cleanup
     dpw.delete(dpw.folder_id('X'))
+
+
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_append():
+    sid = spw.create('appending')
+    spw.append(None, sid)
+    spw.append([], sid)
+    spw.append([[]], sid)
+    spw.append(0, sid)
+    spw.append([1, 2], sid, sheet='Sheet1')
+    spw.append([[3, 4, 5, 6], [7, 8, 9]], sid)
+    spw.append([[10, 11, 12, 13], [14, 15, 16]], sid, row_major=False)
+    spw.append([None, 17], sid)
+    assert spw.values(sid) == [
+        ['0'],
+        ['1', '2'],
+        ['3', '4', '5', '6'],
+        ['7', '8', '9'],
+        ['10', '14'],
+        ['11', '15'],
+        ['12', '16'],
+        ['13'],
+        ['', '17']
+    ]
+    dpw.delete(sid)
+
+    sid = spw.create('appending-2', sheet_names=['Appender'])
+    spw.append(['a', 'b', 'c'], sid)
+    spw.append(['d', 'e', 'f', 'g'], sid, cell='D4')
+    spw.append('h', sid, sheet='Appender')
+    spw.append([['i', 'j'], ['k', 'l']], sid, cell='B7')
+    spw.append([['m', 'n', 'o'], ['p', 'q', 'r']], sid, row_major=False, cell='A13')
+    spw.append('s', sid, cell='A1')
+    assert spw.values(sid) == [
+        ['a', 'b', 'c'],
+        ['s'],
+        [],
+        [],
+        ['', '', '', 'd', 'e', 'f', 'g'],
+        ['', '', '', 'h'],
+        [],
+        ['', 'i', 'j'],
+        ['', 'k', 'l'],
+        [],
+        [],
+        [],
+        [],
+        ['m', 'p'],
+        ['n', 'q'],
+        ['o', 'r']
+    ]
+    dpw.delete(sid)
+
+
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_write():
+    sid = spw.create('writing')
+    spw.write(None, sid, 'A1')
+    spw.write([], sid, 'A1')
+    spw.write([[]], sid, 'A1')
+    spw.write(0, sid, 'C1')
+    spw.write([1, 2], sid, 'A2:B3', sheet='Sheet1')
+    spw.write([[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], sid, 'A4', row_major=False)
+    assert spw.values(sid) == [
+        ['', '', '0'],
+        ['1', '2'],
+        [],
+        ['3', '7', '11'],
+        ['4', '8', '12'],
+        ['5', '9', '13'],
+        ['6', '10', '14'],
+    ]
+
+    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
+    spw.write(values, sid, 'A2')
+    expected = [['', '', 0]]
+    expected.extend(values)
+    expected.extend([[5, 9, 13], [6, 10, 14]])
+    assert spw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
+
+    dpw.delete(sid)
+
+
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_copy_rename_add_delete():
+    id1 = spw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
+    id2 = spw.create('spreadsheet2')
+
+    d_sheet = spw.add_sheets('d', id1)
+    assert list(d_sheet.values()) == ['d']
+    sheets = spw.add_sheets(['e', 'f', 'g'], id1)
+    assert list(sheets.values()) == ['e', 'f', 'g']
+    assert spw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    assert spw.sheet_names(id2) == ('Sheet1',)
+    bid = spw.copy('b', id1, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b')
+    spw.copy(list(d_sheet.keys())[0], id1, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
+
+    spw.rename_sheet(bid, 'B - B', id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
+
+    spw.rename_sheet('a', 'different', id1)
+    assert spw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    spw.delete_sheets('different', id1)
+    assert spw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
+    spw.delete_sheets(bid, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of d')
+    spw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
+    assert spw.sheet_names(id1) == ('b', 'c', 'e', 'f')
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        spw.copy('invalid', id1, id2)
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        spw.delete_sheets('invalid', id1)
+
+    # cleanup
+    dpw.delete(id1)
+    dpw.delete(id2)
