@@ -146,6 +146,9 @@ class GDrive(GoogleAPI):
            `refresh token expiration <https://developers.google.com/identity/protocols/oauth2#expiration>`_
            policy.
 
+        .. _Media type: https://www.iana.org/assignments/media-types/media-types.xhtml
+        .. _Drive MIME type: https://developers.google.com/drive/api/guides/mime-types
+
         Parameters
         ----------
         credentials : :class:`str`, optional
@@ -246,8 +249,7 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
-            The `MIME type <https://developers.google.com/drive/api/guides/mime-types>`_
-            to use to filter the results.
+            The `Drive MIME type`_ or `Media type`_ to use to filter the results.
         folder_id : :class:`str`, optional
             The ID of the folder that `file` is relative to. If not specified
             then `file` is relative to the `My Drive` root folder.
@@ -293,8 +295,7 @@ class GDrive(GoogleAPI):
         file : :class:`str`
             The path to a Google Drive file.
         mime_type : :class:`str`, optional
-            The `MIME type <https://developers.google.com/drive/api/guides/mime-types>`_
-            to use to filter the results.
+            The `Drive MIME type`_ or `Media type`_ to use to filter the results.
         folder_id : :class:`str`, optional
             The ID of the folder that `file` is relative to. If not specified
             then `file` is relative to the `My Drive` root folder.
@@ -408,9 +409,9 @@ class GDrive(GoogleAPI):
             The ID of the folder to upload the file to. If not specified then
             uploads to the `My Drive` root folder.
         mime_type : :class:`str`, optional
-            The `MIME (media) type <https://www.iana.org/assignments/media-types/media-types.xhtml>`_
-            of the file (e.g., ``'text/csv'``). If not specified then a type
-            will be guessed based on the file extension.
+            The `Drive MIME type`_ or `Media type`_ of the file
+            (e.g., ``'text/csv'``). If not specified then a type will be
+            guessed based on the file extension.
         resumable : :class:`bool`
             Whether the upload can be resumed.
         chunk_size : :class:`int`
