@@ -1,7 +1,7 @@
 msl.io.google\_api module
 =========================
 
-Wrappers around the Google API's.
+Wrappers around Google APIs.
 
 .. autoclass:: msl.io.google_api.GDrive
    :members:

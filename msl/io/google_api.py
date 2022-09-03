@@ -1,5 +1,5 @@
 """
-Wrappers around the Google API's.
+Wrappers around Google APIs.
 """
 import os
 import json
