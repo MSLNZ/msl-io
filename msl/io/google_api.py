@@ -822,6 +822,147 @@ class GSheets(GoogleAPI):
             },
         ).execute()
 
+    def copy(self, name_or_id, spreadsheet_id, destination_spreadsheet_id):
+        """Copy a sheet from one spreadsheet to another spreadsheet.
+
+        Parameters
+        ----------
+        name_or_id : :class:`str` or :class:`int`
+            The name or ID of the sheet to copy.
+        spreadsheet_id : :class:`str`
+            The ID of the spreadsheet that contains the sheet.
+        destination_spreadsheet_id : :class:`str`
+            The ID of a spreadsheet to copy the sheet to.
+
+        Returns
+        -------
+        :class:`int`
+            The ID of the sheet in the destination spreadsheet.
+        """
+        if isinstance(name_or_id, int):
+            sheet_id = name_or_id
+        else:
+            sheet_id = self.sheet_id(name_or_id, spreadsheet_id)
+
+        response = self._spreadsheets.sheets().copyTo(
+            spreadsheetId=spreadsheet_id,
+            sheetId=sheet_id,
+            body={
+                'destination_spreadsheet_id': destination_spreadsheet_id,
+            },
+        ).execute()
+        return response['sheetId']
+
+    def sheet_id(self, name, spreadsheet_id):
+        """Returns the ID of a sheet.
+
+        Parameters
+        ----------
+        name : :class:`str`
+            The name of the sheet.
+        spreadsheet_id : :class:`str`
+            The ID of the spreadsheet.
+
+        Returns
+        -------
+        :class:`int`
+            The ID of the sheet.
+        """
+        request = self._spreadsheets.get(spreadsheetId=spreadsheet_id)
+        response = request.execute()
+        for sheet in response['sheets']:
+            if sheet['properties']['title'] == name:
+                return sheet['properties']['sheetId']
+        raise ValueError('There is no sheet named {!r}'.format(name))
+
+    def rename_sheet(self, name_or_id, new_name, spreadsheet_id):
+        """Rename a sheet.
+
+        Parameters
+        ----------
+        name_or_id : :class:`str` or :class:`int`
+            The name or ID of the sheet to rename.
+        new_name : :class:`str`
+            The new name of the sheet.
+        spreadsheet_id : :class:`str`
+            The ID of the spreadsheet that contains the sheet.
+        """
+        if isinstance(name_or_id, int):
+            sheet_id = name_or_id
+        else:
+            sheet_id = self.sheet_id(name_or_id, spreadsheet_id)
+
+        self._spreadsheets.batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body={
+                'requests': [{
+                    'updateSheetProperties': {
+                        'properties': {
+                            'sheetId': sheet_id,
+                            'title': new_name,
+                        },
+                        'fields': 'title',
+                    }
+                }]
+            }
+        ).execute()
+
+    def add_sheets(self, names, spreadsheet_id):
+        """Add sheets to a spreadsheet.
+
+        Parameters
+        ----------
+        names : :class:`str` or :class:`list` of :class:`str`
+            The name(s) of the new sheet(s) to add.
+        spreadsheet_id : :class:`str`
+            The ID of the spreadsheet to add the sheet(s) to.
+
+        Returns
+        -------
+        :class:`dict`
+            The keys are the IDs of the new sheets and the values are the names.
+        """
+        if isinstance(names, str):
+            names = [names]
+        response = self._spreadsheets.batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body={
+                'requests': [{
+                    'addSheet': {
+                        'properties': {
+                            'title': name
+                        }
+                    }
+                } for name in names]
+            }
+        ).execute()
+        return dict((r['addSheet']['properties']['sheetId'],
+                     r['addSheet']['properties']['title'])
+                    for r in response['replies'])
+
+    def delete_sheets(self, names_or_ids, spreadsheet_id):
+        """Delete sheets from a spreadsheet.
+
+        Parameters
+        ----------
+        names_or_ids : :class:`str`, :class:`int` or :class:`list`
+            The name(s) or ID(s) of the sheet(s) to delete.
+        spreadsheet_id : :class:`str`
+            The ID of the spreadsheet to delete the sheet(s) from.
+        """
+        if not isinstance(names_or_ids, (list, tuple)):
+            names_or_ids = [names_or_ids]
+        self._spreadsheets.batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body={
+                'requests': [{
+                    'deleteSheet': {
+                        'sheetId': n if isinstance(n, int) else self.sheet_id(n, spreadsheet_id)
+                    }
+                } for n in names_or_ids]
+            }
+        ).execute()
+
     def create(self, name, sheet_names=None):
         """Create a new spreadsheet.
 

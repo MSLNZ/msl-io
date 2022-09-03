@@ -392,6 +392,48 @@ def test_gsheets_write():
     dpw.delete(sid)
 
 
+@skipif_no_sheets_personal_writeable
+@skipif_no_gdrive_personal_writeable
+def test_gsheets_copy_rename_add_delete():
+    id1 = spw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
+    id2 = spw.create('spreadsheet2')
+
+    d_sheet = spw.add_sheets('d', id1)
+    assert list(d_sheet.values()) == ['d']
+    sheets = spw.add_sheets(['e', 'f', 'g'], id1)
+    assert list(sheets.values()) == ['e', 'f', 'g']
+    assert spw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    assert spw.sheet_names(id2) == ('Sheet1',)
+    bid = spw.copy('b', id1, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b')
+    spw.copy(list(d_sheet.keys())[0], id1, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
+
+    spw.rename_sheet(bid, 'B - B', id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
+
+    spw.rename_sheet('a', 'different', id1)
+    assert spw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    spw.delete_sheets('different', id1)
+    assert spw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
+    spw.delete_sheets(bid, id2)
+    assert spw.sheet_names(id2) == ('Sheet1', 'Copy of d')
+    spw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
+    assert spw.sheet_names(id1) == ('b', 'c', 'e', 'f')
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        spw.copy('invalid', id1, id2)
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        spw.delete_sheets('invalid', id1)
+
+    # cleanup
+    dpw.delete(id1)
+    dpw.delete(id2)
+
+
 @skipif_no_gdrive_personal_readonly
 def test_gdrive_shared_drives():
     assert dpr.shared_drives() == {}
