@@ -562,44 +562,47 @@ def test_prepare_email():
 
     create(['[smtp]', 'host=smtp.example.com', 'port=25'])
     cfg = utils._prepare_email(temp, '', None)
-    assert cfg == {'type': 'smtp', 'to': '', 'from': '', 'host': 'smtp.example.com',
+    assert cfg == {'type': 'smtp', 'to': [''], 'from': '', 'host': 'smtp.example.com',
                    'port': 25, 'starttls': None, 'username': None, 'password': None}
 
     create(['[smtp]', 'host=h', 'port=1'])
     cfg = utils._prepare_email(temp, 'name', None)
-    assert cfg == {'type': 'smtp', 'to': 'name', 'from': 'name', 'host': 'h',
+    assert cfg == {'type': 'smtp', 'to': ['name'], 'from': 'name', 'host': 'h',
                    'port': 1, 'starttls': None, 'username': None, 'password': None}
 
     create(['[smtp]', 'host=h', 'port=1', 'domain=domain'])
     cfg = utils._prepare_email(temp, 'name', None)
-    assert cfg == {'type': 'smtp', 'to': 'name@domain', 'from': 'name@domain', 'host': 'h',
+    assert cfg == {'type': 'smtp', 'to': ['name@domain'], 'from': 'name@domain', 'host': 'h',
                    'port': 1, 'starttls': None, 'username': None, 'password': None}
 
     create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
-    cfg = utils._prepare_email(temp, 'name', None)
-    assert cfg == {'type': 'smtp', 'to': 'name@domain', 'from': 'name@domain', 'host': 'h',
-                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+    cfg = utils._prepare_email(temp, ['name0', 'name1', 'name2'], None)
+    assert cfg == {'type': 'smtp', 'to': ['name0@domain', 'name1@domain', 'name2@domain'],
+                   'from': 'name0@domain', 'host': 'h', 'port': 1, 'starttls': None,
+                   'username': None, 'password': None}
 
     create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
     cfg = utils._prepare_email(temp, 'name@mail.com', None)
-    assert cfg == {'type': 'smtp', 'to': 'name@mail.com', 'from': 'name@mail.com', 'host': 'h',
-                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+    assert cfg == {'type': 'smtp', 'to': ['name@mail.com'], 'from': 'name@mail.com',
+                   'host': 'h', 'port': 1, 'starttls': None, 'username': None,
+                   'password': None}
 
     create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
-    cfg = utils._prepare_email(temp, 'you@mail.com', 'me')
-    assert cfg == {'type': 'smtp', 'to': 'you@mail.com', 'from': 'me@domain', 'host': 'h',
-                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+    cfg = utils._prepare_email(temp, ['you@mail.com', 'me'], 'me')
+    assert cfg == {'type': 'smtp', 'to': ['you@mail.com', 'me@domain'],
+                   'from': 'me@domain', 'host': 'h', 'port': 1, 'starttls': None,
+                   'username': None, 'password': None}
 
     for item in ('yes', 'YES', '1', 'true', 'True', 'on', 'On'):
         create(['[smtp]', 'host=h', 'port=1', 'starttls={}'.format(item)])
         cfg = utils._prepare_email(temp, 'you', 'me')
-        assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me', 'host': 'h',
+        assert cfg == {'type': 'smtp', 'to': ['you'], 'from': 'me', 'host': 'h',
                        'port': 1, 'starttls': True, 'username': None, 'password': None}
 
     for item in ('no', 'No', '0', 'false', 'False', 'off', 'Off'):
         create(['[smtp]', 'host=h', 'port=1', 'starttls={}'.format(item)])
         cfg = utils._prepare_email(temp, 'you', 'me')
-        assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me', 'host': 'h',
+        assert cfg == {'type': 'smtp', 'to': ['you'], 'from': 'me', 'host': 'h',
                        'port': 1, 'starttls': False, 'username': None, 'password': None}
 
     create(['[smtp]', 'host=h', 'port=1', 'username=user'])
@@ -612,55 +615,64 @@ def test_prepare_email():
 
     create(['[smtp]', 'host=h', 'port=1', 'starttls=0', 'username=uname', 'password=pw'])
     cfg = utils._prepare_email(temp, 'you', 'me@mail')
-    assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me@mail', 'host': 'h',
+    assert cfg == {'type': 'smtp', 'to': ['you'], 'from': 'me@mail', 'host': 'h',
                    'port': 1, 'starttls': False, 'username': 'uname', 'password': 'pw'}
 
     create(['[gmail]'])
     cfg = utils._prepare_email(temp, '', None)
-    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+    assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': None}
+    cfg = utils._prepare_email(temp, 'me', None)
+    assert cfg == {'type': 'gmail', 'to': ['me'], 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': None}
+
+    create(['[gmail]', 'domain=domain'])
+    cfg = utils._prepare_email(temp, 'me', None)
+    assert cfg == {'type': 'gmail', 'to': ['me'], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': None}
 
     create(['[gmail]', 'account=mine', 'domain=@gmail.com'])
     cfg = utils._prepare_email(temp, 'you', 'me')
-    assert cfg == {'type': 'gmail', 'to': 'you@gmail.com', 'from': 'me',
+    assert cfg == {'type': 'gmail', 'to': ['you@gmail.com'], 'from': 'me',
                    'account': 'mine', 'credentials': None, 'scopes': None}
 
     create(['[gmail]', 'credentials=path/to/oauth'])
-    cfg = utils._prepare_email(temp, 'email@me.com', None)
-    assert cfg == {'type': 'gmail', 'to': 'email@me.com', 'from': 'me',
+    cfg = utils._prepare_email(temp, ['email@corp.com', 'me'], None)
+    assert cfg == {'type': 'gmail', 'to': ['email@corp.com', 'me'], 'from': 'me',
                    'account': None, 'credentials': 'path/to/oauth', 'scopes': None}
 
     create(['[gmail]', 'credentials=path\\to\\oauth', 'account=work', 'domain=ignored'])
     cfg = utils._prepare_email(temp, 'name@gmail.com', 'name@email.com')
-    assert cfg == {'type': 'gmail', 'to': 'name@gmail.com', 'from': 'name@email.com',
+    assert cfg == {'type': 'gmail', 'to': ['name@gmail.com'], 'from': 'name@email.com',
                    'account': 'work', 'credentials': 'path\\to\\oauth', 'scopes': None}
 
     create(['[gmail]', 'credentials=path\\to\\oauth', 'account=work', 'domain=domain'])
-    cfg = utils._prepare_email(temp, 'name', 'name@email.com')
-    assert cfg == {'type': 'gmail', 'to': 'name@domain', 'from': 'name@email.com',
-                   'account': 'work', 'credentials': 'path\\to\\oauth', 'scopes': None}
+    cfg = utils._prepare_email(temp, ['a', 'b', 'c@corp.net'], None)
+    assert cfg == {'type': 'gmail', 'to': ['a@domain', 'b@domain', 'c@corp.net'],
+                   'from': 'me', 'account': 'work', 'credentials': 'path\\to\\oauth',
+                   'scopes': None}
 
     create(['[gmail]', 'scopes=a'])
-    cfg = utils._prepare_email(temp, '', '')
-    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+    cfg = utils._prepare_email(temp, '', None)
+    assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': ['a']}
 
     create(['[gmail]', 'scopes = ', ' gmail', ' gmail.send', ' g',
             ' gmail.metadata', '', '', '', 'account = work'])
     cfg = utils._prepare_email(temp, '', '')
-    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+    assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': 'work', 'credentials': None,
                    'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
 
     # file-like objects
     with open(temp, mode='rt') as fp:
         cfg = utils._prepare_email(fp, '', '')
-        assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+        assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                        'account': 'work', 'credentials': None,
                        'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
 
     cfg = utils._prepare_email(StringIO('[gmail]'), '', None)
-    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+    assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': None}
 
     os.remove(temp)

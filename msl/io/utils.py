@@ -325,7 +325,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
                 yield item
 
 
-def send_email(config, recipient, sender=None, subject=None, body=None):
+def send_email(config, recipients, sender=None, subject=None, body=None):
     """Send an email.
 
     Parameters
@@ -368,21 +368,23 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
             file, you should set the file permissions provided by your operating
             system to ensure that your authentication credentials are safe.
 
-    recipient : :class:`str`
-        The email address of the recipient. Can omit the ``@domain.com`` part
-        if a ``domain`` key is specified in the `config` file. Can be the
+    recipients : :class:`str` or :class:`list` of :class:`str`
+        The email address(es) of the recipient(s). Can omit the ``@domain.com``
+        part if a ``domain`` key is specified in the `config` file. Can be the
         value ``'me'`` if sending an email to yourself via Gmail.
     sender : :class:`str`, optional
         The email address of the sender. Can omit the ``@domain.com`` part
         if a ``domain`` key is specified in the `config` file. If not
-        specified then it equals the value of the `recipient` parameter if
-        using SMTP or the value ``'me'`` if using Gmail.
+        specified then it equals the value of the first `recipient` if using
+        SMTP or the value ``'me'`` if using Gmail.
     subject : :class:`str`, optional
         The text to include in the subject field.
     body : :class:`str`, optional
-        The text to include in the body of the email.
+        The text to include in the body of the email. The text can be
+        enclosed in ``<html></html>`` tags to use HTML elements to format
+        the message.
     """
-    cfg = _prepare_email(config, recipient, sender)
+    cfg = _prepare_email(config, recipients, sender)
     if cfg['type'] == 'smtp':
         server = SMTP(host=cfg['host'], port=cfg['port'])
         if cfg['starttls']:
@@ -393,9 +395,11 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
             server.login(cfg['username'], cfg['password'])
         msg = MIMEMultipart()
         msg['From'] = cfg['from']
-        msg['To'] = cfg['to']
+        msg['To'] = ', '.join(cfg['to'])
         msg['Subject'] = subject or '(no subject)'
-        msg.attach(MIMEText(body or '', 'plain'))
+        text = body or ''
+        subtype = 'html' if text.startswith('<html>') else 'plain'
+        msg.attach(MIMEText(text, subtype))
         server.sendmail(cfg['from'], cfg['to'], msg.as_string())
         server.quit()
     else:
@@ -404,7 +408,7 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
         gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
 
 
-def _prepare_email(config, to, frm):
+def _prepare_email(config, recipients, sender):
     """Loads a configuration file to prepare for sending an email.
 
     Returns a dict.
@@ -431,18 +435,24 @@ def _prepare_email(config, to, frm):
     if domain and not domain.startswith('@'):
         domain = '@' + domain
 
-    if domain and '@' not in to:
-        to += domain
+    if isinstance(recipients, str):
+        recipients = [recipients]
 
-    if not frm:
+    for i in range(len(recipients)):
+        if domain and '@' not in recipients[i] and \
+                (has_smtp or (has_gmail and recipients[i] != 'me')):
+            recipients[i] += domain
+
+    if not sender:
         if has_gmail:
-            frm = 'me'
+            sender = 'me'
         else:
-            frm = to
-    elif domain and ('@' not in frm) and (has_smtp or (has_gmail and frm != 'me')):
-        frm += domain
+            sender = recipients[0]
+    elif domain and ('@' not in sender) and \
+            (has_smtp or (has_gmail and sender != 'me')):
+        sender += domain
 
-    cfg = {'type': section.name, 'to': to, 'from': frm}
+    cfg = {'type': section.name, 'to': recipients, 'from': sender}
     if has_smtp:
         host, port = section.get('host'), section.getint('port')
         if not (host and port):

@@ -7,8 +7,9 @@ from datetime import (
     datetime,
     timedelta,
 )
-from base64 import urlsafe_b64encode
-from email.message import EmailMessage
+from base64 import b64encode
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from collections import namedtuple
 try:
     # this is only an issue with Python 2.7 and if the
@@ -1233,6 +1234,7 @@ class GMail(GoogleAPI):
         super(GMail, self).__init__(
             'gmail', 'v1', credentials, scopes, False, account)
 
+        self._my_email_address = None
         self._users = self._service.users()
 
     def profile(self):
@@ -1261,13 +1263,13 @@ class GMail(GoogleAPI):
             'history_id': profile['historyId'],
         }
 
-    def send(self, recipient, sender='me', subject=None, body=None):
+    def send(self, recipients, sender='me', subject=None, body=None):
         """Send an email.
 
         Parameters
         ----------
-        recipient : :class:`str`
-            The email address of the recipient. The value ``'me'``
+        recipients : :class:`str` or :class:`list` of :class:`str`
+            The email address(es) of the recipient(s). The value ``'me'``
             can be used to indicate the authenticated user.
         sender : :class:`str`, optional
             The email address of the sender. The value ``'me'``
@@ -1275,21 +1277,33 @@ class GMail(GoogleAPI):
         subject : :class:`str`, optional
             The text to include in the subject field.
         body : :class:`str`, optional
-            The text to include in the body of the email.
+            The text to include in the body of the email. The text can be
+            enclosed in ``<html></html>`` tags to use HTML elements to format
+            the message.
 
         See Also
         --------
         :func:`~msl.io.utils.send_email`
         """
-        if recipient == 'me':
-            recipient = self.profile()['email_address']
+        if isinstance(recipients, str):
+            recipients = [recipients]
 
-        message = EmailMessage()
-        message['To'] = recipient
-        message['From'] = sender
-        message['Subject'] = subject or '(no subject)'
-        message.set_content(body or '')
+        for i in range(len(recipients)):
+            if recipients[i] == 'me':
+                if self._my_email_address is None:
+                    self._my_email_address = self.profile()['email_address']
+                recipients[i] = self._my_email_address
+
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['To'] = ', '.join(recipients)
+        msg['Subject'] = subject or '(no subject)'
+
+        text = body or ''
+        subtype = 'html' if text.startswith('<html>') else 'plain'
+        msg.attach(MIMEText(text, subtype))
+
         self._users.messages().send(
             userId=sender,
-            body={'raw': urlsafe_b64encode(message.as_bytes()).decode()}
+            body={'raw': b64encode(msg.as_bytes()).decode()}
         ).execute()
