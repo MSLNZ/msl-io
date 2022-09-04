@@ -19,7 +19,7 @@ IS_PYTHON3 = sys.version_info.major == 3
 USER_DIR = os.path.expanduser('~'+os.getenv('SUDO_USER', ''))
 
 HOME_DIR = os.getenv('MSL_IO_HOME', os.path.join(USER_DIR, '.msl', 'io'))
-""":class:`str`: The default directory where all files are to be located.
+""":class:`str`: The default directory where all files that are used by MSL-IO are located.
 
 Can be overwritten by specifying a ``MSL_IO_HOME`` environment variable.
 """

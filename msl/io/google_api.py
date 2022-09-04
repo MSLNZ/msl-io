@@ -161,7 +161,8 @@ class GDrive(GoogleAPI):
             that particular Google account. You can associate a different value
             with a Google account at any time (by passing in a different
             `account` value), but you will be asked to authenticate with your
-            `credentials` again.
+            `credentials` again, or you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR`.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
@@ -734,7 +735,8 @@ class GSheets(GoogleAPI):
             that particular Google account. You can associate a different value
             with a Google account at any time (by passing in a different
             `account` value), but you will be asked to authenticate with your
-            `credentials` again.
+            `credentials` again, or you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR`.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
@@ -1210,7 +1212,8 @@ class GMail(GoogleAPI):
             that particular Google account. You can associate a different value
             with a Google account at any time (by passing in a different
             `account` value), but you will be asked to authenticate with your
-            `credentials` again.
+            `credentials` again, or you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR`.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
