@@ -652,4 +652,15 @@ def test_prepare_email():
                    'account': 'work', 'credentials': None,
                    'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
 
+    # file-like objects
+    with open(temp, mode='rt') as fp:
+        cfg = utils._prepare_email(fp, '', '')
+        assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+                       'account': 'work', 'credentials': None,
+                       'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
+
+    cfg = utils._prepare_email(StringIO('[gmail]'), '', None)
+    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': None}
+
     os.remove(temp)

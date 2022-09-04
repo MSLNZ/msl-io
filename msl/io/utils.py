@@ -96,7 +96,7 @@ def copy(source, destination, overwrite=False, include_metadata=True):
         :exc:`FileExistsError` is raised.
     include_metadata : :class:`bool`, optional
         Whether to also copy information such as the file permissions,
-        latest access time and latest modification time with the file.
+        the latest access time and latest modification time with the file.
 
     Returns
     -------
@@ -328,10 +328,10 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
 
     Parameters
     ----------
-    config : :class:`str`
-        The path to an INI-style configuration file that contains information
-        on how to send an email. There are two ways to send an email --
-        Gmail API or SMTP server.
+    config
+        A :term:`path-like object` or :term:`file-like object` of an INI-style
+        configuration file that contains information on how to send an email.
+        There are two ways to send an email -- Gmail API or SMTP server.
 
         An example INI file to use the Gmail API is the following (see
         :class:`~msl.io.google_api.GMail` for more details). Although all
@@ -408,11 +408,14 @@ def _prepare_email(config, to, frm):
 
     Returns a dict.
     """
-    # opening the file makes sure that it exists since
-    # ConfigParser().read() will silently ignore FileNotFoundError
+    if hasattr(config, 'read'):
+        contents = config.read()
+    else:
+        with open(config, mode='rt') as fp:
+            contents = fp.read()
+
     cp = ConfigParser()
-    with open(config, mode='rt') as fp:
-        cp.read_string(fp.read())
+    cp.read_string(contents)
 
     has_smtp = cp.has_section('smtp')
     has_gmail = cp.has_section('gmail')
