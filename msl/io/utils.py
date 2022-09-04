@@ -330,13 +330,13 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
     ----------
     config : :class:`str`
         The path to an INI-style configuration file that contains information
-        on how to send the email. There are two ways to send an email
+        on how to send an email. There are two ways to send an email --
+        Gmail API or SMTP server.
 
-        * Gmail API
-        * SMTP server
-
-        An example INI file for using the Gmail API is the following
-        (see :class:`~msl.io.google_api.GMail` for more details)
+        An example INI file to use the Gmail API is the following (see
+        :class:`~msl.io.google_api.GMail` for more details). Although all
+        key-value pairs are optional, a ``[gmail]`` section must exist to use
+        the Gmail API.
 
         .. code-block:: ini
 
@@ -348,7 +348,8 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
              https://www.googleapis.com/auth/gmail.metadata
            domain = @gmail.com [default: None]
 
-        An example INI file for an SMTP server is the following
+        An example INI file for an SMTP server is the following. Only the `host`
+        and `port` key-value pairs are required.
 
         .. code-block:: ini
 
@@ -362,7 +363,7 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
 
         .. warning::
             Since this information is specified in plain text in the configuration
-            file you should set the file permissions provided by your operating
+            file, you should set the file permissions provided by your operating
             system to ensure that your authentication credentials are safe.
 
     recipient : :class:`str`
