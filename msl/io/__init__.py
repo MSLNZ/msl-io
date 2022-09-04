@@ -30,6 +30,7 @@ from .writers import (
 from .google_api import (
     GDrive,
     GSheets,
+    GMail,
     GValueOption,
     GDateTimeOption,
     GCellType,

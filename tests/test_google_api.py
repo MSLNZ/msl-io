@@ -18,6 +18,7 @@ from msl.io.google_api import (
     GCell,
     GCellType,
     GValueOption,
+    GMail,
 )
 
 # all Google API tests require the necessary "token.json" file to be
@@ -46,6 +47,11 @@ try:
 except:
     sw = None
 
+try:
+    gmail = GMail(account='testing')
+except:
+    gmail = None
+
 skipif_no_gdrive_readonly = pytest.mark.skipif(
     dr is None, reason='No GDrive readonly token'
 )
@@ -60,6 +66,10 @@ skipif_no_sheets_readonly = pytest.mark.skipif(
 
 skipif_no_sheets_writeable = pytest.mark.skipif(
     sw is None, reason='No GSheets writeable token'
+)
+
+skipif_no_gmail = pytest.mark.skipif(
+    gmail is None, reason='No Gmail token'
 )
 
 IS_WINDOWS = sys.platform == 'win32'
@@ -868,3 +878,12 @@ def test_gdrive_move():
 
     # cleanup
     dw.delete(dw.folder_id('X'))
+
+
+@skipif_no_gmail
+def test_gmail_profile():
+    profile = gmail.profile()
+    assert profile['email_address'].endswith('@gmail.com')
+    assert profile['messages_total'] > 1
+    assert profile['threads_total'] > 1
+    assert isinstance(profile['history_id'], str)

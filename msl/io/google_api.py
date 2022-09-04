@@ -7,6 +7,8 @@ from datetime import (
     datetime,
     timedelta,
 )
+from base64 import urlsafe_b64encode
+from email.message import EmailMessage
 from collections import namedtuple
 try:
     # this is only an issue with Python 2.7 and if the
@@ -1183,3 +1185,104 @@ class GSheets(GoogleAPI):
         if values and not isinstance(values[0], (list, tuple)):
             return [values]
         return values
+
+
+class GMail(GoogleAPI):
+
+    def __init__(self, account=None, credentials=None, scopes=None):
+        """Interact with Gmail.
+
+        .. attention::
+           You must follow the instructions in the prerequisites section for setting up the
+           `Gmail API <https://developers.google.com/gmail/api/quickstart/python#prerequisites>`_
+           before you can use this class. It is also useful to be aware of the
+           `refresh token expiration <https://developers.google.com/identity/protocols/oauth2#expiration>`_
+           policy.
+
+        Parameters
+        ----------
+        account : :class:`str`, optional
+            Since a user can have multiple Google accounts, this parameter
+            decides which tokens to load. The value can be any text (or none)
+            that you want to associate with a particular Google account. The
+            value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access
+            that particular Google account. You can associate a different value
+            with a Google account at any time (by passing in a different
+            `account` value), but you will be asked to authenticate with your
+            `credentials` again.
+        credentials : :class:`str`, optional
+            The path to the `client secrets` OAuth credential file. This
+            parameter only needs to be specified the first time that you
+            authenticate with a particular Google account or if you delete
+            the token file that was created when you previously authenticated.
+        scopes : :class:`list` of :class:`str`, optional
+            The list of scopes to enable for the Google API. See
+            `Gmail scopes <https://developers.google.com/identity/protocols/oauth2/scopes#gmail>`_
+            for more details. If not specified then default scopes are chosen.
+        """
+        if not scopes:
+            scopes = [
+                'https://www.googleapis.com/auth/gmail.send',
+                'https://www.googleapis.com/auth/gmail.metadata'
+            ]
+
+        super(GMail, self).__init__(
+            'gmail', 'v1', credentials, scopes, False, account)
+
+        self._users = self._service.users()
+
+    def profile(self):
+        """Gets the authenticated user's Gmail profile.
+
+        Returns
+        -------
+        :class:`dict`
+            Returns the following
+
+            .. code-block:: console
+
+                {
+                   'email_address': string, The authenticated user's email address
+                   'messages_total': integer, The total number of messages in the mailbox
+                   'threads_total': integer, The total number of threads in the mailbox
+                   'history_id': string, The ID of the mailbox's current history record
+                }
+
+        """
+        profile = self._users.getProfile(userId='me').execute()
+        return {
+            'email_address': profile['emailAddress'],
+            'messages_total': profile['messagesTotal'],
+            'threads_total': profile['threadsTotal'],
+            'history_id': profile['historyId'],
+        }
+
+    def send(self, to, subject=None, body=None, frm='me'):
+        """Send an email.
+
+        Parameters
+        ----------
+        to : :class:`str`
+            The email address of the recipient. The special value ``'me'``
+            can be used to indicate the authenticated user.
+        subject : :class:`str`, optional
+            The text to include in the subject field.
+        body : :class:`str`, optional
+            The text to include in the body of the email.
+        frm : :class:`str`, optional
+            The email address of the sender. The special value ``'me'``
+            can be used to indicate the authenticated user.
+        """
+        if to == 'me':
+            to = self.profile()['email_address']
+
+        message = EmailMessage()
+        message['To'] = to
+        message['From'] = frm
+        message['Subject'] = subject or '(no subject)'
+        message.set_content(body or '')
+        self._users.messages().send(
+            userId=frm,
+            body={'raw': urlsafe_b64encode(message.as_bytes()).decode()}
+        ).execute()
