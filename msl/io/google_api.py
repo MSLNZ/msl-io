@@ -1266,13 +1266,17 @@ class GMail(GoogleAPI):
         recipient : :class:`str`
             The email address of the recipient. The value ``'me'``
             can be used to indicate the authenticated user.
+        sender : :class:`str`, optional
+            The email address of the sender. The value ``'me'``
+            can be used to indicate the authenticated user.
         subject : :class:`str`, optional
             The text to include in the subject field.
         body : :class:`str`, optional
             The text to include in the body of the email.
-        sender : :class:`str`, optional
-            The email address of the sender. The value ``'me'``
-            can be used to indicate the authenticated user.
+
+        See Also
+        --------
+        :func:`~msl.io.utils.send_email`
         """
         if recipient == 'me':
             recipient = self.profile()['email_address']
