@@ -238,7 +238,7 @@ class GDrive(GoogleAPI):
                 raise OSError('Not a valid Google Drive folder {!r}'.format(folder))
             if len(files) > 1:
                 matches = '\n  '.join(str(file) for file in files)
-                raise OSError('Multiple folders exist\n  {}'.format(matches))
+                raise OSError('Multiple folders exist for {!r}\n  {}'.format(name, matches))
 
             first = files[0]
             assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
@@ -286,7 +286,8 @@ class GDrive(GoogleAPI):
             raise OSError('Not a valid Google Drive file {!r}'.format(file))
         if len(files) > 1:
             mime_types = '\n  '.join(f['mimeType'] for f in files)
-            raise OSError('Multiple file matches. Filter by mime type:\n  ' + mime_types)
+            raise OSError('Multiple files exist for {!r}. '
+                          'Filter by MIME type:\n  {}'.format(file, mime_types))
 
         first = files[0]
         assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
@@ -315,7 +316,7 @@ class GDrive(GoogleAPI):
         try:
             self.file_id(file, mime_type=mime_type, folder_id=folder_id)
         except OSError as err:
-            return str(err).startswith('Multiple file matches')
+            return str(err).startswith('Multiple files')
         else:
             return True
 
@@ -339,8 +340,8 @@ class GDrive(GoogleAPI):
         """
         try:
             self.folder_id(folder, parent_id=parent_id)
-        except OSError:
-            return False
+        except OSError as err:
+            return str(err).startswith('Multiple folders')
         else:
             return True
 

@@ -481,6 +481,18 @@ def test_gdrive_create_delete_folder():
     assert not dw.is_folder(u3 + '/a', parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
     assert not dw.is_folder(u3, parent_id='1wLAPHCOphcOITR37b8UB88eFW_FzeNQB')
 
+    # create multiple folders with the same name, check exists
+    id1 = dw.create_folder('Temporary')
+    id2 = dw.create_folder('Temporary')
+    assert dw.path(id1) == 'My Drive/Temporary'
+    assert dw.path(id2) == 'My Drive/Temporary'
+    assert id1 != id2
+    assert dw.is_folder('Temporary') is True
+    with pytest.raises(OSError, match='^Multiple folders'):
+        dw.folder_id('Temporary')
+    dw.delete(id1)
+    dw.delete(id2)
+
 
 @skipif_no_gdrive_readonly
 def test_gdrive_is_file():
@@ -663,8 +675,9 @@ def test_gdrive_copy():
     cid = dw.copy(file_txt_id)
     assert cid != file_txt_id
     assert dw.path(cid) == 'My Drive/MSL/msl-io-testing/file.txt'
-    with pytest.raises(OSError, match='Multiple file matches'):
+    with pytest.raises(OSError, match='^Multiple files'):
         dw.file_id('file.txt', folder_id=msl_io_testing_id)
+    assert dw.is_file('file.txt', folder_id=msl_io_testing_id) is True
     dw.delete(cid)
     assert dw.is_file('file.txt', folder_id=msl_io_testing_id)
 
