@@ -531,3 +531,125 @@ def test_run_as_admin():
 
     with pytest.raises(OSError, match=r'ZeroDivisionError:'):
         utils.run_as_admin([sys.executable, '-c', '1/0'], capture_stderr=True, verb=None)
+
+
+def test_prepare_email():
+    temp = os.path.join(tempfile.gettempdir(), '793a7e5d-7e0e-4049-9e9b-f4383b7bb96a.tmp')
+
+    def create(lines):
+        with open(temp, mode='wt') as fp:
+            fp.write('\n'.join(lines))
+
+    with pytest.raises(OSError):
+        utils._prepare_email('does-not-exist.ini', '', '')
+
+    create(['[smtp]', '[gmail]'])
+    with pytest.raises(ValueError, match='Cannot specify both'):
+        utils._prepare_email(temp, '', None)
+
+    create(['[unknown]'])
+    with pytest.raises(ValueError, match='Must create either'):
+        utils._prepare_email(temp, '', None)
+
+    for item in (['[smtp]'], ['[smtp]', 'host=hostname'], ['[smtp]', 'port=25']):
+        create(item)
+        with pytest.raises(ValueError, match="Must specify the 'host' and 'port'"):
+            utils._prepare_email(temp, '', None)
+
+    create(['[smtp]', 'port=not-an-int'])
+    with pytest.raises(ValueError, match='invalid literal for int()'):
+        utils._prepare_email(temp, '', None)
+
+    create(['[smtp]', 'host=smtp.example.com', 'port=25'])
+    cfg = utils._prepare_email(temp, '', None)
+    assert cfg == {'type': 'smtp', 'to': '', 'from': '', 'host': 'smtp.example.com',
+                   'port': 25, 'starttls': None, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1'])
+    cfg = utils._prepare_email(temp, 'name', None)
+    assert cfg == {'type': 'smtp', 'to': 'name', 'from': 'name', 'host': 'h',
+                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1', 'domain=domain'])
+    cfg = utils._prepare_email(temp, 'name', None)
+    assert cfg == {'type': 'smtp', 'to': 'name@domain', 'from': 'name@domain', 'host': 'h',
+                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
+    cfg = utils._prepare_email(temp, 'name', None)
+    assert cfg == {'type': 'smtp', 'to': 'name@domain', 'from': 'name@domain', 'host': 'h',
+                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
+    cfg = utils._prepare_email(temp, 'name@mail.com', None)
+    assert cfg == {'type': 'smtp', 'to': 'name@mail.com', 'from': 'name@mail.com', 'host': 'h',
+                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1', 'domain=@domain'])
+    cfg = utils._prepare_email(temp, 'you@mail.com', 'me')
+    assert cfg == {'type': 'smtp', 'to': 'you@mail.com', 'from': 'me@domain', 'host': 'h',
+                   'port': 1, 'starttls': None, 'username': None, 'password': None}
+
+    for item in ('yes', 'YES', '1', 'true', 'True', 'on', 'On'):
+        create(['[smtp]', 'host=h', 'port=1', 'starttls={}'.format(item)])
+        cfg = utils._prepare_email(temp, 'you', 'me')
+        assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me', 'host': 'h',
+                       'port': 1, 'starttls': True, 'username': None, 'password': None}
+
+    for item in ('no', 'No', '0', 'false', 'False', 'off', 'Off'):
+        create(['[smtp]', 'host=h', 'port=1', 'starttls={}'.format(item)])
+        cfg = utils._prepare_email(temp, 'you', 'me')
+        assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me', 'host': 'h',
+                       'port': 1, 'starttls': False, 'username': None, 'password': None}
+
+    create(['[smtp]', 'host=h', 'port=1', 'username=user'])
+    with pytest.raises(ValueError, match="Must specify the 'password'"):
+        utils._prepare_email(temp, '', None)
+
+    create(['[smtp]', 'host=h', 'port=1', 'password=pw'])
+    with pytest.raises(ValueError, match="Must specify the 'username'"):
+        utils._prepare_email(temp, '', None)
+
+    create(['[smtp]', 'host=h', 'port=1', 'starttls=0', 'username=uname', 'password=pw'])
+    cfg = utils._prepare_email(temp, 'you', 'me@mail')
+    assert cfg == {'type': 'smtp', 'to': 'you', 'from': 'me@mail', 'host': 'h',
+                   'port': 1, 'starttls': False, 'username': 'uname', 'password': 'pw'}
+
+    create(['[gmail]'])
+    cfg = utils._prepare_email(temp, '', None)
+    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': None}
+
+    create(['[gmail]', 'account=mine', 'domain=@gmail.com'])
+    cfg = utils._prepare_email(temp, 'you', 'me')
+    assert cfg == {'type': 'gmail', 'to': 'you@gmail.com', 'from': 'me',
+                   'account': 'mine', 'credentials': None, 'scopes': None}
+
+    create(['[gmail]', 'credentials=path/to/oauth'])
+    cfg = utils._prepare_email(temp, 'email@me.com', None)
+    assert cfg == {'type': 'gmail', 'to': 'email@me.com', 'from': 'me',
+                   'account': None, 'credentials': 'path/to/oauth', 'scopes': None}
+
+    create(['[gmail]', 'credentials=path\\to\\oauth', 'account=work', 'domain=ignored'])
+    cfg = utils._prepare_email(temp, 'name@gmail.com', 'name@email.com')
+    assert cfg == {'type': 'gmail', 'to': 'name@gmail.com', 'from': 'name@email.com',
+                   'account': 'work', 'credentials': 'path\\to\\oauth', 'scopes': None}
+
+    create(['[gmail]', 'credentials=path\\to\\oauth', 'account=work', 'domain=domain'])
+    cfg = utils._prepare_email(temp, 'name', 'name@email.com')
+    assert cfg == {'type': 'gmail', 'to': 'name@domain', 'from': 'name@email.com',
+                   'account': 'work', 'credentials': 'path\\to\\oauth', 'scopes': None}
+
+    create(['[gmail]', 'scopes=a'])
+    cfg = utils._prepare_email(temp, '', '')
+    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': ['a']}
+
+    create(['[gmail]', 'scopes = ', ' gmail', ' gmail.send', ' g',
+            ' gmail.metadata', '', '', '', 'account = work'])
+    cfg = utils._prepare_email(temp, '', '')
+    assert cfg == {'type': 'gmail', 'to': '', 'from': 'me',
+                   'account': 'work', 'credentials': None,
+                   'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
+
+    os.remove(temp)

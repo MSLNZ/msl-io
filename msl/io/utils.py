@@ -14,6 +14,7 @@ from smtplib import SMTP
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from configparser import ConfigParser
 try:
     PermissionError
 except NameError:
@@ -322,85 +323,149 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
                 yield item
 
 
-def send_email(to, config, subject='', body='', frm=None):
+def send_email(config, recipient, sender=None, subject=None, body=None):
     """Send an email.
 
     Parameters
     ----------
-    to : :class:`str`
-        Who do you want to send the email to? Can omit the ``@domain`` part
-        if a ``domain`` key is specified in the `config` file.
     config : :class:`str`
-        The path to the configuration file to use to send the email. A
-        configuration file contains ``key=value`` pairs.
+        The path to an INI-style configuration file that contains information
+        on how to send the email. There are two ways to send an email
 
-        The following ``keys`` must be defined:
+        * Gmail API
+        * SMTP server
 
-        - ``host``: The name, or IP address, of the remote host
-        - ``port``: The port number to connect to on the remote host
+        An example INI file for using the Gmail API is the following
+        (see :class:`~msl.io.google_api.GMail` for more details)
 
-        The following ``keys`` are optional:
+        .. code-block:: ini
 
-        - ``domain``: The domain part of the email address. Can start with ``@``
-        - ``use_encryption``: True|Yes|1 or False|No|0 [default: No]
-        - ``username``: The user name to authenticate with
-        - ``password``: The password for the authentication
+           [gmail]
+           account = work [default: None]
+           credentials = path/to/client_secrets.json [default: None]
+           scopes =       [default: None]
+             https://www.googleapis.com/auth/gmail.send
+             https://www.googleapis.com/auth/gmail.metadata
+           domain = @gmail.com [default: None]
+
+        An example INI file for an SMTP server is the following
+
+        .. code-block:: ini
+
+           [smtp]
+           host = hostname or IP address of the SMTP server
+           port = port number to connect to on the SMTP server
+           starttls = true|yes|1|on -or- false|no|0|off [default: false]
+           username = the username to authenticate with [default: None]
+           password = the password for username [default: None]
+           domain = @company.com [default: None]
 
         .. warning::
             Since this information is specified in plain text in the configuration
             file you should set the file permissions provided by your operating
             system to ensure that your authentication credentials are safe.
 
+    recipient : :class:`str`
+        The email address of the recipient. Can omit the ``@domain.com`` part
+        if a ``domain`` key is specified in the `config` file. Can be the
+        value ``'me'`` if sending an email to yourself via Gmail.
+    sender : :class:`str`, optional
+        The email address of the sender. Can omit the ``@domain.com`` part
+        if a ``domain`` key is specified in the `config` file. If not
+        specified then it equals the value of the `recipient` parameter if
+        using SMTP or the value ``'me'`` if using Gmail.
     subject : :class:`str`, optional
         The text to include in the subject field.
     body : :class:`str`, optional
         The text to include in the body of the email.
-    frm : :class:`str`, optional
-        Who is sending the email? If not specified then equals the `to` value.
     """
-    cfg = dict()
+    cfg = _prepare_email(config, recipient, sender)
+    if cfg['type'] == 'smtp':
+        server = SMTP(host=cfg['host'], port=cfg['port'])
+        if cfg['starttls']:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        if cfg['username'] and cfg['password']:
+            server.login(cfg['username'], cfg['password'])
+        msg = MIMEMultipart()
+        msg['From'] = cfg['from']
+        msg['To'] = cfg['to']
+        msg['Subject'] = subject or '(no subject)'
+        msg.attach(MIMEText(body or '', 'plain'))
+        server.sendmail(cfg['from'], cfg['to'], msg.as_string())
+        server.close()
+    else:
+        # import here since installing the Google-API packages is optional
+        from .google_api import GMail
+        gmail = GMail(account=cfg['account'], credentials=cfg['credentials'], scopes=cfg['scopes'])
+        gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
+
+
+def _prepare_email(config, to, frm):
+    """Loads a configuration file to prepare for sending an email.
+
+    Returns a dict.
+    """
+    # opening the file makes sure that it exists since
+    # ConfigParser().read() will silently ignore FileNotFoundError
+    cp = ConfigParser()
     with open(config, mode='rt') as fp:
-        for line in fp:
-            if line.startswith('#'):
-                continue
-            line_split = line.split('=')
-            if len(line_split) > 1:
-                cfg[line_split[0].lower().strip()] = line_split[1].strip()
+        cp.read_string(fp.read())
 
-    host, port = cfg.get('host'), cfg.get('port')
-    if host is None or port is None:
-        raise ValueError('You must specify the "host" and "port" in the config file')
+    has_smtp = cp.has_section('smtp')
+    has_gmail = cp.has_section('gmail')
+    if has_smtp and has_gmail:
+        raise ValueError("Cannot specify both a 'gmail' and 'smtp' section")
+    if not (has_smtp or has_gmail):
+        raise ValueError("Must create either a 'gmail' or 'smtp' section")
 
-    domain = cfg.get('domain')
-    if domain is not None and not domain.startswith('@'):
+    section = cp['gmail'] if has_gmail else cp['smtp']
+
+    domain = section.get('domain')
+    if domain and not domain.startswith('@'):
         domain = '@' + domain
 
-    if domain is not None and '@' not in to:
+    if domain and '@' not in to:
         to += domain
 
-    if frm is None:
-        frm = to
-    elif domain is not None and '@' not in frm:
+    if not frm:
+        if has_gmail:
+            frm = 'me'
+        else:
+            frm = to
+    elif domain and ('@' not in frm) and (has_smtp or (has_gmail and frm != 'me')):
         frm += domain
 
-    server = SMTP(host=host, port=int(port))
+    cfg = {'type': section.name, 'to': to, 'from': frm}
+    if has_smtp:
+        host, port = section.get('host'), section.getint('port')
+        if not (host and port):
+            raise ValueError("Must specify the 'host' and 'port' of the SMTP server")
 
-    if cfg.get('use_encryption', 'no').lower()[0] in ('t', 'y', '1'):
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
+        username, password = section.get('username'), section.get('password')
+        if username and not password:
+            raise ValueError("Must specify the 'password' since a "
+                             "'username' is specified")
+        elif password and not username:
+            raise ValueError("Must specify the 'username' since a "
+                             "'password' is specified")
 
-    username, password = cfg.get('username'), cfg.get('password')
-    if username and password:
-        server.login(username, password)
-
-    msg = MIMEMultipart()
-    msg['From'] = frm
-    msg['To'] = to
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
-    server.sendmail(msg['From'], msg['To'], msg.as_string())
-    server.close()
+        cfg.update({
+            'host': host,
+            'port': port,
+            'starttls': section.getboolean('starttls'),
+            'username': username,
+            'password': password,
+        })
+    else:
+        scopes = section.get('scopes')
+        cfg.update({
+            'account': section.get('account'),
+            'credentials': section.get('credentials'),
+            'scopes': scopes.split() if scopes else None
+        })
+    return cfg
 
 
 def get_basename(obj):

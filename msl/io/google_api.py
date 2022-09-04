@@ -1258,31 +1258,31 @@ class GMail(GoogleAPI):
             'history_id': profile['historyId'],
         }
 
-    def send(self, to, subject=None, body=None, frm='me'):
+    def send(self, recipient, sender='me', subject=None, body=None):
         """Send an email.
 
         Parameters
         ----------
-        to : :class:`str`
-            The email address of the recipient. The special value ``'me'``
+        recipient : :class:`str`
+            The email address of the recipient. The value ``'me'``
             can be used to indicate the authenticated user.
         subject : :class:`str`, optional
             The text to include in the subject field.
         body : :class:`str`, optional
             The text to include in the body of the email.
-        frm : :class:`str`, optional
-            The email address of the sender. The special value ``'me'``
+        sender : :class:`str`, optional
+            The email address of the sender. The value ``'me'``
             can be used to indicate the authenticated user.
         """
-        if to == 'me':
-            to = self.profile()['email_address']
+        if recipient == 'me':
+            recipient = self.profile()['email_address']
 
         message = EmailMessage()
-        message['To'] = to
-        message['From'] = frm
+        message['To'] = recipient
+        message['From'] = sender
         message['Subject'] = subject or '(no subject)'
         message.set_content(body or '')
         self._users.messages().send(
-            userId=frm,
+            userId=sender,
             body={'raw': urlsafe_b64encode(message.as_bytes()).decode()}
         ).execute()
