@@ -1,14 +1,12 @@
 """
-Create new access tokens (for testing purposes) for the Google APIs.
+Create new access tokens for the Google APIs.
 """
 import os
 
-from msl.io import (
-    constants,
-    GSheets,
-    GDrive,
-    GMail,
-)
+from msl.io import GDrive
+from msl.io import GMail
+from msl.io import GSheets
+from msl.io import constants
 
 account = 'testing'
 credentials = os.path.join(constants.HOME_DIR, account + '-client-secret.json')
