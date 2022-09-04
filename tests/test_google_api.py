@@ -520,6 +520,131 @@ def test_gdrive_is_file():
         dr.is_file('unique', folder_id='INVALID_NCuTWxmABs-w7JenftaLGAG9C')
 
 
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
+def test_gsheets_append():
+    sid = sw.create('appending')
+    sw.append(None, sid)
+    sw.append([], sid)
+    sw.append([[]], sid)
+    sw.append(0, sid)
+    sw.append([1, 2], sid, sheet='Sheet1')
+    sw.append([[3, 4, 5, 6], [7, 8, 9]], sid)
+    sw.append([[10, 11, 12, 13], [14, 15, 16]], sid, row_major=False)
+    sw.append([None, 17], sid)
+    assert sw.values(sid) == [
+        ['0'],
+        ['1', '2'],
+        ['3', '4', '5', '6'],
+        ['7', '8', '9'],
+        ['10', '14'],
+        ['11', '15'],
+        ['12', '16'],
+        ['13'],
+        ['', '17']
+    ]
+    dw.delete(sid)
+
+    sid = sw.create('appending-2', sheet_names=['Appender'])
+    sw.append(['a', 'b', 'c'], sid)
+    sw.append(['d', 'e', 'f', 'g'], sid, cell='D4')
+    sw.append('h', sid, sheet='Appender')
+    sw.append([['i', 'j'], ['k', 'l']], sid, cell='B7')
+    sw.append([['m', 'n', 'o'], ['p', 'q', 'r']], sid, row_major=False, cell='A13')
+    sw.append('s', sid, cell='A1')
+    assert sw.values(sid) == [
+        ['a', 'b', 'c'],
+        ['s'],
+        [],
+        [],
+        ['', '', '', 'd', 'e', 'f', 'g'],
+        ['', '', '', 'h'],
+        [],
+        ['', 'i', 'j'],
+        ['', 'k', 'l'],
+        [],
+        [],
+        [],
+        [],
+        ['m', 'p'],
+        ['n', 'q'],
+        ['o', 'r']
+    ]
+    dw.delete(sid)
+
+
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
+def test_gsheets_write():
+    sid = sw.create('writing')
+    sw.write(None, sid, 'A1')
+    sw.write([], sid, 'A1')
+    sw.write([[]], sid, 'A1')
+    sw.write(0, sid, 'C1')
+    sw.write([1, 2], sid, 'A2:B3', sheet='Sheet1')
+    sw.write([[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], sid, 'A4', row_major=False)
+    assert sw.values(sid) == [
+        ['', '', '0'],
+        ['1', '2'],
+        [],
+        ['3', '7', '11'],
+        ['4', '8', '12'],
+        ['5', '9', '13'],
+        ['6', '10', '14'],
+    ]
+
+    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
+    sw.write(values, sid, 'A2')
+    expected = [['', '', 0]]
+    expected.extend(values)
+    expected.extend([[5, 9, 13], [6, 10, 14]])
+    assert sw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
+
+    dw.delete(sid)
+
+
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
+def test_gsheets_copy_rename_add_delete():
+    id1 = sw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
+    id2 = sw.create('spreadsheet2')
+
+    d_sheet = sw.add_sheets('d', id1)
+    assert list(d_sheet.values()) == ['d']
+    sheets = sw.add_sheets(['e', 'f', 'g'], id1)
+    assert list(sheets.values()) == ['e', 'f', 'g']
+    assert sw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    assert sw.sheet_names(id2) == ('Sheet1',)
+    bid = sw.copy('b', id1, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b')
+    sw.copy(list(d_sheet.keys())[0], id1, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
+
+    sw.rename_sheet(bid, 'B - B', id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
+
+    sw.rename_sheet('a', 'different', id1)
+    assert sw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
+
+    sw.delete_sheets('different', id1)
+    assert sw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
+    sw.delete_sheets(bid, id2)
+    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of d')
+    sw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
+    assert sw.sheet_names(id1) == ('b', 'c', 'e', 'f')
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        sw.copy('invalid', id1, id2)
+
+    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+        sw.delete_sheets('invalid', id1)
+
+    # cleanup
+    dw.delete(id1)
+    dw.delete(id2)
+
+
 @skipif_no_gdrive_readonly
 def test_gdrive_is_folder():
     # relative to the root folder
@@ -743,128 +868,3 @@ def test_gdrive_move():
 
     # cleanup
     dw.delete(dw.folder_id('X'))
-
-
-@skipif_no_sheets_writeable
-@skipif_no_gdrive_writeable
-def test_gsheets_append():
-    sid = sw.create('appending')
-    sw.append(None, sid)
-    sw.append([], sid)
-    sw.append([[]], sid)
-    sw.append(0, sid)
-    sw.append([1, 2], sid, sheet='Sheet1')
-    sw.append([[3, 4, 5, 6], [7, 8, 9]], sid)
-    sw.append([[10, 11, 12, 13], [14, 15, 16]], sid, row_major=False)
-    sw.append([None, 17], sid)
-    assert sw.values(sid) == [
-        ['0'],
-        ['1', '2'],
-        ['3', '4', '5', '6'],
-        ['7', '8', '9'],
-        ['10', '14'],
-        ['11', '15'],
-        ['12', '16'],
-        ['13'],
-        ['', '17']
-    ]
-    dw.delete(sid)
-
-    sid = sw.create('appending-2', sheet_names=['Appender'])
-    sw.append(['a', 'b', 'c'], sid)
-    sw.append(['d', 'e', 'f', 'g'], sid, cell='D4')
-    sw.append('h', sid, sheet='Appender')
-    sw.append([['i', 'j'], ['k', 'l']], sid, cell='B7')
-    sw.append([['m', 'n', 'o'], ['p', 'q', 'r']], sid, row_major=False, cell='A13')
-    sw.append('s', sid, cell='A1')
-    assert sw.values(sid) == [
-        ['a', 'b', 'c'],
-        ['s'],
-        [],
-        [],
-        ['', '', '', 'd', 'e', 'f', 'g'],
-        ['', '', '', 'h'],
-        [],
-        ['', 'i', 'j'],
-        ['', 'k', 'l'],
-        [],
-        [],
-        [],
-        [],
-        ['m', 'p'],
-        ['n', 'q'],
-        ['o', 'r']
-    ]
-    dw.delete(sid)
-
-
-@skipif_no_sheets_writeable
-@skipif_no_gdrive_writeable
-def test_gsheets_write():
-    sid = sw.create('writing')
-    sw.write(None, sid, 'A1')
-    sw.write([], sid, 'A1')
-    sw.write([[]], sid, 'A1')
-    sw.write(0, sid, 'C1')
-    sw.write([1, 2], sid, 'A2:B3', sheet='Sheet1')
-    sw.write([[3, 4, 5, 6], [7, 8, 9, 10], [11, 12, 13, 14]], sid, 'A4', row_major=False)
-    assert sw.values(sid) == [
-        ['', '', '0'],
-        ['1', '2'],
-        [],
-        ['3', '7', '11'],
-        ['4', '8', '12'],
-        ['5', '9', '13'],
-        ['6', '10', '14'],
-    ]
-
-    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
-    sw.write(values, sid, 'A2')
-    expected = [['', '', 0]]
-    expected.extend(values)
-    expected.extend([[5, 9, 13], [6, 10, 14]])
-    assert sw.values(sid, value_option=GValueOption.UNFORMATTED, sheet='Sheet1') == expected
-
-    dw.delete(sid)
-
-
-@skipif_no_sheets_writeable
-@skipif_no_gdrive_writeable
-def test_gsheets_copy_rename_add_delete():
-    id1 = sw.create('spreadsheet1', sheet_names=['a', 'b', 'c'])
-    id2 = sw.create('spreadsheet2')
-
-    d_sheet = sw.add_sheets('d', id1)
-    assert list(d_sheet.values()) == ['d']
-    sheets = sw.add_sheets(['e', 'f', 'g'], id1)
-    assert list(sheets.values()) == ['e', 'f', 'g']
-    assert sw.sheet_names(id1) == ('a', 'b', 'c', 'd', 'e', 'f', 'g')
-
-    assert sw.sheet_names(id2) == ('Sheet1',)
-    bid = sw.copy('b', id1, id2)
-    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b')
-    sw.copy(list(d_sheet.keys())[0], id1, id2)
-    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of b', 'Copy of d')
-
-    sw.rename_sheet(bid, 'B - B', id2)
-    assert sw.sheet_names(id2) == ('Sheet1', 'B - B', 'Copy of d')
-
-    sw.rename_sheet('a', 'different', id1)
-    assert sw.sheet_names(id1) == ('different', 'b', 'c', 'd', 'e', 'f', 'g')
-
-    sw.delete_sheets('different', id1)
-    assert sw.sheet_names(id1) == ('b', 'c', 'd', 'e', 'f', 'g')
-    sw.delete_sheets(bid, id2)
-    assert sw.sheet_names(id2) == ('Sheet1', 'Copy of d')
-    sw.delete_sheets(['g', list(d_sheet.keys())[0]], id1)
-    assert sw.sheet_names(id1) == ('b', 'c', 'e', 'f')
-
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        sw.copy('invalid', id1, id2)
-
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        sw.delete_sheets('invalid', id1)
-
-    # cleanup
-    dw.delete(id1)
-    dw.delete(id2)
