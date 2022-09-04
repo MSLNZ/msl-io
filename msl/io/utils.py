@@ -21,6 +21,8 @@ except NameError:
     PermissionError = OSError  # for Python 2.7
     FileExistsError = OSError
 
+from .google_api import GMail
+
 logger = logging.getLogger(__package__)
 
 _readers = []
@@ -395,11 +397,10 @@ def send_email(config, recipient, sender=None, subject=None, body=None):
         msg['Subject'] = subject or '(no subject)'
         msg.attach(MIMEText(body or '', 'plain'))
         server.sendmail(cfg['from'], cfg['to'], msg.as_string())
-        server.close()
+        server.quit()
     else:
-        # import here since installing the Google-API packages is optional
-        from .google_api import GMail
-        gmail = GMail(account=cfg['account'], credentials=cfg['credentials'], scopes=cfg['scopes'])
+        gmail = GMail(account=cfg['account'], credentials=cfg['credentials'],
+                      scopes=cfg['scopes'])
         gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
 
 
