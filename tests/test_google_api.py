@@ -886,4 +886,7 @@ def test_gmail_profile():
     assert profile['email_address'].endswith('@gmail.com')
     assert profile['messages_total'] > 1
     assert profile['threads_total'] > 1
-    assert isinstance(profile['history_id'], str)
+    if IS_PYTHON2:
+        assert isinstance(profile['history_id'], unicode)
+    else:
+        assert isinstance(profile['history_id'], str)

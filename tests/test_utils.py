@@ -540,7 +540,7 @@ def test_prepare_email():
         with open(temp, mode='wt') as fp:
             fp.write('\n'.join(lines))
 
-    with pytest.raises(OSError):
+    with pytest.raises((OSError, IOError)):
         utils._prepare_email('does-not-exist.ini', '', '')
 
     create(['[smtp]', '[gmail]'])
@@ -671,7 +671,7 @@ def test_prepare_email():
                        'account': 'work', 'credentials': None,
                        'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
 
-    cfg = utils._prepare_email(StringIO('[gmail]'), '', None)
+    cfg = utils._prepare_email(StringIO(u'[gmail]'), '', None)
     assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': None}
 

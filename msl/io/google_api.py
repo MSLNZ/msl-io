@@ -11,6 +11,7 @@ from base64 import b64encode
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from collections import namedtuple
+from collections import OrderedDict
 try:
     # this is only an issue with Python 2.7 and if the
     # Google-API packages were not installed with msl-io
@@ -957,9 +958,9 @@ class GSheets(GoogleAPI):
                 } for name in names]
             }
         ).execute()
-        return dict((r['addSheet']['properties']['sheetId'],
-                     r['addSheet']['properties']['title'])
-                    for r in response['replies'])
+        return OrderedDict((r['addSheet']['properties']['sheetId'],
+                            r['addSheet']['properties']['title'])
+                           for r in response['replies'])
 
     def delete_sheets(self, names_or_ids, spreadsheet_id):
         """Delete sheets from a spreadsheet.
