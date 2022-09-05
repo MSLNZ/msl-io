@@ -675,4 +675,8 @@ def test_prepare_email():
     assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': None}
 
+    cfg = utils._prepare_email(BytesIO(b'[gmail]'), '', None)
+    assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
+                   'account': None, 'credentials': None, 'scopes': None}
+
     os.remove(temp)

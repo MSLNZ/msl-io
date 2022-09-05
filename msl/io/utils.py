@@ -419,6 +419,9 @@ def _prepare_email(config, recipients, sender):
         with open(config, mode='rt') as fp:
             contents = fp.read()
 
+    if isinstance(contents, bytes):
+        contents = contents.decode('utf-8')
+
     cp = ConfigParser()
     cp.read_string(contents)
 
