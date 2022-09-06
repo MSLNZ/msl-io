@@ -221,6 +221,7 @@ setup(
         'google': google_requires,
         'tests': tests_require,
         'docs': docs_require,
+        'dev': tests_require + docs_require + google_requires,
     },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
