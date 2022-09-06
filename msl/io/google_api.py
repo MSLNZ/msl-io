@@ -155,16 +155,18 @@ class GDrive(GoogleAPI):
         Parameters
         ----------
         account : :class:`str`, optional
-            Since a user can have multiple Google accounts, this parameter
-            decides which tokens to load. The value can be any text (or none)
-            that you want to associate with a particular Google account. The
-            value that you chose when you authenticated with your `credentials`
-            should be used for all future instances of this class to access
-            that particular Google account. You can associate a different value
-            with a Google account at any time (by passing in a different
-            `account` value), but you will be asked to authenticate with your
-            `credentials` again, or you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR`.
+            Since a person may have multiple Google accounts, and multiple people
+            may run the same code, this parameter decides which token to load
+            to authenticate with the Google API. The value can be any text (or
+            :data:`None`) that you want to associate with a particular Google
+            account, provided that it contains valid characters for a filename.
+            The value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access that
+            particular Google account. You can associate a different value with
+            a Google account at any time (by passing in a different `account`
+            value), but you will be asked to authenticate with your `credentials`
+            again, or, alternatively, you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
@@ -729,16 +731,18 @@ class GSheets(GoogleAPI):
         Parameters
         ----------
         account : :class:`str`, optional
-            Since a user can have multiple Google accounts, this parameter
-            decides which tokens to load. The value can be any text (or none)
-            that you want to associate with a particular Google account. The
-            value that you chose when you authenticated with your `credentials`
-            should be used for all future instances of this class to access
-            that particular Google account. You can associate a different value
-            with a Google account at any time (by passing in a different
-            `account` value), but you will be asked to authenticate with your
-            `credentials` again, or you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR`.
+            Since a person may have multiple Google accounts, and multiple people
+            may run the same code, this parameter decides which token to load
+            to authenticate with the Google API. The value can be any text (or
+            :data:`None`) that you want to associate with a particular Google
+            account, provided that it contains valid characters for a filename.
+            The value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access that
+            particular Google account. You can associate a different value with
+            a Google account at any time (by passing in a different `account`
+            value), but you will be asked to authenticate with your `credentials`
+            again, or, alternatively, you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
@@ -1206,16 +1210,18 @@ class GMail(GoogleAPI):
         Parameters
         ----------
         account : :class:`str`, optional
-            Since a user can have multiple Google accounts, this parameter
-            decides which tokens to load. The value can be any text (or none)
-            that you want to associate with a particular Google account. The
-            value that you chose when you authenticated with your `credentials`
-            should be used for all future instances of this class to access
-            that particular Google account. You can associate a different value
-            with a Google account at any time (by passing in a different
-            `account` value), but you will be asked to authenticate with your
-            `credentials` again, or you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR`.
+            Since a person may have multiple Google accounts, and multiple people
+            may run the same code, this parameter decides which token to load
+            to authenticate with the Google API. The value can be any text (or
+            :data:`None`) that you want to associate with a particular Google
+            account, provided that it contains valid characters for a filename.
+            The value that you chose when you authenticated with your `credentials`
+            should be used for all future instances of this class to access that
+            particular Google account. You can associate a different value with
+            a Google account at any time (by passing in a different `account`
+            value), but you will be asked to authenticate with your `credentials`
+            again, or, alternatively, you can rename the token files located in
+            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
         credentials : :class:`str`, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
