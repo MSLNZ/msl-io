@@ -45,6 +45,7 @@ from .tables import (
     read_table_gsheets,
     extension_delimiter_map,
 )
+from .utils import logger
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2022, ' + __author__
@@ -65,7 +66,8 @@ def read(file, **kwargs):
         The file to read. For example, it could be a :class:`str` representing
         a file system path or a stream.
     **kwargs
-        Keyword arguments that are passed to the :meth:`Reader.can_read() <msl.io.base_io.Reader.can_read>`
+        All keyword arguments are passed to the
+        :meth:`Reader.can_read() <msl.io.base_io.Reader.can_read>`
         and :meth:`Reader.read() <msl.io.base_io.Reader.read>` methods.
 
     Returns
@@ -83,19 +85,21 @@ def read(file, **kwargs):
         file = str(file)
 
     if hasattr(file, 'read') or is_file_readable(file, strict=True):
-        pass
+        logger.debug('finding Reader for %r', file)
+        for r in _readers:
+            logger.debug('checking %s', r.__name__)
+            try:
+                can_read = r.can_read(file, **kwargs)
+            except Exception as e:
+                logger.debug('%s: %s [%s]', e.__class__.__name__, e, r.__name__)
+                continue
 
-    for rdr in _readers:
-        try:
-            can_read = rdr.can_read(file, **kwargs)
-        except:
-            continue
-
-        if can_read:
-            root = rdr(file)
-            root.read(**kwargs)
-            root.read_only = True
-            return root
+            if can_read:
+                logger.debug('reading file with %s', r.__name__)
+                root = r(file)
+                root.read(**kwargs)
+                root.read_only = True
+                return root
 
     raise OSError('No Reader exists to read {!r}'.format(file))
 
@@ -120,7 +124,7 @@ def read_table(file, **kwargs):
         If the file is an Excel spreadsheet then the keyword arguments are passed to
         :func:`~msl.io.tables.read_table_excel`. If a Google Sheets spreadsheet then
         the keyword arguments are passed to :func:`~msl.io.tables.read_table_gsheets`.
-        Otherwise all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
+        Otherwise, all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
 
     Returns
     -------
