@@ -69,7 +69,7 @@ class JSONReader(Reader):
             #   >>> a
             #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')
             # would cast every element to a string
-            # also a regular Python list stores items as objects anyways
+            # also a regular Python list stores items as objects
             return np.asarray(list_, dtype=object)
 
         def create_group(parent, name, vertex):

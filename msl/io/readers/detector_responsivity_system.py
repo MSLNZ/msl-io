@@ -211,7 +211,7 @@ class DRSReader(Reader):
             assert self._lines_dat[self._index_dat].startswith('End of scan'), self._lines_dat[self._index_dat]
             meta['end_time'] = self._to_datetime(self._lines_dat[self._index_dat])
 
-        # sometimes there was more data columns then header columns
+        # sometimes there was more data columns than header columns
         if data:
             i = 1
             while len(data[0]) > len(fieldnames):

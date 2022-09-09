@@ -547,7 +547,7 @@ def remove_write_permissions(path):
 
     On Windows, this function will set the file attribute to be read only.
 
-    On linux and macOS the write permission is removed for the User,
+    On linux and macOS, write permission is removed for the User,
     Group and Others. The read and execute permissions are preserved.
 
     Parameters
@@ -586,7 +586,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     kwargs
         If the current process already has admin privileges or if the operating
         system is not Windows then all additional keyword arguments are passed
-        to :func:`~subprocess.check_output`. Otherwise only a `timeout` keyword
+        to :func:`~subprocess.check_output`. Otherwise, only a `timeout` keyword
         argument is used (Windows).
 
     Returns
