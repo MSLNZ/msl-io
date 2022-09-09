@@ -1,9 +1,9 @@
 """
 A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 """
-from .vertex import Vertex
 from .dataset import Dataset
 from .dataset_logging import DatasetLogging
+from .vertex import Vertex
 
 
 class Group(Vertex):

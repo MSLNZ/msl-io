@@ -1,5 +1,6 @@
 import os
-from datetime import datetime, date
+from datetime import date
+from datetime import datetime
 
 import pytest
 import xlrd

@@ -4,13 +4,10 @@ Read a Google Sheets spreadsheet.
 import os
 import re
 
-from ..google_api import (
-    GDrive,
-    GSheets,
-    GCellType,
-)
 from .spreadsheet import Spreadsheet
-
+from ..google_api import GCellType
+from ..google_api import GDrive
+from ..google_api import GSheets
 
 _google_file_id_regex = re.compile(r'^1[a-zA-Z0-9_-]{43}$')
 

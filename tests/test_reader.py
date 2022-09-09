@@ -1,6 +1,7 @@
 import os
 import pathlib
-from io import StringIO, BytesIO
+from io import BytesIO
+from io import StringIO
 
 import pytest
 

@@ -1,9 +1,10 @@
-import os
 import logging
+import os
 import tempfile
 
-import pytest
 import numpy as np
+import pytest
+
 try:
     import h5py
 except ImportError:

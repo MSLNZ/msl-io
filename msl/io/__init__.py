@@ -4,48 +4,36 @@ Read and write data files.
 import re
 from collections import namedtuple
 
-from .utils import (
-    _readers,
-    checksum,
-    copy,
-    git_head,
-    is_admin,
-    is_dir_accessible,
-    is_file_readable,
-    register,
-    remove_write_permissions,
-    run_as_admin,
-    search,
-    send_email,
-)
-from .base import (
-    Root,
-    Reader,
-    Writer,
-)
-from .writers import (
-    JSONWriter,
-    HDF5Writer,
-)
-from .google_api import (
-    GDrive,
-    GSheets,
-    GMail,
-    GValueOption,
-    GDateTimeOption,
-    GCellType,
-)
-from .readers import (
-    ExcelReader,
-    GSheetsReader,
-)
-from .tables import (
-    read_table_text,
-    read_table_excel,
-    read_table_gsheets,
-    extension_delimiter_map,
-)
+from .base import Reader
+from .base import Root
+from .base import Writer
+from .google_api import GCellType
+from .google_api import GDateTimeOption
+from .google_api import GDrive
+from .google_api import GMail
+from .google_api import GSheets
+from .google_api import GValueOption
+from .readers import ExcelReader
+from .readers import GSheetsReader
+from .tables import extension_delimiter_map
+from .tables import read_table_excel
+from .tables import read_table_gsheets
+from .tables import read_table_text
+from .utils import _readers
+from .utils import checksum
+from .utils import copy
+from .utils import git_head
+from .utils import is_admin
+from .utils import is_dir_accessible
+from .utils import is_file_readable
 from .utils import logger
+from .utils import register
+from .utils import remove_write_permissions
+from .utils import run_as_admin
+from .utils import search
+from .utils import send_email
+from .writers import HDF5Writer
+from .writers import JSONWriter
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2022, ' + __author__

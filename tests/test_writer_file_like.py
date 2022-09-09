@@ -1,17 +1,23 @@
 """
-When a new Writer is created is should be added to the list of writers to test.
+When a new Writer is created it should be added to the list of writers to test.
 """
 import os
 import tempfile
-from io import BytesIO, StringIO, TextIOWrapper, BufferedWriter
+from io import BufferedWriter
+from io import BytesIO
+from io import StringIO
+from io import TextIOWrapper
 
 import numpy as np
+
 try:
     import h5py
 except ImportError:
     h5py = None
 
-from msl.io import read, JSONWriter, HDF5Writer
+from msl.io import HDF5Writer
+from msl.io import JSONWriter
+from msl.io import read
 from msl.io.constants import IS_PYTHON2
 
 # Append new Writers to test

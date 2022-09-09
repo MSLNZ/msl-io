@@ -10,15 +10,16 @@ Writer for the HDF5_ file format.
 import os
 
 import numpy as np
+
 try:
     import h5py
 except ImportError:
     h5py = None
 
-from .. import Writer
-from ..metadata import Metadata
 from ..base import Root
+from ..base import Writer
 from ..constants import IS_PYTHON2
+from ..metadata import Metadata
 from ..utils import is_file_readable
 
 if not IS_PYTHON2:

@@ -1,15 +1,21 @@
 import os
 
-import pytest
 import numpy as np
+import pytest
+
 try:
     import h5py
 except ImportError:
     h5py = None
 
-from msl.io import read, read_table, JSONWriter, HDF5Writer, copy, is_dir_accessible
-
-from helper import roots_equal, metadata_equal
+from helper import metadata_equal
+from helper import roots_equal
+from msl.io import HDF5Writer
+from msl.io import JSONWriter
+from msl.io import copy
+from msl.io import is_dir_accessible
+from msl.io import read
+from msl.io import read_table
 
 # the Z: drive (if it exists) is a mapped drive to the "Photometry & Radiometry" folder
 folder = r'Z:\transfer'

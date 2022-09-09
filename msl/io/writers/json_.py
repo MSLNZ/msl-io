@@ -4,17 +4,17 @@ Writer for a JSON_ file format. The corresponding :class:`~msl.io.base.Reader` i
 
 .. _JSON: https://www.json.org/
 """
-import os
-import json
 import codecs
+import json
+import os
 from io import BufferedIOBase
 
 import numpy as np
 
-from .. import Writer
-from ..metadata import Metadata
 from ..base import Root
+from ..base import Writer
 from ..constants import IS_PYTHON2
+from ..metadata import Metadata
 from ..utils import is_file_readable
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.

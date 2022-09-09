@@ -1,27 +1,28 @@
 """
 General functions.
 """
-import re
-import os
-import sys
-import stat
 import ctypes
-import shutil
 import hashlib
 import logging
+import os
+import re
+import shutil
+import stat
 import subprocess
-from smtplib import SMTP
+import sys
+from configparser import ConfigParser
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from configparser import ConfigParser
+from smtplib import SMTP
+
+from .google_api import GMail
+
 try:
     PermissionError
 except NameError:
     PermissionError = OSError  # for Python 2.7
     FileExistsError = OSError
-
-from .google_api import GMail
 
 logger = logging.getLogger(__package__)
 

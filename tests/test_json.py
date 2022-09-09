@@ -4,15 +4,18 @@ import tempfile
 
 import numpy as np
 import pytest
+
 try:
     import h5py
 except ImportError:
     h5py = None
 
-from msl.io import JSONWriter, read, HDF5Writer
+from helper import read_sample
+from helper import roots_equal
+from msl.io import HDF5Writer
+from msl.io import JSONWriter
+from msl.io import read
 from msl.io.readers import JSONReader
-
-from helper import read_sample, roots_equal
 
 
 def test_read_write_convert():

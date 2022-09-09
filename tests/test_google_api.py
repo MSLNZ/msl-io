@@ -1,25 +1,24 @@
-import os
 import io
+import os
 import sys
-import uuid
 import tempfile
+import uuid
 from datetime import datetime
 
 import pytest
+
 try:
     from googleapiclient.errors import HttpError
 except ImportError:
     HttpError = Exception
 
 from msl.io.constants import IS_PYTHON2
-from msl.io.google_api import (
-    GDrive,
-    GSheets,
-    GCell,
-    GCellType,
-    GValueOption,
-    GMail,
-)
+from msl.io.google_api import GCell
+from msl.io.google_api import GCellType
+from msl.io.google_api import GDrive
+from msl.io.google_api import GMail
+from msl.io.google_api import GSheets
+from msl.io.google_api import GValueOption
 
 # all Google API tests require the necessary "token.json" file to be
 # available for a specific Google user's account

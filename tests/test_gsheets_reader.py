@@ -3,10 +3,8 @@ from datetime import datetime
 import pytest
 from googleapiclient.errors import HttpError
 
-from msl.io import (
-    GDrive,
-    GSheetsReader,
-)
+from msl.io import GDrive
+from msl.io import GSheetsReader
 from msl.io.readers.gsheets import _google_file_id_regex
 
 try:

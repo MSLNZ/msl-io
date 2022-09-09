@@ -1,17 +1,15 @@
 """
 Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
-import json
 import codecs
+import json
 from io import BufferedIOBase
 
 import numpy as np
 
-from .. import (
-    register,
-    Reader,
-)
+from ..base import Reader
 from ..constants import IS_PYTHON2
+from ..utils import register
 
 
 @register

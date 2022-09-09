@@ -6,10 +6,8 @@ from datetime import datetime
 
 import numpy as np
 
-from .. import (
-    register,
-    Reader,
-)
+from ..base import Reader
+from ..utils import register
 
 
 @register

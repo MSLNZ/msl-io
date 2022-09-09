@@ -1,12 +1,12 @@
 """
 Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
 """
-import os
 import codecs
 import itertools
+import os
 
-from .group import Group
 from .constants import IS_PYTHON2
+from .group import Group
 from .utils import get_basename
 
 
