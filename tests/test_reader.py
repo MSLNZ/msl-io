@@ -5,7 +5,7 @@ from io import StringIO, BytesIO
 import pytest
 
 from msl.io import Reader
-from msl.io.base_io import Root
+from msl.io.base import Root
 from msl.io.constants import IS_PYTHON2
 
 

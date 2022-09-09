@@ -1,6 +1,6 @@
 import pytest
 
-from msl.io.base_io import Root, Writer
+from msl.io.base import Root, Writer
 from msl.io.dataset import Dataset
 
 

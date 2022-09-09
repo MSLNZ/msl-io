@@ -18,7 +18,7 @@ from .utils import (
     search,
     send_email,
 )
-from .base_io import (
+from .base import (
     Root,
     Reader,
     Writer,
@@ -67,18 +67,18 @@ def read(file, **kwargs):
         a file system path or a stream.
     **kwargs
         All keyword arguments are passed to the
-        :meth:`Reader.can_read() <msl.io.base_io.Reader.can_read>`
-        and :meth:`Reader.read() <msl.io.base_io.Reader.read>` methods.
+        :meth:`Reader.can_read() <msl.io.base.Reader.can_read>`
+        and :meth:`Reader.read() <msl.io.base.Reader.read>` methods.
 
     Returns
     -------
-    :class:`~msl.io.base_io.Reader`
+    :class:`~msl.io.base.Reader`
         The data from the file.
 
     Raises
     ------
     OSError
-        If no :class:`~msl.io.base_io.Reader` exists to be able to read
+        If no :class:`~msl.io.base.Reader` exists to be able to read
         the specified file.
     """
     if hasattr(file, 'as_posix'):  # a pathlib.Path object

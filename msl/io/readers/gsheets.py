@@ -21,10 +21,10 @@ class GSheetsReader(Spreadsheet):
         """Read a Google Sheets spreadsheet.
 
         This class simply provides a convenience for reading information
-        from Google spreadsheets. It is not registered as a :class:`~msl.io.base_io.Reader`
+        from Google spreadsheets. It is not registered as a :class:`~msl.io.base.Reader`
         because the information in a spreadsheet is unstructured and therefore
         one cannot generalize how to parse a spreadsheet to create a
-        :class:`~msl.io.base_io.Root`.
+        :class:`~msl.io.base.Root`.
 
         Parameters
         ----------

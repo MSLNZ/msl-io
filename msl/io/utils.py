@@ -199,19 +199,19 @@ def is_file_readable(file, strict=False):
 
 
 def register(reader_class):
-    """Use as a decorator to register a :class:`~msl.io.base_io.Reader` subclass.
+    """Use as a decorator to register a :class:`~msl.io.base.Reader` subclass.
 
     See :ref:`io-create-reader` for an example on how to use @register decorator.
 
     Parameters
     ----------
-    reader_class : :class:`~msl.io.base_io.Reader`
-        A :class:`~msl.io.base_io.Reader` subclass.
+    reader_class : :class:`~msl.io.base.Reader`
+        A :class:`~msl.io.base.Reader` subclass.
 
     Returns
     -------
-    :class:`~msl.io.base_io.Reader`
-        The :class:`~msl.io.base_io.Reader`.
+    :class:`~msl.io.base.Reader`
+        The :class:`~msl.io.base.Reader`.
     """
     def append(cls):
         _readers.append(cls)

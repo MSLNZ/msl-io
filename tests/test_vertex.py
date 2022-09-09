@@ -1,6 +1,6 @@
 import pytest
 
-from msl.io.base_io import Root
+from msl.io.base import Root
 from msl.io.vertex import Vertex
 
 

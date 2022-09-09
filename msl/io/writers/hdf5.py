@@ -17,7 +17,7 @@ except ImportError:
 
 from .. import Writer
 from ..metadata import Metadata
-from ..base_io import Root
+from ..base import Root
 from ..constants import IS_PYTHON2
 from ..utils import is_file_readable
 
@@ -48,7 +48,7 @@ class HDF5Writer(Writer):
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the value of
             `file` that was specified when :class:`HDF5Writer` was instantiated.
-        root : :class:`~msl.io.base_io.Root`, optional
+        root : :class:`~msl.io.base.Root`, optional
             Write `root` in HDF5_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`HDF5Writer`.

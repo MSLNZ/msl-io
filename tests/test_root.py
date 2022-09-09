@@ -3,7 +3,7 @@ import logging
 
 import pytest
 
-from msl.io.base_io import Root
+from msl.io.base import Root
 from msl.io.group import Group
 from msl.io.dataset import Dataset
 
