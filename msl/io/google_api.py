@@ -1,17 +1,16 @@
 """
 Wrappers around Google APIs.
 """
-import os
 import json
-from datetime import (
-    datetime,
-    timedelta,
-)
+import os
 from base64 import b64encode
+from collections import OrderedDict
+from collections import namedtuple
+from datetime import datetime
+from datetime import timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from collections import namedtuple
-from collections import OrderedDict
+
 try:
     # this is only an issue with Python 2.7 and if the
     # Google-API packages were not installed with msl-io
@@ -21,26 +20,22 @@ except ImportError:
 
 # having the Google-API packages are optional
 try:
-    from googleapiclient.discovery import build
-    from google_auth_oauthlib.flow import InstalledAppFlow
-    from google.auth.transport.requests import Request
     from google.auth.exceptions import RefreshError
+    from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
-    from googleapiclient.http import (
-        MediaFileUpload,
-        MediaIoBaseDownload,
-        DEFAULT_CHUNK_SIZE,
-    )
+    from googleapiclient.http import DEFAULT_CHUNK_SIZE
+    from googleapiclient.http import MediaFileUpload
+    from googleapiclient.http import MediaIoBaseDownload
     HAS_GOOGLE_API = True
 except ImportError:
     DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024
     HAS_GOOGLE_API = False
 
-from .constants import (
-    HOME_DIR,
-    IS_PYTHON2,
-)
+from .constants import HOME_DIR
+from .constants import IS_PYTHON2
 
 
 def _authenticate(token, client_secrets_file, scopes):

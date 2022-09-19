@@ -1,22 +1,24 @@
+import datetime
+import hashlib
 import os
 import re
-import sys
-import stat
-import uuid
 import shutil
-import hashlib
-import datetime
-import tempfile
+import stat
 import subprocess
-from io import BytesIO, StringIO
-try:
-    PermissionError
-except NameError:
-    PermissionError = OSError  # for Python 2.7
+import sys
+import tempfile
+import uuid
+from io import BytesIO
+from io import StringIO
 
 import pytest
 
 from msl.io import utils
+
+try:
+    PermissionError
+except NameError:
+    PermissionError = OSError  # for Python 2.7
 
 
 def test_search():

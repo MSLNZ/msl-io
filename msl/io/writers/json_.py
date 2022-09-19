@@ -1,20 +1,20 @@
 """
-Writer for a JSON_ file format. The corresponding :class:`~msl.io.base_io.Reader` is
+Writer for a JSON_ file format. The corresponding :class:`~msl.io.base.Reader` is
 :class:`~msl.io.readers.json_.JSONReader`.
 
 .. _JSON: https://www.json.org/
 """
-import os
-import json
 import codecs
+import json
+import os
 from io import BufferedIOBase
 
 import numpy as np
 
-from .. import Writer
-from ..metadata import Metadata
-from ..base_io import Root
+from ..base import Root
+from ..base import Writer
 from ..constants import IS_PYTHON2
+from ..metadata import Metadata
 from ..utils import is_file_readable
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.
@@ -70,7 +70,7 @@ class JSONWriter(Writer):
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the value of
             `file` that was specified when :class:`JSONWriter` was instantiated.
-        root : :class:`~msl.io.base_io.Root`, optional
+        root : :class:`~msl.io.base.Root`, optional
             Write `root` in JSON_ format. If :data:`None` then write the
             :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
             in this :class:`JSONWriter`.

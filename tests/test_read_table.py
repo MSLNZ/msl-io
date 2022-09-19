@@ -1,28 +1,23 @@
 from __future__ import unicode_literals
+
 import os
-import sys
 import pathlib
+import sys
 import warnings
 from datetime import datetime
-from io import StringIO, BytesIO
+from io import BytesIO
+from io import StringIO
 
-import pytest
 import numpy as np
-
-from msl.io import read_table
-from msl.io.tables import (
-    read_table_gsheets,
-    read_table_excel,
-)
-from msl.io.constants import IS_PYTHON2
-
-from test_google_api import (
-    skipif_no_gdrive_readonly,
-    skipif_no_sheets_readonly,
-)
+import pytest
 
 from helper import datasets_equal
-
+from msl.io import read_table
+from msl.io.constants import IS_PYTHON2
+from msl.io.tables import read_table_excel
+from msl.io.tables import read_table_gsheets
+from test_google_api import skipif_no_gdrive_readonly
+from test_google_api import skipif_no_sheets_readonly
 
 skipif_32bit_py27 = pytest.mark.skipif(
     sys.maxsize < 2**32 and IS_PYTHON2,

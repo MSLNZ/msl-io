@@ -4,47 +4,36 @@ Read and write data files.
 import re
 from collections import namedtuple
 
-from .utils import (
-    _readers,
-    checksum,
-    copy,
-    git_head,
-    is_admin,
-    is_dir_accessible,
-    is_file_readable,
-    register,
-    remove_write_permissions,
-    run_as_admin,
-    search,
-    send_email,
-)
-from .base_io import (
-    Root,
-    Reader,
-    Writer,
-)
-from .writers import (
-    JSONWriter,
-    HDF5Writer,
-)
-from .google_api import (
-    GDrive,
-    GSheets,
-    GMail,
-    GValueOption,
-    GDateTimeOption,
-    GCellType,
-)
-from .readers import (
-    ExcelReader,
-    GSheetsReader,
-)
-from .tables import (
-    read_table_text,
-    read_table_excel,
-    read_table_gsheets,
-    extension_delimiter_map,
-)
+from .base import Reader
+from .base import Root
+from .base import Writer
+from .google_api import GCellType
+from .google_api import GDateTimeOption
+from .google_api import GDrive
+from .google_api import GMail
+from .google_api import GSheets
+from .google_api import GValueOption
+from .readers import ExcelReader
+from .readers import GSheetsReader
+from .tables import extension_delimiter_map
+from .tables import read_table_excel
+from .tables import read_table_gsheets
+from .tables import read_table_text
+from .utils import _readers
+from .utils import checksum
+from .utils import copy
+from .utils import git_head
+from .utils import is_admin
+from .utils import is_dir_accessible
+from .utils import is_file_readable
+from .utils import logger
+from .utils import register
+from .utils import remove_write_permissions
+from .utils import run_as_admin
+from .utils import search
+from .utils import send_email
+from .writers import HDF5Writer
+from .writers import JSONWriter
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2018 - 2022, ' + __author__
@@ -65,37 +54,40 @@ def read(file, **kwargs):
         The file to read. For example, it could be a :class:`str` representing
         a file system path or a stream.
     **kwargs
-        Keyword arguments that are passed to the :meth:`Reader.can_read() <msl.io.base_io.Reader.can_read>`
-        and :meth:`Reader.read() <msl.io.base_io.Reader.read>` methods.
+        All keyword arguments are passed to the
+        :meth:`Reader.can_read() <msl.io.base.Reader.can_read>`
+        and :meth:`Reader.read() <msl.io.base.Reader.read>` methods.
 
     Returns
     -------
-    :class:`~msl.io.base_io.Reader`
+    :class:`~msl.io.base.Reader`
         The data from the file.
 
     Raises
     ------
     OSError
-        If no :class:`~msl.io.base_io.Reader` exists to be able to read
+        If no :class:`~msl.io.base.Reader` exists to be able to read
         the specified file.
     """
     if hasattr(file, 'as_posix'):  # a pathlib.Path object
         file = str(file)
 
     if hasattr(file, 'read') or is_file_readable(file, strict=True):
-        pass
+        logger.debug('finding Reader for %r', file)
+        for r in _readers:
+            logger.debug('checking %s', r.__name__)
+            try:
+                can_read = r.can_read(file, **kwargs)
+            except Exception as e:
+                logger.debug('%s: %s [%s]', e.__class__.__name__, e, r.__name__)
+                continue
 
-    for rdr in _readers:
-        try:
-            can_read = rdr.can_read(file, **kwargs)
-        except:
-            continue
-
-        if can_read:
-            root = rdr(file)
-            root.read(**kwargs)
-            root.read_only = True
-            return root
+            if can_read:
+                logger.debug('reading file with %s', r.__name__)
+                root = r(file)
+                root.read(**kwargs)
+                root.read_only = True
+                return root
 
     raise OSError('No Reader exists to read {!r}'.format(file))
 
@@ -120,7 +112,7 @@ def read_table(file, **kwargs):
         If the file is an Excel spreadsheet then the keyword arguments are passed to
         :func:`~msl.io.tables.read_table_excel`. If a Google Sheets spreadsheet then
         the keyword arguments are passed to :func:`~msl.io.tables.read_table_gsheets`.
-        Otherwise all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
+        Otherwise, all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
 
     Returns
     -------

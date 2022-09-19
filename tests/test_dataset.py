@@ -1,7 +1,7 @@
 import sys
 
-import pytest
 import numpy as np
+import pytest
 
 from msl.io.dataset import Dataset
 

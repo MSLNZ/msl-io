@@ -41,7 +41,7 @@ Package Structure
 .. toctree::
 
    msl.io <_api/msl.io>
-   msl.io.base_io <_api/msl.io.base_io>
+   msl.io.base <_api/msl.io.base>
    msl.io.constants <_api/msl.io.constants>
    msl.io.dataset <_api/msl.io.dataset>
    msl.io.dataset_logging <_api/msl.io.dataset_logging>

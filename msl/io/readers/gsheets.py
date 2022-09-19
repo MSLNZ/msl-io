@@ -4,13 +4,10 @@ Read a Google Sheets spreadsheet.
 import os
 import re
 
-from ..google_api import (
-    GDrive,
-    GSheets,
-    GCellType,
-)
 from .spreadsheet import Spreadsheet
-
+from ..google_api import GCellType
+from ..google_api import GDrive
+from ..google_api import GSheets
 
 _google_file_id_regex = re.compile(r'^1[a-zA-Z0-9_-]{43}$')
 
@@ -21,10 +18,10 @@ class GSheetsReader(Spreadsheet):
         """Read a Google Sheets spreadsheet.
 
         This class simply provides a convenience for reading information
-        from Google spreadsheets. It is not registered as a :class:`~msl.io.base_io.Reader`
+        from Google spreadsheets. It is not registered as a :class:`~msl.io.base.Reader`
         because the information in a spreadsheet is unstructured and therefore
         one cannot generalize how to parse a spreadsheet to create a
-        :class:`~msl.io.base_io.Root`.
+        :class:`~msl.io.base.Root`.
 
         Parameters
         ----------

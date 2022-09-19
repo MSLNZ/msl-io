@@ -90,7 +90,7 @@ class DatasetLogging(Dataset, logging.Handler):
         if self._auto_resize and self._data.shape < kwargs['shape']:
             self._resize(new_allocated=kwargs['shape'][0])
 
-        # the Handler will overwrite the self._name attribute so we create a reference to the
+        # the Handler will overwrite the self._name attribute, so we create a reference to the
         # `name` of the Dataset and then set the `name` of the Handler after it is initialized
         name = self._name
         logging.Handler.__init__(self, level=level)
@@ -103,7 +103,7 @@ class DatasetLogging(Dataset, logging.Handler):
         # DatasetLogging.__init__ checks for the following condition:
         #   "if not (hdlr in self.handlers):"
         # and this could fail if adding multiple DatasetLogging instances
-        # to the RootLogger and the Dataset's are emtpy. Every DatasetLogging
+        # to the RootLogger and the Datasets are emtpy. Every DatasetLogging
         # instance must be unique because every Vertex is unique so this
         # method can simply return False.
         return False

@@ -1,6 +1,5 @@
-from msl.io.readers import DRSReader
-
 from helper import read_sample
+from msl.io.readers import DRSReader
 
 
 def test_drs():

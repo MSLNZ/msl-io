@@ -48,7 +48,7 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
    :target: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml
 
 .. _HDF5: https://www.hdfgroup.org/
-.. _Root: https://msl-io.readthedocs.io/en/latest/_api/msl.io.base_io.html#msl.io.base_io.Root
+.. _Root: https://msl-io.readthedocs.io/en/latest/_api/msl.io.base.html#msl.io.base.Root
 .. _Group: https://msl-io.readthedocs.io/en/latest/group.html
 .. _Dataset: https://msl-io.readthedocs.io/en/latest/dataset.html
 .. _Metadata: https://msl-io.readthedocs.io/en/latest/metadata.html

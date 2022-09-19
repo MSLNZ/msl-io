@@ -8,7 +8,7 @@ All :ref:`msl-io-group` and :ref:`msl-io-dataset` objects contain :class:`~msl.i
 for accessing the *keys* of the :class:`dict` as class attributes (see :ref:`attribute-key-limitations` for
 more information).
 
-For example, suppose that a file is read with the :class:`~msl.io.base_io.Root` :ref:`msl-io-group`
+For example, suppose that a file is read with the :class:`~msl.io.base.Root` :ref:`msl-io-group`
 having the following :class:`~msl.io.metadata.Metadata`
 
 .. invisible-code-block: pycon
@@ -39,7 +39,7 @@ or as a class attribute
     >>> root.metadata.voltage
     1.2
 
-When a file is read, the :class:`~msl.io.base_io.Root` object is returned in read-only mode so
+When a file is read, the :class:`~msl.io.base.Root` object is returned in read-only mode so
 you cannot modify the metadata
 
 .. code-block:: pycon

@@ -1,11 +1,12 @@
 import os
 import pathlib
-from io import StringIO, BytesIO
+from io import BytesIO
+from io import StringIO
 
 import pytest
 
 from msl.io import Reader
-from msl.io.base_io import Root
+from msl.io.base import Root
 from msl.io.constants import IS_PYTHON2
 
 

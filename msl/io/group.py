@@ -1,9 +1,9 @@
 """
 A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 """
-from .vertex import Vertex
 from .dataset import Dataset
 from .dataset_logging import DatasetLogging
+from .vertex import Vertex
 
 
 class Group(Vertex):
@@ -450,8 +450,8 @@ class Group(Vertex):
             The :ref:`attribute names <logrecord-attributes>` to include in the
             :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
             If the :class:`~msl.io.dataset.Dataset` exists and if `attributes`
-            are specified and they do not match those of the existing
-            :class:`~msl.io.dataset.Dataset` then a :exc:`ValueError` is raised.
+            are specified, and they do not match those of the existing
+            :class:`~msl.io.dataset.Dataset`, then a :exc:`ValueError` is raised.
             If :data:`None` and the :class:`~msl.io.dataset.Dataset` does not exist
             then uses ``asctime``, ``levelname``, ``name``, and ``message``.
         logger : :class:`~logging.Logger`, optional

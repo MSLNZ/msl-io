@@ -1,12 +1,12 @@
 """
 Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
 """
-import os
 import codecs
 import itertools
+import os
 
-from .group import Group
 from .constants import IS_PYTHON2
+from .group import Group
 from .utils import get_basename
 
 
@@ -21,10 +21,10 @@ class Root(Group):
         Parameters
         ----------
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-            The file object to associate with the :class:`~msl.io.base_io.Root`.
+            The file object to associate with the :class:`~msl.io.base.Root`.
         **metadata
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
-            for the :class:`~msl.io.base_io.Root`.
+            for the :class:`~msl.io.base.Root`.
         """
         super(Group, self).__init__('/', None, False, **metadata)
         self._file = file
@@ -73,7 +73,7 @@ class Writer(Root):
             The file to write the data to. Can also be specified in the :meth:`write` method.
         **metadata
             Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
-            of the :class:`~msl.io.base_io.Root`.
+            of the :class:`~msl.io.base.Root`.
         """
         super(Writer, self).__init__(file, **metadata)
         self._context_kwargs = {}
@@ -124,10 +124,10 @@ class Writer(Root):
         ----------
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
             The file to write the `root` to. If :data:`None` then uses the
-            `file` value that was specified when the :class:`~msl.io.base_io.Writer`
+            `file` value that was specified when the :class:`~msl.io.base.Writer`
             was instantiated.
-        root : :class:`~msl.io.base_io.Root`, optional
-            Write the `root` object in the file format of this :class:`~msl.io.base_io.Writer`.
+        root : :class:`~msl.io.base.Root`, optional
+            Write the `root` object in the file format of this :class:`~msl.io.base.Writer`.
             This is useful when converting between different file formats.
         **kwargs
             Additional key-value pairs to use when writing the file.
@@ -160,7 +160,7 @@ class Reader(Root):
 
     @staticmethod
     def can_read(file, **kwargs):
-        """Whether this :class:`~msl.io.base_io.Reader` can read the file specified by `file`.
+        """Whether this :class:`~msl.io.base.Reader` can read the file specified by `file`.
 
         .. important::
            You must override this method.
@@ -168,9 +168,9 @@ class Reader(Root):
         Parameters
         ----------
         file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-            The file to check whether the :class:`~msl.io.base_io.Reader` can read it.
+            The file to check whether the :class:`~msl.io.base.Reader` can read it.
         **kwargs
-            Key-value pairs that the :class:`~msl.io.base_io.Reader` class may need
+            Key-value pairs that the :class:`~msl.io.base.Reader` class may need
             when checking if it can read the `file`.
 
         Returns
@@ -183,8 +183,8 @@ class Reader(Root):
     def read(self, **kwargs):
         """Read the file.
 
-        The file can be accessed by the :attr:`~msl.io.base_io.Root.file`
-        property of the :class:`~msl.io.base_io.Reader`, i.e., ``self.file``
+        The file can be accessed by the :attr:`~msl.io.base.Root.file`
+        property of the :class:`~msl.io.base.Reader`, i.e., ``self.file``
 
         .. important::
            You must override this method.
@@ -192,7 +192,7 @@ class Reader(Root):
         Parameters
         ----------
         **kwargs
-            Key-value pairs that the :class:`~msl.io.base_io.Reader` class may need
+            Key-value pairs that the :class:`~msl.io.base.Reader` class may need
             when reading the file.
         """
         raise NotImplementedError

@@ -3,7 +3,7 @@ Reader for the HDF5_ file format.
 
 .. attention::
    This Reader loads the entire HDF5_ file in memory. If you need to use any of
-   the more advanced features of a HDF5_ file then it is best to directly load
+   the more advanced features of an HDF5_ file, it is best to directly load
    the file using H5py_.
 
 .. _HDF5: https://www.hdfgroup.org/
@@ -16,10 +16,8 @@ try:
 except ImportError:
     h5py = None
 
-from .. import (
-    register,
-    Reader,
-)
+from ..base import Reader
+from ..utils import register
 
 
 @register

@@ -4,7 +4,7 @@
 Writers
 =======
 
-The following :class:`~msl.io.base_io.Writer`\s are available:
+The following :class:`~msl.io.base.Writer`\s are available:
 
 .. toctree::
 
@@ -15,11 +15,11 @@ The following :class:`~msl.io.base_io.Writer`\s are available:
 
 Create a New Writer
 +++++++++++++++++++
-When adding a new :class:`~msl.io.base_io.Writer` class to the repository_ the following
+When adding a new :class:`~msl.io.base.Writer` class to the repository_ the following
 steps should be performed. Please follow the :ref:`style guide <style-guide>`.
 
 1. Create a fork_ of the repository_.
-2. Create a new :class:`~msl.io.base_io.Writer` by following this template and save it to
+2. Create a new :class:`~msl.io.base.Writer` by following this template and save it to
    the `msl/io/writers/`_ directory.
 
     .. code-block:: python
@@ -46,7 +46,7 @@ steps should be performed. Please follow the :ref:`style guide <style-guide>`.
                 """
 
 3. Add test cases to the `tests/`_ directory to make sure that your Writer works as expected. It is
-   recommended to try converting a :class:`~msl.io.base_io.Root` object between your Writer and other
+   recommended to try converting a :class:`~msl.io.base.Root` object between your Writer and other
    Writers that are available to verify different file-format conversions. Also, look at the test
    modules that begin with ``test_writer`` for more examples. Run the tests using ``python setup.py tests``
    (ideally you would run the tests for all :ref:`currently-supported versions <io-dependencies>` of

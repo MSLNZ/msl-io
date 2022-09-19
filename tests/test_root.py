@@ -1,11 +1,11 @@
-import types
 import logging
+import types
 
 import pytest
 
-from msl.io.base_io import Root
-from msl.io.group import Group
+from msl.io.base import Root
 from msl.io.dataset import Dataset
+from msl.io.group import Group
 
 
 def test_instantiation():

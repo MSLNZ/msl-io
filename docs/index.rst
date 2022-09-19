@@ -4,13 +4,13 @@
 MSL-IO
 ======
 **MSL-IO** follows the data model used by HDF5_ to read and write data files -- where there is a
-:class:`~msl.io.base_io.Root`, :ref:`msl-io-group`\s and :ref:`msl-io-dataset`\s and these objects
+:class:`~msl.io.base.Root`, :ref:`msl-io-group`\s and :ref:`msl-io-dataset`\s and these objects
 each have :ref:`msl-io-metadata` associated with them.
 
 .. image:: _static/hdf5_data_model.png
 
 The tree structure is similar to the file-system structure used by operating systems. :ref:`msl-io-group`\s
-are analogous to the directories (where :class:`~msl.io.base_io.Root` is the root :ref:`msl-io-group`) and
+are analogous to the directories (where :class:`~msl.io.base.Root` is the root :ref:`msl-io-group`) and
 :ref:`msl-io-dataset`\s are analogous to the files.
 
 The data files that can be read or created are not restricted to HDF5_ files, but any file format that
@@ -41,19 +41,19 @@ Suppose you want to create a new HDF5_ file. We first create an instance of
    >>> from msl.io import HDF5Writer
    >>> h5 = HDF5Writer()
 
-then we can add :class:`~msl.io.metadata.Metadata` to the :class:`~msl.io.base_io.Root`,
+then we can add :class:`~msl.io.metadata.Metadata` to the :class:`~msl.io.base.Root`,
 
 .. code-block:: pycon
 
    >>> h5.add_metadata(one=1, two=2)
 
-create a :class:`~msl.io.dataset.Dataset` in the :class:`~msl.io.base_io.Root`,
+create a :class:`~msl.io.dataset.Dataset` in the :class:`~msl.io.base.Root`,
 
 .. code-block:: pycon
 
    >>> dataset1 = h5.create_dataset('dataset1', data=[1, 2, 3, 4])
 
-create a :class:`~msl.io.group.Group` in the :class:`~msl.io.base_io.Root`,
+create a :class:`~msl.io.group.Group` in the :class:`~msl.io.base.Root`,
 
 .. code-block:: pycon
 
@@ -73,15 +73,15 @@ Finally, we write the file
 
 .. note::
 
-   The file is not created until you call the :meth:`~msl.io.base_io.Writer.write` or
-   :meth:`~msl.io.base_io.Writer.save` method.
+   The file is not created until you call the :meth:`~msl.io.base.Writer.write` or
+   :meth:`~msl.io.base.Writer.save` method.
 
 .. _msl-io-read:
 
 Read a file
 ------------
 The :func:`~msl.io.read` function is available to read a file. Provided that a :ref:`Reader <io-readers>`
-exists to read the file a :class:`~msl.io.base_io.Root` object is returned. We will read the file
+exists to read the file a :class:`~msl.io.base.Root` object is returned. We will read the file
 that we created above.
 
 .. code-block:: pycon
@@ -90,7 +90,7 @@ that we created above.
     >>> root = read('my_file.h5')
 
 You can print a representation of all :class:`~msl.io.group.Group`\s and :class:`~msl.io.dataset.Dataset`\s
-in the :class:`~msl.io.base_io.Root` by calling the :meth:`~msl.io.base_io.Root.tree` method
+in the :class:`~msl.io.base.Root` by calling the :meth:`~msl.io.base.Root.tree` method
 
 .. code-block:: pycon
 

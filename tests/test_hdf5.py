@@ -1,17 +1,20 @@
 import os
 import tempfile
 
-import pytest
 import numpy as np
+import pytest
+
 try:
     import h5py
 except ImportError:
     h5py = None
 
-from msl.io import read, HDF5Writer, JSONWriter
+from helper import read_sample
+from helper import roots_equal
+from msl.io import HDF5Writer
+from msl.io import JSONWriter
+from msl.io import read
 from msl.io.readers import HDF5Reader
-
-from helper import read_sample, roots_equal
 
 
 @pytest.mark.skipif(h5py is None, reason='h5py not installed')

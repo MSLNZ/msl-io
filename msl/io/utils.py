@@ -1,27 +1,28 @@
 """
 General functions.
 """
-import re
-import os
-import sys
-import stat
 import ctypes
-import shutil
 import hashlib
 import logging
+import os
+import re
+import shutil
+import stat
 import subprocess
-from smtplib import SMTP
+import sys
+from configparser import ConfigParser
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from configparser import ConfigParser
+from smtplib import SMTP
+
+from .google_api import GMail
+
 try:
     PermissionError
 except NameError:
     PermissionError = OSError  # for Python 2.7
     FileExistsError = OSError
-
-from .google_api import GMail
 
 logger = logging.getLogger(__package__)
 
@@ -199,19 +200,19 @@ def is_file_readable(file, strict=False):
 
 
 def register(reader_class):
-    """Use as a decorator to register a :class:`~msl.io.base_io.Reader` subclass.
+    """Use as a decorator to register a :class:`~msl.io.base.Reader` subclass.
 
     See :ref:`io-create-reader` for an example on how to use @register decorator.
 
     Parameters
     ----------
-    reader_class : :class:`~msl.io.base_io.Reader`
-        A :class:`~msl.io.base_io.Reader` subclass.
+    reader_class : :class:`~msl.io.base.Reader`
+        A :class:`~msl.io.base.Reader` subclass.
 
     Returns
     -------
-    :class:`~msl.io.base_io.Reader`
-        The :class:`~msl.io.base_io.Reader`.
+    :class:`~msl.io.base.Reader`
+        The :class:`~msl.io.base.Reader`.
     """
     def append(cls):
         _readers.append(cls)
@@ -546,7 +547,7 @@ def remove_write_permissions(path):
 
     On Windows, this function will set the file attribute to be read only.
 
-    On linux and macOS the write permission is removed for the User,
+    On linux and macOS, write permission is removed for the User,
     Group and Others. The read and execute permissions are preserved.
 
     Parameters
@@ -585,7 +586,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     kwargs
         If the current process already has admin privileges or if the operating
         system is not Windows then all additional keyword arguments are passed
-        to :func:`~subprocess.check_output`. Otherwise only a `timeout` keyword
+        to :func:`~subprocess.check_output`. Otherwise, only a `timeout` keyword
         argument is used (Windows).
 
     Returns

@@ -3,7 +3,7 @@
 =======
 Readers
 =======
-The following :class:`~msl.io.base_io.Reader`\s are available:
+The following :class:`~msl.io.base.Reader`\s are available:
 
 .. toctree::
 
@@ -15,17 +15,17 @@ The following :class:`~msl.io.base_io.Reader`\s are available:
 
 Create a New Reader
 +++++++++++++++++++
-When adding a new :class:`~msl.io.base_io.Reader` class to the repository_ the following
+When adding a new :class:`~msl.io.base.Reader` class to the repository_ the following
 steps should be performed. Please follow the :ref:`style guide <style-guide>`.
 
 .. note::
-   If you do not want to upload the new :class:`~msl.io.base_io.Reader` class to the repository_
-   then you only need to write the code found in Step 2 to use your :class:`~msl.io.base_io.Reader`
-   in your own program. Once you import your module in your code your :class:`~msl.io.base_io.Reader`
+   If you do not want to upload the new :class:`~msl.io.base.Reader` class to the repository_
+   then you only need to write the code found in Step 2 to use your :class:`~msl.io.base.Reader`
+   in your own program. Once you import your module in your code your :class:`~msl.io.base.Reader`
    will be available from the :func:`~msl.io.read` function.
 
 1. Create a fork_ of the repository_.
-2. Create a new :class:`~msl.io.base_io.Reader` by following this template and save it to
+2. Create a new :class:`~msl.io.base.Reader` by following this template and save it to
    the `msl/io/readers/`_ directory.
 
     .. code-block:: python

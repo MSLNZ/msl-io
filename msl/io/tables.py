@@ -5,12 +5,10 @@ import re
 
 import numpy as np
 
-from . import (
-    Reader,
-    ExcelReader,
-    GSheetsReader,
-)
+from .base import Reader
 from .dataset import Dataset
+from .readers import ExcelReader
+from .readers import GSheetsReader
 from .utils import get_basename
 
 _spreadsheet_top_left_regex = re.compile(r'^([A-Z]+)(\d+)$')

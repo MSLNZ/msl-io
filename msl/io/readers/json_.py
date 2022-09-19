@@ -1,17 +1,15 @@
 """
 Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
-import json
 import codecs
+import json
 from io import BufferedIOBase
 
 import numpy as np
 
-from .. import (
-    register,
-    Reader,
-)
+from ..base import Reader
 from ..constants import IS_PYTHON2
+from ..utils import register
 
 
 @register
@@ -71,7 +69,7 @@ class JSONReader(Reader):
             #   >>> a
             #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')
             # would cast every element to a string
-            # also a regular Python list stores items as objects anyways
+            # also a regular Python list stores items as objects
             return np.asarray(list_, dtype=object)
 
         def create_group(parent, name, vertex):
