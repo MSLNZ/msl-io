@@ -587,8 +587,15 @@ class GDrive(GoogleAPI):
             The keys are the IDs of the shared drives and the values are the
             names of the shared drives.
         """
-        response = self._drives.list().execute()
-        return dict((d['id'], d['name']) for d in response['drives'])
+        drives = {}
+        next_page_token = ''
+        while True:
+            response = self._drives.list(pageSize=100, pageToken=next_page_token).execute()
+            drives.update(dict((d['id'], d['name']) for d in response['drives']))
+            next_page_token = response.get('nextPageToken')
+            if not next_page_token:
+                break
+        return drives
 
     def copy(self, file_id, folder_id=None, name=None):
         """Copy a file.
