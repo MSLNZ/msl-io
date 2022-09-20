@@ -386,6 +386,8 @@ class GDrive(GoogleAPI):
     def delete(self, file_or_folder_id):
         """Delete a file or a folder.
 
+        Files that are in read-only mode cannot be deleted.
+
         .. danger::
            Permanently deletes the file or folder owned by the user without
            moving it to the trash. If the target is a folder, then all files
@@ -397,6 +399,11 @@ class GDrive(GoogleAPI):
         file_or_folder_id : :class:`str`
             The ID of the file or folder to delete.
         """
+        if self.is_read_only(file_or_folder_id):
+            # The API allows for a file to be deleted if it is in read-only mode,
+            # but we will not allow it to be deleted
+            raise RuntimeError('Cannot delete the file since it is in read-only mode')
+
         self._files.delete(
             fileId=file_or_folder_id,
             supportsAllDrives=True,
@@ -640,6 +647,59 @@ class GDrive(GoogleAPI):
             supportsAllDrives=True,
             body={'name': new_name},
         ).execute()
+
+    def read_only(self, file_id, read_only, reason=''):
+        """Set a file to be in read-only mode.
+
+        Parameters
+        ----------
+        file_id : :class:`str`
+            The ID of a file.
+        read_only : :class:`bool`
+            Whether to set the file to be in read-only mode.
+        reason : :class:`str`, optional
+            The reason for putting the file in read-only mode.
+            Only used if `read_only` is :data:`True`.
+        """
+        restrictions = {'readOnly': read_only}
+        if read_only:
+            restrictions['reason'] = reason
+
+            # If `file_id` is already in read-only mode, and it is being set
+            # to read-only mode then the API raises a TimeoutError waiting for
+            # a response. To avoid this error, check the mode and if it is
+            # already in read-only mode we are done.
+            if self.is_read_only(file_id):
+                return
+
+        self._files.update(
+            fileId=file_id,
+            supportsAllDrives=True,
+            body={'contentRestrictions': [restrictions]}
+        ).execute()
+
+    def is_read_only(self, file_id):
+        """Returns whether the file is in read-only mode.
+
+        Parameters
+        ----------
+        file_id : :class:`str`
+            The ID of a file.
+
+        Returns
+        -------
+        :class:`bool`
+            Whether the file is in read-only mode.
+        """
+        response = self._files.get(
+            fileId=file_id,
+            supportsAllDrives=True,
+            fields='contentRestrictions',
+        ).execute()
+        restrictions = response.get('contentRestrictions')
+        if not restrictions:
+            return False
+        return restrictions[0]['readOnly']
 
 
 class GValueOption(Enum):

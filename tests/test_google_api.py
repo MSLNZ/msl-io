@@ -654,6 +654,52 @@ def test_gsheets_copy_rename_add_delete():
     dw.delete(id2)
 
 
+@skipif_no_sheets_writeable
+@skipif_no_gdrive_writeable
+def test_read_only():
+    # Although folders cannot be set to be in read-only mode,
+    # test that calling is_read_only() does not raise an error
+    fid = dw.create_folder('Read Only Test')
+    assert dw.is_read_only(fid) is False
+    dw.delete(fid)
+
+    # create a spreadsheet file
+    fid = sw.create('Lockable')
+    assert dw.is_read_only(fid) is False
+    sw.write('test', fid, 'A1', 'Sheet1')
+    dw.read_only(fid, True)
+    assert dw.is_read_only(fid) is True
+
+    # cannot create a new sheet
+    with pytest.raises(HttpError):
+        sw.add_sheets('Another Sheet', fid)
+
+    # cannot rename
+    with pytest.raises(HttpError):
+        dw.rename(fid, 'New Name')
+
+    # cannot delete
+    with pytest.raises(RuntimeError, match='Cannot delete'):
+        dw.delete(fid)
+
+    # cannot modify a cell
+    with pytest.raises(HttpError):
+        sw.write('test2', fid, 'A2', 'Sheet1')
+    assert sw.values(fid) == [['test']]
+
+    # setting the same value multiple times is okay
+    dw.read_only(fid, True)
+    dw.read_only(fid, True)
+    dw.read_only(fid, True)
+    assert dw.is_read_only(fid) is True
+    dw.read_only(fid, False)
+    dw.read_only(fid, False)
+    dw.read_only(fid, False)
+    assert dw.is_read_only(fid) is False
+
+    dw.delete(fid)
+
+
 @skipif_no_gdrive_readonly
 def test_gdrive_is_folder():
     # relative to the root folder
