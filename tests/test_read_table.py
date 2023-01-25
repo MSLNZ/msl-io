@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import os
 import pathlib
 import sys
-import warnings
 from datetime import datetime
 from io import BytesIO
 from io import StringIO
@@ -399,18 +398,20 @@ def test_gsheets_all_data():
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore', category=np.VisibleDeprecationWarning)
-        dset = read_table(table_id+'.gsheet', account='testing', sheet='StartH22')
-        assert dset.metadata.header.size == 0
-        assert dset.shape == (31,)
-        for i in range(20):
-            assert dset[i] == ()
-        assert np.array_equal(dset[20][:7], [None] * 7)
-        assert np.array_equal(dset[20][7:], gsheet_header)
-        for i, row in enumerate(gsheet_data, start=21):
-            assert np.array_equal(dset[i][:7], [None] * 7)
-            assert np.array_equal(dset[i][7:], row)
+    dset = read_table(table_id+'.gsheet', account='testing', sheet='StartH22')
+    assert dset.metadata.header.size == 11
+    assert dset.shape == (31, 11)
+    for i in range(20):
+        assert np.array_equal(dset[i], [None] * 11)
+    assert np.array_equal(dset[20][:7], [None] * 7)
+    assert np.array_equal(dset[20][7:], gsheet_header)
+    for i, row in enumerate(gsheet_data, start=21):
+        assert np.array_equal(dset[i][:7], [None] * 7)
+        assert np.array_equal(dset[i][7:], row)
+
+    dset = read_table(table_id+'.gsheet', account='testing', sheet='StartH22', cells='H22')
+    assert np.array_equal(dset.metadata.header, gsheet_header)
+    assert np.array_equal(dset, gsheet_data)
 
     # ID of MSL/msl-io-testing/Copy of table.gsheet
     file = '1NfDUZzHk71CPAfhIoE8l9h4NJ8oeqKfqGAUM81Vyc88.gsheet'
