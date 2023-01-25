@@ -816,7 +816,7 @@ def test_gdrive_download():
 @skipif_no_gdrive_writeable
 def test_gdrive_empty_trash():
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match='Insufficient Permission'):
+    with pytest.raises(HttpError, match='insufficient authentication scopes'):
         dr.empty_trash()
     dw.empty_trash()
 
