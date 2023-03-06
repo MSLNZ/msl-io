@@ -1,6 +1,8 @@
 """
 A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
 """
+import re
+
 from .dataset import Dataset
 from .dataset_logging import DatasetLogging
 from .vertex import Vertex
@@ -108,30 +110,76 @@ class Group(Vertex):
         """
         return isinstance(obj, Group)
 
-    def datasets(self):
-        """Get all :class:`~msl.io.dataset.Dataset`\\s of this :class:`Group`.
+    def datasets(self, exclude=None, include=None, flags=0):
+        """Get the :class:`~msl.io.dataset.Dataset`\\s in this :class:`Group`.
+
+        Parameters
+        ----------
+        exclude : :class:`str`, optional
+            A regex pattern to use to exclude :class:`~msl.io.dataset.Dataset`\\s.
+            The :func:`re.search` function is used to compare the `exclude` regex
+            pattern with the `name` of each :class:`~msl.io.dataset.Dataset`. If
+            there is a match, the :class:`~msl.io.dataset.Dataset` is not yielded.
+        include : :class:`str`, optional
+            A regex pattern to use to include :class:`~msl.io.dataset.Dataset`\\s.
+            The :func:`re.search` function is used to compare the `include` regex
+            pattern with the `name` of each :class:`~msl.io.dataset.Dataset`. If
+            there is a match, the :class:`~msl.io.dataset.Dataset` is yielded.
+        flags : :class:`int`, optional
+            Regex flags that are passed to :func:`re.compile`.
 
         Yields
         ------
         :class:`~msl.io.dataset.Dataset`
-            All :class:`~msl.io.dataset.Dataset`\\s that are contained within
-            this :class:`Group`.
+            The filtered :class:`~msl.io.dataset.Dataset`\\s based on the
+            `exclude` and `include` regex patterns. The `exclude` pattern
+            has more precedence than the `include` pattern if there is a
+            conflict.
         """
+        e = False if exclude is None else re.compile(exclude, flags=flags)
+        i = False if include is None else re.compile(include, flags=flags)
         for obj in self._mapping.values():
             if self.is_dataset(obj):
+                if e and e.search(obj.name):
+                    continue
+                if i and not i.search(obj.name):
+                    continue
                 yield obj
 
-    def groups(self):
-        """Get all sub-:class:`Group`\\s (descendants) of this :class:`Group`.
+    def groups(self, exclude=None, include=None, flags=0):
+        """Get the sub-:class:`.Group`\\s (descendants) of this :class:`.Group`.
+
+        Parameters
+        ----------
+        exclude : :class:`str`, optional
+            A regex pattern to use to exclude :class:`.Group`\\s. The
+            :func:`re.search` function is used to compare the `exclude` regex
+            pattern with the `name` of each :class:`.Group`. If there is a match,
+            the :class:`.Group` is not yielded.
+        include : :class:`str`, optional
+            A regex pattern to use to include :class:`.Group`\\s. The
+            :func:`re.search` function is used to compare the `include` regex
+            pattern with the `name` of each :class:`.Group`. If there is a match,
+            the :class:`.Group` is yielded.
+        flags : :class:`int`, optional
+            Regex flags that are passed to :func:`re.compile`.
 
         Yields
         ------
         :class:`Group`
-            All sub-:class:`Group`\\s (descendants) that are contained within
-            this :class:`Group`.
+            The filtered :class:`.Group`\\s (descendants) based on the
+            `exclude` and `include` regex patterns. The `exclude` pattern
+            has more precedence than the `include` pattern if there is a
+            conflict.
         """
+        e = False if exclude is None else re.compile(exclude, flags=flags)
+        i = False if include is None else re.compile(include, flags=flags)
         for obj in self._mapping.values():
             if self.is_group(obj):
+                if e and e.search(obj.name):
+                    continue
+                if i and not i.search(obj.name):
+                    continue
                 yield obj
 
     descendants = groups
