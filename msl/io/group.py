@@ -147,7 +147,7 @@ class Group(Vertex):
                 yield obj
 
     def groups(self, exclude=None, include=None, flags=0):
-        """Get the sub-:class:`.Group`\\s (descendants) of this :class:`.Group`.
+        """Get the sub-:class:`.Group`\\s of this :class:`.Group`.
 
         Parameters
         ----------
@@ -167,10 +167,9 @@ class Group(Vertex):
         Yields
         ------
         :class:`Group`
-            The filtered :class:`.Group`\\s (descendants) based on the
-            `exclude` and `include` regex patterns. The `exclude` pattern
-            has more precedence than the `include` pattern if there is a
-            conflict.
+            The filtered :class:`.Group`\\s based on the `exclude` and `include`
+            regex patterns. The `exclude` pattern has more precedence than the
+            `include` pattern if there is a conflict.
         """
         e = False if exclude is None else re.compile(exclude, flags=flags)
         i = False if include is None else re.compile(include, flags=flags)
@@ -182,15 +181,25 @@ class Group(Vertex):
                     continue
                 yield obj
 
-    descendants = groups
-
-    def ancestors(self):
-        """Get all parent :class:`Group`\\s (ancestors) of this :class:`Group`.
+    def descendants(self):
+        """Get all descendant (children) :class:`.Group`\\s of this :class:`.Group`.
 
         Yields
         ------
-        :class:`Group`
-            The ancestors of this :class:`Group`.
+        :class:`.Group`
+            The descendants of this :class:`.Group`.
+        """
+        for obj in self._mapping.values():
+            if self.is_group(obj):
+                yield obj
+
+    def ancestors(self):
+        """Get all ancestor (parent) :class:`.Group`\\s of this :class:`.Group`.
+
+        Yields
+        ------
+        :class:`.Group`
+            The ancestors of this :class:`.Group`.
         """
         parent = self.parent
         while parent is not None:

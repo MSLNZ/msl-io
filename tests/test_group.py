@@ -394,7 +394,7 @@ def test_ancestors():
     assert len(list(w.ancestors())) == 0
 
     w.create_group('pear')  # ignore leading /
-    w.create_group('a/B/c/apple')
+    w.create_group('a/B/c/apple')  # ignore leading /
     w.create_group('/a/strawberry')
     w.create_group('a/b/banana')  # ignore leading /
     w.create_group('/a/melon')
@@ -438,3 +438,69 @@ def test_ancestors():
     assert ancestors[1].name == '/a/B'
     assert ancestors[2].name == '/a'
     assert ancestors[3].name == '/'
+
+
+def test_descendants():
+    w = JSONWriter()
+    assert len(list(w.descendants())) == 0
+
+    w.create_group('pear')  # ignore leading /
+    w.create_group('a/B/c/apple')  # ignore leading /
+    w.create_group('/a/strawberry')
+    w.create_group('/a/b/banana')
+    w.create_group('/a/melon')
+    w.create_group('/a/B/c/d/e/kiwi')
+
+    descendants = list(w.descendants())
+    assert len(descendants) == 12
+    assert descendants[0].name == '/pear'
+    assert descendants[1].name == '/a'
+    assert descendants[2].name == '/a/B'
+    assert descendants[3].name == '/a/B/c'
+    assert descendants[4].name == '/a/B/c/apple'
+    assert descendants[5].name == '/a/strawberry'
+    assert descendants[6].name == '/a/b'
+    assert descendants[7].name == '/a/b/banana'
+    assert descendants[8].name == '/a/melon'
+    assert descendants[9].name == '/a/B/c/d'
+    assert descendants[10].name == '/a/B/c/d/e'
+    assert descendants[11].name == '/a/B/c/d/e/kiwi'
+
+    descendants = list(w.pear.descendants())
+    assert len(descendants) == 0
+
+    descendants = list(w.a.descendants())
+    assert len(descendants) == 10
+    assert descendants[0].name == '/a/B'
+    assert descendants[1].name == '/a/B/c'
+    assert descendants[2].name == '/a/B/c/apple'
+    assert descendants[3].name == '/a/strawberry'
+    assert descendants[4].name == '/a/b'
+    assert descendants[5].name == '/a/b/banana'
+    assert descendants[6].name == '/a/melon'
+    assert descendants[7].name == '/a/B/c/d'
+    assert descendants[8].name == '/a/B/c/d/e'
+    assert descendants[9].name == '/a/B/c/d/e/kiwi'
+
+    descendants = list(w.a.B.descendants())
+    assert len(descendants) == 5
+    assert descendants[0].name == '/a/B/c'
+    assert descendants[1].name == '/a/B/c/apple'
+    assert descendants[2].name == '/a/B/c/d'
+    assert descendants[3].name == '/a/B/c/d/e'
+    assert descendants[4].name == '/a/B/c/d/e/kiwi'
+
+    descendants = list(w.a.B.c.apple.descendants())
+    assert len(descendants) == 0
+
+    descendants = list(w['/a/B/c'].descendants())
+    assert len(descendants) == 4
+    assert descendants[0].name == '/a/B/c/apple'
+    assert descendants[1].name == '/a/B/c/d'
+    assert descendants[2].name == '/a/B/c/d/e'
+    assert descendants[3].name == '/a/B/c/d/e/kiwi'
+
+    descendants = list(w['a/B/c/d'].descendants())  # ignore leading /
+    assert len(descendants) == 2
+    assert descendants[0].name == '/a/B/c/d/e'
+    assert descendants[1].name == '/a/B/c/d/e/kiwi'
