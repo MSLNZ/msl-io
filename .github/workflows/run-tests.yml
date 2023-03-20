@@ -17,7 +17,7 @@ jobs:
         python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
         os: [windows-latest, ubuntu-20.04, macos-latest]
         architecture: [x64]
-        xml: builtin
+        xml: [builtin]
         include:
           - python-version: "3.x"
             os: windows-latest
