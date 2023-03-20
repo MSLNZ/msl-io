@@ -3,9 +3,9 @@ from datetime import date
 from datetime import datetime
 
 import pytest
-import xlrd
 
 from msl.io import ExcelReader
+from msl.io.readers._xlrd import Book
 
 
 def test_raises():
@@ -25,9 +25,17 @@ def test_raises():
         ExcelReader(file).read(sheet='XXXYYYZZZ')
 
 
-def test_cell():
+def test_on_demand_default():
     file = os.path.join(os.path.dirname(__file__), 'samples', 'table.xlsx')
-    excel = ExcelReader(file, on_demand=True)
+    excel = ExcelReader(file)
+    assert excel.workbook.on_demand is True
+
+
+@pytest.mark.parametrize('on_demand', [True, False])
+def test_cell(on_demand):
+    file = os.path.join(os.path.dirname(__file__), 'samples', 'table.xlsx')
+    excel = ExcelReader(file, on_demand=on_demand)
+    assert excel.workbook.on_demand is on_demand
     values = [
         ('timestamp', 'val1', 'uncert1', 'val2', 'uncert2'),
         (datetime(2019, 9, 11, 14, 6, 55), -0.505382, 0.000077, 0.501073, 0.000079),
@@ -44,7 +52,7 @@ def test_cell():
 
     assert excel.file == file
     assert excel.sheet_names() == ('A1', 'BH11', 'AEX154041')
-    assert isinstance(excel.workbook, xlrd.book.Book)
+    assert isinstance(excel.workbook, Book)
     sheet = excel.workbook.sheet_by_name('A1')
     assert sheet.nrows == 11
     assert sheet.ncols == 5
@@ -128,15 +136,17 @@ def test_cell():
     assert excel.read(cell='AEY154042:AFA154044', sheet='AEX154041') == [row[1:4] for row in values[1:4]]
     assert excel.read(cell='J1:M10', sheet='A1') == []
 
-    # calling close() multiple times is okay (on_demand is True by default)
+    # calling close() multiple times is okay
     for _ in range(10):
         excel.close()
 
 
-def test_datatypes():
-    # the following workbook only contains 1 sheet so we don't have to specify the sheet
+@pytest.mark.parametrize('on_demand', [True, False])
+def test_datatypes(on_demand):
+    # the following workbook only contains 1 sheet, so we don't have to specify the sheet
     file = os.path.join(os.path.dirname(__file__), 'samples', 'excel_datatypes.xlsx')
-    excel = ExcelReader(file, on_demand=False)
+    excel = ExcelReader(file, on_demand=on_demand)
+    assert excel.workbook.on_demand is on_demand
     assert excel.file == file
     assert excel.workbook.nsheets == 1
     assert excel.sheet_names() == ('Sheet1',)
@@ -152,6 +162,6 @@ def test_datatypes():
     assert excel.read(cell='D2') == 0.34  # '34%'
     assert excel.read(cell='A1:A2') == [(1.23,), (3.141592653589793,)]
 
-    # calling close() multiple times is okay when on_demand=False
+    # calling close() multiple times is okay
     for _ in range(10):
         excel.close()

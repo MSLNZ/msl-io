@@ -33,7 +33,7 @@ Dependencies
 ++++++++++++
 * Python 2.7, 3.5+
 * numpy_
-* xlrd_
+* xlrd_ (bundled with **MSL-IO**)
 
 Documentation
 -------------

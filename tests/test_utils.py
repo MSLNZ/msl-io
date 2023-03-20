@@ -41,7 +41,7 @@ def test_search():
     assert len(files) == 3
 
     files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=r'v?env')
-    assert len(files) == 6
+    assert len(files) == 7
 
     files = s(pattern=r'__init__\.py(?!c)', levels=None, exclude_folders=['readers', 'v?env'])
     assert len(files) == 5
@@ -471,7 +471,6 @@ def test_run_as_admin():
         fp.write('import sys\r\n')
         # additional packages must be available since msl-io depends on them
         fp.write('import numpy\r\n')
-        fp.write('import xlrd\r\n')
         fp.write('print(sys.executable)\r\n')
         fp.write('print(sys.argv[1:])\r\n')
         fp.write('print("written to stderr", file=sys.stderr)\r\n')

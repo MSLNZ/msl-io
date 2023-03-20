@@ -144,10 +144,7 @@ def get_version():
     return dev_version
 
 
-install_requires = [
-    'numpy',
-    'xlrd<2.0',  # xlrd v2.0+ will not open .xlsx files anymore
-]
+install_requires = ['numpy']
 
 google_requires = [
     'google-api-python-client',

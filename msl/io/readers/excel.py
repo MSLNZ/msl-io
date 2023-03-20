@@ -3,8 +3,7 @@ Read an Excel spreadsheet (.xls and .xlsx).
 """
 from datetime import datetime
 
-import xlrd
-
+from . import _xlrd
 from .spreadsheet import Spreadsheet
 
 
@@ -44,7 +43,7 @@ class ExcelReader(Spreadsheet):
         if encoding is not None:
             kwargs['encoding_override'] = encoding
 
-        self._workbook = xlrd.open_workbook(file, **kwargs)
+        self._workbook = _xlrd.open_workbook(file, **kwargs)
 
     @property
     def workbook(self):
@@ -107,7 +106,7 @@ class ExcelReader(Spreadsheet):
 
         try:
             sheet = self._workbook.sheet_by_name(sheet_name)
-        except xlrd.XLRDError:
+        except _xlrd.XLRDError:
             # TODO want to raise ValueError without nested exceptions
             #  Can "raise from None" when dropping Python 2 support
             sheet = None
@@ -153,22 +152,22 @@ class ExcelReader(Spreadsheet):
         """Get the value of a cell."""
         cell = sheet.cell(row, col)
         t = cell.ctype
-        if t == xlrd.XL_CELL_NUMBER:
+        if t == _xlrd.XL_CELL_NUMBER:
             if cell.value.is_integer():
                 return int(cell.value)
             return cell.value
-        elif t == xlrd.XL_CELL_DATE:
-            dt = datetime(*xlrd.xldate_as_tuple(cell.value, self._workbook.datemode))
+        elif t == _xlrd.XL_CELL_DATE:
+            dt = datetime(*_xlrd.xldate_as_tuple(cell.value, self._workbook.datemode))
             if dt.hour + dt.minute + dt.second + dt.microsecond == 0:
                 dt = dt.date()
             if as_datetime:
                 return dt
             return str(dt)
-        elif t == xlrd.XL_CELL_BOOLEAN:
+        elif t == _xlrd.XL_CELL_BOOLEAN:
             return bool(cell.value)
-        elif t == xlrd.XL_CELL_EMPTY:
+        elif t == _xlrd.XL_CELL_EMPTY:
             return None
-        elif t == xlrd.XL_CELL_ERROR:
-            return xlrd.error_text_from_code[cell.value]
+        elif t == _xlrd.XL_CELL_ERROR:
+            return _xlrd.error_text_from_code[cell.value]
         else:
             return cell.value.strip()
