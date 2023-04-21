@@ -404,10 +404,9 @@ def send_email(config, recipients, sender=None, subject=None, body=None):
         server.sendmail(cfg['from'], cfg['to'], msg.as_string())
         server.quit()
     else:
-        gmail = GMail(account=cfg['account'], credentials=cfg['credentials'],
-                      scopes=cfg['scopes'])
-        gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
-        gmail.close()
+        with GMail(account=cfg['account'], credentials=cfg['credentials'],
+                   scopes=cfg['scopes']) as gmail:
+            gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
 
 
 def _prepare_email(config, recipients, sender):
