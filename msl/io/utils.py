@@ -407,6 +407,7 @@ def send_email(config, recipients, sender=None, subject=None, body=None):
         gmail = GMail(account=cfg['account'], credentials=cfg['credentials'],
                       scopes=cfg['scopes'])
         gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
+        gmail.close()
 
 
 def _prepare_email(config, recipients, sender):
