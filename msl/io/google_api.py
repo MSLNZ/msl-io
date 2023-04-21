@@ -123,10 +123,20 @@ class GoogleAPI(object):
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     @property
     def service(self):
         """The Resource object with methods for interacting with the API service."""
         return self._service
+
+    def close(self):
+        """Close the connection to the API service."""
+        self._service.close()
 
 
 class GDrive(GoogleAPI):
