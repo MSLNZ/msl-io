@@ -206,11 +206,31 @@ def test_datetime_objects(extn, kwargs):
      ('.txt', dict(dtype=data.dtype, delimiter='\t', skiprows=5))]
 )
 def test_skip_rows_5(extn, kwargs):
-    new_header = ['2019-09-11 14:07:07', '-0.505250', '0.000119', '0.500923', '0.000120']
+    new_header = ['2019-09-11 14:07:11', '-0.505275', '0.000070', '0.500965', '0.000088']
     dset = read_table(get_url(extn), **kwargs)
     assert np.array_equal(dset.metadata.header, new_header)
-    assert np.array_equal(dset.data, data[4:])
-    assert dset.shape == (6,)
+    assert np.array_equal(dset.data, data[5:])
+    assert dset.shape == (5,)
+
+
+@pytest.mark.parametrize(
+    ('extn', 'kwargs'),
+    [('.csv', dict(skiprows=3, usecols=(1, 4))),
+     ('.txt', dict(skiprows=3, usecols=(1, 4), delimiter='\t'))]
+)
+def test_skip_rows_use_cols(extn, kwargs):
+    h = ['-0.505308', '0.000087']
+    d = [[-0.505250, 0.000120],
+         [-0.505275, 0.000088],
+         [-0.505137, 0.000085],
+         [-0.505073, 0.000084],
+         [-0.505133, 0.000076],
+         [-0.505096, 0.000062],
+         [-0.505072, 0.000149]]
+    dset = read_table(get_url(extn), **kwargs)
+    assert np.array_equal(dset.metadata.header, h)
+    assert np.array_equal(dset.data, d)
+    assert dset.shape == (7, 2)
 
 
 @pytest.mark.parametrize(

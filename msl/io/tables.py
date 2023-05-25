@@ -70,7 +70,8 @@ def read_table_text(file, **kwargs):
         kwargs['delimiter'] = extension_delimiter_map.get(extn)
 
     if 'skiprows' not in kwargs:
-        kwargs['skiprows'] = 1
+        kwargs['skiprows'] = 0
+    kwargs['skiprows'] += 1  # Reader.get_lines is 1-based, np.loadtxt is 0-based
 
     first_line = Reader.get_lines(file, kwargs['skiprows'], kwargs['skiprows'])
     if not first_line:
