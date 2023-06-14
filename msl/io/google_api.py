@@ -579,7 +579,7 @@ class GDrive(GoogleAPI):
         try:
             self._files.update(addParents=destination_id, **params).execute()
         except HttpError as e:
-            if 'exactly one parent' not in e.reason:
+            if 'exactly one parent' not in str(e):
                 raise
 
             # Handle the following error:
