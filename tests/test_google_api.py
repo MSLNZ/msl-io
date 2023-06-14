@@ -453,7 +453,7 @@ def test_gdrive_file_id_multiple():
 def test_gdrive_create_delete_folder():
 
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match='Insufficient Permission'):
+    with pytest.raises(HttpError, match=r'[iI]nsufficient'):
         dr.create_folder('TEST')
 
     u1 = str(uuid.uuid4())
@@ -731,7 +731,7 @@ def test_gdrive_upload():
         fp.write('from msl.io import GDrive')
 
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match='Insufficient Permission'):
+    with pytest.raises(HttpError, match=r'[iI]nsufficient'):
         dr.upload(temp_file)
 
     file_id = dw.upload(
@@ -816,7 +816,7 @@ def test_gdrive_download():
 @skipif_no_gdrive_writeable
 def test_gdrive_empty_trash():
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match='insufficient authentication scopes'):
+    with pytest.raises(HttpError, match=r'[iI]nsufficient'):
         dr.empty_trash()
     dw.empty_trash()
 
