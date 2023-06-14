@@ -88,3 +88,7 @@ def test_drive_sheets():
     copy_f_id = drive.copy(f_id, iid)
     assert drive.path(copy_f_id) == 'My Drive/Files Backup/' + filename
     drive.delete(files_id)
+    drive.delete(iid)
+    drive.delete(spreadsheet_id)
+    drive.delete(spreadsheet_2_id)
+    drive.empty_trash()
