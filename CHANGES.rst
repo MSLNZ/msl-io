@@ -2,6 +2,10 @@
 Release Notes
 =============
 
+Version 0.2.0 (in development)
+==============================
+
+
 Version 0.1.0 (2023-06-16)
 ==========================
 Initial release.
