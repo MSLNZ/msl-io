@@ -8,27 +8,16 @@ import sphinx
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
+from msl import io
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 on_rtd = os.getenv('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
-
-    from unittest.mock import MagicMock
-
-    class Mock(MagicMock):
-        @classmethod
-        def __getattr__(cls, name):
-            return MagicMock()
-
-    MOCK_MODULES = ['numpy']
-    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 else:
     html_theme = 'sphinx_rtd_theme'
-
-from msl import io
 
 # -- General configuration ------------------------------------------------
 
