@@ -37,10 +37,10 @@ Dependencies
 
 Documentation
 -------------
-The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.io/en/latest/index.html>`_.
+The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.io/en/stable/index.html>`_.
 
 .. |docs| image:: https://readthedocs.org/projects/msl-io/badge/?version=latest
-   :target: https://msl-io.readthedocs.io/en/latest/
+   :target: https://msl-io.readthedocs.io/en/stable/
    :alt: Documentation Status
    :scale: 100%
 
@@ -48,12 +48,12 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
    :target: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml
 
 .. _HDF5: https://www.hdfgroup.org/
-.. _Root: https://msl-io.readthedocs.io/en/latest/_api/msl.io.base.html#msl.io.base.Root
-.. _Group: https://msl-io.readthedocs.io/en/latest/group.html
-.. _Dataset: https://msl-io.readthedocs.io/en/latest/dataset.html
-.. _Metadata: https://msl-io.readthedocs.io/en/latest/metadata.html
-.. _Reader: https://msl-io.readthedocs.io/en/latest/readers.html
-.. _Writer: https://msl-io.readthedocs.io/en/latest/writers.html
-.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
+.. _Root: https://msl-io.readthedocs.io/en/stable/_api/msl.io.base.html#msl.io.base.Root
+.. _Group: https://msl-io.readthedocs.io/en/stable/group.html
+.. _Dataset: https://msl-io.readthedocs.io/en/stable/dataset.html
+.. _Metadata: https://msl-io.readthedocs.io/en/stable/metadata.html
+.. _Reader: https://msl-io.readthedocs.io/en/stable/readers.html
+.. _Writer: https://msl-io.readthedocs.io/en/stable/writers.html
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
 .. _numpy: https://www.numpy.org/
-.. _xlrd: https://xlrd.readthedocs.io/en/latest/
+.. _xlrd: https://xlrd.readthedocs.io/en/stable/

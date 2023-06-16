@@ -45,10 +45,10 @@ To include the Google-API packages when installing **MSL-IO** run
 
    msl install io[google]
 
-.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
 .. _numpy: https://www.numpy.org/
 .. _h5py: https://www.h5py.org/
-.. _xlrd: https://xlrd.readthedocs.io/en/latest/
+.. _xlrd: https://xlrd.readthedocs.io/en/stable/
 .. _google-api-python-client: https://pypi.org/project/google-api-python-client/
 .. _google-auth-httplib2: https://pypi.org/project/google-auth-httplib2/
 .. _google-auth-oauthlib: https://pypi.org/project/google-auth-oauthlib/
