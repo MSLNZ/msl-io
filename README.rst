@@ -1,7 +1,7 @@
 MSL-IO
 ======
 
-|docs| |github tests|
+|docs| |pypi| |github tests|
 
 **MSL-IO** follows the data model used by HDF5_ to read and write data files -- where there is a
 Root_, Group_\s and Dataset_\s and these objects each have Metadata_ associated with them.
@@ -43,6 +43,9 @@ The documentation for **MSL-IO** can be found `here <https://msl-io.readthedocs.
    :target: https://msl-io.readthedocs.io/en/stable/
    :alt: Documentation Status
    :scale: 100%
+
+.. |pypi| image:: https://badge.fury.io/py/msl-io.svg
+   :target: https://badge.fury.io/py/msl-io
 
 .. |github tests| image:: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml/badge.svg
    :target: https://github.com/MSLNZ/msl-io/actions/workflows/run-tests.yml
