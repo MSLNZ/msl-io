@@ -127,7 +127,7 @@ def test_checksum():
     for algorithm in hashlib.algorithms_available:
         if sys.platform.startswith('linux') and \
                 sys.version_info[:2] == (3, 8) and \
-                algorithm == 'ripemd160':
+                algorithm in ('ripemd160', 'whirlpool'):
             continue
         value = utils.checksum(path, algorithm=algorithm)
         assert isinstance(value, str)
