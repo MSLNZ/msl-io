@@ -21,7 +21,7 @@ To install **MSL-IO** run:
 
 .. code-block:: console
 
-   pip install https://github.com/MSLNZ/msl-io/archive/main.zip
+   pip install msl-io
 
 Alternatively, using the `MSL Package Manager`_ run:
 
