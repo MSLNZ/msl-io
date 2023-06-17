@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   PY_COLORS: 1
-  COLUMNS: 120
+  COLUMNS: 110
 
 jobs:
   test:
@@ -22,11 +22,14 @@ jobs:
           - python-version: "3.x"
             os: windows
             architecture: x86
+            xml: builtin
           - python-version: "3.x"
             os: windows
+            architecture: x64
             xml: defusedxml
           - python-version: "3.x"
             os: windows
+            architecture: x64
             xml: lxml
 
     steps:
