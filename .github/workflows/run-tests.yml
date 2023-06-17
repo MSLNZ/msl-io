@@ -9,24 +9,24 @@ env:
 jobs:
   test:
     name: Test
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
 
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
-        os: [windows-latest, ubuntu-20.04, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        os: [windows, ubuntu, macos]
         architecture: [x64]
         xml: [builtin]
         include:
           - python-version: "3.x"
-            os: windows-latest
+            os: windows
             architecture: x86
           - python-version: "3.x"
-            os: windows-latest
+            os: windows
             xml: defusedxml
           - python-version: "3.x"
-            os: windows-latest
+            os: windows
             xml: lxml
 
     steps:

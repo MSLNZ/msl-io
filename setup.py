@@ -150,14 +150,12 @@ google_requires = [
     'google-api-python-client',
     'google-auth-httplib2',
     'google-auth-oauthlib',
-    'enum34; python_version < "3.4"',
 ]
 
 tests_require = [
     'pytest>=4.4',  # >=4.4 to support the "-p conftest" option
     'pytest-cov',
     'numpy>=1.16',  # the max_rows kwarg in np.loadtxt was added in v1.16
-    'pathlib; python_version < "3.4"',
 ]
 if sys.maxsize > 2**32:
     tests_require.append('h5py')
@@ -197,12 +195,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -210,6 +203,7 @@ setup(
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
     ],
+    python_requires='>=3.8',
     setup_requires=sphinx + pytest_runner,
     tests_require=tests_require,
     install_requires=install_requires,
