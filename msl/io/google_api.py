@@ -752,7 +752,7 @@ class GDateTimeOption(Enum):
 
 
 class GCellType(Enum):
-    """The data type of a spreadsheet cell."""
+    """The spreadsheet cell data type."""
 
     BOOLEAN = 'BOOLEAN'
     CURRENCY = 'CURRENCY'
@@ -764,6 +764,7 @@ class GCellType(Enum):
     PERCENT = 'PERCENT'
     SCIENTIFIC = 'SCIENTIFIC'
     STRING = 'STRING'
+    TEXT = 'TEXT'
     TIME = 'TIME'
     UNKNOWN = 'UNKNOWN'
 
@@ -1205,7 +1206,10 @@ class GSheets(GoogleAPI):
                         elif 'numberValue' in effective_value:
                             value = effective_value['numberValue']
                             t = col.get('effectiveFormat', {}).get('numberFormat', {}).get('type', 'NUMBER')
-                            typ = GCellType(t)
+                            try:
+                                typ = GCellType(t)
+                            except ValueError:
+                                typ = GCellType.UNKNOWN
                         elif 'stringValue' in effective_value:
                             value = effective_value['stringValue']
                             typ = GCellType.STRING
