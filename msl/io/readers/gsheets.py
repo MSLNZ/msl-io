@@ -51,6 +51,19 @@ class GSheetsReader(Spreadsheet):
         self._gsheets = GSheets(**kwargs)
         self._cached_sheet_name = None
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        """Close the connection to the GSheet API service.
+
+        .. versionadded:: 0.2
+        """
+        self._gsheets.close()
+
     def read(self, cell=None, sheet=None, as_datetime=True):
         """Read values from the Google Sheets spreadsheet.
 
