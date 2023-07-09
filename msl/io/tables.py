@@ -140,20 +140,17 @@ def read_table_excel(file, cells=None, sheet=None, as_datetime=True, dtype=None,
     elif hasattr(file, 'name'):  # a TextIOWrapper object
         file = file.name
 
-    excel = ExcelReader(file, **kwargs)
-
-    if cells is not None and not _spreadsheet_range_regex.match(cells):
-        match = _spreadsheet_top_left_regex.match(cells)
-        if not match:
-            raise ValueError('Invalid cell {!r}'.format(cells))
-        name = sheet or excel.workbook.sheet_names()[0]
-        s = excel.workbook.sheet_by_name(name)
-        letters = excel.to_letters(s.ncols - 1)
-        row = match.group(2)
-        cells += ':{}{}'.format(letters, row)
-
-    table = excel.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
-    excel.close()
+    with ExcelReader(file, **kwargs) as excel:
+        if cells is not None and not _spreadsheet_range_regex.match(cells):
+            match = _spreadsheet_top_left_regex.match(cells)
+            if not match:
+                raise ValueError('Invalid cell {!r}'.format(cells))
+            name = sheet or excel.workbook.sheet_names()[0]
+            s = excel.workbook.sheet_by_name(name)
+            letters = excel.to_letters(s.ncols - 1)
+            row = match.group(2)
+            cells += ':{}{}'.format(letters, row)
+        table = excel.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
