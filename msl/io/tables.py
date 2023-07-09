@@ -204,16 +204,15 @@ def read_table_gsheets(file, cells=None, sheet=None, as_datetime=True, dtype=Non
     elif hasattr(file, 'name'):  # a TextIOWrapper object
         file = file.name
 
-    sheets = GSheetsReader(file, **kwargs)
-
-    if cells is not None and not _spreadsheet_range_regex.match(cells):
-        if not _spreadsheet_top_left_regex.match(cells):
-            raise ValueError('Invalid cell {!r}'.format(cells))
-        r, c = sheets.to_indices(cells)
-        data = sheets.read(sheet=sheet, as_datetime=as_datetime)
-        table = [row[c:] for row in data[r:]]
-    else:
-        table = sheets.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
+    with GSheetsReader(file, **kwargs) as sheets:
+        if cells is not None and not _spreadsheet_range_regex.match(cells):
+            if not _spreadsheet_top_left_regex.match(cells):
+                raise ValueError('Invalid cell {!r}'.format(cells))
+            r, c = sheets.to_indices(cells)
+            data = sheets.read(sheet=sheet, as_datetime=as_datetime)
+            table = [row[c:] for row in data[r:]]
+        else:
+            table = sheets.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
