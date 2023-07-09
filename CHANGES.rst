@@ -7,7 +7,8 @@ Version 0.2.0 (in development)
 
 * Added
 
-  - :class:`~msl.io.readers.gsheets.GSheetsReader` can now be used as a context manager
+  - :class:`~msl.io.readers.gsheets.GSheetsReader` and :class:`~msl.io.readers.excel.ExcelReader`
+    can now be used as a context manager
   - :meth:`GSheetsReader.close <msl.io.readers.gsheets.GSheetsReader.close>` method
   - a *TEXT* member to the :class:`~msl.io.google_api.GCellType` enum
 
