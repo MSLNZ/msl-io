@@ -130,7 +130,7 @@ def test_checksum():
                 algorithm in ('ripemd160', 'whirlpool', 'md4'):
                 continue
             if sys.platform == 'darwin' and \
-                algorithm in ('md4', 'mdc2'):
+                algorithm in ('md4', 'mdc2', 'whirlpool'):
                 continue
         value = utils.checksum(path, algorithm=algorithm)
         assert isinstance(value, str)

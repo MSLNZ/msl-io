@@ -20,15 +20,15 @@ jobs:
         xml: [builtin]
         include:
           - python-version: "3.8"
-            os: windows
+            os: windows-latest
             architecture: x86
             xml: builtin
           - python-version: "3.x"
-            os: windows
+            os: windows-latest
             architecture: x64
             xml: defusedxml
           - python-version: "3.x"
-            os: windows
+            os: windows-latest
             architecture: x64
             xml: lxml
 
