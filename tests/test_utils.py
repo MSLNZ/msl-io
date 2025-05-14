@@ -125,10 +125,13 @@ def test_checksum():
 
     # ensure that all available algorithms can be used
     for algorithm in hashlib.algorithms_available:
-        if sys.platform.startswith(('linux', 'darwin')) and \
-                sys.version_info[:2] == (3, 8) and \
+        if sys.version_info[:2] == (3, 8):
+            if sys.platform.startswith('linux') and \
                 algorithm in ('ripemd160', 'whirlpool', 'md4'):
-            continue
+                continue
+            if sys.platform == 'darwin' and \
+                algorithm in ('md4', 'mdc2'):
+                continue
         value = utils.checksum(path, algorithm=algorithm)
         assert isinstance(value, str)
 
