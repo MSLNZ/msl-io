@@ -9,13 +9,13 @@ env:
 jobs:
   test:
     name: Test
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: [windows, ubuntu, macos]
+        os: [windows-latest, ubuntu-latest, macos-13]
         architecture: [x64]
         xml: [builtin]
         include:
