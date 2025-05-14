@@ -96,7 +96,7 @@ maximum *x* value in *my_dataset* you can use
 
 .. code-block:: pycon
 
-   >>> my_dataset.x.max()
+   >>> print(my_dataset.x.max())
    8.73
 
 .. _msl-io-dataset-slicing:
@@ -119,7 +119,7 @@ or index it
 
 .. code-block:: pycon
 
-   >>> my_dataset[2]
+   >>> print(my_dataset[2])
    (3.44, 2.91)
 
 Since a :class:`numpy.ndarray` is returned, you are responsible for keeping

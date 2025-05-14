@@ -184,9 +184,10 @@ def test_copy():
         src_stat = os.stat(__file__)
         dst_stat = os.stat(dest)
         for attr in dir(src_stat):
+            print(attr)
             if not attr.startswith('st_'):
                 continue
-            if attr in ['st_ino', 'st_ctime', 'st_ctime_ns', 'st_birthtime']:  # these will never be equal
+            if attr in ['st_ino', 'st_ctime', 'st_ctime_ns', 'st_birthtime', "st_birthtime_ns"]:  # these will never be equal
                 continue
             src_value = getattr(src_stat, attr)
             dst_value = getattr(dst_stat, attr)

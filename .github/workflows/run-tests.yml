@@ -14,12 +14,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         os: [windows, ubuntu, macos]
         architecture: [x64]
         xml: [builtin]
         include:
-          - python-version: "3.x"
+          - python-version: "3.8"
             os: windows
             architecture: x86
             xml: builtin
@@ -34,17 +34,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
-      - name: Install dependencies and package
+      - name: Upgrade pip, setuptools and wheel
         run: |
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools wheel
-          python -m pip install --upgrade --editable .[tests]
+      - name: Install numpy 1.23.5 (Windows, x86)
+        if: ${{ matrix.architecture == 'x86' }}
+        run: python -m pip install --upgrade numpy==1.23.5
+      - name: Install package
+        run: python -m pip install --upgrade --editable .[tests] --prefer-binary
       - name: Install defusedxml
         if: ${{ matrix.xml == 'defusedxml' }}
         run: python -m pip install --upgrade defusedxml

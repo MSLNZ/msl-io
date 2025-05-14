@@ -329,7 +329,7 @@ def test_pow():
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 5), reason='the @ operator requires Python 3.5+')
 def test_matmul():
-    import dataset_matmul
+    from tests import dataset_matmul
     dataset_matmul.run()
 
 

@@ -1,4 +1,4 @@
-from helper import read_sample
+from tests.helper import read_sample
 from msl.io.readers import DRSReader
 
 

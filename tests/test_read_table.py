@@ -10,13 +10,13 @@ from io import StringIO
 import numpy as np
 import pytest
 
-from helper import datasets_equal
+from tests.helper import datasets_equal
 from msl.io import read_table
 from msl.io.constants import IS_PYTHON2
 from msl.io.tables import read_table_excel
 from msl.io.tables import read_table_gsheets
-from test_google_api import skipif_no_gdrive_readonly
-from test_google_api import skipif_no_sheets_readonly
+from tests.test_google_api import skipif_no_gdrive_readonly
+from tests.test_google_api import skipif_no_sheets_readonly
 
 skipif_32bit_py27 = pytest.mark.skipif(
     sys.maxsize < 2**32 and IS_PYTHON2,
@@ -179,8 +179,8 @@ dt = {'names': header, 'formats': [object, float, float, float, float]}
 
 @pytest.mark.parametrize(
     ('extn', 'kwargs'),
-    [('.csv', dict(dtype=dt, converters={0: to_datetime})),
-     ('.txt', dict(dtype=dt, converters={0: to_datetime}, delimiter='\t')),
+    [('.csv', dict(dtype=dt, converters={0: to_datetime}, encoding="bytes")),
+     ('.txt', dict(dtype=dt, converters={0: to_datetime}, delimiter='\t', encoding="bytes")),
      ('.xls', dict(dtype=dt, sheet='A1')),
      ('.xls', dict(dtype=dt, sheet='BH11', cells='BH11:BL21')),
      ('.xlsx', dict(dtype=dt, sheet='A1')),

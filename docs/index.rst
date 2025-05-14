@@ -27,6 +27,10 @@ Getting Started
 
 .. invisible-code-block: pycon
 
+   >>> from pathlib import Path
+   >>> Path("my_file.h5").unlink(missing_ok=True)
+   >>> Path("my_file.json").unlink(missing_ok=True)
+   >>> Path("my_table.csv").unlink(missing_ok=True)
    >>> SKIP_IF_PYTHON_LESS_THAN_36() or SKIP_IF_NO_H5PY()
 
 .. _msl-io-write:
@@ -134,14 +138,14 @@ You can access the :ref:`msl-io-metadata` of any object through the :obj:`~msl.i
 
 .. code-block:: pycon
 
-    >>> root.metadata
+    >>> print(root.metadata)
     <Metadata '/' {'one': 1, 'two': 2}>
 
 You can access values of the :ref:`msl-io-metadata` as attributes
 
 .. code-block:: pycon
 
-   >>> root.metadata.one
+   >>> print(root.metadata.one)
    1
    >>> dataset2.metadata.three
    3
@@ -150,7 +154,7 @@ or as keys
 
 .. code-block:: pycon
 
-   >>> root.metadata['two']
+   >>> print(root.metadata['two'])
    2
    >>> dataset2.metadata['three']
    3
@@ -291,12 +295,12 @@ You can read this file and interact with the data using the following
     >>> csv
     <Dataset 'my_table.csv' shape=(3, 3) dtype='<f8' (1 metadata)>
     >>> csv.metadata
-    <Metadata 'my_table.csv' {'header': array(['x', 'y', 'z'], dtype='<U1')}>
+    <Metadata 'my_table.csv' {'header': ['x' 'y' 'z']}>
     >>> csv.data
     array([[1., 2., 3.],
            [4., 5., 6.],
            [7., 8., 9.]])
-    >>> csv.max()
+    >>> print(csv.max())
     9.0
 
 You can read a table from a text-based file or from an Excel spreadsheet.

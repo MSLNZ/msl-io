@@ -9,8 +9,8 @@ try:
 except ImportError:
     h5py = None
 
-from helper import read_sample
-from helper import roots_equal
+from tests.helper import read_sample
+from tests.helper import roots_equal
 from msl.io import HDF5Writer
 from msl.io import JSONWriter
 from msl.io import read

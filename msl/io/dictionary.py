@@ -27,7 +27,7 @@ class Dictionary(MutableMapping):
         self._mapping = OrderedDict(**kwargs)
 
     def __repr__(self):
-        return '{' + ', '.join('{!r}: {!r}'.format(key, value) for key, value in self._mapping.items()) + '}'
+        return '{' + ', '.join(f"{key!r}: {value!r}" if isinstance(value, str) else f"{key!r}: {value}" for key, value in self._mapping.items()) + '}'
 
     def __iter__(self):
         return iter(self._mapping)

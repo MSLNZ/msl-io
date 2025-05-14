@@ -8,8 +8,8 @@ try:
 except ImportError:
     h5py = None
 
-from helper import metadata_equal
-from helper import roots_equal
+from tests.helper import metadata_equal
+from tests.helper import roots_equal
 from msl.io import HDF5Writer
 from msl.io import JSONWriter
 from msl.io import copy
