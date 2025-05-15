@@ -7,7 +7,6 @@ import pytest
 
 from msl.io import Reader
 from msl.io.base import Root
-from msl.io.constants import IS_PYTHON2
 
 
 def test_get_root():
@@ -31,8 +30,6 @@ def test_get_lines():
     string_io = StringIO()
     with open(path, mode='rt') as fp:
         data = fp.read()
-        if IS_PYTHON2:
-            data = unicode(data)
         string_io.write(data)
     string_io.seek(0)
 

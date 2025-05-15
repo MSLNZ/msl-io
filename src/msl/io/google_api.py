@@ -4,19 +4,12 @@ Wrappers around Google APIs.
 import json
 import os
 from base64 import b64encode
-from collections import OrderedDict
 from collections import namedtuple
 from datetime import datetime
 from datetime import timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-try:
-    # this is only an issue with Python 2.7 and if the
-    # Google-API packages were not installed with msl-io
-    from enum import Enum
-except ImportError:
-    Enum = object
+from enum import Enum
 
 # having the Google-API packages are optional
 try:
@@ -35,7 +28,6 @@ except ImportError:
     HAS_GOOGLE_API = False
 
 from .constants import HOME_DIR
-from .constants import IS_PYTHON2
 
 
 def _authenticate(token, client_secrets_file, scopes):
@@ -83,10 +75,7 @@ def _authenticate(token, client_secrets_file, scopes):
                 if os.path.isfile(token) and not os.getenv('MSL_IO_RUNNING_TESTS'):
                     message = '{}: {}\nDo you want to delete the token file and re-authenticate ' \
                               '(y/N)? '.format(err.__class__.__name__, err.args[0])
-                    if IS_PYTHON2:
-                        yes_no = raw_input(message)
-                    else:
-                        yes_no = input(message)
+                    yes_no = input(message)
                     if yes_no.lower().startswith('y'):
                         os.remove(token)
                         return _authenticate(token, client_secrets_file, scopes)
@@ -111,7 +100,7 @@ def _authenticate(token, client_secrets_file, scopes):
     return credentials
 
 
-class GoogleAPI(object):
+class GoogleAPI:
 
     def __init__(self, service, version, credentials, scopes, read_only, account):
         """Base class for all Google APIs."""
@@ -773,15 +762,15 @@ GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
 """The information about a Google Sheets cell.
 
 .. attribute:: value
-   
+
    The value of the cell.
-   
+
 .. attribute:: type
-   
+
    :class:`GCellType`: The data type of `value`.
 
 .. attribute:: formatted
-   
+
    :class:`str`: The formatted value (i.e., how the `value` is displayed in the cell).
 """
 
@@ -1035,7 +1024,7 @@ class GSheets(GoogleAPI):
                 } for name in names]
             }
         ).execute()
-        return OrderedDict((r['addSheet']['properties']['sheetId'],
+        return dict((r['addSheet']['properties']['sheetId'],
                             r['addSheet']['properties']['title'])
                            for r in response['replies'])
 

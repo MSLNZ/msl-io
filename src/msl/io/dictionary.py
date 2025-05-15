@@ -1,14 +1,7 @@
 """
-An :class:`~collections.OrderedDict` that can be made read only.
+An dict that can be made read only.
 """
-from collections import OrderedDict
-try:
-    # this try..except block fixes:
-    #   DeprecationWarning: Using or importing the ABCs from 'collections' instead
-    #   of from 'collections.abc' is deprecated, and in 3.8 it will stop working
-    from collections.abc import MutableMapping, KeysView, ItemsView, ValuesView
-except ImportError:
-    from collections import MutableMapping, KeysView, ItemsView, ValuesView
+from collections.abc import MutableMapping, KeysView, ItemsView, ValuesView
 
 
 class Dictionary(MutableMapping):
@@ -24,7 +17,7 @@ class Dictionary(MutableMapping):
             Key-value pairs that are used to create the underlying :class:`dict` object.
         """
         self._read_only = bool(read_only)
-        self._mapping = OrderedDict(**kwargs)
+        self._mapping = dict(**kwargs)
 
     def __repr__(self):
         return '{' + ', '.join(f"{key!r}: {value!r}" if isinstance(value, str) else f"{key!r}: {value}" for key, value in self._mapping.items()) + '}'

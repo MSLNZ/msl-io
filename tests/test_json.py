@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import tempfile
 
@@ -239,7 +238,7 @@ def test_raises():
             writer.write(file=file, root=root, mode=m)
 
     # r+ is a valid mode, but the file must already exist
-    with pytest.raises((IOError, OSError), match=r'No such file or directory'):
+    with pytest.raises(OSError, match=r'No such file or directory'):
         writer.write(file='does_not.exist', root=root, mode='r+')
 
     # by specifying the mode one can overwrite a file
@@ -367,15 +366,15 @@ def test_pretty_printing():
 def test_unicode():
     def do_asserts(r):
         assert len(r.metadata) == 2
-        assert u'μ' in r.metadata
-        assert u'\u03bc' in r.metadata
+        assert 'μ' in r.metadata
+        assert '\u03bc' in r.metadata
         assert 'unit' in r.metadata
-        assert r.metadata[u'μ'] == 'micro'
-        assert r.metadata[u'\u03bc'] == 'micro'
-        assert r.metadata.unit == u'°C'
-        assert r.metadata.unit == u'\xb0C'
+        assert r.metadata['μ'] == 'micro'
+        assert r.metadata['\u03bc'] == 'micro'
+        assert r.metadata.unit == '°C'
+        assert r.metadata.unit == '\xb0C'
 
-    root = read_sample(u'uñicödé.json')
+    root = read_sample('uñicödé.json')
     do_asserts(root)
 
     for b in [False, True]:

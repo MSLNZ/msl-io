@@ -4,7 +4,6 @@ Writer for a JSON_ file format. The corresponding :class:`~msl.io.base.Reader` i
 
 .. _JSON: https://www.json.org/
 """
-import codecs
 import json
 import os
 from io import BufferedIOBase
@@ -13,15 +12,11 @@ import numpy as np
 
 from ..base import Root
 from ..base import Writer
-from ..constants import IS_PYTHON2
 from ..metadata import Metadata
 from ..utils import is_file_readable
 
 # Custom JSON encoder that writes a 1-dimensional list on a single line.
-if IS_PYTHON2:
-    from ._py2_json_encoder import _make_iterencode
-else:
-    from ._py3_json_encoder import _make_iterencode
+from ._py3_json_encoder import _make_iterencode
 
 _original_make_iterencode = json.encoder._make_iterencode
 
@@ -133,17 +128,10 @@ class JSONWriter(Writer):
             'errors': kwargs.pop('errors', 'strict')
         }
 
-        if IS_PYTHON2:
-            opener = codecs.open  # this allows the encoding and errors kwargs to be used
-        else:
-            # don't use codecs.open because the file looks better when opened in Notepad
-            # (on Windows) when the standard open function use used
-            opener = open
-
         is_file_like = hasattr(file, 'write')
 
         if not is_file_like:
-            if not open_kwargs['mode'] or (open_kwargs['mode'] == 'x' and IS_PYTHON2):
+            if not open_kwargs['mode']:
                 open_kwargs['mode'] = 'w'
                 if os.path.isfile(file) or is_file_readable(file):
                     raise OSError(
@@ -174,14 +162,11 @@ class JSONWriter(Writer):
                 encoding = open_kwargs['encoding']
                 file.write(header.encode(encoding))
                 file.write(json.dumps(dict_, **kwargs).encode(encoding))
-            elif IS_PYTHON2:
-                file.write(unicode(header))
-                file.write(unicode(json.dumps(dict_, **kwargs)))
             else:
                 file.write(header)
                 json.dump(dict_, file, **kwargs)
         else:
-            with opener(file, **open_kwargs) as fp:
+            with open(file, **open_kwargs) as fp:
                 fp.write(header)
                 json.dump(dict_, fp, **kwargs)
 

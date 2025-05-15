@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import os
 import pathlib
 import sys
@@ -12,16 +10,10 @@ import pytest
 
 from tests.helper import datasets_equal
 from msl.io import read_table
-from msl.io.constants import IS_PYTHON2
 from msl.io.tables import read_table_excel
 from msl.io.tables import read_table_gsheets
 from tests.test_google_api import skipif_no_gdrive_readonly
 from tests.test_google_api import skipif_no_sheets_readonly
-
-skipif_32bit_py27 = pytest.mark.skipif(
-    sys.maxsize < 2**32 and IS_PYTHON2,
-    reason='Avoid Google API MemoryError on 32-bit Python 2.7'
-)
 
 # the data in the Excel, CVS and TXT files that are tested contain the following
 header = np.asarray(['timestamp', 'val1', 'uncert1', 'val2', 'uncert2'], dtype=str)
@@ -64,7 +56,7 @@ def get_url(extension):
 def test_raises():
 
     # file does not exist
-    with pytest.raises((IOError, OSError)):
+    with pytest.raises(OSError):
         read_table('does not exist')
 
     # the 'unpack' argument is not supported for text-based files
@@ -329,7 +321,6 @@ def test_pathlib():
     assert datasets_equal(dset1, dset2)
 
 
-@skipif_32bit_py27
 @skipif_no_gdrive_readonly
 @skipif_no_sheets_readonly
 def test_gsheet_file_path():
@@ -342,7 +333,6 @@ def test_gsheet_file_path():
     assert np.array_equal(dset, gsheet_data)
 
 
-@skipif_32bit_py27
 @skipif_no_gdrive_readonly
 @skipif_no_sheets_readonly
 def test_gsheet_pathlib():
@@ -360,7 +350,6 @@ def test_gsheet_pathlib():
     assert np.array_equal(dset, gsheet_data)
 
 
-@skipif_32bit_py27
 @skipif_no_gdrive_readonly
 @skipif_no_sheets_readonly
 def test_gsheet_file_pointer():
@@ -387,7 +376,6 @@ def test_gsheet_file_pointer():
     # so read_table_gsheets will not be called, also GSheets cannot load a file stream
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_as_datetime():
     # ID of the table.gsheet file
@@ -404,7 +392,6 @@ def test_gsheets_as_datetime():
     assert np.array_equal(dset, data2)
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_all_data():
     # ID of the table.gsheet file
@@ -440,7 +427,6 @@ def test_gsheets_all_data():
     assert np.array_equal(dset, gsheet_data)
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_one_row():
     # ID of the table.gsheet file
@@ -450,7 +436,6 @@ def test_gsheets_one_row():
     assert np.array_equal(dset, gsheet_data[0])
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_one_column():
     # ID of the table.gsheet file
@@ -460,7 +445,6 @@ def test_gsheets_one_column():
     assert np.array_equal(dset, gsheet_data[:, 1])
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_header_only():
     # ID of the table.gsheet file
@@ -470,7 +454,6 @@ def test_gsheets_header_only():
     assert dset.size == 0
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_empty():
     # ID of the table.gsheet file
@@ -480,7 +463,6 @@ def test_gsheets_empty():
     assert dset.size == 0
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheets_cell_range():
     # ID of the table.gsheet file
@@ -515,7 +497,6 @@ def test_gsheets_cell_range():
     assert np.array_equal(dset, gsheet_data[0])
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheet_range_out_of_bounds():
     for c in ['A100', 'J1:M10']:
@@ -530,7 +511,6 @@ def test_gsheet_range_out_of_bounds():
     assert np.array_equal(dset.data, gsheet_data)
 
 
-@skipif_32bit_py27
 @skipif_no_sheets_readonly
 def test_gsheet_raises():
 

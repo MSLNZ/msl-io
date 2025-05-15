@@ -15,12 +15,6 @@ import pytest
 
 from msl.io import utils
 
-try:
-    PermissionError
-except NameError:
-    PermissionError = OSError  # for Python 2.7
-
-
 def test_search():
 
     def s(**kwargs):
@@ -139,9 +133,9 @@ def test_checksum():
         assert isinstance(value, str)
 
     # file does not exist
-    with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
+    with pytest.raises(OSError, match='does_not_exist.txt'):
         utils.checksum('/the/file/does_not_exist.txt')
-    with pytest.raises((IOError, OSError), match='does_not_exist.txt'):
+    with pytest.raises(OSError, match='does_not_exist.txt'):
         utils.checksum(b'/the/file/does_not_exist.txt')
 
     # invalid type
@@ -162,14 +156,14 @@ def test_get_basename():
         '/a/b/c/d/e/file.dat',
         'file.dat',
         '/a/file.dat',
-        u'/something/file.dat',
+        '/something/file.dat',
         'file://a.b.c.d/folder/file.dat',
     ]
     if sys.platform == 'win32':
         paths.extend([
             'C:\\a\\b\\c\\d\\e\\file.dat',
             r'C:\a\file.dat',
-            u'D:/file.dat',
+            'D:/file.dat',
             r'\\a.b.c.d\folder\file.dat',
             '\\\\a.b.c.d\\folder\\file.dat',
         ])
@@ -177,7 +171,7 @@ def test_get_basename():
         assert utils.get_basename(path) == 'file.dat'
         assert utils.get_basename(path.encode()) == b'file.dat'
 
-    assert utils.get_basename(StringIO(u'hello')) == u'StringIO'
+    assert utils.get_basename(StringIO('hello')) == 'StringIO'
     assert utils.get_basename(BytesIO(b'hello')) == 'BytesIO'
 
     with open(__file__, mode='rt') as fp:
@@ -221,11 +215,11 @@ def test_copy():
 
     # source file does not exist
     for item in [r'/the/file/does_not_exist.txt', r'/the/file/does_not_exist', r'does_not_exist']:
-        with pytest.raises((IOError, OSError), match=item):
+        with pytest.raises(OSError, match=item):
             utils.copy(item, '')
 
     # destination invalid
-    with pytest.raises((IOError, OSError), match=r"''"):
+    with pytest.raises(OSError, match=r"''"):
         utils.copy(__file__, '')
 
     # copy (with metadata) to a directory that already exists
@@ -320,7 +314,7 @@ def test_remove_write_permissions():
 
     # cannot open the file to modify it
     for m in ['wb', 'ab', 'wt', 'at', 'w+', 'w+b']:
-        with pytest.raises((IOError, OSError)):
+        with pytest.raises(OSError):
             open(path, mode=m)
 
     # cannot delete the file (only valid on Windows)
@@ -359,10 +353,10 @@ def test_is_file_readable():
     with pytest.raises(TypeError):
         utils.is_file_readable(None, strict=True)
 
-    with pytest.raises((IOError, OSError)):
+    with pytest.raises(OSError):
         utils.is_file_readable('', strict=True)
 
-    with pytest.raises((IOError, OSError)):
+    with pytest.raises(OSError):
         utils.is_file_readable(__file__+'py', strict=True)
 
 
@@ -478,7 +472,6 @@ def test_run_as_admin():
     # run a python script
     file = os.path.join(tempfile.gettempdir(), 'msl_io_admin_test.py')
     with open(file, mode='wt') as fp:
-        fp.write('from __future__ import print_function\r\n')
         fp.write('import sys\r\n')
         # additional packages must be available since msl-io depends on them
         fp.write('import numpy\r\n')
@@ -552,7 +545,7 @@ def test_prepare_email():
         with open(temp, mode='wt') as fp:
             fp.write('\n'.join(lines))
 
-    with pytest.raises((OSError, IOError)):
+    with pytest.raises(OSError):
         utils._prepare_email('does-not-exist.ini', '', '')
 
     create(['[smtp]', '[gmail]'])
@@ -683,7 +676,7 @@ def test_prepare_email():
                        'account': 'work', 'credentials': None,
                        'scopes': ['gmail', 'gmail.send', 'g', 'gmail.metadata']}
 
-    cfg = utils._prepare_email(StringIO(u'[gmail]'), '', None)
+    cfg = utils._prepare_email(StringIO('[gmail]'), '', None)
     assert cfg == {'type': 'gmail', 'to': [''], 'from': 'me',
                    'account': None, 'credentials': None, 'scopes': None}
 

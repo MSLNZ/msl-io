@@ -1,14 +1,9 @@
 """
 JSON encoder that writes a 1-dimensional list on a single line.
 
-Must have a Python 2 and Python 3 version of this file to avoid syntax errors.
-
-The Python 3 version uses "yield from".
-
-This is the Python 3 version copied from the builtin json.encoder._make_iterencode function
+This version was copied from the builtin json.encoder._make_iterencode function
 and modified slightly for a 1-dimensional list.
 """
-
 
 def _make_iterencode(markers, _default, _encoder, _indent, _floatstr,
         _key_separator, _item_separator, _sort_keys, _skipkeys, _one_shot,

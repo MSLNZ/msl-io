@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2005-2013 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
-
-from __future__ import print_function
-
 from array import array
 from struct import calcsize, unpack
 
@@ -121,8 +117,8 @@ class Sheet(BaseObject):
     #:
     #:   for crange in thesheet.col_label_ranges:
     #:       rlo, rhi, clo, chi = crange
-    #:       for rx in xrange(rlo, rhi):
-    #:           for cx in xrange(clo, chi):
+    #:       for rx in range(rlo, rhi):
+    #:           for cx in range(clo, chi):
     #:               print "Column label at (rowx=%d, colx=%d) is %r" \
     #:                   (rx, cx, thesheet.cell_value(rx, cx))
     col_label_ranges = []
@@ -151,8 +147,8 @@ class Sheet(BaseObject):
     #:
     #:   for crange in thesheet.merged_cells:
     #:       rlo, rhi, clo, chi = crange
-    #:       for rowx in xrange(rlo, rhi):
-    #:           for colx in xrange(clo, chi):
+    #:       for rowx in range(rlo, rhi):
+    #:           for colx in range(clo, chi):
     #:               # cell (rlo, clo) (the top left one) will carry the data
     #:               # and formatting info; the remainder will be recorded as
     #:               # blank cells, but a renderer will apply the formatting info
@@ -474,7 +470,7 @@ class Sheet(BaseObject):
         """
         return [
             self.cell(rowx, colx)
-            for colx in xrange(len(self._cell_values[rowx]))
+            for colx in range(len(self._cell_values[rowx]))
         ]
 
     def __getitem__(self, item):
@@ -529,7 +525,7 @@ class Sheet(BaseObject):
             end_colx += nc
         return [
             self.cell(rowx, colx)
-            for colx in xrange(start_colx, end_colx)
+            for colx in range(start_colx, end_colx)
         ]
 
     def col_slice(self, colx, start_rowx=0, end_rowx=None):
@@ -547,7 +543,7 @@ class Sheet(BaseObject):
             end_rowx += nr
         return [
             self.cell(rowx, colx)
-            for rowx in xrange(start_rowx, end_rowx)
+            for rowx in range(start_rowx, end_rowx)
         ]
 
     def col_values(self, colx, start_rowx=0, end_rowx=None):
@@ -565,7 +561,7 @@ class Sheet(BaseObject):
             end_rowx += nr
         return [
             self._cell_values[rowx][colx]
-            for rowx in xrange(start_rowx, end_rowx)
+            for rowx in range(start_rowx, end_rowx)
         ]
 
     def col_types(self, colx, start_rowx=0, end_rowx=None):
@@ -583,7 +579,7 @@ class Sheet(BaseObject):
             end_rowx += nr
         return [
             self._cell_types[rowx][colx]
-            for rowx in xrange(start_rowx, end_rowx)
+            for rowx in range(start_rowx, end_rowx)
         ]
 
     col = col_slice
@@ -637,12 +633,12 @@ class Sheet(BaseObject):
             s_cell_values = self._cell_values
             s_cell_xf_indexes = self._cell_xf_indexes
             s_fmt_info = self.formatting_info
-            # for rowx in xrange(self.nrows):
+            # for rowx in range(self.nrows):
             if self._first_full_rowx == -2:
                 ubound = self.nrows
             else:
                 ubound = self._first_full_rowx
-            for rowx in xrange(ubound):
+            for rowx in range(ubound):
                 trow = s_cell_types[rowx]
                 rlen = len(trow)
                 nextra = ncols - rlen
@@ -669,7 +665,7 @@ class Sheet(BaseObject):
                 scxa = self._cell_xf_indexes.append
                 bt = self.bt
                 bf = self.bf
-                for _unused in xrange(self.nrows, nr):
+                for _unused in range(self.nrows, nr):
                     scta(bt * 0)
                     scva([])
                     if fmt_info:
@@ -763,7 +759,7 @@ class Sheet(BaseObject):
                 nc = self.ncols
                 bt = self.bt
                 bf = self.bf
-                for _unused in xrange(self.nrows, nr):
+                for _unused in range(self.nrows, nr):
                     # self._put_cell_rows_appended += 1
                     scta(bt * nc)
                     scva([UNICODE_LITERAL('')] * nc)
@@ -846,7 +842,7 @@ class Sheet(BaseObject):
                     nrt = BYTES_ORD(data[pos])
                     pos += 1
                     runlist = []
-                    for _unused in xrange(nrt):
+                    for _unused in range(nrt):
                         runlist.append(unpack('<BB', data[pos:pos+2]))
                         pos += 2
                     assert pos == len(data)
@@ -855,7 +851,7 @@ class Sheet(BaseObject):
                     nrt = unpack('<H', data[pos:pos+2])[0]
                     pos += 2
                     runlist = []
-                    for _unused in xrange(nrt):
+                    for _unused in range(nrt):
                         runlist.append(unpack('<HH', data[pos:pos+4]))
                         pos += 4
                     assert pos == len(data)
@@ -869,7 +865,7 @@ class Sheet(BaseObject):
                 mulrk_row, mulrk_first = local_unpack('<HH', data[0:4])
                 mulrk_last, = local_unpack('<H', data[-2:])
                 pos = 4
-                for colx in xrange(mulrk_first, mulrk_last+1):
+                for colx in range(mulrk_first, mulrk_last+1):
                     xf_index, = local_unpack('<H', data[pos:pos+2])
                     d = unpack_RK(data[pos+2:pos+6])
                     pos += 6
@@ -1028,7 +1024,7 @@ class Sheet(BaseObject):
                     ( 8, 0x0700, 'outline_level'),
                     (12, 0x1000, 'collapsed'),
                 ))
-                for colx in xrange(first_colx, last_colx+1):
+                for colx in range(first_colx, last_colx+1):
                     if colx > 255: break # Excel does 0 to 256 inclusive
                     self.colinfo_map[colx] = c
                     if 0:
@@ -1057,7 +1053,7 @@ class Sheet(BaseObject):
                 iguff = unpack("<8i", data[2:34])
                 gcw = []
                 for bits in iguff:
-                    for j in xrange(32):
+                    for j in range(32):
                         gcw.append(bits & 1)
                         bits >>= 1
                 self.gcw = tuple(gcw)
@@ -1078,7 +1074,7 @@ class Sheet(BaseObject):
                 # print >> self.logfile, "MULBLANK", rowx, mul_first, mul_last, data_len, nitems, mul_last + 4 - mul_first
                 assert nitems == mul_last + 4 - mul_first
                 pos = 2
-                for colx in xrange(mul_first, mul_last + 1):
+                for colx in range(mul_first, mul_last + 1):
                     self_put_cell(rowx, colx, XL_CELL_BLANK, '', result[pos])
                     pos += 1
             elif rc == XL_DIMENSION or rc == XL_DIMENSION2:
@@ -1446,7 +1442,7 @@ class Sheet(BaseObject):
                             "should have first <= last -- record ignored!"
                             % (first_colx, last_colx), file=self.logfile)
                         continue
-                    for colx in xrange(first_colx, last_colx+1):
+                    for colx in range(first_colx, last_colx+1):
                         if colx in self.colinfo_map:
                             c = self.colinfo_map[colx]
                         else:
@@ -1474,7 +1470,7 @@ class Sheet(BaseObject):
                             "should have 0 <= first < last <= 256"
                             % (first_colx, last_colx), file=self.logfile)
                         last_colx = min(last_colx, 256)
-                    for colx in xrange(first_colx, last_colx):
+                    for colx in range(first_colx, last_colx):
                         offset = 4 + 3 * (colx - first_colx)
                         cell_attr = data[offset:offset+3]
                         xf_index = self.fixed_BIFF2_xfindex(cell_attr, rowx=-1, colx=colx)
@@ -1611,7 +1607,7 @@ class Sheet(BaseObject):
         if blah:
             fprintf(self.logfile, "New cell_attr %r at (%r, %r)\n", cell_attr, rowx, colx)
         if not self.book.xf_list:
-            for xfx in xrange(16):
+            for xfx in range(16):
                 self.insert_new_BIFF20_xf(cell_attr=b"\x40\x00\x00", style=xfx < 15)
         xfx = self.insert_new_BIFF20_xf(cell_attr=cell_attr)
         return xfx
@@ -1851,8 +1847,8 @@ class Sheet(BaseObject):
             raise XLRDError("Bug or corrupt file, send copy of input file for debugging")
 
         self.hyperlink_list.append(h)
-        for rowx in xrange(h.frowx, h.lrowx+1):
-            for colx in xrange(h.fcolx, h.lcolx+1):
+        for rowx in range(h.frowx, h.lrowx+1):
+            for colx in range(h.fcolx, h.lcolx+1):
                 self.hyperlink_map[rowx, colx] = h
 
     def handle_quicktip(self, data):
@@ -2049,7 +2045,7 @@ class Sheet(BaseObject):
             # print totruns, cbRuns, rc3, data3_len, repr(data3)
             assert rc3 == XL_CONTINUE
             assert data3_len % 8 == 0
-            for pos in xrange(0, data3_len, 8):
+            for pos in range(0, data3_len, 8):
                 run = unpack('<HH4x', data3[pos:pos+8])
                 o.rich_text_runlist.append(run)
                 totruns += 8

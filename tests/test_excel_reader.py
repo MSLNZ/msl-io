@@ -13,7 +13,7 @@ def test_raises():
     file = os.path.join(os.path.dirname(__file__), 'samples', 'table.xls')
 
     # file does not exist
-    with pytest.raises((IOError, OSError)):
+    with pytest.raises(OSError):
         ExcelReader('does not exist')
 
     # more than one sheet in the Excel workbook

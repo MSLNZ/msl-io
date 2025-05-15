@@ -7,7 +7,7 @@ import string
 _cell_regex = re.compile(r'^([A-Z]+)(\d*)$')
 
 
-class Spreadsheet(object):
+class Spreadsheet:
 
     def __init__(self, file):
         """Generic class for spreadsheets.

@@ -18,12 +18,8 @@ except ImportError:
 
 from ..base import Root
 from ..base import Writer
-from ..constants import IS_PYTHON2
 from ..metadata import Metadata
 from ..utils import is_file_readable
-
-if not IS_PYTHON2:
-    unicode = str
 
 
 class HDF5Writer(Writer):
@@ -86,7 +82,7 @@ class HDF5Writer(Writer):
                 convert, dtype = False, []
                 for n in obj.dtype.names:
                     typ = obj.dtype.fields[n][0]
-                    if isinstance(obj[n].item(0), (unicode, str)):
+                    if isinstance(obj[n].item(0), str):
                         dtype.append((n, vstr))
                         convert = True
                     else:
@@ -99,7 +95,7 @@ class HDF5Writer(Writer):
             elif obj.dtype.char == 'O':
                 has_complex = False
                 for item in obj.flat:
-                    if isinstance(item, (unicode, str)):
+                    if isinstance(item, str):
                         return obj.astype(dtype='S')
                     elif isinstance(item, np.complexfloating):
                         has_complex = True

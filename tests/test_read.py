@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pathlib
 import socket
 import threading
@@ -21,12 +20,12 @@ from msl.io.readers import JSONReader
 
 def test_raises():
     # file does not exist
-    with pytest.raises((IOError, OSError), match=r'No such file'):
+    with pytest.raises(OSError, match=r'No such file'):
         read('does_not.exist')
 
     # unicode filename
-    with pytest.raises((IOError, OSError), match=r'No such file'):
-        read(u'Filé döes ñot éxist')
+    with pytest.raises(OSError, match=r'No such file'):
+        read('Filé döes ñot éxist')
 
     # no Reader class exists to read this test_read.py file
     with pytest.raises(OSError, match=r'No Reader exists'):
@@ -34,21 +33,21 @@ def test_raises():
 
     # unicode filename
     with pytest.raises(OSError, match=r'No Reader exists'):
-        read_sample(u'uñicödé')
+        read_sample('uñicödé')
 
 
 @pytest.mark.skipif(h5py is None, reason='h5py is not installed')
 def test_unicode_filename():
-    root = read_sample(u'uñicödé.h5')
+    root = read_sample('uñicödé.h5')
     assert root.metadata.is_unicode
-    assert root.file.endswith(u'uñicödé.h5')
-    assert u'café' in root
-    assert u'/café' in root
-    assert u'café/caña' in root
-    assert u'/café/caña' in root
-    assert u'caña' in root[u'café']
-    assert u'/caña' in root[u'/café']
-    assert u'cafécaña' not in root
+    assert root.file.endswith('uñicödé.h5')
+    assert 'café' in root
+    assert '/café' in root
+    assert 'café/caña' in root
+    assert '/café/caña' in root
+    assert 'caña' in root['café']
+    assert '/caña' in root['/café']
+    assert 'cafécaña' not in root
 
 
 def test_socket():

@@ -1,11 +1,9 @@
 """
 Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
 """
-import codecs
 import itertools
 import os
 
-from .constants import IS_PYTHON2
 from .group import Group
 from .utils import get_basename
 
@@ -255,11 +253,6 @@ class Reader(Root):
         if 'encoding' not in kwargs:
             kwargs['encoding'] = 'utf-8'
 
-        if IS_PYTHON2:
-            opener = codecs.open  # this allows the encoding and errors kwargs to be used
-        else:
-            opener = open
-
         # want the "stop" line to be included
         if (len(args) > 1) and (args[1] is not None) and (args[1] < 0):
             if args[1] == -1:
@@ -284,7 +277,7 @@ class Reader(Root):
                 lines = get(file)
                 file.seek(position)
             else:
-                with opener(file, 'r', **kwargs) as f:
+                with open(file, 'r', **kwargs) as f:
                     lines = get(f)
 
             if len(args) == 1:
@@ -306,7 +299,7 @@ class Reader(Root):
                 lines = get(file)
                 file.seek(position)
             else:
-                with opener(file, 'r', **kwargs) as f:
+                with open(file, 'r', **kwargs) as f:
                     lines = get(f)
 
         if remove_empty_lines:

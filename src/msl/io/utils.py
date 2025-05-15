@@ -18,12 +18,6 @@ from smtplib import SMTP
 
 from .google_api import GMail
 
-try:
-    PermissionError
-except NameError:
-    PermissionError = OSError  # for Python 2.7
-    FileExistsError = OSError
-
 logger = logging.getLogger(__package__)
 
 _readers = []
@@ -82,7 +76,7 @@ def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
         return hash_cls.hexdigest(shake_length)
 
 
-def copy(source, destination, overwrite=False, include_metadata=True):
+def copy(source, destination, overwrite=False, include_metadata=True, follow_symlinks=True):
     """Copy a file.
 
     Parameters
@@ -100,6 +94,9 @@ def copy(source, destination, overwrite=False, include_metadata=True):
     include_metadata : :class:`bool`, optional
         Whether to also copy information such as the file permissions,
         the latest access time and latest modification time with the file.
+    follow_symlinks
+        Whether to follow symbolic links.
+        !!! note "Added in version 0.2"
 
     Returns
     -------
@@ -109,21 +106,16 @@ def copy(source, destination, overwrite=False, include_metadata=True):
     if os.path.isdir(destination) or is_dir_accessible(destination):
         destination = os.path.join(destination, os.path.basename(source))
     else:
-        # TODO include the exist_ok kwarg to makedirs
-        #  when dropping support for Python 2.7
-        try:
-            os.makedirs(os.path.dirname(destination))
-        except OSError:
-            pass
+        dirs = os.path.dirname(destination)
+        if dirs:
+            os.makedirs(dirs, exist_ok=True)
 
     if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
         raise FileExistsError('Will not overwrite {!r}'.format(destination))
 
-    # TODO include the follow_symlinks kwarg to copyfile and copystat
-    #  (and to this "copy" function) when dropping support for Python 2.7
-    shutil.copyfile(source, destination)
+    shutil.copyfile(source, destination, follow_symlinks=follow_symlinks)
     if include_metadata:
-        shutil.copystat(source, destination)
+        shutil.copystat(source, destination, follow_symlinks=follow_symlinks)
 
     return destination
 
@@ -722,10 +714,10 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
     sei = ShellExecuteInfoW()
     sei.fMask = 0x00000040 | 0x00008000  # SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NO_CONSOLE
-    sei.lpVerb = kwargs.get('verb', u'runas')  # change the verb when running the tests
-    sei.lpFile = u'cmd.exe'
+    sei.lpVerb = kwargs.get('verb', 'runas')  # change the verb when running the tests
+    sei.lpFile = 'cmd.exe'
     sei.lpParameters = params
-    sei.lpDirectory = u'{}'.format(cwd) if cwd else None
+    sei.lpDirectory = '{}'.format(cwd) if cwd else None
     sei.nShow = int(show)
     sei.cbSize = ctypes.sizeof(sei)
     if not ctypes.windll.Shell32.ShellExecuteExW(ctypes.byref(sei)):

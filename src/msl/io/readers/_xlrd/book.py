@@ -1,29 +1,20 @@
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
-
-from __future__ import print_function
-
+import mmap
 import struct
+from struct import unpack
+from time import perf_counter
 
 from . import compdoc, formatting, sheet
 from .biffh import *
 from .formula import *
 from .timemachine import *
 
-try:
-    from time import perf_counter
-except ImportError:
-    # Python 2.7
-    from time import clock as perf_counter
-
-from struct import unpack
 
 empty_cell = sheet.empty_cell # for exposure to the world ...
 
 DEBUG = 0
-
-import mmap
 
 MY_EOF = 0xF00BAAA # not a 16-bit number
 
@@ -437,7 +428,7 @@ class Book(BaseObject):
 
         All sheets not already loaded will be loaded.
         """
-        for sheetx in xrange(self.nsheets):
+        for sheetx in range(self.nsheets):
             if not self._sheet_list[sheetx]:
                 self.get_sheet(sheetx)
         return self._sheet_list[:]
@@ -717,7 +708,7 @@ class Book(BaseObject):
     def get_sheets(self):
         # DEBUG = 0
         if DEBUG: print("GET_SHEETS:", self._sheet_names, self._sh_abs_posn, file=self.logfile)
-        for sheetno in xrange(len(self._sheet_names)):
+        for sheetno in range(len(self._sheet_names)):
             if DEBUG: print("GET_SHEETS: sheetno =", sheetno, self._sheet_names, self._sh_abs_posn, file=self.logfile)
             self.get_sheet(sheetno)
 
@@ -888,7 +879,7 @@ class Book(BaseObject):
                     raise XLRDError("Missing CONTINUE after EXTERNSHEET record")
                 data += data2
             pos = 2
-            for k in xrange(num_refs):
+            for k in range(num_refs):
                 info = unpack("<HHH", data[pos:pos+6])
                 ref_recordx, ref_first_sheetx, ref_last_sheetx = info
                 self._externsheet_info.append(info)
@@ -1400,7 +1391,7 @@ def unpack_SST_table(datatab, nstrings):
     local_min = min
     local_BYTES_ORD = BYTES_ORD
     latin_1 = "latin_1"
-    for _unused_i in xrange(nstrings):
+    for _unused_i in range(nstrings):
         nchars = local_unpack('<H', data[pos:pos+2])[0]
         pos += 2
         options = local_BYTES_ORD(data[pos])
@@ -1450,7 +1441,7 @@ def unpack_SST_table(datatab, nstrings):
 
         if rtcount:
             runs = []
-            for runindex in xrange(rtcount):
+            for runindex in range(rtcount):
                 if pos == datalen:
                     pos = 0
                     datainx += 1

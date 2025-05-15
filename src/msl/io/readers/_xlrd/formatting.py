@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
@@ -7,9 +6,6 @@
 """
 Module for formatting information.
 """
-
-from __future__ import print_function
-
 import re
 from struct import unpack
 
@@ -108,12 +104,12 @@ def initialise_colour_map(book):
     if not book.formatting_info:
         return
     # Add the 8 invariant colours
-    for i in xrange(8):
+    for i in range(8):
         book.colour_map[i] = excel_default_palette_b8[i]
     # Add the default palette depending on the version
     dpal = default_palette[book.biff_version]
     ndpal = len(dpal)
-    for i in xrange(ndpal):
+    for i in range(ndpal):
         book.colour_map[i+8] = dpal[i]
     # Add the specials -- None means the RGB value is not known
     # System window text colour for border lines
@@ -151,7 +147,7 @@ def nearest_colour_index(colour_map, rgb, debug=0):
             % (rgb, best_colourx, colour_map[best_colourx], best_metric))
     return best_colourx
 
-class EqNeAttrs(object):
+class EqNeAttrs:
     """
     This mixin class exists solely so that :class:`Format`, :class:`Font`, and
     :class:`XF` objects can be compared by value of their attributes.
@@ -423,7 +419,7 @@ fmt_code_ranges = [ # both-inclusive ranges of "standard" format codes
 
 std_format_code_types = {}
 for lo, hi, ty in fmt_code_ranges:
-    for x in xrange(lo, hi+1):
+    for x in range(lo, hi+1):
         std_format_code_types[x] = ty
 del lo, hi, ty, x
 
@@ -597,7 +593,7 @@ def handle_palette(book, data):
     assert book.palette_record == [] # There should be only 1 PALETTE record
     # a colour will be 0xbbggrr
     # IOW, red is at the little end
-    for i in xrange(n_colours):
+    for i in range(n_colours):
         c = colours[i]
         red   =  c        & 0xff
         green = (c >>  8) & 0xff
@@ -1029,7 +1025,7 @@ def xf_epilogue(self):
                 "NOTE !!! XF[%d] parent[%d] %s different\n",
                 xf_arg.xf_index, parent_arg.xf_index, attr)
 
-    for xfx in xrange(num_xfs):
+    for xfx in range(num_xfs):
         xf = self.xf_list[xfx]
 
         try:

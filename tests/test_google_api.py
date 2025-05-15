@@ -6,13 +6,8 @@ import uuid
 from datetime import datetime
 
 import pytest
+from googleapiclient.errors import HttpError
 
-try:
-    from googleapiclient.errors import HttpError
-except ImportError:
-    HttpError = Exception
-
-from msl.io.constants import IS_PYTHON2
 from msl.io.google_api import GCell
 from msl.io.google_api import GCellType
 from msl.io.google_api import GDrive
@@ -759,10 +754,9 @@ def test_gdrive_download():
     # cannot be a string IO object
     with pytest.raises(TypeError):
         dr.download(file_id, save_to=io.StringIO())
-    if not IS_PYTHON2:  # in Python 2, str and bytes are the same
-        with pytest.raises(TypeError):
-            dr.download(file_id, save_to=open('junk.txt', mode='wt'))
-        os.remove('junk.txt')  # clean up since it got created before the error was raised
+    with pytest.raises(TypeError):
+        dr.download(file_id, save_to=open('junk.txt', mode='wt'))
+    os.remove('junk.txt')  # clean up since it got created before the error was raised
 
     # a BytesIO object
     with io.BytesIO() as buffer:
@@ -931,7 +925,4 @@ def test_gmail_profile():
     assert profile['email_address'].endswith('@gmail.com')
     assert profile['messages_total'] > 1
     assert profile['threads_total'] > 1
-    if IS_PYTHON2:
-        assert isinstance(profile['history_id'], unicode)
-    else:
-        assert isinstance(profile['history_id'], str)
+    assert isinstance(profile['history_id'], str)

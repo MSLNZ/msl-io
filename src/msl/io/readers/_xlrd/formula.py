@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
@@ -7,9 +6,6 @@
 """
 Module for parsing/evaluating Microsoft Excel formulas.
 """
-
-from __future__ import print_function
-
 import copy
 import operator as opr
 from struct import unpack
@@ -531,7 +527,7 @@ class FormulaError(Exception):
     pass
 
 
-class Operand(object):
+class Operand:
     """
     Used in evaluating formulas.
     The following table describes the kinds and how their values

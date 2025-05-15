@@ -187,25 +187,15 @@ class Dataset(Vertex):
         return lhs * self._data
 
     def __matmul__(self, rhs):
-        # TODO could use the @ operator when dropping support for Python 2
-        return np.matmul(self._data, rhs)
+        return self._data @ rhs
 
     def __rmatmul__(self, lhs):
-        # TODO could use the @ operator when dropping support for Python 2
-        return np.matmul(lhs, self._data)
+        return lhs @ self._data
 
     def __truediv__(self, rhs):
         return self._data / rhs
 
     def __rtruediv__(self, lhs):
-        return lhs / self._data
-
-    def __div__(self, rhs):
-        # TODO could remove this method when dropping support for Python 2
-        return self._data / rhs
-
-    def __rdiv__(self, lhs):
-        # TODO could remove this method when dropping support for Python 2
         return lhs / self._data
 
     def __floordiv__(self, rhs):

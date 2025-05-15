@@ -18,7 +18,6 @@ except ImportError:
 from msl.io import HDF5Writer
 from msl.io import JSONWriter
 from msl.io import read
-from msl.io.constants import IS_PYTHON2
 
 # Append new Writers to test
 writers = [JSONWriter, HDF5Writer]
@@ -106,10 +105,7 @@ def test_open_text():
 
         with open(path, mode='wt') as fp:
             with writer(fp) as root:
-                if IS_PYTHON2:
-                    assert isinstance(root.file, file)
-                else:
-                    assert isinstance(root.file, TextIOWrapper)
+                assert isinstance(root.file, TextIOWrapper)
                 assert repr(root) == "<{} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)
@@ -133,10 +129,7 @@ def test_open_binary():
             continue
         with open(path, mode='wb') as fp:
             with writer(fp) as root:
-                if IS_PYTHON2:
-                    assert isinstance(root.file, file)
-                else:
-                    assert isinstance(root.file, BufferedWriter)
+                assert isinstance(root.file, BufferedWriter)
                 assert repr(root) == "<{} 'binaryfile.bin' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
                 fill_root_with_data(root)
                 assert_root_data(root)

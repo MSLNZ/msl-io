@@ -2,13 +2,6 @@
 Constants used by MSL-IO.
 """
 import os
-import sys
-
-IS_PYTHON2 = sys.version_info.major == 2
-""":class:`bool`: Whether Python 2 is being used."""
-
-IS_PYTHON3 = sys.version_info.major == 3
-""":class:`bool`: Whether Python 3 is being used."""
 
 # If this module is run via "sudo python" on a Raspberry Pi the value of
 # os.path.expanduser('~') becomes '/root' instead of '/home/pi'. On Linux using

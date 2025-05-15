@@ -571,6 +571,7 @@ class Group(Vertex):
                         if dset is dataset:
                             key = '/' + dset.name.lstrip(group.name)
                             del group._mapping[key]
+                            break
 
                 # temporarily make this Group not in read-only mode
                 original_read_only_mode = bool(self._read_only)

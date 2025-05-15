@@ -102,7 +102,6 @@ addopts = [
     "--doctest-glob=*.rst",
     "--import-mode=importlib",
     "--ignore=docs/conf.py",
-    "--ignore=src/msl/io/writers/_py2_json_encoder.py",
     "--ignore=tests/create_google_api_tokens.py",
 ]
 consider_namespace_packages = true

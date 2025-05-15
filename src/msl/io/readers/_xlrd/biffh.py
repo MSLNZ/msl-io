@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 # Portions copyright © 2005-2010 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
-from __future__ import print_function
-
 import sys
 from struct import unpack
 
@@ -19,7 +16,7 @@ class XLRDError(Exception):
     """
 
 
-class BaseObject(object):
+class BaseObject:
     """
     Parent of almost all other classes in the package. Defines a common
     :meth:`dump` method for debugging.
@@ -345,7 +342,7 @@ def unpack_cell_range_address_list_update_pos(output_list, data, pos, biff_versi
             fmt = "<HHBB"
         else:
             fmt = "<HHHH"
-        for _unused in xrange(n):
+        for _unused in range(n):
             ra, rb, ca, cb = unpack(fmt, data[pos:pos+addr_size])
             output_list.append((ra, rb+1, ca, cb+1))
             pos += addr_size

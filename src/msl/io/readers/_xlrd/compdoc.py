@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
@@ -9,8 +8,6 @@ Implements the minimal functionality required
 to extract a "Workbook" or "Book" stream (as one big string)
 from an OLE2 Compound Document file.
 """
-from __future__ import print_function
-
 import array
 import mmap
 import sys
@@ -31,7 +28,7 @@ EVILSID = -5
 class CompDocError(Exception):
     pass
 
-class DirNode(object):
+class DirNode:
 
     def __init__(self, DID, dent, DEBUG=0, logfile=sys.stdout):
         # dent is the 128-byte directory entry
@@ -81,7 +78,7 @@ class ScatteredMemory:
         self.slices = slices
 
         sizes = [y-x for x, y in slices]
-        self.cum_sum = [sum(sizes[:x + 1]) for x in xrange(len(sizes))]
+        self.cum_sum = [sum(sizes[:x + 1]) for x in range(len(sizes))]
 
     @staticmethod
     def _mmap_closed(mmap):
@@ -122,7 +119,7 @@ class ScatteredMemory:
             return mem
 
 
-class CompDoc(object):
+class CompDoc:
     """
     Compound document handler.
 
@@ -232,7 +229,7 @@ class CompDoc(object):
         self.SAT = []
         actual_SAT_sectors = 0
         dump_again = 0
-        for msidx in xrange(len(MSAT)):
+        for msidx in range(len(MSAT)):
             msid = MSAT[msidx]
             if msid in (FREESID, EOCSID):
                 # Specification: the MSAT array may be padded with trailing FREESID entries.
@@ -269,7 +266,7 @@ class CompDoc(object):
         if DEBUG and dump_again:
             print("MSAT: len =", len(MSAT), file=logfile)
             dump_list(MSAT, 10, logfile)
-            for satx in xrange(mem_data_secs, len(self.SAT)):
+            for satx in range(mem_data_secs, len(self.SAT)):
                 self.SAT[satx] = EVILSID
             print("SAT: len =", len(self.SAT), file=logfile)
             dump_list(self.SAT, 10, logfile)
@@ -281,7 +278,7 @@ class CompDoc(object):
             name="directory", seen_id=3)
         dirlist = []
         did = -1
-        for pos in xrange(0, len(dbytes), 128):
+        for pos in range(0, len(dbytes), 128):
             did += 1
             dirlist.append(DirNode(did, dbytes[pos:pos+128], 0, logfile))
         self.dirlist = dirlist
@@ -530,7 +527,7 @@ def dump_list(alist, stride, f=sys.stdout):
         print(file=f)
     pos = None
     oldpos = None
-    for pos in xrange(0, len(alist), stride):
+    for pos in range(0, len(alist), stride):
         if oldpos is None:
             _dump_line(pos)
             oldpos = pos

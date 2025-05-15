@@ -1,14 +1,12 @@
 """
 Read a file that was created by :class:`~msl.io.writers.json_.JSONWriter`.
 """
-import codecs
 import json
 from io import BufferedIOBase
 
 import numpy as np
 
 from ..base import Reader
-from ..constants import IS_PYTHON2
 from ..utils import register
 
 
@@ -45,11 +43,6 @@ class JSONReader(Reader):
             'errors': kwargs.pop('errors', 'strict'),
         }
 
-        if IS_PYTHON2:
-            opener = codecs.open  # this allows the encoding and errors kwargs to be used
-        else:
-            opener = open
-
         if hasattr(self.file, 'read'):
             self.file.readline()  # skip the first line
             data = self.file.read()
@@ -57,7 +50,7 @@ class JSONReader(Reader):
                 data = data.decode(**open_kwargs)
             dict_ = json.loads(data, **kwargs)
         else:
-            with opener(self.file, mode='r', **open_kwargs) as fp:
+            with open(self.file, mode='r', **open_kwargs) as fp:
                 fp.readline()  # skip the first line
                 dict_ = json.loads(fp.read(), **kwargs)
 

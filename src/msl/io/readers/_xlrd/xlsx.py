@@ -2,8 +2,6 @@
 # Portions copyright (c) 2008-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a BSD-style licence.
 ##
-from __future__ import print_function, unicode_literals
-
 import gc
 import re
 import sys
@@ -47,7 +45,7 @@ def augment_keys(adict, uri):
         adict[uri + x] = adict[x]
 
 _UPPERCASE_1_REL_INDEX = {} # Used in fast conversion of column names (e.g. "XFD") to indices (16383)
-for _x in xrange(26):
+for _x in range(26):
     _UPPERCASE_1_REL_INDEX["ABCDEFGHIJKLMNOPQRSTUVWXYZ"[_x]] = _x + 1
 for _x in "123456789":
     _UPPERCASE_1_REL_INDEX[_x] = 0
@@ -202,7 +200,7 @@ def make_name_access_maps(bk):
     name_and_scope_map = {} # (name.lower(), scope): Name_object
     name_map = {}           # name.lower() : list of Name_objects (sorted in scope order)
     num_names = len(bk.name_obj_list)
-    for namex in xrange(num_names):
+    for namex in range(num_names):
         nobj = bk.name_obj_list[namex]
         name_lcase = nobj.name.lower()
         key = (name_lcase, nobj.scope)
@@ -226,7 +224,7 @@ def make_name_access_maps(bk):
     bk.name_and_scope_map = name_and_scope_map
     bk.name_map = name_map
 
-class X12General(object):
+class X12General:
 
     def process_stream(self, stream, heading=None):
         if self.verbosity >= 2 and heading is not None:
@@ -788,7 +786,7 @@ class XLSXBook(Book):
         :returns: A list of all sheets in the book.
         All sheets not already loaded will be loaded.
         """
-        for sheetx in xrange(self.nsheets):
+        for sheetx in range(self.nsheets):
             yield self._sheet_list[sheetx] or self.get_sheet(sheetx)
 
     def unload_sheet(self, sheet_name_or_index):
