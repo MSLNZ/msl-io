@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: [windows-latest, ubuntu-latest, macos-13]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         architecture: [x64]
         xml: [builtin]
         include:
@@ -35,11 +35,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }} (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
+      - name: Set up Python ${{ matrix.python-version }} (non Windows)
+        if: ${{ matrix.os != 'windows-latest' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Upgrade pip, setuptools and wheel
         run: |
           python -m pip install --upgrade pip
@@ -47,8 +53,10 @@ jobs:
       - name: Install numpy 1.23.5 (Windows, x86)
         if: ${{ matrix.architecture == 'x86' }}
         run: python -m pip install --upgrade numpy==1.23.5
-      - name: Install package
-        run: python -m pip install --upgrade --editable .[tests] --prefer-binary
+      - name: Install package (and test dependencies)
+        run: |
+          python -m pip install --upgrade pytest pytest-cov
+          python -m pip install --upgrade .[h5py,google] --prefer-binary
       - name: Install defusedxml
         if: ${{ matrix.xml == 'defusedxml' }}
         run: python -m pip install --upgrade defusedxml
