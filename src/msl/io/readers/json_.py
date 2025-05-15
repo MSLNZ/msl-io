@@ -21,7 +21,7 @@ class JSONReader(Reader):
             text = Reader.get_bytes(file, 21, 34).decode()
         else:
             text = Reader.get_lines(file, 1, **kwargs)[0][20:34]
-        return text == 'MSL JSONWriter'
+        return text == "MSL JSONWriter"
 
     def read(self, **kwargs):
         """Read the file that was created by :class:`~msl.io.writers.json_.JSONWriter`
@@ -39,18 +39,18 @@ class JSONReader(Reader):
             `json.loads <https://docs.python.org/3/library/json.html#json.loads>`_.
         """
         open_kwargs = {
-            'encoding': kwargs.get('encoding', 'utf-8'),
-            'errors': kwargs.pop('errors', 'strict'),
+            "encoding": kwargs.get("encoding", "utf-8"),
+            "errors": kwargs.pop("errors", "strict"),
         }
 
-        if hasattr(self.file, 'read'):
+        if hasattr(self.file, "read"):
             self.file.readline()  # skip the first line
             data = self.file.read()
             if isinstance(data, bytes):
                 data = data.decode(**open_kwargs)
             dict_ = json.loads(data, **kwargs)
         else:
-            with open(self.file, mode='r', **open_kwargs) as fp:
+            with open(self.file, mode="r", **open_kwargs) as fp:
                 fp.readline()  # skip the first line
                 dict_ = json.loads(fp.read(), **kwargs)
 
@@ -72,18 +72,18 @@ class JSONReader(Reader):
                     if isinstance(value, list):
                         value = list_to_ndarray(value)
                     group.metadata[key] = value
-                elif 'dtype' in value and 'data' in value:  # Dataset
+                elif "dtype" in value and "data" in value:  # Dataset
                     kws = dict()
                     for dkey, dval in value.items():
-                        if dkey == 'data':
+                        if dkey == "data":
                             pass  # handled in the 'dtype' check
-                        elif dkey == 'dtype':
+                        elif dkey == "dtype":
                             if isinstance(dval, list):
-                                kws['data'] = np.asarray(
-                                    [tuple(row) for row in value['data']],
+                                kws["data"] = np.asarray(
+                                    [tuple(row) for row in value["data"]],
                                     dtype=[tuple(item) for item in dval])
                             else:
-                                kws['data'] = np.asarray(value['data'], dtype=dval)
+                                kws["data"] = np.asarray(value["data"], dtype=dval)
                         else:  # Metadata
                             if isinstance(dval, list):
                                 dval = list_to_ndarray(dval)
@@ -93,4 +93,4 @@ class JSONReader(Reader):
                     create_group(group, key, value)
 
         # create the root group
-        create_group(None, '', dict_)
+        create_group(None, "", dict_)

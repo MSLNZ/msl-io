@@ -23,7 +23,7 @@ logger = logging.getLogger(__package__)
 _readers = []
 
 
-def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
+def checksum(file, algorithm="sha256", chunk_size=65536, shake_length=256):
     """Get the checksum of a file.
 
     A checksum is a sequence of numbers and letters that act as a fingerprint
@@ -61,10 +61,10 @@ def checksum(file, algorithm='sha256', chunk_size=65536, shake_length=256):
     hash_cls = hashlib.new(algorithm)
 
     try:
-        with open(file, mode='rb') as f:
+        with open(file, mode="rb") as f:
             read(f)
     except TypeError:
-        if not hasattr(file, 'tell'):
+        if not hasattr(file, "tell"):
             raise
         position = file.tell()
         read(file)
@@ -111,7 +111,7 @@ def copy(source, destination, overwrite=False, include_metadata=True, follow_sym
             os.makedirs(dirs, exist_ok=True)
 
     if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
-        raise FileExistsError('Will not overwrite {!r}'.format(destination))
+        raise FileExistsError("Will not overwrite {!r}".format(destination))
 
     shutil.copyfile(source, destination, follow_symlinks=follow_symlinks)
     if include_metadata:
@@ -183,7 +183,7 @@ def is_file_readable(file, strict=False):
         Whether the file exists and is readable.
     """
     try:
-        with open(file, mode='rb'):
+        with open(file, mode="rb"):
             return True
     except:
         if strict:
@@ -208,7 +208,7 @@ def register(reader_class):
     """
     def append(cls):
         _readers.append(cls)
-        logger.debug('registered %r', cls)
+        logger.debug("registered %r", cls)
         return cls
     return append(reader_class)
 
@@ -266,8 +266,8 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
     if levels is not None and levels < 0:
         return
 
-    if ignore_hidden_folders and os.path.basename(folder).startswith('.'):
-        logger.debug('ignore hidden folder %r', folder)
+    if ignore_hidden_folders and os.path.basename(folder).startswith("."):
+        logger.debug("ignore hidden folder %r", folder)
         return
 
     if exclude_folders:
@@ -282,7 +282,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         basename = os.path.basename(folder)
         for exclude in ex_compiled:
             if exclude.search(basename):
-                logger.debug('excluding folder %r', folder)
+                logger.debug("excluding folder %r", folder)
                 return
     else:
         ex_compiled = None
@@ -291,7 +291,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         try:
             names = os.listdir(folder)
         except PermissionError:
-            logger.debug('permission error %r', folder)
+            logger.debug("permission error %r", folder)
             return
     else:
         names = os.listdir(folder)
@@ -302,7 +302,7 @@ def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
         regex = pattern
 
     for name in names:
-        path = folder + '/' + name
+        path = folder + "/" + name
         if os.path.isfile(path) or is_file_readable(path):
             if regex is None or regex.search(name):
                 yield path
@@ -378,27 +378,27 @@ def send_email(config, recipients, sender=None, subject=None, body=None):
         the message.
     """
     cfg = _prepare_email(config, recipients, sender)
-    if cfg['type'] == 'smtp':
-        server = SMTP(host=cfg['host'], port=cfg['port'])
-        if cfg['starttls']:
+    if cfg["type"] == "smtp":
+        server = SMTP(host=cfg["host"], port=cfg["port"])
+        if cfg["starttls"]:
             server.ehlo()
             server.starttls()
             server.ehlo()
-        if cfg['username'] and cfg['password']:
-            server.login(cfg['username'], cfg['password'])
+        if cfg["username"] and cfg["password"]:
+            server.login(cfg["username"], cfg["password"])
         msg = MIMEMultipart()
-        msg['From'] = cfg['from']
-        msg['To'] = ', '.join(cfg['to'])
-        msg['Subject'] = subject or '(no subject)'
-        text = body or ''
-        subtype = 'html' if text.startswith('<html>') else 'plain'
+        msg["From"] = cfg["from"]
+        msg["To"] = ", ".join(cfg["to"])
+        msg["Subject"] = subject or "(no subject)"
+        text = body or ""
+        subtype = "html" if text.startswith("<html>") else "plain"
         msg.attach(MIMEText(text, subtype))
-        server.sendmail(cfg['from'], cfg['to'], msg.as_string())
+        server.sendmail(cfg["from"], cfg["to"], msg.as_string())
         server.quit()
     else:
-        with GMail(account=cfg['account'], credentials=cfg['credentials'],
-                   scopes=cfg['scopes']) as gmail:
-            gmail.send(cfg['to'], sender=cfg['from'], subject=subject, body=body)
+        with GMail(account=cfg["account"], credentials=cfg["credentials"],
+                   scopes=cfg["scopes"]) as gmail:
+            gmail.send(cfg["to"], sender=cfg["from"], subject=subject, body=body)
 
 
 def _prepare_email(config, recipients, sender):
@@ -406,55 +406,55 @@ def _prepare_email(config, recipients, sender):
 
     Returns a dict.
     """
-    if hasattr(config, 'read'):
+    if hasattr(config, "read"):
         contents = config.read()
     else:
-        with open(config, mode='rt') as fp:
+        with open(config, mode="rt") as fp:
             contents = fp.read()
 
     if isinstance(contents, bytes):
-        contents = contents.decode('utf-8')
+        contents = contents.decode("utf-8")
 
     cp = ConfigParser()
     cp.read_string(contents)
 
-    has_smtp = cp.has_section('smtp')
-    has_gmail = cp.has_section('gmail')
+    has_smtp = cp.has_section("smtp")
+    has_gmail = cp.has_section("gmail")
     if has_smtp and has_gmail:
         raise ValueError("Cannot specify both a 'gmail' and 'smtp' section")
     if not (has_smtp or has_gmail):
         raise ValueError("Must create either a 'gmail' or 'smtp' section")
 
-    section = cp['gmail'] if has_gmail else cp['smtp']
+    section = cp["gmail"] if has_gmail else cp["smtp"]
 
-    domain = section.get('domain')
-    if domain and not domain.startswith('@'):
-        domain = '@' + domain
+    domain = section.get("domain")
+    if domain and not domain.startswith("@"):
+        domain = "@" + domain
 
     if isinstance(recipients, str):
         recipients = [recipients]
 
     for i in range(len(recipients)):
-        if domain and '@' not in recipients[i] and \
-                (has_smtp or (has_gmail and recipients[i] != 'me')):
+        if domain and "@" not in recipients[i] and \
+                (has_smtp or (has_gmail and recipients[i] != "me")):
             recipients[i] += domain
 
     if not sender:
         if has_gmail:
-            sender = 'me'
+            sender = "me"
         else:
             sender = recipients[0]
-    elif domain and ('@' not in sender) and \
-            (has_smtp or (has_gmail and sender != 'me')):
+    elif domain and ("@" not in sender) and \
+            (has_smtp or (has_gmail and sender != "me")):
         sender += domain
 
-    cfg = {'type': section.name, 'to': recipients, 'from': sender}
+    cfg = {"type": section.name, "to": recipients, "from": sender}
     if has_smtp:
-        host, port = section.get('host'), section.getint('port')
+        host, port = section.get("host"), section.getint("port")
         if not (host and port):
             raise ValueError("Must specify the 'host' and 'port' of the SMTP server")
 
-        username, password = section.get('username'), section.get('password')
+        username, password = section.get("username"), section.get("password")
         if username and not password:
             raise ValueError("Must specify the 'password' since a "
                              "'username' is specified")
@@ -463,18 +463,18 @@ def _prepare_email(config, recipients, sender):
                              "'password' is specified")
 
         cfg.update({
-            'host': host,
-            'port': port,
-            'starttls': section.getboolean('starttls'),
-            'username': username,
-            'password': password,
+            "host": host,
+            "port": port,
+            "starttls": section.getboolean("starttls"),
+            "username": username,
+            "password": password,
         })
     else:
-        scopes = section.get('scopes')
+        scopes = section.get("scopes")
         cfg.update({
-            'account': section.get('account'),
-            'credentials': section.get('credentials'),
-            'scopes': scopes.split() if scopes else None
+            "account": section.get("account"),
+            "credentials": section.get("credentials"),
+            "scopes": scopes.split() if scopes else None
         })
     return cfg
 
@@ -521,7 +521,7 @@ def git_head(directory):
         If `directory` is not a directory that is under version control
         then returns :data:`None`.
     """
-    cmd = ['git', 'show', '-s', '--format=%H %ct', 'HEAD']
+    cmd = ["git", "show", "-s", "--format=%H %ct", "HEAD"]
     try:
         out = subprocess.check_output(cmd, cwd=directory, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError:
@@ -529,8 +529,8 @@ def git_head(directory):
 
     sha, timestamp = out.split()
     return {
-        'hash': sha.decode('ascii'),
-        'datetime': datetime.fromtimestamp(int(timestamp))
+        "hash": sha.decode("ascii"),
+        "datetime": datetime.fromtimestamp(int(timestamp))
     }
 
 
@@ -614,7 +614,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     >>> run_as_admin(['sc', 'create', 'MyLogger', 'binPath=', 'C:\\\\logger.exe', 'start=', 'auto'])
     """
     if not args and not executable:
-        raise ValueError('Must specify the args and/or an executable')
+        raise ValueError("Must specify the args and/or an executable")
 
     stderr = subprocess.STDOUT if capture_stderr else None
     process = subprocess.check_output if blocking else subprocess.Popen
@@ -626,67 +626,67 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     if cwd is None:
         cwd = os.getcwd()
 
-    if os.name != 'nt':
+    if os.name != "nt":
         if not args:
-            command = ['sudo', executable]
+            command = ["sudo", executable]
         elif isinstance(args, str):
-            exe = executable or ''
-            command = 'sudo {} {}'.format(exe, args)
+            exe = executable or ""
+            command = "sudo {} {}".format(exe, args)
         else:
             exe = [executable] if executable else []
-            command = ['sudo'] + exe + list(args)
+            command = ["sudo"] + exe + list(args)
         return process(command, cwd=cwd, stderr=stderr, **kwargs)
 
     # Windows is more complicated
 
     if args is None:
-        args = ''
+        args = ""
 
     if not isinstance(args, str):
         args = subprocess.list2cmdline(args)
 
     if executable is None:
-        executable = ''
+        executable = ""
     else:
         executable = subprocess.list2cmdline([executable])
 
     # the 'runas' verb starts in C:\WINDOWS\system32
-    cd = subprocess.list2cmdline(['cd', '/d', cwd, '&&'])
+    cd = subprocess.list2cmdline(["cd", "/d", cwd, "&&"])
 
     # check if a Python environment needs to be activated
-    activate = ''
+    activate = ""
     if executable == sys.executable or args.startswith(sys.executable):
-        conda = os.getenv('CONDA_PREFIX')  # conda
-        venv = os.getenv('VIRTUAL_ENV')  # venv
+        conda = os.getenv("CONDA_PREFIX")  # conda
+        venv = os.getenv("VIRTUAL_ENV")  # venv
         if conda:
-            env = os.getenv('CONDA_DEFAULT_ENV')
-            assert env, 'CONDA_DEFAULT_ENV environment variable does not exist'
-            if env == 'base':
-                bat = os.path.join(conda, 'Scripts', 'activate.bat')
+            env = os.getenv("CONDA_DEFAULT_ENV")
+            assert env, "CONDA_DEFAULT_ENV environment variable does not exist"
+            if env == "base":
+                bat = os.path.join(conda, "Scripts", "activate.bat")
             else:
                 bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
-                                                   'Scripts', 'activate.bat'))
-            assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
-            activate = subprocess.list2cmdline([bat, env, '&&'])
+                                                   "Scripts", "activate.bat"))
+            assert os.path.isfile(bat), "Cannot find {!r}".format(bat)
+            activate = subprocess.list2cmdline([bat, env, "&&"])
         elif venv:
-            bat = os.path.join(venv, 'Scripts', 'activate.bat')
-            assert os.path.isfile(bat), 'Cannot find {!r}'.format(bat)
-            activate = subprocess.list2cmdline([bat, '&&'])
+            bat = os.path.join(venv, "Scripts", "activate.bat")
+            assert os.path.isfile(bat), "Cannot find {!r}".format(bat)
+            activate = subprocess.list2cmdline([bat, "&&"])
 
     # redirect stdout (stderr) to a file
-    redirect = ''
-    stdout_file = ''
+    redirect = ""
+    stdout_file = ""
     if not show:
         import uuid
         import tempfile
         stdout_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        r = ['>', stdout_file]
+        r = [">", stdout_file]
         if capture_stderr:
-            r.append('2>&1')
+            r.append("2>&1")
         redirect = subprocess.list2cmdline(r)
-        if re.search(r'\d$', args):
+        if re.search(r"\d$", args):
             # this number is also considered as a file handle, so add a space
-            redirect = ' ' + redirect
+            redirect = " " + redirect
 
     # the string that is passed to cmd.exe
     params = '/S /C "{cd} {activate} {executable} {args}"{redirect}'.format(
@@ -696,28 +696,28 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
     class ShellExecuteInfoW(ctypes.Structure):
         _fields_ = [
-            ('cbSize', DWORD),
-            ('fMask', ULONG),
-            ('hwnd', HWND),
-            ('lpVerb', LPCWSTR),
-            ('lpFile', LPCWSTR),
-            ('lpParameters', LPCWSTR),
-            ('lpDirectory', LPCWSTR),
-            ('nShow', INT),
-            ('hInstApp', HINSTANCE),
-            ('lpIDList', ctypes.c_void_p),
-            ('lpClass', LPCWSTR),
-            ('hkeyClass', HKEY),
-            ('dwHotKey', DWORD),
-            ('hIcon', HANDLE),
-            ('hProcess', HANDLE)]
+            ("cbSize", DWORD),
+            ("fMask", ULONG),
+            ("hwnd", HWND),
+            ("lpVerb", LPCWSTR),
+            ("lpFile", LPCWSTR),
+            ("lpParameters", LPCWSTR),
+            ("lpDirectory", LPCWSTR),
+            ("nShow", INT),
+            ("hInstApp", HINSTANCE),
+            ("lpIDList", ctypes.c_void_p),
+            ("lpClass", LPCWSTR),
+            ("hkeyClass", HKEY),
+            ("dwHotKey", DWORD),
+            ("hIcon", HANDLE),
+            ("hProcess", HANDLE)]
 
     sei = ShellExecuteInfoW()
     sei.fMask = 0x00000040 | 0x00008000  # SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NO_CONSOLE
-    sei.lpVerb = kwargs.get('verb', 'runas')  # change the verb when running the tests
-    sei.lpFile = 'cmd.exe'
+    sei.lpVerb = kwargs.get("verb", "runas")  # change the verb when running the tests
+    sei.lpFile = "cmd.exe"
     sei.lpParameters = params
-    sei.lpDirectory = '{}'.format(cwd) if cwd else None
+    sei.lpDirectory = "{}".format(cwd) if cwd else None
     sei.nShow = int(show)
     sei.cbSize = ctypes.sizeof(sei)
     if not ctypes.windll.Shell32.ShellExecuteExW(ctypes.byref(sei)):
@@ -727,14 +727,14 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
         return sei.hProcess
 
     kernel32 = ctypes.windll.kernel32
-    timeout = kwargs.get('timeout', -1)  # INFINITE = -1
+    timeout = kwargs.get("timeout", -1)  # INFINITE = -1
     milliseconds = int(timeout * 1e3) if timeout > 0 else timeout
 
     ret = kernel32.WaitForSingleObject(sei.hProcess, milliseconds)
     if ret == 0:  # WAIT_OBJECT_0
-        stdout = b''
+        stdout = b""
         if stdout_file and os.path.isfile(stdout_file):
-            with open(stdout_file, mode='rb') as fp:
+            with open(stdout_file, mode="rb") as fp:
                 stdout = fp.read()
             os.remove(stdout_file)
 
@@ -744,15 +744,15 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
 
         if code.value != 0:
             msg = ctypes.FormatError(code.value)
-            out_str = stdout.decode('utf-8', 'ignore').rstrip()
+            out_str = stdout.decode("utf-8", "ignore").rstrip()
             if show:
-                msg += '\nSet show=False to capture the stdout stream.'
+                msg += "\nSet show=False to capture the stdout stream."
             else:
                 if not capture_stderr:
-                    msg += '\nSet capture_stderr=True to see if ' \
-                           'more information is available.'
+                    msg += "\nSet capture_stderr=True to see if " \
+                           "more information is available."
                 if out_str:
-                    msg += '\n{}'.format(out_str)
+                    msg += "\n{}".format(out_str)
             raise ctypes.WinError(code=code.value, descr=msg)
 
         kernel32.CloseHandle(sei.hProcess)
@@ -762,16 +762,16 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
         raise ctypes.WinError()
 
     if ret == 0x00000080:  # WAIT_ABANDONED
-        msg = 'The specified object is a mutex object that was not ' \
-              'released by the thread that owned the mutex object before ' \
-              'the owning thread terminated. Ownership of the mutex ' \
-              'object is granted to the calling thread and the mutex state ' \
-              'is set to non-signaled. If the mutex was protecting persistent ' \
-              'state information, you should check it for consistency.'
+        msg = "The specified object is a mutex object that was not " \
+              "released by the thread that owned the mutex object before " \
+              "the owning thread terminated. Ownership of the mutex " \
+              "object is granted to the calling thread and the mutex state " \
+              "is set to non-signaled. If the mutex was protecting persistent " \
+              "state information, you should check it for consistency."
     elif ret == 0x00000102:  # WAIT_TIMEOUT
         msg = "The timeout interval elapsed after {} second(s) and the " \
               "object's state is non-signaled.".format(timeout)
     else:
-        msg = 'Unknown return value 0x{:x}'.format(ret)
+        msg = "Unknown return value 0x{:x}".format(ret)
 
-    raise WindowsError('WaitForSingleObject: ' + msg)
+    raise WindowsError("WaitForSingleObject: " + msg)

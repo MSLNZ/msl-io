@@ -30,7 +30,7 @@ class Metadata(Dictionary):
         self._vertex_name = vertex_name
 
     def __repr__(self):
-        return '<Metadata {!r} {}>'.format(self._vertex_name, super(Metadata, self).__repr__())
+        return "<Metadata {!r} {}>".format(self._vertex_name, super(Metadata, self).__repr__())
 
     def __getitem__(self, item):
         try:
@@ -60,17 +60,17 @@ class Metadata(Dictionary):
         raise AttributeError(msg)
 
     def __setattr__(self, item, value):
-        if item.endswith('read_only'):
+        if item.endswith("read_only"):
             val = bool(value)
-            self.__dict__['_read_only'] = val
+            self.__dict__["_read_only"] = val
             try:
                 # make all numpy ndarray's read only also
-                for obj in self.__dict__['_mapping'].values():
+                for obj in self.__dict__["_mapping"].values():
                     if isinstance(obj, np.ndarray):
                         obj.setflags(write=not val)
             except KeyError:
                 pass
-        elif item == '_mapping' or item == '_vertex_name':
+        elif item == "_mapping" or item == "_vertex_name":
             self.__dict__[item] = value
         else:
             self._raise_if_read_only()

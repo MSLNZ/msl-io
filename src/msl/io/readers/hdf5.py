@@ -32,7 +32,7 @@ class HDF5Reader(Reader):
 
         .. _signature: https://support.hdfgroup.org/HDF5/doc/H5.format.html#Superblock
         """
-        return Reader.get_bytes(file, 8) == b'\x89HDF\r\n\x1a\n'
+        return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
 
     def read(self, **kwargs):
         """Reads the HDF5_ file.
@@ -44,22 +44,22 @@ class HDF5Reader(Reader):
         """
         if h5py is None:
             raise ImportError(
-                'You must install h5py to read HDF5 files, run\n'
-                '  pip install h5py'
+                "You must install h5py to read HDF5 files, run\n"
+                "  pip install h5py"
             )
 
         def convert(name, obj):
             head, tail = os.path.split(name)
-            s = self['/' + head] if head else self
+            s = self["/" + head] if head else self
             if isinstance(obj, h5py.Dataset):
                 s.create_dataset(tail, data=obj[:], **obj.attrs)
             elif isinstance(obj, h5py.Group):
                 s.create_group(tail, **obj.attrs)
             else:
-                assert False, 'Unhandled HDF5Reader object {}'.format(obj)
+                assert False, "Unhandled HDF5Reader object {}".format(obj)
 
         def h5_open(name):
-            with h5py.File(name, mode='r', **kwargs) as h5:
+            with h5py.File(name, mode="r", **kwargs) as h5:
                 self.add_metadata(**h5.attrs)
                 h5.visititems(convert)
 
@@ -68,8 +68,8 @@ class HDF5Reader(Reader):
         # and then mapped on the same computer. Opening the file
         # using open() and then passing in the file handle to
         # h5py.File is more universal
-        if hasattr(self.file, 'read'):  # already a file-like object
+        if hasattr(self.file, "read"):  # already a file-like object
             h5_open(self.file)
         else:
-            with open(self.file, mode='rb') as fp:
+            with open(self.file, mode="rb") as fp:
                 h5_open(fp)

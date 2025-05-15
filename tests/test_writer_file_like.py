@@ -24,9 +24,9 @@ writers = [JSONWriter, HDF5Writer]
 
 
 def fill_root_with_data(root):
-    root.add_metadata(x=1, foo='bar')
-    b = root.create_group('a/b')
-    b.create_dataset('points', data=[[1, 2], [3, 4], [-5, 6], [7, -8]], cartesian=True)
+    root.add_metadata(x=1, foo="bar")
+    b = root.create_group("a/b")
+    b.create_dataset("points", data=[[1, 2], [3, 4], [-5, 6], [7, -8]], cartesian=True)
     root.a.add_metadata(two=2.0)
 
 
@@ -36,11 +36,11 @@ def assert_root_data(root):
     assert len(list(root.ancestors())) == 0
     assert len(list(root.datasets())) == 1
     assert len(root.metadata) == 2
-    assert root.metadata['x'] == 1
-    assert root.metadata.foo == 'bar'
-    assert 'a' in root
-    assert 'b' in root.a
-    assert 'points' in root.a.b
+    assert root.metadata["x"] == 1
+    assert root.metadata.foo == "bar"
+    assert "a" in root
+    assert "b" in root.a
+    assert "points" in root.a.b
     assert len(root.a.metadata) == 1
     assert root.a.metadata.two == 2.0
     points = root.a.b.points
@@ -95,7 +95,7 @@ def test_bytes_io():
 
 def test_open_text():
     # write Root to a text-io stream and then read it back
-    path = os.path.join(tempfile.gettempdir(), 'textfile.txt')
+    path = os.path.join(tempfile.gettempdir(), "textfile.txt")
     if os.path.isfile(path):
         os.remove(path)
 
@@ -103,7 +103,7 @@ def test_open_text():
         if writer is HDF5Writer:
             continue  # The HDF5Writer cannot write to a text-based stream
 
-        with open(path, mode='wt') as fp:
+        with open(path, mode="wt") as fp:
             with writer(fp) as root:
                 assert isinstance(root.file, TextIOWrapper)
                 assert repr(root) == "<{} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
@@ -120,14 +120,14 @@ def test_open_text():
 
 def test_open_binary():
     # write Root to a binary-io stream and then read it back
-    path = os.path.join(tempfile.gettempdir(), 'binaryfile.bin')
+    path = os.path.join(tempfile.gettempdir(), "binaryfile.bin")
     if os.path.isfile(path):
         os.remove(path)
 
     for writer in writers:
         if writer is HDF5Writer and h5py is None:
             continue
-        with open(path, mode='wb') as fp:
+        with open(path, mode="wb") as fp:
             with writer(fp) as root:
                 assert isinstance(root.file, BufferedWriter)
                 assert repr(root) == "<{} 'binaryfile.bin' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)

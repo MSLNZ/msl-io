@@ -9,7 +9,7 @@ except ImportError:
 
 from msl.io.google_api import GSheets
 
-os.environ['MSL_IO_RUNNING_TESTS'] = 'True'
+os.environ["MSL_IO_RUNNING_TESTS"] = "True"
 
 
 @pytest.fixture(autouse=True)
@@ -33,24 +33,24 @@ def doctest_skipif(doctest_namespace):
     # Got:
     #     <Metadata '/' {'two': 2, 'one': 1}>
     if sys.version_info[:2] < (3, 6):
-        ver = lambda: pytest.skip('Python < 3.6')
+        ver = lambda: pytest.skip("Python < 3.6")
     else:
         ver = lambda: None
 
     # 32-bit wheels for h5py are not available for Python 3.9+
     if h5py is None:
-        h5 = lambda: pytest.skip('h5py not installed')
+        h5 = lambda: pytest.skip("h5py not installed")
     else:
         h5 = lambda: None
 
     try:
-        GSheets(account='testing', read_only=True)
+        GSheets(account="testing", read_only=True)
     except:
-        sheets_read_token = lambda: pytest.skip('Google API tokens not available')
+        sheets_read_token = lambda: pytest.skip("Google API tokens not available")
     else:
         sheets_read_token = lambda: None
 
-    doctest_namespace['SKIP_IF_PYTHON_LESS_THAN_36'] = ver
-    doctest_namespace['SKIP_IF_NO_H5PY'] = h5
-    doctest_namespace['SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN'] = sheets_read_token
-    doctest_namespace['SKIP_RUN_AS_ADMIN'] = lambda: pytest.skip('Illustrative examples')
+    doctest_namespace["SKIP_IF_PYTHON_LESS_THAN_36"] = ver
+    doctest_namespace["SKIP_IF_NO_H5PY"] = h5
+    doctest_namespace["SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN"] = sheets_read_token
+    doctest_namespace["SKIP_RUN_AS_ADMIN"] = lambda: pytest.skip("Illustrative examples")

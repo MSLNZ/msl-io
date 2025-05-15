@@ -37,11 +37,11 @@ class Group(Vertex):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return '<Group {!r} ({} groups, {} datasets, {} metadata)>'.format(self._name, g, d, m)
+        return "<Group {!r} ({} groups, {} datasets, {} metadata)>".format(self._name, g, d, m)
 
     def __getitem__(self, item):
-        if item and not item[0] == '/':
-            item = '/' + item
+        if item and not item[0] == "/":
+            item = "/" + item
         try:
             return self._mapping[item]
         except KeyError:
@@ -50,14 +50,14 @@ class Group(Vertex):
 
     def __getattr__(self, item):
         try:
-            return self.__getitem__('/' + item)
+            return self.__getitem__("/" + item)
         except KeyError as e:
             msg = str(e)
         raise AttributeError(msg)
 
     def __delattr__(self, item):
         try:
-            return self.__delitem__('/' + item)
+            return self.__delitem__("/" + item)
         except KeyError as e:
             msg = str(e)
         raise AttributeError(msg)
@@ -221,9 +221,9 @@ class Group(Vertex):
             `group` will be copied.
         """
         if not isinstance(group, Group):
-            raise TypeError('Must pass in a Group object, got {!r}'.format(group))
+            raise TypeError("Must pass in a Group object, got {!r}".format(group))
 
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
 
         if not group:  # no sub-Groups or Datasets, only add the Metadata
             self.create_group(name + group.name, **group.metadata.copy())
@@ -287,7 +287,7 @@ class Group(Vertex):
         :class:`Group`
             The :class:`Group` that was created or that already existed.
         """
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         group_name = name if self.parent is None else self.name + name
         for group in self.groups():
             if group.name == group_name:
@@ -311,9 +311,9 @@ class Group(Vertex):
             and the :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset, Dataset):
-            raise TypeError('Must pass in a Dataset object, got {!r}'.format(dataset))
+            raise TypeError("Must pass in a Dataset object, got {!r}".format(dataset))
 
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         self.create_dataset(
             name, read_only=dataset.read_only, data=dataset.data.copy(), **dataset.metadata.copy()
         )
@@ -365,14 +365,14 @@ class Group(Vertex):
         :class:`~msl.io.dataset.Dataset`
             The :class:`~msl.io.dataset.Dataset` that was created or that already existed.
         """
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         dataset_name = name if self.parent is None else self.name + name
         for dataset in self.datasets():
             if dataset.name == dataset_name:
                 if read_only is not None:
                     dataset.read_only = read_only
                 if kwargs:  # only add the kwargs that should be Metadata
-                    for kw in ['shape', 'dtype', 'buffer', 'offset', 'strides', 'order', 'data']:
+                    for kw in ["shape", "dtype", "buffer", "offset", "strides", "order", "data"]:
                         kwargs.pop(kw, None)
                 dataset.add_metadata(**kwargs)
                 return dataset
@@ -393,9 +393,9 @@ class Group(Vertex):
             :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset_logging, DatasetLogging):
-            raise TypeError('Must pass in a DatasetLogging object, got {!r}'.format(dataset_logging))
+            raise TypeError("Must pass in a DatasetLogging object, got {!r}".format(dataset_logging))
 
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         self.create_dataset_logging(
             name,
             level=dataset_logging.level,
@@ -406,7 +406,7 @@ class Group(Vertex):
             **dataset_logging.metadata.copy()
         )
 
-    def create_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **kwargs):
+    def create_dataset_logging(self, name, level="INFO", attributes=None, logger=None, date_fmt=None, **kwargs):
         """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
 
         Automatically creates the ancestor :class:`Group`\\s if they do not exist.
@@ -481,15 +481,15 @@ class Group(Vertex):
         if attributes is None:
             # if the default attribute names are changed then update the `attributes`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
-            attributes = ['asctime', 'levelname', 'name', 'message']
+            attributes = ["asctime", "levelname", "name", "message"]
         if date_fmt is None:
             # if the default date_fmt is changed then update the `date_fmt`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
-            date_fmt = '%Y-%m-%dT%H:%M:%S.%f'
+            date_fmt = "%Y-%m-%dT%H:%M:%S.%f"
         return DatasetLogging(name, parent, level=level, attributes=attributes,
                               logger=logger, date_fmt=date_fmt, **metadata)
 
-    def require_dataset_logging(self, name, level='INFO', attributes=None, logger=None, date_fmt=None, **kwargs):
+    def require_dataset_logging(self, name, level="INFO", attributes=None, logger=None, date_fmt=None, **kwargs):
         """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
 
         If the :class:`~msl.io.dataset_logging.DatasetLogging` exists then it will be returned
@@ -543,18 +543,18 @@ class Group(Vertex):
             The :class:`~msl.io.dataset_logging.DatasetLogging` that was created or
             that already existed.
         """
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         dataset_name = name if self.parent is None else self.name + name
         for dataset in self.datasets():
             if dataset.name == dataset_name:
-                if ('logging_level' not in dataset.metadata) or \
-                        ('logging_level_name' not in dataset.metadata) or \
-                        ('logging_date_format' not in dataset.metadata):
-                    raise ValueError('The required Dataset was found but it is not used for logging')
+                if ("logging_level" not in dataset.metadata) or \
+                        ("logging_level_name" not in dataset.metadata) or \
+                        ("logging_date_format" not in dataset.metadata):
+                    raise ValueError("The required Dataset was found but it is not used for logging")
 
                 if attributes and (dataset.dtype.names != tuple(attributes)):
-                    raise ValueError('The attribute names of the existing '
-                                     'logging Dataset are {} which does not equal {}'
+                    raise ValueError("The attribute names of the existing "
+                                     "logging Dataset are {} which does not equal {}"
                                      .format(dataset.dtype.names, tuple(attributes)))
 
                 if isinstance(dataset, DatasetLogging):
@@ -569,7 +569,7 @@ class Group(Vertex):
                 for group in groups:
                     for dset in group.datasets():
                         if dset is dataset:
-                            key = '/' + dset.name.lstrip(group.name)
+                            key = "/" + dset.name.lstrip(group.name)
                             del group._mapping[key]
                             break
 
@@ -601,19 +601,19 @@ class Group(Vertex):
             removed or :data:`None` if there was no :class:`Group` or
             :class:`~msl.io.dataset.Dataset` with the specified `name`.
         """
-        name = '/' + name.strip('/')
+        name = "/" + name.strip("/")
         return self.pop(name, None)
 
     def _check(self, read_only, **kwargs):
         self._raise_if_read_only()
-        kwargs.pop('parent', None)
+        kwargs.pop("parent", None)
         if read_only is None:
             return self._read_only, kwargs
         return read_only, kwargs
 
     def _create_ancestors(self, name, read_only):
         # automatically create the ancestor Groups if they do not already exist
-        names = name.strip('/').split('/')
+        names = name.strip("/").split("/")
         parent = self
         for n in names[:-1]:
             if n not in parent:

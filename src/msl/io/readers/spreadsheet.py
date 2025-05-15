@@ -4,7 +4,7 @@ Generic class for spreadsheets.
 import re
 import string
 
-_cell_regex = re.compile(r'^([A-Z]+)(\d*)$')
+_cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
 
 
 class Spreadsheet:
@@ -96,7 +96,7 @@ class Spreadsheet:
             div, mod = divmod(index, 26)
             letters.append(uppercase[mod])
             index = div - 1
-        return ''.join(letters[::-1])
+        return "".join(letters[::-1])
 
     @staticmethod
     def to_indices(cell):
@@ -136,7 +136,7 @@ class Spreadsheet:
         """
         match = _cell_regex.match(cell)
         if not match:
-            raise ValueError('Invalid cell {!r}'.format(cell))
+            raise ValueError("Invalid cell {!r}".format(cell))
 
         letters, numbers = match.groups()
         row = max(0, int(numbers) - 1) if numbers else None
@@ -184,9 +184,9 @@ class Spreadsheet:
         >>> to_slices('A5:M100', row_step=2, column_step=4)
         (slice(4, 100, 2), slice(0, 13, 4))
         """
-        split = cells.split(':')
+        split = cells.split(":")
         if len(split) != 2:
-            raise ValueError('Invalid cell range {!r}'.format(cells))
+            raise ValueError("Invalid cell range {!r}".format(cells))
 
         r1, c1 = Spreadsheet.to_indices(split[0])
         r2, c2 = Spreadsheet.to_indices(split[1])

@@ -24,7 +24,7 @@ class Root(Group):
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
             for the :class:`~msl.io.base.Root`.
         """
-        super(Group, self).__init__('/', None, False, **metadata)
+        super(Group, self).__init__("/", None, False, **metadata)
         self._file = file
 
     def __repr__(self):
@@ -32,7 +32,7 @@ class Root(Group):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return '<{} {!r} ({} groups, {} datasets, {} metadata)>'.\
+        return "<{} {!r} ({} groups, {} datasets, {} metadata)>".\
             format(self.__class__.__name__, b, g, d, m)
 
     @property
@@ -57,8 +57,8 @@ class Root(Group):
         :class:`str`
             The `tree structure`_.
         """
-        return repr(self) + '\n' + \
-            '\n'.join(' ' * (indent * k.count('/')) + repr(v) for k, v in sorted(self.items()))
+        return repr(self) + "\n" + \
+            "\n".join(" " * (indent * k.count("/")) + repr(v) for k, v in sorted(self.items()))
 
 
 class Writer(Root):
@@ -91,12 +91,12 @@ class Writer(Root):
             The new :class:`Root` for the :class:`Writer`.
         """
         if not isinstance(root, Group):  # it is okay to pass in any Group object
-            raise TypeError('Must pass in a Root object, got {!r}'.format(root))
+            raise TypeError("Must pass in a Root object, got {!r}".format(root))
         self.clear()
         self.metadata.clear()
         self.add_metadata(**root.metadata)
         if root:  # only do this if there are Groups and/or Datasets in the new root
-            self.add_group('', root)
+            self.add_group("", root)
 
     def update_context_kwargs(self, **kwargs):
         """
@@ -248,10 +248,10 @@ class Reader(Root):
         :class:`list` of :class:`str`
             The lines from the file. Trailing whitespace is stripped from each line.
         """
-        remove_empty_lines = kwargs.pop('remove_empty_lines', False)
+        remove_empty_lines = kwargs.pop("remove_empty_lines", False)
 
-        if 'encoding' not in kwargs:
-            kwargs['encoding'] = 'utf-8'
+        if "encoding" not in kwargs:
+            kwargs["encoding"] = "utf-8"
 
         # want the "stop" line to be included
         if (len(args) > 1) and (args[1] is not None) and (args[1] < 0):
@@ -264,7 +264,7 @@ class Reader(Root):
         if (len(args) > 1) and (args[0] is not None) and (args[0] > 0):
             args = (args[0] - 1,) + args[1:]
 
-        is_file_like = hasattr(file, 'tell')
+        is_file_like = hasattr(file, "tell")
 
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
@@ -277,7 +277,7 @@ class Reader(Root):
                 lines = get(file)
                 file.seek(position)
             else:
-                with open(file, 'r', **kwargs) as f:
+                with open(file, "r", **kwargs) as f:
                     lines = get(f)
 
             if len(args) == 1:
@@ -299,7 +299,7 @@ class Reader(Root):
                 lines = get(file)
                 file.seek(position)
             else:
-                with open(file, 'r', **kwargs) as f:
+                with open(file, "r", **kwargs) as f:
                     lines = get(f)
 
         if remove_empty_lines:
@@ -342,7 +342,7 @@ class Reader(Root):
         :class:`bytes`
             The bytes from the file.
         """
-        is_file_like = hasattr(file, 'tell')
+        is_file_like = hasattr(file, "tell")
         if is_file_like:
             position = file.tell()
             file.seek(0, os.SEEK_END)
@@ -361,7 +361,7 @@ class Reader(Root):
                 size = 0
 
             if size == 0:
-                with open(file, mode='rt') as fp:
+                with open(file, mode="rt") as fp:
                     fp.seek(0, os.SEEK_END)
                     size = fp.tell()
 
@@ -394,7 +394,7 @@ class Reader(Root):
             position = file.tell()
             _file = file
         else:
-            _file = open(file, mode='rb')
+            _file = open(file, mode="rb")
 
         _file.seek(start)
         data = _file.read(max(0, stop - start))
@@ -428,4 +428,4 @@ class Reader(Root):
             try:
                 return Reader.get_extension(file.name)
             except AttributeError:
-                return ''
+                return ""

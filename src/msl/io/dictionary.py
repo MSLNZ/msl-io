@@ -20,7 +20,7 @@ class Dictionary(MutableMapping):
         self._mapping = dict(**kwargs)
 
     def __repr__(self):
-        return '{' + ', '.join(f"{key!r}: {value!r}" if isinstance(value, str) else f"{key!r}: {value}" for key, value in self._mapping.items()) + '}'
+        return "{" + ", ".join(f"{key!r}: {value!r}" if isinstance(value, str) else f"{key!r}: {value}" for key, value in self._mapping.items()) + "}"
 
     def __iter__(self):
         return iter(self._mapping)
@@ -68,7 +68,7 @@ class Dictionary(MutableMapping):
     def _raise_if_read_only(self):
         if self._read_only:
             # numpy also raises ValueError if the ndarray is in read-only mode
-            raise ValueError('Cannot modify {!r}. It is accessed in read-only mode.'.format(self))
+            raise ValueError("Cannot modify {!r}. It is accessed in read-only mode.".format(self))
 
     def _raise_key_error(self, key):
-        raise KeyError('{!r} is not in {!r}'.format(key, self))
+        raise KeyError("{!r} is not in {!r}".format(key, self))

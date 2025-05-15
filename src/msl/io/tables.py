@@ -11,11 +11,11 @@ from .readers import ExcelReader
 from .readers import GSheetsReader
 from .utils import get_basename
 
-_spreadsheet_top_left_regex = re.compile(r'^([A-Z]+)(\d+)$')
-_spreadsheet_range_regex = re.compile(r'^[A-Z]+\d*:[A-Z]+\d*$')
+_spreadsheet_top_left_regex = re.compile(r"^([A-Z]+)(\d+)$")
+_spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
 
 
-extension_delimiter_map = {'.csv': ','}
+extension_delimiter_map = {".csv": ","}
 """:class:`dict`: The delimiter to use to separate columns in a table based on the file extension.
 
 If the `delimiter` is not specified when calling the :func:`~msl.io.read_table` function then this
@@ -59,36 +59,36 @@ def read_table_text(file, **kwargs):
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
-    if kwargs.get('unpack', False):
+    if kwargs.get("unpack", False):
         raise ValueError('Cannot use the "unpack" option')
 
-    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+    if hasattr(file, "as_posix"):  # a pathlib.Path object
         file = str(file)
 
-    if 'delimiter' not in kwargs:
+    if "delimiter" not in kwargs:
         extn = Reader.get_extension(file).lower()
-        kwargs['delimiter'] = extension_delimiter_map.get(extn)
+        kwargs["delimiter"] = extension_delimiter_map.get(extn)
 
-    if 'skiprows' not in kwargs:
-        kwargs['skiprows'] = 0
-    kwargs['skiprows'] += 1  # Reader.get_lines is 1-based, np.loadtxt is 0-based
+    if "skiprows" not in kwargs:
+        kwargs["skiprows"] = 0
+    kwargs["skiprows"] += 1  # Reader.get_lines is 1-based, np.loadtxt is 0-based
 
-    first_line = Reader.get_lines(file, kwargs['skiprows'], kwargs['skiprows'])
+    first_line = Reader.get_lines(file, kwargs["skiprows"], kwargs["skiprows"])
     if not first_line:
         header, data = [], []
     else:
-        header = first_line[0].split(kwargs['delimiter'])
+        header = first_line[0].split(kwargs["delimiter"])
         # Calling np.loadtxt (on Python 3.5, 3.6 and 3.7) on a file
         # on a mapped drive could raise an OSError. This occurred
         # when a local folder was shared and then mapped on the same
         # computer. Opening the file using open() and then passing
         # in the file handle to np.loadtxt is more universal
-        if hasattr(file, 'read'):  # already a file-like object
+        if hasattr(file, "read"):  # already a file-like object
             data = np.loadtxt(file, **kwargs)
         else:
-            with open(file, mode='rt') as fp:
+            with open(file, mode="rt") as fp:
                 data = np.loadtxt(fp, **kwargs)
-        use_cols = kwargs.get('usecols')
+        use_cols = kwargs.get("usecols")
         if use_cols:
             if isinstance(use_cols, int):
                 use_cols = [use_cols]
@@ -135,21 +135,21 @@ def read_table_excel(file, cells=None, sheet=None, as_datetime=True, dtype=None,
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
-    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+    if hasattr(file, "as_posix"):  # a pathlib.Path object
         file = str(file)
-    elif hasattr(file, 'name'):  # a TextIOWrapper object
+    elif hasattr(file, "name"):  # a TextIOWrapper object
         file = file.name
 
     with ExcelReader(file, **kwargs) as excel:
         if cells is not None and not _spreadsheet_range_regex.match(cells):
             match = _spreadsheet_top_left_regex.match(cells)
             if not match:
-                raise ValueError('Invalid cell {!r}'.format(cells))
+                raise ValueError("Invalid cell {!r}".format(cells))
             name = sheet or excel.workbook.sheet_names()[0]
             s = excel.workbook.sheet_by_name(name)
             letters = excel.to_letters(s.ncols - 1)
             row = match.group(2)
-            cells += ':{}{}'.format(letters, row)
+            cells += ":{}{}".format(letters, row)
         table = excel.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
@@ -196,15 +196,15 @@ def read_table_gsheets(file, cells=None, sheet=None, as_datetime=True, dtype=Non
         The table as a :class:`~msl.io.dataset.Dataset`. The header is included
         in the :class:`~msl.io.metadata.Metadata`.
     """
-    if hasattr(file, 'as_posix'):  # a pathlib.Path object
+    if hasattr(file, "as_posix"):  # a pathlib.Path object
         file = str(file)
-    elif hasattr(file, 'name'):  # a TextIOWrapper object
+    elif hasattr(file, "name"):  # a TextIOWrapper object
         file = file.name
 
     with GSheetsReader(file, **kwargs) as sheets:
         if cells is not None and not _spreadsheet_range_regex.match(cells):
             if not _spreadsheet_top_left_regex.match(cells):
-                raise ValueError('Invalid cell {!r}'.format(cells))
+                raise ValueError("Invalid cell {!r}".format(cells))
             r, c = sheets.to_indices(cells)
             data = sheets.read(sheet=sheet, as_datetime=as_datetime)
             table = [row[c:] for row in data[r:]]

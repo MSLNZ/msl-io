@@ -29,27 +29,27 @@ class Vertex(Dictionary):
         super(Vertex, self).__init__(read_only)
 
         if not name:
-            raise ValueError('The vertex name must be a non-empty string')
+            raise ValueError("The vertex name must be a non-empty string")
 
         if parent is not None:
-            if '/' in name:
+            if "/" in name:
                 raise ValueError('The vertex name cannot contain the "/" character')
 
             # use a path name similar to a UNIX file system
-            if parent.name.endswith('/'):
+            if parent.name.endswith("/"):
                 name = parent.name + name
             else:
-                name = parent.name + '/' + name
+                name = parent.name + "/" + name
 
             # notify all ancestors that this vertex was created
             i = 0
             ancestor = parent
-            name_split = name.split('/')
+            name_split = name.split("/")
             while ancestor is not None:
                 i += 1
-                key = '/' + '/'.join(name_split[-i:])
+                key = "/" + "/".join(name_split[-i:])
                 if key in ancestor._mapping:
-                    raise ValueError('The name of this vertex, {!r}, is not unique'.format(key))
+                    raise ValueError("The name of this vertex, {!r}, is not unique".format(key))
                 ancestor._mapping[key] = self
                 ancestor = ancestor._parent
 
@@ -59,8 +59,8 @@ class Vertex(Dictionary):
 
     def __delitem__(self, item):
         self._raise_if_read_only()
-        if item and not item[0] == '/':
-            item = '/' + item
+        if item and not item[0] == "/":
+            item = "/" + item
 
         try:
             popped = self._mapping.pop(item)
@@ -71,7 +71,7 @@ class Vertex(Dictionary):
             # use recursion to delete the reference to
             # `popped` from the head of this Vertex
             head, tail = os.path.split(item)
-            if head != '/':
+            if head != "/":
                 assert self[head].pop(tail) is popped
 
             def notify_ancestors(obj):

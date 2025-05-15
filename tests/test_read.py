@@ -20,34 +20,34 @@ from msl.io.readers import JSONReader
 
 def test_raises():
     # file does not exist
-    with pytest.raises(OSError, match=r'No such file'):
-        read('does_not.exist')
+    with pytest.raises(OSError, match=r"No such file"):
+        read("does_not.exist")
 
     # unicode filename
-    with pytest.raises(OSError, match=r'No such file'):
-        read('Filé döes ñot éxist')
+    with pytest.raises(OSError, match=r"No such file"):
+        read("Filé döes ñot éxist")
 
     # no Reader class exists to read this test_read.py file
-    with pytest.raises(OSError, match=r'No Reader exists'):
+    with pytest.raises(OSError, match=r"No Reader exists"):
         read(__file__)
 
     # unicode filename
-    with pytest.raises(OSError, match=r'No Reader exists'):
-        read_sample('uñicödé')
+    with pytest.raises(OSError, match=r"No Reader exists"):
+        read_sample("uñicödé")
 
 
-@pytest.mark.skipif(h5py is None, reason='h5py is not installed')
+@pytest.mark.skipif(h5py is None, reason="h5py is not installed")
 def test_unicode_filename():
-    root = read_sample('uñicödé.h5')
+    root = read_sample("uñicödé.h5")
     assert root.metadata.is_unicode
-    assert root.file.endswith('uñicödé.h5')
-    assert 'café' in root
-    assert '/café' in root
-    assert 'café/caña' in root
-    assert '/café/caña' in root
-    assert 'caña' in root['café']
-    assert '/caña' in root['/café']
-    assert 'cafécaña' not in root
+    assert root.file.endswith("uñicödé.h5")
+    assert "café" in root
+    assert "/café" in root
+    assert "café/caña" in root
+    assert "/café/caña" in root
+    assert "caña" in root["café"]
+    assert "/caña" in root["/café"]
+    assert "cafécaña" not in root
 
 
 def test_socket():
@@ -55,14 +55,14 @@ def test_socket():
 
     # get any available port
     sock = socket.socket()
-    sock.bind(('', 0))
+    sock.bind(("", 0))
     port = sock.getsockname()[1]
     sock.close()
 
     # the server will run in a separate thread
     def start_server():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind(('localhost', port))
+        server.bind(("localhost", port))
         server.listen(1)
         conn, _ = server.accept()
         with BytesIO(conn.recv(2**18)) as buf:
@@ -80,12 +80,12 @@ def test_socket():
     # read the sample file into a BytesIO stream
     client_send_buf = BytesIO()
     with JSONWriter(client_send_buf) as json:
-        root_client = read_sample('json_sample.json')
+        root_client = read_sample("json_sample.json")
         json.set_root(root_client)
 
     # send the bytes to the server
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('localhost', port))
+    client.connect(("localhost", port))
     client.sendall(client_send_buf.getvalue())
     client_send_buf.close()
 
@@ -102,6 +102,6 @@ def test_socket():
 
 
 def test_pathlib():
-    root1 = read_sample('json_sample.json')
+    root1 = read_sample("json_sample.json")
     root2 = read(pathlib.Path(root1.file))
     assert roots_equal(root1, root2)

@@ -35,13 +35,13 @@ class ExcelReader(Spreadsheet):
         super(ExcelReader, self).__init__(file)
 
         # change the default on_demand value
-        if 'on_demand' not in kwargs:
-            kwargs['on_demand'] = True
+        if "on_demand" not in kwargs:
+            kwargs["on_demand"] = True
 
         # 'encoding' is an alias for 'encoding_override'
-        encoding = kwargs.pop('encoding', None)
+        encoding = kwargs.pop("encoding", None)
         if encoding is not None:
-            kwargs['encoding_override'] = encoding
+            kwargs["encoding_override"] = encoding
 
         self._workbook = _xlrd.open_workbook(file, **kwargs)
 
@@ -103,9 +103,9 @@ class ExcelReader(Spreadsheet):
         if not sheet:
             names = self.sheet_names()
             if len(names) > 1:
-                raise ValueError('{!r} contains the following sheets:\n  {}\n'
-                                 'You must specify the name of the sheet to read'
-                                 .format(self._file, ', '.join(repr(n) for n in names)))
+                raise ValueError("{!r} contains the following sheets:\n  {}\n"
+                                 "You must specify the name of the sheet to read"
+                                 .format(self._file, ", ".join(repr(n) for n in names)))
             sheet_name = names[0]
         else:
             sheet_name = sheet
@@ -120,7 +120,7 @@ class ExcelReader(Spreadsheet):
             return [tuple(self._value(sheet, r, c, as_datetime) for c in range(sheet.ncols))
                     for r in range(sheet.nrows)]
 
-        split = cell.split(':')
+        split = cell.split(":")
         r1, c1 = self.to_indices(split[0])
         if r1 is None:
             r1 = 0

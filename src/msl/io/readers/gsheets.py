@@ -9,7 +9,7 @@ from ..google_api import GCellType
 from ..google_api import GDrive
 from ..google_api import GSheets
 
-_google_file_id_regex = re.compile(r'^1[a-zA-Z0-9_-]{43}$')
+_google_file_id_regex = re.compile(r"^1[a-zA-Z0-9_-]{43}$")
 
 
 class GSheetsReader(Spreadsheet):
@@ -38,8 +38,8 @@ class GSheetsReader(Spreadsheet):
         """
         super(GSheetsReader, self).__init__(file)
 
-        if not kwargs.get('read_only', True):
-            raise ValueError('Must instantiate {} in read-only mode'.format(self.__class__.__name__))
+        if not kwargs.get("read_only", True):
+            raise ValueError("Must instantiate {} in read-only mode".format(self.__class__.__name__))
 
         path, ext = os.path.splitext(file)
         folders, _ = os.path.split(path)
@@ -111,21 +111,21 @@ class GSheetsReader(Spreadsheet):
             else:
                 names = self.sheet_names()
                 if len(names) != 1:
-                    raise ValueError('{!r} contains the following sheets:\n  {}\n'
-                                     'You must specify the name of the sheet to read'
-                                     .format(self._file, ', '.join(repr(n) for n in names)))
+                    raise ValueError("{!r} contains the following sheets:\n  {}\n"
+                                     "You must specify the name of the sheet to read"
+                                     .format(self._file, ", ".join(repr(n) for n in names)))
                 sheet = names[0]
                 self._cached_sheet_name = sheet
 
         if cell:
-            ranges = '{}!{}'.format(sheet, cell)
+            ranges = "{}!{}".format(sheet, cell)
         else:
             ranges = sheet
 
         cells = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
         if sheet not in cells:
-            raise ValueError('There is no sheet named {!r} in {!r}'.format(sheet, self._file))
+            raise ValueError("There is no sheet named {!r} in {!r}".format(sheet, self._file))
 
         values = []
         for row in cells[sheet]:
@@ -143,7 +143,7 @@ class GSheetsReader(Spreadsheet):
         if not cell:
             return values
 
-        if ':' not in cell:
+        if ":" not in cell:
             if values:
                 return values[0][0]
             return

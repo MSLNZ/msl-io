@@ -79,22 +79,22 @@ class JSONWriter(Writer):
         if file is None:
             file = self.file
         if not file:
-            raise ValueError('You must specify a file to write the root to')
+            raise ValueError("You must specify a file to write the root to")
 
         if root is None:
             root = self
         elif not isinstance(root, Root):
-            raise TypeError('The root parameter must be a Root object')
+            raise TypeError("The root parameter must be a Root object")
 
         def add_dataset(d, dataset):
             if dataset.dtype.fields:
                 # can't iterate over dataset.dtype.fields.items() since Python < 3.6
                 # does not preserve order in a dict
                 fields = dataset.dtype.fields
-                d['dtype'] = [[n, str(fields[n][0])] for n in dataset.dtype.names]
+                d["dtype"] = [[n, str(fields[n][0])] for n in dataset.dtype.names]
             else:
-                d['dtype'] = dataset.dtype.str
-            d['data'] = dataset.tolist()
+                d["dtype"] = dataset.dtype.str
+            d["data"] = dataset.tolist()
 
         def meta_to_dict(metadata):
             return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else v)
@@ -103,7 +103,7 @@ class JSONWriter(Writer):
         dict_ = dict(**meta_to_dict(root.metadata))
 
         for name, value in root.items():
-            vertices = name.split('/')
+            vertices = name.split("/")
             root_key = vertices[1]
 
             if root_key not in dict_:
@@ -123,30 +123,30 @@ class JSONWriter(Writer):
                         add_dataset(vertex[leaf_key], value)
 
         open_kwargs = {
-            'mode': kwargs.pop('mode', None),
-            'encoding': kwargs.pop('encoding', 'utf-8'),
-            'errors': kwargs.pop('errors', 'strict')
+            "mode": kwargs.pop("mode", None),
+            "encoding": kwargs.pop("encoding", "utf-8"),
+            "errors": kwargs.pop("errors", "strict")
         }
 
-        is_file_like = hasattr(file, 'write')
+        is_file_like = hasattr(file, "write")
 
         if not is_file_like:
-            if not open_kwargs['mode']:
-                open_kwargs['mode'] = 'w'
+            if not open_kwargs["mode"]:
+                open_kwargs["mode"] = "w"
                 if os.path.isfile(file) or is_file_readable(file):
                     raise OSError(
                         "File exists {!r}\n"
                         "Specify mode='w' if you want to overwrite it.".format(file)
                     )
-            elif open_kwargs['mode'] == 'r':
-                raise ValueError('Invalid mode {!r}'.format(open_kwargs['mode']))
-            elif open_kwargs['mode'] == 'a':
-                open_kwargs['mode'] = 'w'
+            elif open_kwargs["mode"] == "r":
+                raise ValueError("Invalid mode {!r}".format(open_kwargs["mode"]))
+            elif open_kwargs["mode"] == "a":
+                open_kwargs["mode"] = "w"
 
-        if 'indent' not in kwargs:
-            kwargs['indent'] = 2
-        if 'cls' not in kwargs:
-            kwargs['cls'] = _NumpyEncoder
+        if "indent" not in kwargs:
+            kwargs["indent"] = 2
+        if "cls" not in kwargs:
+            kwargs["cls"] = _NumpyEncoder
             json.encoder._make_iterencode = _make_iterencode
 
         # header = '#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__)
@@ -155,11 +155,11 @@ class JSONWriter(Writer):
         # and therefore the value of self.__class__.__name__ would change. The
         # JSONReader.can_read() method expects the text 'MSL JSONWriter' to be in a
         # specific location on the first line in the file.
-        header = '#File created with: MSL JSONWriter version 1.0\n'
+        header = "#File created with: MSL JSONWriter version 1.0\n"
 
         if is_file_like:
             if isinstance(file, BufferedIOBase):  # a bytes-like object is required
-                encoding = open_kwargs['encoding']
+                encoding = open_kwargs["encoding"]
                 file.write(header.encode(encoding))
                 file.write(json.dumps(dict_, **kwargs).encode(encoding))
             else:
@@ -170,7 +170,7 @@ class JSONWriter(Writer):
                 fp.write(header)
                 json.dump(dict_, fp, **kwargs)
 
-        if kwargs['cls'] is _NumpyEncoder:
+        if kwargs["cls"] is _NumpyEncoder:
             json.encoder._make_iterencode = _original_make_iterencode
 
 
@@ -186,7 +186,7 @@ class _NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj, np.bool_):
             return bool(obj)
         elif isinstance(obj, bytes):
-            return obj.decode(encoding='utf-8')
+            return obj.decode(encoding="utf-8")
 
         # Let the base class raise the TypeError
         return json.JSONEncoder.default(self, obj)

@@ -8,8 +8,8 @@ from msl.io import GMail
 from msl.io import GSheets
 from msl.io import constants
 
-account = 'testing'
-credentials = os.path.join(constants.HOME_DIR, account + '-client-secret.json')
+account = "testing"
+credentials = os.path.join(constants.HOME_DIR, account + "-client-secret.json")
 
 GMail(account=account, credentials=credentials)
 GSheets(account=account, credentials=credentials, read_only=True)

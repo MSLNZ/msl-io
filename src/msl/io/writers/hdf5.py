@@ -54,22 +54,22 @@ class HDF5Writer(Writer):
         """
         if h5py is None:
             raise ImportError(
-                'You must install h5py to write HDF5 files, run\n'
-                '  pip install h5py'
+                "You must install h5py to write HDF5 files, run\n"
+                "  pip install h5py"
             )
 
         if file is None:
             file = self.file
         if not file:
-            raise ValueError('You must specify a file to write the root to')
+            raise ValueError("You must specify a file to write the root to")
 
         if root is None:
             root = self
         elif not isinstance(root, Root):
-            raise TypeError('The root parameter must be a Root object')
+            raise TypeError("The root parameter must be a Root object")
 
-        if 'mode' not in kwargs:
-            kwargs['mode'] = 'x'  # Create file, fail if exists
+        if "mode" not in kwargs:
+            kwargs["mode"] = "x"  # Create file, fail if exists
 
         def check_ndarray_dtype(obj):
             if not isinstance(obj, np.ndarray):
@@ -90,13 +90,13 @@ class HDF5Writer(Writer):
                 if convert:
                     return obj.astype(dtype=dtype)
                 return obj
-            elif obj.dtype.char == 'U':
+            elif obj.dtype.char == "U":
                 return obj.astype(dtype=vstr)
-            elif obj.dtype.char == 'O':
+            elif obj.dtype.char == "O":
                 has_complex = False
                 for item in obj.flat:
                     if isinstance(item, str):
-                        return obj.astype(dtype='S')
+                        return obj.astype(dtype="S")
                     elif isinstance(item, np.complexfloating):
                         has_complex = True
                     elif item is None:
@@ -128,21 +128,21 @@ class HDF5Writer(Writer):
         # an OSError. This occurred when a local folder was shared and then
         # mapped on the same computer. Opening the file using open() and then
         # passing in the file handle to h5py.File is more universal
-        if hasattr(file, 'write'):  # already a file-like object
+        if hasattr(file, "write"):  # already a file-like object
             h5_open(file)
         else:
-            m = kwargs['mode']
-            if m in ['x', 'w-']:
+            m = kwargs["mode"]
+            if m in ["x", "w-"]:
                 if os.path.isfile(file) or is_file_readable(file):
                     raise OSError(
                         "File exists {!r}\n"
                         "Specify mode='w' if you want to overwrite it.".format(file)
                     )
-            elif m == 'r+':
+            elif m == "r+":
                 if not (os.path.isfile(file) or is_file_readable(file)):
-                    raise OSError('File does not exist {!r}'.format(file))
-            elif m not in ['w', 'a']:
-                raise ValueError('Invalid mode {!r}'.format(m))
+                    raise OSError("File does not exist {!r}".format(file))
+            elif m not in ["w", "a"]:
+                raise ValueError("Invalid mode {!r}".format(m))
 
-            with open(file, mode='w+b') as fp:
+            with open(file, mode="w+b") as fp:
                 h5_open(fp)

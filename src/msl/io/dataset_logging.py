@@ -53,11 +53,11 @@ class DatasetLogging(Dataset, logging.Handler):
             rows that were created.
         """
         if not attributes or not all(isinstance(a, str) for a in attributes):
-            raise ValueError('Must specify attribute names as strings, got: {}'.format(attributes))
+            raise ValueError("Must specify attribute names as strings, got: {}".format(attributes))
 
         self._logger = None
         self._attributes = tuple(attributes)
-        self._uses_asctime = 'asctime' in attributes
+        self._uses_asctime = "asctime" in attributes
         self._date_fmt = date_fmt
 
         if isinstance(level, str):
@@ -65,30 +65,30 @@ class DatasetLogging(Dataset, logging.Handler):
 
         # these 3 keys in the metadata are used to distinguish a DatasetLogging
         # object from a regular Dataset object
-        kwargs['logging_level'] = level
-        kwargs['logging_level_name'] = logging.getLevelName(level)
-        kwargs['logging_date_format'] = date_fmt
+        kwargs["logging_level"] = level
+        kwargs["logging_level_name"] = logging.getLevelName(level)
+        kwargs["logging_date_format"] = date_fmt
         self._dtype = np.dtype([(a, object) for a in attributes])
 
-        self._auto_resize = 'size' in kwargs or 'shape' in kwargs
+        self._auto_resize = "size" in kwargs or "shape" in kwargs
         if self._auto_resize:
-            if 'size' in kwargs:
-                kwargs['shape'] = (kwargs.pop('size'),)
-            elif isinstance(kwargs['shape'], int):
-                kwargs['shape'] = (kwargs['shape'],)
+            if "size" in kwargs:
+                kwargs["shape"] = (kwargs.pop("size"),)
+            elif isinstance(kwargs["shape"], int):
+                kwargs["shape"] = (kwargs["shape"],)
 
-            shape = kwargs['shape']
+            shape = kwargs["shape"]
             if len(shape) != 1:
-                raise ValueError('Invalid shape {}, the number of dimensions must be 1'.format(shape))
+                raise ValueError("Invalid shape {}, the number of dimensions must be 1".format(shape))
             if shape[0] < 0:
-                raise ValueError('Invalid shape {}'.format(shape))
+                raise ValueError("Invalid shape {}".format(shape))
 
         # call Dataset.__init__ before Handler.__init__ in case the Dataset cannot be created
         Dataset.__init__(self, name, parent, False, dtype=self._dtype, **kwargs)
 
         self._index = np.count_nonzero(self._data)
-        if self._auto_resize and self._data.shape < kwargs['shape']:
-            self._resize(new_allocated=kwargs['shape'][0])
+        if self._auto_resize and self._data.shape < kwargs["shape"]:
+            self._resize(new_allocated=kwargs["shape"][0])
 
         # the Handler will overwrite the self._name attribute, so we create a reference to the
         # `name` of the Dataset and then set the `name` of the Handler after it is initialized
@@ -163,7 +163,7 @@ class DatasetLogging(Dataset, logging.Handler):
             The :class:`~logging.Logger` to add this class's :class:`~logging.Handler` to.
         """
         if not isinstance(logger, logging.Logger):
-            raise TypeError('Must be a logging.Logger object')
+            raise TypeError("Must be a logging.Logger object")
 
         level = self.metadata.logging_level
         if logger.level == 0 or logger.level > level:

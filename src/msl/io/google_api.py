@@ -49,15 +49,15 @@ def _authenticate(token, client_secrets_file, scopes):
     """
     if not HAS_GOOGLE_API:
         raise RuntimeError(
-            'You must install the Google-API packages, run\n'
-            '  pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib'
+            "You must install the Google-API packages, run\n"
+            "  pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib"
         )
 
     credentials = None
 
     # load the token from an environment variable if it exists
     # ignore the '.json' extension
-    token_env_name = os.path.basename(token)[:-5].replace('-', '_').upper()
+    token_env_name = os.path.basename(token)[:-5].replace("-", "_").upper()
     if token_env_name in os.environ:
         info = json.loads(os.environ[token_env_name])
         credentials = Credentials.from_authorized_user_info(info, scopes=scopes)
@@ -72,11 +72,11 @@ def _authenticate(token, client_secrets_file, scopes):
             try:
                 credentials.refresh(Request())
             except RefreshError as err:
-                if os.path.isfile(token) and not os.getenv('MSL_IO_RUNNING_TESTS'):
-                    message = '{}: {}\nDo you want to delete the token file and re-authenticate ' \
-                              '(y/N)? '.format(err.__class__.__name__, err.args[0])
+                if os.path.isfile(token) and not os.getenv("MSL_IO_RUNNING_TESTS"):
+                    message = "{}: {}\nDo you want to delete the token file and re-authenticate " \
+                              "(y/N)? ".format(err.__class__.__name__, err.args[0])
                     yes_no = input(message)
-                    if yes_no.lower().startswith('y'):
+                    if yes_no.lower().startswith("y"):
                         os.remove(token)
                         return _authenticate(token, client_secrets_file, scopes)
                 raise
@@ -94,7 +94,7 @@ def _authenticate(token, client_secrets_file, scopes):
             dirname = os.path.dirname(token)
             if dirname and not os.path.isdir(dirname):
                 os.makedirs(dirname)
-            with open(token, mode='wt') as fp:
+            with open(token, mode="wt") as fp:
                 fp.write(credentials.to_json())
 
     return credentials
@@ -105,9 +105,9 @@ class GoogleAPI:
     def __init__(self, service, version, credentials, scopes, read_only, account):
         """Base class for all Google APIs."""
 
-        name = '{}-'.format(account) if account else ''
-        readonly = '-readonly' if read_only else ''
-        filename = '{}token-{}{}.json'.format(name, service, readonly)
+        name = "{}-".format(account) if account else ""
+        readonly = "-readonly" if read_only else ""
+        filename = "{}token-{}{}.json".format(name, service, readonly)
         token = os.path.join(HOME_DIR, filename)
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
@@ -130,8 +130,8 @@ class GoogleAPI:
 
 class GDrive(GoogleAPI):
 
-    MIME_TYPE_FOLDER = 'application/vnd.google-apps.folder'
-    ROOT_NAMES = ['Google Drive', 'My Drive', 'Drive']
+    MIME_TYPE_FOLDER = "application/vnd.google-apps.folder"
+    ROOT_NAMES = ["Google Drive", "My Drive", "Drive"]
 
     def __init__(self, account=None, credentials=None, read_only=True, scopes=None):
         """Interact with Google Drive.
@@ -177,17 +177,17 @@ class GDrive(GoogleAPI):
         if not scopes:
             if read_only:
                 scopes = [
-                    'https://www.googleapis.com/auth/drive.readonly',
-                    'https://www.googleapis.com/auth/drive.metadata.readonly'
+                    "https://www.googleapis.com/auth/drive.readonly",
+                    "https://www.googleapis.com/auth/drive.metadata.readonly"
                 ]
             else:
                 scopes = [
-                    'https://www.googleapis.com/auth/drive',
-                    'https://www.googleapis.com/auth/drive.metadata',
+                    "https://www.googleapis.com/auth/drive",
+                    "https://www.googleapis.com/auth/drive.metadata",
                 ]
 
         super(GDrive, self).__init__(
-            'drive', 'v3', credentials, scopes, read_only, account)
+            "drive", "v3", credentials, scopes, read_only, account)
 
         self._files = self._service.files()
         self._drives = self._service.drives()
@@ -222,7 +222,7 @@ class GDrive(GoogleAPI):
         :class:`str`
             The folder ID.
         """
-        folder_id = parent_id or 'root'
+        folder_id = parent_id or "root"
         names = GDrive._folder_hierarchy(folder)
         for name in names:
             q = '"{}" in parents and name="{}" and trashed=false and mimeType="{}"'.format(
@@ -230,20 +230,20 @@ class GDrive(GoogleAPI):
             )
             response = self._files.list(
                 q=q,
-                fields='files(id,name)',
+                fields="files(id,name)",
                 includeItemsFromAllDrives=True,
                 supportsAllDrives=True,
             ).execute()
-            files = response['files']
+            files = response["files"]
             if not files:
-                raise OSError('Not a valid Google Drive folder {!r}'.format(folder))
+                raise OSError("Not a valid Google Drive folder {!r}".format(folder))
             if len(files) > 1:
-                matches = '\n  '.join(str(file) for file in files)
-                raise OSError('Multiple folders exist for {!r}\n  {}'.format(name, matches))
+                matches = "\n  ".join(str(file) for file in files)
+                raise OSError("Multiple folders exist for {!r}\n  {}".format(name, matches))
 
             first = files[0]
-            assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
-            folder_id = first['id']
+            assert name == first["name"], "{!r} != {!r}".format(name, first["name"])
+            folder_id = first["id"]
 
         return folder_id
 
@@ -278,21 +278,21 @@ class GDrive(GoogleAPI):
 
         response = self._files.list(
             q=q,
-            fields='files(id,name,mimeType)',
+            fields="files(id,name,mimeType)",
             includeItemsFromAllDrives=True,
             supportsAllDrives=True,
         ).execute()
-        files = response['files']
+        files = response["files"]
         if not files:
-            raise OSError('Not a valid Google Drive file {!r}'.format(file))
+            raise OSError("Not a valid Google Drive file {!r}".format(file))
         if len(files) > 1:
-            mime_types = '\n  '.join(f['mimeType'] for f in files)
-            raise OSError('Multiple files exist for {!r}. '
-                          'Filter by MIME type:\n  {}'.format(file, mime_types))
+            mime_types = "\n  ".join(f["mimeType"] for f in files)
+            raise OSError("Multiple files exist for {!r}. "
+                          "Filter by MIME type:\n  {}".format(file, mime_types))
 
         first = files[0]
-        assert name == first['name'], '{!r} != {!r}'.format(name, first['name'])
-        return first['id']
+        assert name == first["name"], "{!r} != {!r}".format(name, first["name"])
+        return first["id"]
 
     def is_file(self, file, mime_type=None, folder_id=None):
         """Check if a file exists.
@@ -317,7 +317,7 @@ class GDrive(GoogleAPI):
         try:
             self.file_id(file, mime_type=mime_type, folder_id=folder_id)
         except OSError as err:
-            return str(err).startswith('Multiple files')
+            return str(err).startswith("Multiple files")
         else:
             return True
 
@@ -342,7 +342,7 @@ class GDrive(GoogleAPI):
         try:
             self.folder_id(folder, parent_id=parent_id)
         except OSError as err:
-            return str(err).startswith('Multiple folders')
+            return str(err).startswith("Multiple folders")
         else:
             return True
 
@@ -368,19 +368,19 @@ class GDrive(GoogleAPI):
             The ID of the last (right most) folder that was created.
         """
         names = GDrive._folder_hierarchy(folder)
-        response = {'id': parent_id or 'root'}
+        response = {"id": parent_id or "root"}
         for name in names:
             request = self._files.create(
                 body={
-                    'name': name,
-                    'mimeType': GDrive.MIME_TYPE_FOLDER,
-                    'parents': [response['id']],
+                    "name": name,
+                    "mimeType": GDrive.MIME_TYPE_FOLDER,
+                    "parents": [response["id"]],
                 },
-                fields='id',
+                fields="id",
                 supportsAllDrives=True,
             )
             response = request.execute()
-        return response['id']
+        return response["id"]
 
     def delete(self, file_or_folder_id):
         """Delete a file or a folder.
@@ -401,7 +401,7 @@ class GDrive(GoogleAPI):
         if self.is_read_only(file_or_folder_id):
             # The API allows for a file to be deleted if it is in read-only mode,
             # but we will not allow it to be deleted
-            raise RuntimeError('Cannot delete the file since it is in read-only mode')
+            raise RuntimeError("Cannot delete the file since it is in read-only mode")
 
         self._files.delete(
             fileId=file_or_folder_id,
@@ -440,12 +440,12 @@ class GDrive(GoogleAPI):
         :class:`str`
             The ID of the file that was uploaded.
         """
-        parent_id = folder_id or 'root'
+        parent_id = folder_id or "root"
         filename = os.path.basename(file)
 
-        body = {'name': filename, 'parents': [parent_id]}
+        body = {"name": filename, "parents": [parent_id]}
         if mime_type:
-            body['mimeType'] = mime_type
+            body["mimeType"] = mime_type
 
         request = self._files.create(
             body=body,
@@ -455,11 +455,11 @@ class GDrive(GoogleAPI):
                 chunksize=chunk_size,
                 resumable=resumable
             ),
-            fields='id',
+            fields="id",
             supportsAllDrives=True,
         )
         response = request.execute()
-        return response['id']
+        return response["id"]
 
     def download(self, file_id, save_to=None, num_retries=0, chunk_size=DEFAULT_CHUNK_SIZE, callback=None):
         """Download a file.
@@ -489,21 +489,21 @@ class GDrive(GoogleAPI):
                 drive.download('0Bwab3C2ejYSdM190b2psXy1C50P', callback=handler)
 
         """
-        if hasattr(save_to, 'write'):
+        if hasattr(save_to, "write"):
             fh = save_to
         else:
             if not save_to or os.path.isdir(save_to):
                 response = self._files.get(
                     fileId=file_id,
-                    fields='name',
+                    fields="name",
                     supportsAllDrives=True,
                 ).execute()
-                name = response['name']
+                name = response["name"]
                 if save_to and os.path.isdir(save_to):
                     save_to = os.path.join(save_to, name)
                 else:
                     save_to = name
-            fh = open(save_to, mode='wb')
+            fh = open(save_to, mode="wb")
 
         request = self._files.get_media(fileId=file_id, supportsAllDrives=True)
         downloader = MediaIoBaseDownload(fh, request, chunksize=chunk_size)
@@ -533,18 +533,18 @@ class GDrive(GoogleAPI):
         while True:
             request = self._files.get(
                 fileId=file_or_folder_id,
-                fields='name,parents',
+                fields="name,parents",
                 supportsAllDrives=True,
             )
             response = request.execute()
-            names.append(response['name'])
-            parents = response.get('parents', [])
+            names.append(response["name"])
+            parents = response.get("parents", [])
             if not parents:
                 break
             if len(parents) > 1:
-                raise OSError('Multiple parents exist. This case has not been handled yet. Contact developers.')
-            file_or_folder_id = response['parents'][0]
-        return '/'.join(names[::-1])
+                raise OSError("Multiple parents exist. This case has not been handled yet. Contact developers.")
+            file_or_folder_id = response["parents"][0]
+        return "/".join(names[::-1])
 
     def move(self, source_id, destination_id):
         """Move a file or a folder.
@@ -564,19 +564,19 @@ class GDrive(GoogleAPI):
             The ID of the destination folder. To move the file or folder to the
             `My Drive` root folder then specify ``'root'`` as the `destination_id`.
         """
-        params = {'fileId': source_id, 'supportsAllDrives': True}
+        params = {"fileId": source_id, "supportsAllDrives": True}
         try:
             self._files.update(addParents=destination_id, **params).execute()
         except HttpError as e:
-            if 'exactly one parent' not in str(e):
+            if "exactly one parent" not in str(e):
                 raise
 
             # Handle the following error:
             #   A shared drive item must have exactly one parent
-            response = self._files.get(fields='parents', **params).execute()
+            response = self._files.get(fields="parents", **params).execute()
             self._files.update(
                 addParents=destination_id,
-                removeParents=','.join(response['parents']),
+                removeParents=",".join(response["parents"]),
                 **params).execute()
 
     def shared_drives(self):
@@ -589,11 +589,11 @@ class GDrive(GoogleAPI):
             names of the shared drives.
         """
         drives = {}
-        next_page_token = ''
+        next_page_token = ""
         while True:
             response = self._drives.list(pageSize=100, pageToken=next_page_token).execute()
-            drives.update(dict((d['id'], d['name']) for d in response['drives']))
-            next_page_token = response.get('nextPageToken')
+            drives.update(dict((d["id"], d["name"]) for d in response["drives"]))
+            next_page_token = response.get("nextPageToken")
             if not next_page_token:
                 break
         return drives
@@ -620,14 +620,14 @@ class GDrive(GoogleAPI):
         """
         response = self._files.copy(
             fileId=file_id,
-            fields='id',
+            fields="id",
             supportsAllDrives=True,
             body={
-                'name': name,
-                'parents': [folder_id] if folder_id else None,
+                "name": name,
+                "parents": [folder_id] if folder_id else None,
             },
         ).execute()
-        return response['id']
+        return response["id"]
 
     def rename(self, file_or_folder_id, new_name):
         """Rename a file or folder.
@@ -644,10 +644,10 @@ class GDrive(GoogleAPI):
         self._files.update(
             fileId=file_or_folder_id,
             supportsAllDrives=True,
-            body={'name': new_name},
+            body={"name": new_name},
         ).execute()
 
-    def read_only(self, file_id, read_only, reason=''):
+    def read_only(self, file_id, read_only, reason=""):
         """Set a file to be in read-only mode.
 
         Parameters
@@ -660,9 +660,9 @@ class GDrive(GoogleAPI):
             The reason for putting the file in read-only mode.
             Only used if `read_only` is :data:`True`.
         """
-        restrictions = {'readOnly': read_only}
+        restrictions = {"readOnly": read_only}
         if read_only:
-            restrictions['reason'] = reason
+            restrictions["reason"] = reason
 
             # If `file_id` is already in read-only mode, and it is being set
             # to read-only mode then the API raises a TimeoutError waiting for
@@ -674,7 +674,7 @@ class GDrive(GoogleAPI):
         self._files.update(
             fileId=file_id,
             supportsAllDrives=True,
-            body={'contentRestrictions': [restrictions]}
+            body={"contentRestrictions": [restrictions]}
         ).execute()
 
     def is_read_only(self, file_id):
@@ -693,29 +693,29 @@ class GDrive(GoogleAPI):
         response = self._files.get(
             fileId=file_id,
             supportsAllDrives=True,
-            fields='contentRestrictions',
+            fields="contentRestrictions",
         ).execute()
-        restrictions = response.get('contentRestrictions')
+        restrictions = response.get("contentRestrictions")
         if not restrictions:
             return False
-        return restrictions[0]['readOnly']
+        return restrictions[0]["readOnly"]
 
 
 class GValueOption(Enum):
     """Determines how values should be returned."""
 
-    FORMATTED = 'FORMATTED_VALUE'
+    FORMATTED = "FORMATTED_VALUE"
     """Values will be calculated and formatted in the reply according to the
     cell's formatting. Formatting is based on the spreadsheet's locale, not
     the requesting user's locale. For example, if A1 is 1.23 and A2 is =A1
     and formatted as currency, then A2 would return "$1.23"."""
 
-    UNFORMATTED = 'UNFORMATTED_VALUE'
+    UNFORMATTED = "UNFORMATTED_VALUE"
     """Values will be calculated, but not formatted in the reply.
     For example, if A1 is 1.23 and A2 is =A1 and formatted as currency, then
     A2 would return the number 1.23."""
 
-    FORMULA = 'FORMULA'
+    FORMULA = "FORMULA"
     """Values will not be calculated. The reply will include the formulas.
     For example, if A1 is 1.23 and A2 is =A1 and formatted as currency,
     then A2 would return "=A1"."""
@@ -724,7 +724,7 @@ class GValueOption(Enum):
 class GDateTimeOption(Enum):
     """Determines how dates should be returned."""
 
-    SERIAL_NUMBER = 'SERIAL_NUMBER'
+    SERIAL_NUMBER = "SERIAL_NUMBER"
     """Instructs date, time, datetime, and duration fields to be output as
     doubles in "serial number" format, as popularized by Lotus 1-2-3. The
     whole number portion of the value (left of the decimal) counts the days
@@ -734,7 +734,7 @@ class GDateTimeOption(Enum):
     and .5 because noon is half a day. February 1st 1900 at 3pm would be
     33.625. This correctly treats the year 1900 as not a leap year."""
 
-    FORMATTED_STRING = 'FORMATTED_STRING'
+    FORMATTED_STRING = "FORMATTED_STRING"
     """Instructs date, time, datetime, and duration fields to be output as
     strings in their given number format (which is dependent on the
     spreadsheet locale)."""
@@ -743,22 +743,22 @@ class GDateTimeOption(Enum):
 class GCellType(Enum):
     """The spreadsheet cell data type."""
 
-    BOOLEAN = 'BOOLEAN'
-    CURRENCY = 'CURRENCY'
-    DATE = 'DATE'
-    DATE_TIME = 'DATE_TIME'
-    EMPTY = 'EMPTY'
-    ERROR = 'ERROR'
-    NUMBER = 'NUMBER'
-    PERCENT = 'PERCENT'
-    SCIENTIFIC = 'SCIENTIFIC'
-    STRING = 'STRING'
-    TEXT = 'TEXT'
-    TIME = 'TIME'
-    UNKNOWN = 'UNKNOWN'
+    BOOLEAN = "BOOLEAN"
+    CURRENCY = "CURRENCY"
+    DATE = "DATE"
+    DATE_TIME = "DATE_TIME"
+    EMPTY = "EMPTY"
+    ERROR = "ERROR"
+    NUMBER = "NUMBER"
+    PERCENT = "PERCENT"
+    SCIENTIFIC = "SCIENTIFIC"
+    STRING = "STRING"
+    TEXT = "TEXT"
+    TIME = "TIME"
+    UNKNOWN = "UNKNOWN"
 
 
-GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
+GCell = namedtuple("GCell", ("value", "type", "formatted"))
 """The information about a Google Sheets cell.
 
 .. attribute:: value
@@ -777,7 +777,7 @@ GCell = namedtuple('GCell', ('value', 'type', 'formatted'))
 
 class GSheets(GoogleAPI):
 
-    MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
+    MIME_TYPE = "application/vnd.google-apps.spreadsheet"
     SERIAL_NUMBER_ORIGIN = datetime(1899, 12, 30)
 
     def __init__(self, account=None, credentials=None, read_only=True, scopes=None):
@@ -820,12 +820,12 @@ class GSheets(GoogleAPI):
         """
         if not scopes:
             if read_only:
-                scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+                scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
             else:
-                scopes = ['https://www.googleapis.com/auth/spreadsheets']
+                scopes = ["https://www.googleapis.com/auth/spreadsheets"]
 
         super(GSheets, self).__init__(
-            'sheets', 'v4', credentials, scopes, read_only, account)
+            "sheets", "v4", credentials, scopes, read_only, account)
 
         self._spreadsheets = self._service.spreadsheets()
 
@@ -861,11 +861,11 @@ class GSheets(GoogleAPI):
         self._spreadsheets.values().append(
             spreadsheetId=spreadsheet_id,
             range=self._get_range(sheet, cell, spreadsheet_id),
-            valueInputOption='RAW' if raw else 'USER_ENTERED',
-            insertDataOption='INSERT_ROWS',
+            valueInputOption="RAW" if raw else "USER_ENTERED",
+            insertDataOption="INSERT_ROWS",
             body={
-                'values': self._values(values),
-                'majorDimension': 'ROWS' if row_major else 'COLUMNS',
+                "values": self._values(values),
+                "majorDimension": "ROWS" if row_major else "COLUMNS",
             },
         ).execute()
 
@@ -903,10 +903,10 @@ class GSheets(GoogleAPI):
         self._spreadsheets.values().update(
             spreadsheetId=spreadsheet_id,
             range=self._get_range(sheet, cell, spreadsheet_id),
-            valueInputOption='RAW' if raw else 'USER_ENTERED',
+            valueInputOption="RAW" if raw else "USER_ENTERED",
             body={
-                'values': self._values(values),
-                'majorDimension': 'ROWS' if row_major else 'COLUMNS',
+                "values": self._values(values),
+                "majorDimension": "ROWS" if row_major else "COLUMNS",
             },
         ).execute()
 
@@ -936,10 +936,10 @@ class GSheets(GoogleAPI):
             spreadsheetId=spreadsheet_id,
             sheetId=sheet_id,
             body={
-                'destination_spreadsheet_id': destination_spreadsheet_id,
+                "destination_spreadsheet_id": destination_spreadsheet_id,
             },
         ).execute()
-        return response['sheetId']
+        return response["sheetId"]
 
     def sheet_id(self, name, spreadsheet_id):
         """Returns the ID of a sheet.
@@ -958,10 +958,10 @@ class GSheets(GoogleAPI):
         """
         request = self._spreadsheets.get(spreadsheetId=spreadsheet_id)
         response = request.execute()
-        for sheet in response['sheets']:
-            if sheet['properties']['title'] == name:
-                return sheet['properties']['sheetId']
-        raise ValueError('There is no sheet named {!r}'.format(name))
+        for sheet in response["sheets"]:
+            if sheet["properties"]["title"] == name:
+                return sheet["properties"]["sheetId"]
+        raise ValueError("There is no sheet named {!r}".format(name))
 
     def rename_sheet(self, name_or_id, new_name, spreadsheet_id):
         """Rename a sheet.
@@ -983,13 +983,13 @@ class GSheets(GoogleAPI):
         self._spreadsheets.batchUpdate(
             spreadsheetId=spreadsheet_id,
             body={
-                'requests': [{
-                    'updateSheetProperties': {
-                        'properties': {
-                            'sheetId': sheet_id,
-                            'title': new_name,
+                "requests": [{
+                    "updateSheetProperties": {
+                        "properties": {
+                            "sheetId": sheet_id,
+                            "title": new_name,
                         },
-                        'fields': 'title',
+                        "fields": "title",
                     }
                 }]
             }
@@ -1015,18 +1015,18 @@ class GSheets(GoogleAPI):
         response = self._spreadsheets.batchUpdate(
             spreadsheetId=spreadsheet_id,
             body={
-                'requests': [{
-                    'addSheet': {
-                        'properties': {
-                            'title': name
+                "requests": [{
+                    "addSheet": {
+                        "properties": {
+                            "title": name
                         }
                     }
                 } for name in names]
             }
         ).execute()
-        return dict((r['addSheet']['properties']['sheetId'],
-                            r['addSheet']['properties']['title'])
-                           for r in response['replies'])
+        return dict((r["addSheet"]["properties"]["sheetId"],
+                            r["addSheet"]["properties"]["title"])
+                           for r in response["replies"])
 
     def delete_sheets(self, names_or_ids, spreadsheet_id):
         """Delete sheets from a spreadsheet.
@@ -1043,9 +1043,9 @@ class GSheets(GoogleAPI):
         self._spreadsheets.batchUpdate(
             spreadsheetId=spreadsheet_id,
             body={
-                'requests': [{
-                    'deleteSheet': {
-                        'sheetId': n if isinstance(n, int) else self.sheet_id(n, spreadsheet_id)
+                "requests": [{
+                    "deleteSheet": {
+                        "sheetId": n if isinstance(n, int) else self.sheet_id(n, spreadsheet_id)
                     }
                 } for n in names_or_ids]
             }
@@ -1070,13 +1070,13 @@ class GSheets(GoogleAPI):
         :class:`str`
             The ID of the spreadsheet that was created.
         """
-        body = {'properties': {'title': name}}
+        body = {"properties": {"title": name}}
         if sheet_names:
-            body['sheets'] = [{
-                'properties': {'title': sn}
+            body["sheets"] = [{
+                "properties": {"title": sn}
             } for sn in sheet_names]
         response = self._spreadsheets.create(body=body).execute()
-        return response['spreadsheetId']
+        return response["spreadsheetId"]
 
     def sheet_names(self, spreadsheet_id):
         """Get the names of all sheets in a spreadsheet.
@@ -1093,7 +1093,7 @@ class GSheets(GoogleAPI):
         """
         request = self._spreadsheets.get(spreadsheetId=spreadsheet_id)
         response = request.execute()
-        return tuple(r['properties']['title'] for r in response['sheets'])
+        return tuple(r["properties"]["title"] for r in response["sheets"])
 
     def values(self,
                spreadsheet_id,
@@ -1133,20 +1133,20 @@ class GSheets(GoogleAPI):
         :class:`list`
             The values from the sheet.
         """
-        if hasattr(value_option, 'value'):
+        if hasattr(value_option, "value"):
             value_option = value_option.value
 
-        if hasattr(datetime_option, 'value'):
+        if hasattr(datetime_option, "value"):
             datetime_option = datetime_option.value
 
         response = self._spreadsheets.values().get(
             spreadsheetId=spreadsheet_id,
             range=self._get_range(sheet, cells, spreadsheet_id),
-            majorDimension='ROWS' if row_major else 'COLUMNS',
+            majorDimension="ROWS" if row_major else "COLUMNS",
             valueRenderOption=value_option,
             dateTimeRenderOption=datetime_option
         ).execute()
-        return response.get('values', [])
+        return response.get("values", [])
 
     def cells(self, spreadsheet_id, ranges=None):
         """Return cells from a spreadsheet.
@@ -1181,40 +1181,40 @@ class GSheets(GoogleAPI):
             ranges=ranges,
         ).execute()
         cells = {}
-        for sheet in response['sheets']:
+        for sheet in response["sheets"]:
             data = []
-            for item in sheet['data']:
-                for row in item.get('rowData', []):
+            for item in sheet["data"]:
+                for row in item.get("rowData", []):
                     row_data = []
-                    for col in row.get('values', []):
-                        effective_value = col.get('effectiveValue', None)
-                        formatted = col.get('formattedValue', '')
+                    for col in row.get("values", []):
+                        effective_value = col.get("effectiveValue", None)
+                        formatted = col.get("formattedValue", "")
                         if effective_value is None:
                             value = None
                             typ = GCellType.EMPTY
-                        elif 'numberValue' in effective_value:
-                            value = effective_value['numberValue']
-                            t = col.get('effectiveFormat', {}).get('numberFormat', {}).get('type', 'NUMBER')
+                        elif "numberValue" in effective_value:
+                            value = effective_value["numberValue"]
+                            t = col.get("effectiveFormat", {}).get("numberFormat", {}).get("type", "NUMBER")
                             try:
                                 typ = GCellType(t)
                             except ValueError:
                                 typ = GCellType.UNKNOWN
-                        elif 'stringValue' in effective_value:
-                            value = effective_value['stringValue']
+                        elif "stringValue" in effective_value:
+                            value = effective_value["stringValue"]
                             typ = GCellType.STRING
-                        elif 'boolValue' in effective_value:
-                            value = effective_value['boolValue']
+                        elif "boolValue" in effective_value:
+                            value = effective_value["boolValue"]
                             typ = GCellType.BOOLEAN
-                        elif 'errorValue' in effective_value:
-                            msg = effective_value['errorValue']['message']
-                            value = '{} ({})'.format(col['formattedValue'], msg)
+                        elif "errorValue" in effective_value:
+                            msg = effective_value["errorValue"]["message"]
+                            value = "{} ({})".format(col["formattedValue"], msg)
                             typ = GCellType.ERROR
                         else:
                             value = formatted
                             typ = GCellType.UNKNOWN
                         row_data.append(GCell(value=value, type=typ, formatted=formatted))
                     data.append(row_data)
-                cells[sheet['properties']['title']] = data
+                cells[sheet["properties"]["title"]] = data
         return cells
 
     @staticmethod
@@ -1239,14 +1239,14 @@ class GSheets(GoogleAPI):
         if not sheet:
             names = self.sheet_names(spreadsheet_id)
             if len(names) != 1:
-                sheets = ', '.join(repr(n) for n in names)
-                raise ValueError('You must specify a sheet name: ' + sheets)
+                sheets = ", ".join(repr(n) for n in names)
+                raise ValueError("You must specify a sheet name: " + sheets)
             _range = names[0]
         else:
             _range = sheet
 
         if cells:
-            _range += '!{}'.format(cells)
+            _range += "!{}".format(cells)
 
         return _range
 
@@ -1299,12 +1299,12 @@ class GMail(GoogleAPI):
         """
         if not scopes:
             scopes = [
-                'https://www.googleapis.com/auth/gmail.send',
-                'https://www.googleapis.com/auth/gmail.metadata'
+                "https://www.googleapis.com/auth/gmail.send",
+                "https://www.googleapis.com/auth/gmail.metadata"
             ]
 
         super(GMail, self).__init__(
-            'gmail', 'v1', credentials, scopes, False, account)
+            "gmail", "v1", credentials, scopes, False, account)
 
         self._my_email_address = None
         self._users = self._service.users()
@@ -1327,15 +1327,15 @@ class GMail(GoogleAPI):
                 }
 
         """
-        profile = self._users.getProfile(userId='me').execute()
+        profile = self._users.getProfile(userId="me").execute()
         return {
-            'email_address': profile['emailAddress'],
-            'messages_total': profile['messagesTotal'],
-            'threads_total': profile['threadsTotal'],
-            'history_id': profile['historyId'],
+            "email_address": profile["emailAddress"],
+            "messages_total": profile["messagesTotal"],
+            "threads_total": profile["threadsTotal"],
+            "history_id": profile["historyId"],
         }
 
-    def send(self, recipients, sender='me', subject=None, body=None):
+    def send(self, recipients, sender="me", subject=None, body=None):
         """Send an email.
 
         Parameters
@@ -1361,21 +1361,21 @@ class GMail(GoogleAPI):
             recipients = [recipients]
 
         for i in range(len(recipients)):
-            if recipients[i] == 'me':
+            if recipients[i] == "me":
                 if self._my_email_address is None:
-                    self._my_email_address = self.profile()['email_address']
+                    self._my_email_address = self.profile()["email_address"]
                 recipients[i] = self._my_email_address
 
         msg = MIMEMultipart()
-        msg['From'] = sender
-        msg['To'] = ', '.join(recipients)
-        msg['Subject'] = subject or '(no subject)'
+        msg["From"] = sender
+        msg["To"] = ", ".join(recipients)
+        msg["Subject"] = subject or "(no subject)"
 
-        text = body or ''
-        subtype = 'html' if text.startswith('<html>') else 'plain'
+        text = body or ""
+        subtype = "html" if text.startswith("<html>") else "plain"
         msg.attach(MIMEText(text, subtype))
 
         self._users.messages().send(
             userId=sender,
-            body={'raw': b64encode(msg.as_bytes()).decode()}
+            body={"raw": b64encode(msg.as_bytes()).decode()}
         ).execute()

@@ -5,9 +5,9 @@ from msl.io.vertex import Vertex
 
 
 def test_instantiation():
-    root = Root('')
+    root = Root("")
 
-    v = Vertex(name='this is ok', parent=root, read_only=True)
+    v = Vertex(name="this is ok", parent=root, read_only=True)
     assert v.read_only
 
     # must specify a name
@@ -15,15 +15,15 @@ def test_instantiation():
         Vertex(parent=root, read_only=True)
 
     # the name must be a non-empty string
-    for n in [None, '']:
-        with pytest.raises(ValueError, match=r'non-empty string'):
+    for n in [None, ""]:
+        with pytest.raises(ValueError, match=r"non-empty string"):
             Vertex(name=n, parent=root, read_only=True)
 
     # the name cannot contain a '/'
-    for n in ['/', '/a', 'a/b']:
+    for n in ["/", "/a", "a/b"]:
         with pytest.raises(ValueError, match=r'cannot contain the "/" character'):
             Vertex(name=n, parent=root, read_only=True)
 
     # check that the name is forced to be unique
-    with pytest.raises(ValueError, match=r'is not unique'):
-        Vertex(name='this is ok', parent=root, read_only=True)
+    with pytest.raises(ValueError, match=r"is not unique"):
+        Vertex(name="this is ok", parent=root, read_only=True)
