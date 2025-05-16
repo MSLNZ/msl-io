@@ -1,9 +1,8 @@
 """
 Read and write data files.
 """
-import re
-from collections import namedtuple
 
+from .__about__ import __author__, __copyright__, __version__, version_tuple
 from .base import Reader, _readers, register
 from .base import Root
 from .base import Writer
@@ -32,15 +31,6 @@ from .utils import search
 from .utils import send_email
 from .writers import HDF5Writer
 from .writers import JSONWriter
-
-__author__ = "Measurement Standards Laboratory of New Zealand"
-__copyright__ = "\xa9 2018 - 2023, " + __author__
-__version__ = "0.2.0.dev0"
-
-_v = re.search(r"(\d+)\.(\d+)\.(\d+)[.-]?(.*)", __version__).groups()
-
-version_info = namedtuple("version_info", "major minor micro releaselevel")(int(_v[0]), int(_v[1]), int(_v[2]), _v[3])
-""":obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro, releaselevel) tuple."""
 
 
 def read(file, **kwargs):
