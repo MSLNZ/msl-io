@@ -27,7 +27,7 @@ except ImportError:
     DEFAULT_CHUNK_SIZE = 100 * 1024 * 1024
     HAS_GOOGLE_API = False
 
-from .constants import HOME_DIR
+from .constants import MSL_IO_DIR
 
 
 def _authenticate(token, client_secrets_file, scopes):
@@ -35,9 +35,9 @@ def _authenticate(token, client_secrets_file, scopes):
 
     Parameters
     ----------
-    token : :class:`str`
+    token : PathLike
         The path to a token file. If it does not exist then it will be created.
-    client_secrets_file : :class:`str`
+    client_secrets_file : PathLike
         The "client secrets" file to use to generate the OAuth credentials.
     scopes : :class:`list` of :class:`str`
         The list of scopes to enable.
@@ -107,8 +107,7 @@ class GoogleAPI:
 
         name = f"{account}-" if account else ""
         readonly = "-readonly" if read_only else ""
-        filename = f"{name}token-{service}{readonly}.json"
-        token = os.path.join(HOME_DIR, filename)
+        token = MSL_IO_DIR / f"{name}token-{service}{readonly}.json"
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
 
@@ -160,8 +159,8 @@ class GDrive(GoogleAPI):
             a Google account at any time (by passing in a different `account`
             value), but you will be asked to authenticate with your `credentials`
             again, or, alternatively, you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
-        credentials : :class:`str`, optional
+            :const:`~msl.io.constants.MSL_IO_DIR` to match the new `account` value.
+        credentials : PathLike, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
             authenticate with a particular Google account or if you delete
@@ -802,8 +801,8 @@ class GSheets(GoogleAPI):
             a Google account at any time (by passing in a different `account`
             value), but you will be asked to authenticate with your `credentials`
             again, or, alternatively, you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
-        credentials : :class:`str`, optional
+            :const:`~msl.io.constants.MSL_IO_DIR` to match the new `account` value.
+        credentials : PathLike, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
             authenticate with a particular Google account or if you delete
@@ -1284,8 +1283,8 @@ class GMail(GoogleAPI):
             a Google account at any time (by passing in a different `account`
             value), but you will be asked to authenticate with your `credentials`
             again, or, alternatively, you can rename the token files located in
-            :const:`~msl.io.constants.HOME_DIR` to match the new `account` value.
-        credentials : :class:`str`, optional
+            :const:`~msl.io.constants.MSL_IO_DIR` to match the new `account` value.
+        credentials : PathLike, optional
             The path to the `client secrets` OAuth credential file. This
             parameter only needs to be specified the first time that you
             authenticate with a particular Google account or if you delete
