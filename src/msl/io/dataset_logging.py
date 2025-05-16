@@ -53,7 +53,7 @@ class DatasetLogging(Dataset, logging.Handler):
             rows that were created.
         """
         if not attributes or not all(isinstance(a, str) for a in attributes):
-            raise ValueError("Must specify attribute names as strings, got: {}".format(attributes))
+            raise ValueError(f"Must specify attribute names as strings, got: {attributes}")
 
         self._logger = None
         self._attributes = tuple(attributes)
@@ -79,9 +79,9 @@ class DatasetLogging(Dataset, logging.Handler):
 
             shape = kwargs["shape"]
             if len(shape) != 1:
-                raise ValueError("Invalid shape {}, the number of dimensions must be 1".format(shape))
+                raise ValueError(f"Invalid shape {shape}, the number of dimensions must be 1")
             if shape[0] < 0:
-                raise ValueError("Invalid shape {}".format(shape))
+                raise ValueError(f"Invalid shape {shape}")
 
         # call Dataset.__init__ before Handler.__init__ in case the Dataset cannot be created
         Dataset.__init__(self, name, parent, False, dtype=self._dtype, **kwargs)

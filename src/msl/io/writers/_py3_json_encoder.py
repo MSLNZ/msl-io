@@ -140,7 +140,7 @@ def _make_iterencode(markers, _default, _encoder, _indent, _floatstr,
                 continue
             else:
                 raise TypeError("keys must be str, int, float, bool or None, "
-                                "not {}".format(key.__class__.__name__))
+                                f"not {key.__class__.__name__}")
             if first:
                 first = False
             else:

@@ -32,8 +32,7 @@ class Root(Group):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return "<{} {!r} ({} groups, {} datasets, {} metadata)>".\
-            format(self.__class__.__name__, b, g, d, m)
+        return f"<{self.__class__.__name__} {b!r} ({g} groups, {d} datasets, {m} metadata)>"
 
     @property
     def file(self):
@@ -91,7 +90,7 @@ class Writer(Root):
             The new :class:`Root` for the :class:`Writer`.
         """
         if not isinstance(root, Group):  # it is okay to pass in any Group object
-            raise TypeError("Must pass in a Root object, got {!r}".format(root))
+            raise TypeError(f"Must pass in a Root object, got {root!r}")
         self.clear()
         self.metadata.clear()
         self.add_metadata(**root.metadata)

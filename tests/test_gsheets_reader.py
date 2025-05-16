@@ -151,4 +151,4 @@ def test_google_file_id_regex():
 
     # contains an invalid character
     for c in r""" !"#$%&'()*+,./:;<=>?@[\]^`{|}~""":
-        assert not _google_file_id_regex.search("1Q0TAgnw6AJQWkLMf{}V3qEhEXuCEXTFAc95cEcshOXnQ".format(c))
+        assert not _google_file_id_regex.search(f"1Q0TAgnw6AJQWkLMf{c}V3qEhEXuCEXTFAc95cEcshOXnQ")

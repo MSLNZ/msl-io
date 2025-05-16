@@ -136,7 +136,7 @@ class Spreadsheet:
         """
         match = _cell_regex.match(cell)
         if not match:
-            raise ValueError("Invalid cell {!r}".format(cell))
+            raise ValueError(f"Invalid cell {cell!r}")
 
         letters, numbers = match.groups()
         row = max(0, int(numbers) - 1) if numbers else None
@@ -186,7 +186,7 @@ class Spreadsheet:
         """
         split = cells.split(":")
         if len(split) != 2:
-            raise ValueError("Invalid cell range {!r}".format(cells))
+            raise ValueError(f"Invalid cell range {cells!r}")
 
         r1, c1 = Spreadsheet.to_indices(split[0])
         r2, c2 = Spreadsheet.to_indices(split[1])

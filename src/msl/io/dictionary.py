@@ -68,7 +68,7 @@ class Dictionary(MutableMapping):
     def _raise_if_read_only(self):
         if self._read_only:
             # numpy also raises ValueError if the ndarray is in read-only mode
-            raise ValueError("Cannot modify {!r}. It is accessed in read-only mode.".format(self))
+            raise ValueError(f"Cannot modify {self!r}. It is accessed in read-only mode.")
 
     def _raise_key_error(self, key):
-        raise KeyError("{!r} is not in {!r}".format(key, self))
+        raise KeyError(f"{key!r} is not in {self!r}")

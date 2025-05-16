@@ -129,7 +129,7 @@ class DRSReader(Reader):
         self._index_log += 1
         if self._lines_log[self._index_log].startswith("Laboratory Temperature"):
             line_split = [item.strip() for item in self._lines_log[self._index_log].split(";")]
-            meta["Laboratory Temperature {}".format(line_split[1])] = float(line_split[2])
+            meta[f"Laboratory Temperature {line_split[1]}"] = float(line_split[2])
             self._index_log += 1
 
         # some have info about the
@@ -153,8 +153,8 @@ class DRSReader(Reader):
         self._index_log += 1
         while "DVM RANGE" in self._lines_log[self._index_log]:
             dvm = re.search(r"(\w+)::DVM RANGE\(V\)=\s+(.*\d+)\s+;\s+DVM NPLC=\s+(\d+)", self._lines_log[self._index_log])
-            meta["{}_dvm_range".format(dvm.group(1))] = float(dvm.group(2))
-            meta["{}_dvm_nplc".format(dvm.group(1))] = float(dvm.group(3))
+            meta[f"{dvm.group(1)}_dvm_range"] = float(dvm.group(2))
+            meta[f"{dvm.group(1)}_dvm_nplc"] = float(dvm.group(3))
             self._index_log += 1
 
         assert self._lines_log[self._index_log].startswith("Stray light filters"), self._lines_log[self._index_log]
@@ -196,7 +196,7 @@ class DRSReader(Reader):
                 if key in h:
                     name = h.replace(key, value)
                     if name in fieldnames:
-                        name += "-({})".format(key[-1])
+                        name += f"-({key[-1]})"
                     break
             fieldnames.append(name)
 
@@ -263,7 +263,7 @@ class DRSReader(Reader):
                     if j == 0:
                         values.append(float(item[:-2]))
                     elif j == 1:
-                        assert item == aliases[name], "expect Name={}, got {}".format(aliases[name], item)
+                        assert item == aliases[name], f"expect Name={aliases[name]}, got {item}"
                     elif j >= n:
                         break
                     else:
@@ -284,7 +284,7 @@ class DRSReader(Reader):
             vertex_name = "log-" + aliases[name]
             vertex_name = vertex_name.replace(".", "")  # cannot contain a "."
             if vertex_name in group:
-                vertex_name += "-({})".format(name[-1])
+                vertex_name += f"-({name[-1]})"
 
             group.create_dataset(
                 vertex_name,

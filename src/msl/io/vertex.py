@@ -49,7 +49,7 @@ class Vertex(Dictionary):
                 i += 1
                 key = "/" + "/".join(name_split[-i:])
                 if key in ancestor._mapping:
-                    raise ValueError("The name of this vertex, {!r}, is not unique".format(key))
+                    raise ValueError(f"The name of this vertex, {key!r}, is not unique")
                 ancestor._mapping[key] = self
                 ancestor = ancestor._parent
 

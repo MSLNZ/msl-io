@@ -63,10 +63,10 @@ def test_string_io():
         with StringIO() as buf:
             with writer(buf) as root:
                 assert isinstance(root.file, StringIO)
-                assert repr(root) == "<{} 'StringIO' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'StringIO' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == "<{} 'StringIO' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'StringIO' (2 groups, 1 datasets, 2 metadata)>"
 
             buf.seek(0)
             root2 = read(buf)
@@ -82,10 +82,10 @@ def test_bytes_io():
         with BytesIO() as buf:
             with writer(buf) as root:
                 assert isinstance(root.file, BytesIO)
-                assert repr(root) == "<{} 'BytesIO' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'BytesIO' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == "<{} 'BytesIO' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'BytesIO' (2 groups, 1 datasets, 2 metadata)>"
 
             buf.seek(0)
             root2 = read(buf)
@@ -106,10 +106,10 @@ def test_open_text():
         with open(path, mode="wt") as fp:
             with writer(fp) as root:
                 assert isinstance(root.file, TextIOWrapper)
-                assert repr(root) == "<{} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == "<{} 'textfile.txt' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'textfile.txt' (2 groups, 1 datasets, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == path
@@ -130,10 +130,10 @@ def test_open_binary():
         with open(path, mode="wb") as fp:
             with writer(fp) as root:
                 assert isinstance(root.file, BufferedWriter)
-                assert repr(root) == "<{} 'binaryfile.bin' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'binaryfile.bin' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == "<{} 'binaryfile.bin' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'binaryfile.bin' (2 groups, 1 datasets, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == path

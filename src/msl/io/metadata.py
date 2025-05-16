@@ -30,7 +30,7 @@ class Metadata(Dictionary):
         self._vertex_name = vertex_name
 
     def __repr__(self):
-        return "<Metadata {!r} {}>".format(self._vertex_name, super(Metadata, self).__repr__())
+        return f"<Metadata {self._vertex_name!r} {super(Metadata, self).__repr__()}>"
 
     def __getitem__(self, item):
         try:

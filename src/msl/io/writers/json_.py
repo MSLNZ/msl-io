@@ -135,8 +135,8 @@ class JSONWriter(Writer):
                 open_kwargs["mode"] = "w"
                 if os.path.isfile(file) or is_file_readable(file):
                     raise OSError(
-                        "File exists {!r}\n"
-                        "Specify mode='w' if you want to overwrite it.".format(file)
+                        f"File exists {file!r}\n"
+                        "Specify mode='w' if you want to overwrite it."
                     )
             elif open_kwargs["mode"] == "r":
                 raise ValueError("Invalid mode {!r}".format(open_kwargs["mode"]))

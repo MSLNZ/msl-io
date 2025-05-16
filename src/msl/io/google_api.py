@@ -73,8 +73,8 @@ def _authenticate(token, client_secrets_file, scopes):
                 credentials.refresh(Request())
             except RefreshError as err:
                 if os.path.isfile(token) and not os.getenv("MSL_IO_RUNNING_TESTS"):
-                    message = "{}: {}\nDo you want to delete the token file and re-authenticate " \
-                              "(y/N)? ".format(err.__class__.__name__, err.args[0])
+                    message = f"{err.__class__.__name__}: {err.args[0]}\nDo you want to delete the token file and re-authenticate " \
+                              "(y/N)? "
                     yes_no = input(message)
                     if yes_no.lower().startswith("y"):
                         os.remove(token)
@@ -105,9 +105,9 @@ class GoogleAPI:
     def __init__(self, service, version, credentials, scopes, read_only, account):
         """Base class for all Google APIs."""
 
-        name = "{}-".format(account) if account else ""
+        name = f"{account}-" if account else ""
         readonly = "-readonly" if read_only else ""
-        filename = "{}token-{}{}.json".format(name, service, readonly)
+        filename = f"{name}token-{service}{readonly}.json"
         token = os.path.join(HOME_DIR, filename)
         oauth = _authenticate(token, credentials, scopes)
         self._service = build(service, version, credentials=oauth)
@@ -225,9 +225,7 @@ class GDrive(GoogleAPI):
         folder_id = parent_id or "root"
         names = GDrive._folder_hierarchy(folder)
         for name in names:
-            q = '"{}" in parents and name="{}" and trashed=false and mimeType="{}"'.format(
-                folder_id, name, GDrive.MIME_TYPE_FOLDER
-            )
+            q = f'"{folder_id}" in parents and name="{name}" and trashed=false and mimeType="{GDrive.MIME_TYPE_FOLDER}"'
             response = self._files.list(
                 q=q,
                 fields="files(id,name)",
@@ -236,10 +234,10 @@ class GDrive(GoogleAPI):
             ).execute()
             files = response["files"]
             if not files:
-                raise OSError("Not a valid Google Drive folder {!r}".format(folder))
+                raise OSError(f"Not a valid Google Drive folder {folder!r}")
             if len(files) > 1:
                 matches = "\n  ".join(str(file) for file in files)
-                raise OSError("Multiple folders exist for {!r}\n  {}".format(name, matches))
+                raise OSError(f"Multiple folders exist for {name!r}\n  {matches}")
 
             first = files[0]
             assert name == first["name"], "{!r} != {!r}".format(name, first["name"])
@@ -270,11 +268,11 @@ class GDrive(GoogleAPI):
         folders, name = os.path.split(file)
         folder_id = self.folder_id(folders, parent_id=folder_id)
 
-        q = '"{}" in parents and name="{}" and trashed=false'.format(folder_id, name)
+        q = f'"{folder_id}" in parents and name="{name}" and trashed=false'
         if not mime_type:
-            q += ' and mimeType!="{}"'.format(GDrive.MIME_TYPE_FOLDER)
+            q += f' and mimeType!="{GDrive.MIME_TYPE_FOLDER}"'
         else:
-            q += ' and mimeType="{}"'.format(mime_type)
+            q += f' and mimeType="{mime_type}"'
 
         response = self._files.list(
             q=q,
@@ -284,11 +282,11 @@ class GDrive(GoogleAPI):
         ).execute()
         files = response["files"]
         if not files:
-            raise OSError("Not a valid Google Drive file {!r}".format(file))
+            raise OSError(f"Not a valid Google Drive file {file!r}")
         if len(files) > 1:
             mime_types = "\n  ".join(f["mimeType"] for f in files)
-            raise OSError("Multiple files exist for {!r}. "
-                          "Filter by MIME type:\n  {}".format(file, mime_types))
+            raise OSError(f"Multiple files exist for {file!r}. "
+                          f"Filter by MIME type:\n  {mime_types}")
 
         first = files[0]
         assert name == first["name"], "{!r} != {!r}".format(name, first["name"])
@@ -961,7 +959,7 @@ class GSheets(GoogleAPI):
         for sheet in response["sheets"]:
             if sheet["properties"]["title"] == name:
                 return sheet["properties"]["sheetId"]
-        raise ValueError("There is no sheet named {!r}".format(name))
+        raise ValueError(f"There is no sheet named {name!r}")
 
     def rename_sheet(self, name_or_id, new_name, spreadsheet_id):
         """Rename a sheet.
@@ -1246,7 +1244,7 @@ class GSheets(GoogleAPI):
             _range = sheet
 
         if cells:
-            _range += "!{}".format(cells)
+            _range += f"!{cells}"
 
         return _range
 

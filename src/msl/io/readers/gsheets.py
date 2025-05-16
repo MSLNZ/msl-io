@@ -39,7 +39,7 @@ class GSheetsReader(Spreadsheet):
         super(GSheetsReader, self).__init__(file)
 
         if not kwargs.get("read_only", True):
-            raise ValueError("Must instantiate {} in read-only mode".format(self.__class__.__name__))
+            raise ValueError(f"Must instantiate {self.__class__.__name__} in read-only mode")
 
         path, ext = os.path.splitext(file)
         folders, _ = os.path.split(path)
@@ -118,14 +118,14 @@ class GSheetsReader(Spreadsheet):
                 self._cached_sheet_name = sheet
 
         if cell:
-            ranges = "{}!{}".format(sheet, cell)
+            ranges = f"{sheet}!{cell}"
         else:
             ranges = sheet
 
         cells = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
         if sheet not in cells:
-            raise ValueError("There is no sheet named {!r} in {!r}".format(sheet, self._file))
+            raise ValueError(f"There is no sheet named {sheet!r} in {self._file!r}")
 
         values = []
         for row in cells[sheet]:

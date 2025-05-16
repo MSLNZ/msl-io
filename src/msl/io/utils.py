@@ -111,7 +111,7 @@ def copy(source, destination, overwrite=False, include_metadata=True, follow_sym
             os.makedirs(dirs, exist_ok=True)
 
     if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
-        raise FileExistsError("Will not overwrite {!r}".format(destination))
+        raise FileExistsError(f"Will not overwrite {destination!r}")
 
     shutil.copyfile(source, destination, follow_symlinks=follow_symlinks)
     if include_metadata:
@@ -631,7 +631,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
             command = ["sudo", executable]
         elif isinstance(args, str):
             exe = executable or ""
-            command = "sudo {} {}".format(exe, args)
+            command = f"sudo {exe} {args}"
         else:
             exe = [executable] if executable else []
             command = ["sudo"] + exe + list(args)
@@ -666,11 +666,11 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
             else:
                 bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
                                                    "Scripts", "activate.bat"))
-            assert os.path.isfile(bat), "Cannot find {!r}".format(bat)
+            assert os.path.isfile(bat), f"Cannot find {bat!r}"
             activate = subprocess.list2cmdline([bat, env, "&&"])
         elif venv:
             bat = os.path.join(venv, "Scripts", "activate.bat")
-            assert os.path.isfile(bat), "Cannot find {!r}".format(bat)
+            assert os.path.isfile(bat), f"Cannot find {bat!r}"
             activate = subprocess.list2cmdline([bat, "&&"])
 
     # redirect stdout (stderr) to a file
@@ -689,8 +689,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
             redirect = " " + redirect
 
     # the string that is passed to cmd.exe
-    params = '/S /C "{cd} {activate} {executable} {args}"{redirect}'.format(
-        cd=cd, activate=activate, executable=executable, args=args, redirect=redirect)
+    params = f'/S /C "{cd} {activate} {executable} {args}"{redirect}'
 
     from ctypes.wintypes import DWORD, ULONG, HWND, LPCWSTR, INT, HINSTANCE, HKEY, HANDLE
 
@@ -717,7 +716,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     sei.lpVerb = kwargs.get("verb", "runas")  # change the verb when running the tests
     sei.lpFile = "cmd.exe"
     sei.lpParameters = params
-    sei.lpDirectory = "{}".format(cwd) if cwd else None
+    sei.lpDirectory = f"{cwd}" if cwd else None
     sei.nShow = int(show)
     sei.cbSize = ctypes.sizeof(sei)
     if not ctypes.windll.Shell32.ShellExecuteExW(ctypes.byref(sei)):
@@ -752,7 +751,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
                     msg += "\nSet capture_stderr=True to see if " \
                            "more information is available."
                 if out_str:
-                    msg += "\n{}".format(out_str)
+                    msg += f"\n{out_str}"
             raise ctypes.WinError(code=code.value, descr=msg)
 
         kernel32.CloseHandle(sei.hProcess)
@@ -769,9 +768,9 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
               "is set to non-signaled. If the mutex was protecting persistent " \
               "state information, you should check it for consistency."
     elif ret == 0x00000102:  # WAIT_TIMEOUT
-        msg = "The timeout interval elapsed after {} second(s) and the " \
-              "object's state is non-signaled.".format(timeout)
+        msg = f"The timeout interval elapsed after {timeout} second(s) and the " \
+              "object's state is non-signaled."
     else:
-        msg = "Unknown return value 0x{:x}".format(ret)
+        msg = f"Unknown return value 0x{ret:x}"
 
     raise WindowsError("WaitForSingleObject: " + msg)

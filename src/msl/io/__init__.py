@@ -89,7 +89,7 @@ def read(file, **kwargs):
                 root.read_only = True
                 return root
 
-    raise OSError("No Reader exists to read {!r}".format(file))
+    raise OSError(f"No Reader exists to read {file!r}")
 
 
 def read_table(file, **kwargs):

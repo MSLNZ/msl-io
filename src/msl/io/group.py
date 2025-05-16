@@ -37,7 +37,7 @@ class Group(Vertex):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return "<Group {!r} ({} groups, {} datasets, {} metadata)>".format(self._name, g, d, m)
+        return f"<Group {self._name!r} ({g} groups, {d} datasets, {m} metadata)>"
 
     def __getitem__(self, item):
         if item and not item[0] == "/":
@@ -221,7 +221,7 @@ class Group(Vertex):
             `group` will be copied.
         """
         if not isinstance(group, Group):
-            raise TypeError("Must pass in a Group object, got {!r}".format(group))
+            raise TypeError(f"Must pass in a Group object, got {group!r}")
 
         name = "/" + name.strip("/")
 
@@ -311,7 +311,7 @@ class Group(Vertex):
             and the :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset, Dataset):
-            raise TypeError("Must pass in a Dataset object, got {!r}".format(dataset))
+            raise TypeError(f"Must pass in a Dataset object, got {dataset!r}")
 
         name = "/" + name.strip("/")
         self.create_dataset(
@@ -393,7 +393,7 @@ class Group(Vertex):
             :class:`~msl.io.metadata.Metadata` are copied.
         """
         if not isinstance(dataset_logging, DatasetLogging):
-            raise TypeError("Must pass in a DatasetLogging object, got {!r}".format(dataset_logging))
+            raise TypeError(f"Must pass in a DatasetLogging object, got {dataset_logging!r}")
 
         name = "/" + name.strip("/")
         self.create_dataset_logging(
@@ -554,8 +554,8 @@ class Group(Vertex):
 
                 if attributes and (dataset.dtype.names != tuple(attributes)):
                     raise ValueError("The attribute names of the existing "
-                                     "logging Dataset are {} which does not equal {}"
-                                     .format(dataset.dtype.names, tuple(attributes)))
+                                     f"logging Dataset are {dataset.dtype.names} which does not equal {tuple(attributes)}"
+                                     )
 
                 if isinstance(dataset, DatasetLogging):
                     return dataset

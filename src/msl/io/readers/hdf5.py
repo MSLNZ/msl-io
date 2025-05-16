@@ -56,7 +56,7 @@ class HDF5Reader(Reader):
             elif isinstance(obj, h5py.Group):
                 s.create_group(tail, **obj.attrs)
             else:
-                assert False, "Unhandled HDF5Reader object {}".format(obj)
+                assert False, f"Unhandled HDF5Reader object {obj}"
 
         def h5_open(name):
             with h5py.File(name, mode="r", **kwargs) as h5:

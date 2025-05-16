@@ -135,14 +135,14 @@ class HDF5Writer(Writer):
             if m in ["x", "w-"]:
                 if os.path.isfile(file) or is_file_readable(file):
                     raise OSError(
-                        "File exists {!r}\n"
-                        "Specify mode='w' if you want to overwrite it.".format(file)
+                        f"File exists {file!r}\n"
+                        "Specify mode='w' if you want to overwrite it."
                     )
             elif m == "r+":
                 if not (os.path.isfile(file) or is_file_readable(file)):
-                    raise OSError("File does not exist {!r}".format(file))
+                    raise OSError(f"File does not exist {file!r}")
             elif m not in ["w", "a"]:
-                raise ValueError("Invalid mode {!r}".format(m))
+                raise ValueError(f"Invalid mode {m!r}")
 
             with open(file, mode="w+b") as fp:
                 h5_open(fp)

@@ -58,8 +58,8 @@ class Dataset(Vertex):
         self.read_only = read_only
 
     def __repr__(self):
-        return "<{} {!r} shape={} dtype={!r} ({} metadata)>"\
-            .format(self.__class__.__name__, self._name, self._data.shape, self._data.dtype.str, len(self.metadata))
+        return f"<{self.__class__.__name__} {self._name!r} shape={self._data.shape} dtype={self._data.dtype.str!r} ({len(self.metadata)} metadata)>"\
+            
 
     def __str__(self):
         return repr(self._data)

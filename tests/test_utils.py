@@ -414,10 +414,10 @@ def test_run_as_admin():
     with open(file, mode="wt") as fp:
         fp.write("@ECHO OFF\r\n")
         for i in range(1, 6):
-            fp.write("echo %{}\r\n".format(i))
+            fp.write(f"echo %{i}\r\n")
 
     expected = b"ECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\n"
-    out = utils.run_as_admin(args='"{}"'.format(file), verb=None)
+    out = utils.run_as_admin(args=f'"{file}"', verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file], verb=None)
     assert out == expected
@@ -425,7 +425,7 @@ def test_run_as_admin():
     assert out == expected
 
     expected = b"pi\r\n-p\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\n"
-    out = utils.run_as_admin(args='"{}" pi -p'.format(file), verb=None)
+    out = utils.run_as_admin(args=f'"{file}" pi -p', verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file, "pi", "-p"], verb=None)
     assert out == expected
@@ -433,7 +433,7 @@ def test_run_as_admin():
     assert out == expected
 
     expected = b'pi\r\n-p\r\n"hel lo"\r\nECHO is off.\r\nECHO is off.\r\n'
-    out = utils.run_as_admin(args='"{}" pi -p "hel lo"'.format(file), verb=None)
+    out = utils.run_as_admin(args=f'"{file}" pi -p "hel lo"', verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file, "pi", "-p", "hel lo"], verb=None)
     assert out == expected
@@ -441,7 +441,7 @@ def test_run_as_admin():
     assert out == expected
 
     expected = b'pi\r\n-p\r\n"hel lo"\r\n6\r\n"last parameter received"\r\n'
-    out = utils.run_as_admin(args='"{}" pi -p "hel lo" 6 "last parameter received"'.format(file), verb=None)
+    out = utils.run_as_admin(args=f'"{file}" pi -p "hel lo" 6 "last parameter received"', verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file, "pi", "-p", "hel lo", "6", "last parameter received"], verb=None)
     assert out == expected
@@ -462,7 +462,7 @@ def test_run_as_admin():
     expected = subprocess.check_output([sys.executable, "-VV"])
     out = utils.run_as_admin(args="-VV", executable=sys.executable, verb=None)
     assert out == expected
-    out = utils.run_as_admin(args="{} -VV".format(sys.executable), verb=None)
+    out = utils.run_as_admin(args=f"{sys.executable} -VV", verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[sys.executable, "-VV"], verb=None)
     assert out == expected
@@ -480,10 +480,10 @@ def test_run_as_admin():
         fp.write('print("written to stderr", file=sys.stderr)\r\n')
 
     # no arguments
-    expected = "{}\r\n[]\r\n".format(sys.executable).encode()
+    expected = f"{sys.executable}\r\n[]\r\n".encode()
     out = utils.run_as_admin(args=file, executable=sys.executable, verb=None)
     assert out == expected
-    out = utils.run_as_admin(args="{} {}".format(sys.executable, file), verb=None)
+    out = utils.run_as_admin(args=f"{sys.executable} {file}", verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file], executable=sys.executable, verb=None)
     assert out == expected
@@ -491,10 +491,10 @@ def test_run_as_admin():
     assert out == expected
 
     # with arguments
-    expected = "{}\r\n['1', 'x=5', 'a b c d', 'e']\r\n".format(sys.executable).encode()
-    out = utils.run_as_admin(args='{} 1 x=5 "a b c d" e'.format(file), executable=sys.executable, verb=None)
+    expected = f"{sys.executable}\r\n['1', 'x=5', 'a b c d', 'e']\r\n".encode()
+    out = utils.run_as_admin(args=f'{file} 1 x=5 "a b c d" e', executable=sys.executable, verb=None)
     assert out == expected
-    out = utils.run_as_admin(args='{} {} 1 x=5 "a b c d" e'.format(sys.executable, file), verb=None)
+    out = utils.run_as_admin(args=f'{sys.executable} {file} 1 x=5 "a b c d" e', verb=None)
     assert out == expected
     out = utils.run_as_admin(args=[file, "1", "x=5", "a b c d", "e"], executable=sys.executable, verb=None)
     assert out == expected
@@ -502,7 +502,7 @@ def test_run_as_admin():
     assert out == expected
 
     # change directory
-    expected = "{}\r\n['1']\r\n".format(sys.executable).encode()
+    expected = f"{sys.executable}\r\n['1']\r\n".encode()
     out = utils.run_as_admin(args=[sys.executable, os.path.basename(file), "1"], cwd=os.path.dirname(file), verb=None)
     assert out == expected
 
@@ -599,13 +599,13 @@ def test_prepare_email():
                    "username": None, "password": None}
 
     for item in ("yes", "YES", "1", "true", "True", "on", "On"):
-        create(["[smtp]", "host=h", "port=1", "starttls={}".format(item)])
+        create(["[smtp]", "host=h", "port=1", f"starttls={item}"])
         cfg = utils._prepare_email(temp, "you", "me")
         assert cfg == {"type": "smtp", "to": ["you"], "from": "me", "host": "h",
                        "port": 1, "starttls": True, "username": None, "password": None}
 
     for item in ("no", "No", "0", "false", "False", "off", "Off"):
-        create(["[smtp]", "host=h", "port=1", "starttls={}".format(item)])
+        create(["[smtp]", "host=h", "port=1", f"starttls={item}"])
         cfg = utils._prepare_email(temp, "you", "me")
         assert cfg == {"type": "smtp", "to": ["you"], "from": "me", "host": "h",
                        "port": 1, "starttls": False, "username": None, "password": None}

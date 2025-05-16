@@ -59,7 +59,7 @@ def test_none_type():
         with pytest.raises(ValueError) as err:
             with writer() as root:
                 assert root.file is None
-                assert repr(root) == "<{} 'NoneType' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'NoneType' (0 groups, 0 datasets, 0 metadata)>"
         assert err.match("specify a file")
 
 
@@ -76,7 +76,7 @@ def test_file_path():
             assert root.file == path
             fill_root_with_data(root)
             assert_root_data(root)
-            assert repr(root) == "<{} 'foo' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+            assert repr(root) == f"<{writer.__name__} 'foo' (2 groups, 1 datasets, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == path
@@ -96,7 +96,7 @@ def test_exception_raised():
         with pytest.raises(ZeroDivisionError):
             with writer(path) as root:
                 assert root.file == path
-                assert repr(root) == "<{} 'bar' (0 groups, 0 datasets, 0 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'bar' (0 groups, 0 datasets, 0 metadata)>"
                 divide = 1/0
 
         root2 = read(path)
@@ -114,7 +114,7 @@ def test_exception_raised():
                 assert root.file == path
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == "<{} 'bar' (2 groups, 1 datasets, 2 metadata)>".format(writer.__name__)
+                assert repr(root) == f"<{writer.__name__} 'bar' (2 groups, 1 datasets, 2 metadata)>"
                 divide = 1/0
 
         root2 = read(path)
