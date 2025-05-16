@@ -6,8 +6,7 @@ from io import BufferedIOBase
 
 import numpy as np
 
-from ..base import Reader
-from ..utils import register
+from ..base import Reader, register
 
 
 @register

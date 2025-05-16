@@ -4,7 +4,7 @@ Read and write data files.
 import re
 from collections import namedtuple
 
-from .base import Reader
+from .base import Reader, _readers, register
 from .base import Root
 from .base import Writer
 from .google_api import GCellType
@@ -19,7 +19,6 @@ from .tables import extension_delimiter_map
 from .tables import read_table_excel
 from .tables import read_table_gsheets
 from .tables import read_table_text
-from .utils import _readers
 from .utils import checksum
 from .utils import copy
 from .utils import git_head
@@ -27,7 +26,6 @@ from .utils import is_admin
 from .utils import is_dir_accessible
 from .utils import is_file_readable
 from .utils import logger
-from .utils import register
 from .utils import remove_write_permissions
 from .utils import run_as_admin
 from .utils import search

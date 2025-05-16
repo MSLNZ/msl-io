@@ -20,8 +20,6 @@ from .google_api import GMail
 
 logger = logging.getLogger(__package__)
 
-_readers = []
-
 
 def checksum(file, algorithm="sha256", chunk_size=65536, shake_length=256):
     """Get the checksum of a file.
@@ -189,28 +187,6 @@ def is_file_readable(file, strict=False):
         if strict:
             raise
         return False
-
-
-def register(reader_class):
-    """Use as a decorator to register a :class:`~msl.io.base.Reader` subclass.
-
-    See :ref:`io-create-reader` for an example on how to use @register decorator.
-
-    Parameters
-    ----------
-    reader_class : :class:`~msl.io.base.Reader`
-        A :class:`~msl.io.base.Reader` subclass.
-
-    Returns
-    -------
-    :class:`~msl.io.base.Reader`
-        The :class:`~msl.io.base.Reader`.
-    """
-    def append(cls):
-        _readers.append(cls)
-        logger.debug("registered %r", cls)
-        return cls
-    return append(reader_class)
 
 
 def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,

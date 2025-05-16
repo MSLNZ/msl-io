@@ -16,8 +16,7 @@ try:
 except ImportError:
     h5py = None
 
-from ..base import Reader
-from ..utils import register
+from ..base import Reader, register
 
 
 @register

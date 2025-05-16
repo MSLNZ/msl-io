@@ -1,11 +1,16 @@
 """
 Base classes for all :class:`Reader`\\s. and :class:`Writer`\\s.
 """
+from __future__ import annotations
+
 import itertools
+import logging
 import os
 
 from .group import Group
 from .utils import get_basename
+
+logger = logging.getLogger(__package__)
 
 
 class Root(Group):
@@ -428,3 +433,28 @@ class Reader(Root):
                 return Reader.get_extension(file.name)
             except AttributeError:
                 return ""
+
+
+def register(cls: type[Reader]) -> type[Reader]:
+    """Use as a decorator to register a :class:`~msl.io.base.Reader` subclass.
+
+    See :ref:`io-create-reader` for an example on how to use @register decorator.
+
+    Parameters
+    ----------
+    cls : :class:`~msl.io.base.Reader`
+        A :class:`~msl.io.base.Reader` subclass.
+
+    Returns
+    -------
+    :class:`~msl.io.base.Reader`
+        The :class:`~msl.io.base.Reader`.
+    """
+    def append(_reader: type[Reader]) -> type[Reader]:
+        _readers.append(cls)
+        logger.debug("msl-io registered %r", cls)
+        return cls
+    return append(cls)
+
+
+_readers: list[type[Reader]] = []
