@@ -101,6 +101,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob=*.rst",
     "--import-mode=importlib",
+    "--ignore=src/msl/io/_types.py",
     "--ignore=docs/conf.py",
     "--ignore=tests/create_google_api_tokens.py",
 ]
