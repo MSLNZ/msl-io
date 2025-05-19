@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import hashlib
 import os
@@ -8,111 +10,130 @@ import subprocess
 import sys
 import tempfile
 import uuid
-from io import BytesIO
-from io import StringIO
+from io import BytesIO, StringIO
+from pathlib import Path
 
 import pytest
 
 from msl.io import utils
+from msl.io.utils import _GMailConfig, _prepare_email, _SMTPConfig  # pyright: ignore[reportPrivateUsage]
 
-def test_search():
 
-    def s(**kwargs):
-        return list(utils.search(base, **kwargs))
-
+def test_search() -> None:
     # the msl-io folder
-    base = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    assert base.endswith("msl-io")
+    d = Path(__file__).parent.parent
+    assert d.name.endswith("msl-io")
 
     # (?!c) means match __init__.py files but ignore __init__.pyc files
-    files = s(pattern=r"__init__\.py(?!c)")
+    files = list(utils.search(d, include=r"__init__\.py(?!c)"))
     assert len(files) == 0
 
-    files = s(pattern=r"__init__\.py(?!c)", levels=1)
+    files = list(utils.search(d, include=r"__init__\.py$", depth=3))
+    assert len(files) == 1
+    for file in files:
+        assert file.name == "__init__.py"
+
+    files = list(utils.search(d, include=r"__init__\.py$", depth=None, exclude=r"v?env"))
+    assert len(files) == 4  # noqa: PLR2004
+    for file in files:
+        assert file.name == "__init__.py"
+
+    files = list(utils.search(d, include=r"__init__\.py(?!c)", depth=None, exclude=r"readers|v?env"))
+    assert len(files) == 2  # noqa: PLR2004
+    for file in files:
+        assert file.name == "__init__.py"
+
+    files = list(utils.search(d, include=r"__init__\.py$", depth=None, exclude=r"readers|writers|v?env"))
+    assert len(files) == 1
+    for file in files:
+        assert file.name == "__init__.py"
+
+    files = list(utils.search(d, include=r"license"))
     assert len(files) == 0
 
-    files = s(pattern=r"__init__\.py(?!c)", levels=2)
+    files = list(utils.search(d, include=r"license", flags=re.IGNORECASE))
+    assert len(files) == 1
+    for file in files:
+        assert file.name == "LICENSE.txt"
+
+    files = list(utils.search(d, include=re.compile(r"license", flags=re.IGNORECASE)))
+    assert len(files) == 1
+    for file in files:
+        assert file.name == "LICENSE.txt"
+
+    files = list(utils.search(d, depth=1, include=r"git", ignore_hidden_folders=True))
+    assert len(files) == 1
+    for file in files:
+        assert file.name == ".gitignore"
+
+    files = list(utils.search(d, depth=1, include=r"git", exclude=r"ignore", ignore_hidden_folders=True))
     assert len(files) == 0
 
-    files = s(pattern=r"__init__\.py(?!c)", levels=3)
-    assert len(files) == 1
+    files = list(utils.search(d, depth=1, include=r"git", ignore_hidden_folders=False))
+    assert len(files) > 1
 
-    files = s(pattern=r"__init__\.py(?!c)", levels=None, exclude_folders=r"v?env")
-    assert len(files) == 4
+    files = list(utils.search(d, include=r"\.(toml|json)$"))
+    assert len(files) == 2  # noqa: PLR2004
 
-    files = s(pattern=r"__init__\.py(?!c)", levels=None, exclude_folders=["readers", "v?env"])
-    assert len(files) == 2
-
-    files = s(pattern=r"__init__\.py(?!c)", levels=None, exclude_folders=["readers", "writers", "v?env"])
-    assert len(files) == 1
-
-    files = s(pattern=r"license")
+    files = list(utils.search("does-not-exist"))
     assert len(files) == 0
 
-    files = s(pattern=r"license", regex_flags=re.IGNORECASE)
-    assert len(files) == 1
-
-    files = s(pattern=r"\.(toml|json)")
-    assert len(files) == 2
-
-    files = s(pattern=r"README", levels=None, exclude_folders="v?env")
-    assert len(files) == 1
-
-    files = s(pattern=r"README", levels=None, ignore_hidden_folders=False,
-              exclude_folders=[".eggs", ".pytest_cache", ".cache", "v?env"])
-    assert len(files) == 1
-
-    files = s(pattern=r"(^in|^auth)", levels=1, exclude_folders="htmlcov")
-    assert len(files) == 3
-
-    files = s(pattern=r"(^in|^auth)", levels=1, regex_flags=re.IGNORECASE, exclude_folders="htmlcov")
-    assert len(files) == 4
+    with pytest.raises(FileNotFoundError, match=r"does-not-exist"):
+        _ = list(utils.search("does-not-exist", ignore_os_error=False))
 
 
-def test_git_head():
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+def test_git_head() -> None:
+    root_dir = Path(__file__).parent.parent
 
     head = utils.git_head(root_dir)
-    assert len(head["hash"]) == 40
+    assert head is not None
+    assert len(head.hash) == 40  # noqa: PLR2004
+    assert all(char.isalnum() for char in head.hash)
     assert all(char.isalnum() for char in head["hash"])
-    if sys.version_info.major > 2:
-        assert isinstance(head["hash"], str)
-    assert isinstance(head["datetime"], datetime.datetime)
+    assert isinstance(head.hash, str)
+    assert isinstance(head.timestamp, datetime.datetime)
+    assert head.timestamp.year > 2024  # noqa: PLR2004
+    assert head["timestamp"].year > 2024  # noqa: PLR2004
+
+    head = utils.git_head(str(root_dir))
+    assert head is not None
+
+    head = utils.git_head(str(root_dir).encode())
+    assert head is not None
 
     # can specify any directory within the version control hierarchy
-    assert utils.git_head(os.path.join(root_dir, ".git")) == head
-    assert utils.git_head(os.path.join(root_dir, "src", "msl", "io", "readers")) == head
-    assert utils.git_head(os.path.dirname(__file__)) == head
-    assert utils.git_head(os.path.join(root_dir, "docs", "_api")) == head
+    assert utils.git_head(root_dir / ".git") == head
+    assert utils.git_head(root_dir / "src" / "msl" / "io" / "readers") == head
 
     # a directory not under version control
     assert utils.git_head(tempfile.gettempdir()) is None
 
 
-def test_checksum():
-    path = os.path.join(os.path.dirname(__file__), "samples", "hdf5_sample.h5")
+def test_checksum() -> None:
+    path = Path(__file__).parent / "samples" / "hdf5_sample.h5"
     sha256 = "e5dad4f15335e603fd602c22bf9ddb71b3500f862905495d3d17e6159a463d2d"
     md5 = "a46708df266595218db2ba06788c4695"
 
-    # use a filename as a string
-    assert isinstance(path, str)
+    # use a filename as Path
     assert sha256 == utils.checksum(path, algorithm="sha256")
     assert md5 == utils.checksum(path, algorithm="md5")
 
+    # use a filename as a string
+    assert sha256 == utils.checksum(str(path), algorithm="sha256")
+    assert md5 == utils.checksum(str(path), algorithm="md5")
+
     # use a filename as bytes
-    path_as_bytes = path.encode()
-    assert isinstance(path_as_bytes, bytes)
-    assert sha256 == utils.checksum(path_as_bytes, algorithm="sha256")
-    assert md5 == utils.checksum(path_as_bytes, algorithm="md5")
+    assert sha256 == utils.checksum(str(path).encode(), algorithm="sha256")
+    assert md5 == utils.checksum(str(path).encode(), algorithm="md5")
 
     # use a file pointer (binary mode)
-    with open(path, mode="rb") as fp:
+    with path.open("rb") as fp:
         assert sha256 == utils.checksum(fp, algorithm="sha256")
-    with open(path, mode="rb") as fp:
+    with path.open("rb") as fp:
         assert md5 == utils.checksum(fp, algorithm="md5")
 
     # use a byte buffer
-    with open(path, mode="rb") as fp:
+    with path.open("rb") as fp:
         buffer = BytesIO(fp.read())
     assert buffer.tell() == 0
     assert sha256 == utils.checksum(buffer, algorithm="sha256")
@@ -123,35 +144,33 @@ def test_checksum():
     # ensure that all available algorithms can be used
     for algorithm in hashlib.algorithms_available:
         if sys.version_info[:2] == (3, 8):
-            if sys.platform.startswith("linux") and \
-                algorithm in ("ripemd160", "whirlpool", "md4"):
+            if sys.platform.startswith("linux") and algorithm in ("ripemd160", "whirlpool", "md4"):
                 continue
-            if sys.platform == "darwin" and \
-                algorithm in ("md4", "mdc2", "whirlpool"):
+            if sys.platform == "darwin" and algorithm in ("md4", "mdc2", "whirlpool"):
                 continue
         value = utils.checksum(path, algorithm=algorithm)
         assert isinstance(value, str)
 
     # file does not exist
     with pytest.raises(OSError, match="does_not_exist.txt"):
-        utils.checksum("/the/file/does_not_exist.txt")
+        _ = utils.checksum("/the/file/does_not_exist.txt")
     with pytest.raises(OSError, match="does_not_exist.txt"):
-        utils.checksum(b"/the/file/does_not_exist.txt")
+        _ = utils.checksum(b"/the/file/does_not_exist.txt")
 
-    # invalid type
-    with pytest.raises(TypeError):
-        utils.checksum(None)
-    with pytest.raises(TypeError):
-        utils.checksum(bytearray(buffer.getvalue()))
-    with pytest.raises(TypeError):
-        utils.checksum(memoryview(buffer.getvalue()))
+    # invalid file type
+    with pytest.raises(AttributeError):
+        _ = utils.checksum(None)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    with pytest.raises(AttributeError):
+        _ = utils.checksum(bytearray(b"data"))  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    with pytest.raises(AttributeError):
+        _ = utils.checksum(memoryview(b"data"))  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
 
     # unsupported algorithm
     with pytest.raises(ValueError, match=r"unsupported"):
-        utils.checksum(path, algorithm="invalid")
+        _ = utils.checksum(path, algorithm="invalid")
 
 
-def test_get_basename():
+def test_get_basename() -> None:
     paths = [
         "/a/b/c/d/e/file.dat",
         "file.dat",
@@ -160,34 +179,38 @@ def test_get_basename():
         "file://a.b.c.d/folder/file.dat",
     ]
     if sys.platform == "win32":
-        paths.extend([
-            "C:\\a\\b\\c\\d\\e\\file.dat",
-            r"C:\a\file.dat",
-            "D:/file.dat",
-            r"\\a.b.c.d\folder\file.dat",
-            "\\\\a.b.c.d\\folder\\file.dat",
-        ])
+        paths.extend(
+            [
+                "C:\\a\\b\\c\\d\\e\\file.dat",
+                r"C:\a\file.dat",
+                "D:/file.dat",
+                r"\\a.b.c.d\folder\file.dat",
+                "\\\\a.b.c.d\\folder\\file.dat",
+            ]
+        )
     for path in paths:
         assert utils.get_basename(path) == "file.dat"
-        assert utils.get_basename(path.encode()) == b"file.dat"
+        assert utils.get_basename(path.encode()) == "file.dat"
+        assert utils.get_basename(Path(path)) == "file.dat"
 
     assert utils.get_basename(StringIO("hello")) == "StringIO"
     assert utils.get_basename(BytesIO(b"hello")) == "BytesIO"
 
-    with open(__file__, mode="rt") as fp:
+    with Path(__file__).open("rb") as fp:
+        assert utils.get_basename(fp) == "test_utils.py"
+
+    with Path(__file__).open() as fp:
         assert utils.get_basename(fp) == "test_utils.py"
 
 
-def test_copy():
-
-    def check_stat(dest):
-        src_stat = os.stat(__file__)
-        dst_stat = os.stat(dest)
+def test_copy() -> None:  # noqa: C901, PLR0915
+    def check_stat(dest: Path) -> bool:  # noqa: C901
+        src_stat = Path(__file__).stat()
+        dst_stat = dest.stat()
         for attr in dir(src_stat):
-            print(attr)
             if not attr.startswith("st_"):
                 continue
-            if attr in ["st_ino", "st_ctime", "st_ctime_ns", "st_birthtime", "st_birthtime_ns"]:  # these will never be equal
+            if attr in ["st_ino", "st_ctime", "st_ctime_ns", "st_birthtime", "st_birthtime_ns"]:  # these won't equal
                 continue
             src_value = getattr(src_stat, attr)
             dst_value = getattr(dst_stat, attr)
@@ -197,9 +220,9 @@ def test_copy():
                     return False
             elif "time" in attr:  # times can be approximate
                 if attr.endswith("ns"):
-                    if abs(src_value - dst_value) > 1e4:
+                    if abs(src_value - dst_value) > 1e4:  # noqa: PLR2004
                         return False
-                elif abs(src_value - dst_value) > 1e-4:
+                elif abs(src_value - dst_value) > 1e-4:  # noqa: PLR2004
                     return False
             elif attr == "st_dev" and sys.platform == "win32" and os.getenv("GITHUB_ACTIONS"):
                 # the ST_DEV values are not equal if the tests are run
@@ -210,29 +233,24 @@ def test_copy():
         return True
 
     # make sure there is no remnant file from a previously-failed test
-    if os.path.isfile(os.path.join(tempfile.gettempdir(), "test_utils.py")):
-        os.remove(os.path.join(tempfile.gettempdir(), "test_utils.py"))
+    (Path(tempfile.gettempdir()) / "test_utils.py").unlink(missing_ok=True)
 
     # source file does not exist
     for item in [r"/the/file/does_not_exist.txt", r"/the/file/does_not_exist", r"does_not_exist"]:
-        with pytest.raises(OSError, match=item):
-            utils.copy(item, "")
-
-    # destination invalid
-    with pytest.raises(OSError, match=r"''"):
-        utils.copy(__file__, "")
+        with pytest.raises(OSError, match="does_not_exist"):
+            _ = utils.copy(item, "")
 
     # copy (with metadata) to a directory that already exists
     dst = utils.copy(__file__, tempfile.gettempdir())
-    assert dst == os.path.join(tempfile.gettempdir(), "test_utils.py")
+    assert dst == Path(tempfile.gettempdir()) / "test_utils.py"
     assert check_stat(dst)
     assert utils.checksum(__file__) == utils.checksum(dst)
 
     # destination already exists
     with pytest.raises(OSError, match=r"Will not overwrite"):
-        utils.copy(__file__, dst)
+        _ = utils.copy(__file__, dst)
     with pytest.raises(OSError, match=r"Will not overwrite"):
-        utils.copy(__file__, tempfile.gettempdir())
+        _ = utils.copy(__file__, tempfile.gettempdir())
 
     # can overwrite (with metadata), specify full path
     dst2 = utils.copy(__file__, dst, overwrite=True)
@@ -252,82 +270,81 @@ def test_copy():
     assert check_stat(dst4)
     assert utils.checksum(__file__) == utils.checksum(dst4)
 
-    os.remove(dst)
+    dst.unlink()
 
     # copy without metadata
     dst = utils.copy(__file__, tempfile.gettempdir(), include_metadata=False)
-    assert dst == os.path.join(tempfile.gettempdir(), "test_utils.py")
+    assert dst == Path(tempfile.gettempdir()) / "test_utils.py"
     assert not check_stat(dst)
     assert utils.checksum(__file__) == utils.checksum(dst)
-    os.remove(dst)
+    dst.unlink()
 
     # copy (without metadata) but use a different destination basename
-    destination = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + ".tmp")
+    destination = Path(tempfile.gettempdir()) / f"{uuid.uuid4()}.tmp"
     dst = utils.copy(__file__, destination, include_metadata=False)
     assert dst == destination
     assert not check_stat(dst)
     assert utils.checksum(__file__) == utils.checksum(dst)
-    os.remove(dst)
+    dst.unlink()
 
     # copy to a directory that does not exist
     new_dirs = str(uuid.uuid4()).split("-")
-    assert not os.path.isdir(os.path.join(tempfile.gettempdir(), new_dirs[0]))
-    destination = os.path.join(tempfile.gettempdir(), *new_dirs)
-    destination = os.path.join(destination, "new_file.tmp")
+    assert not (Path(tempfile.gettempdir()) / new_dirs[0]).is_dir()
+    destination = Path(tempfile.gettempdir()).joinpath(*new_dirs)
+    destination = destination / "new_file.tmp"
     dst = utils.copy(__file__, destination)
     assert dst == destination
     assert check_stat(dst)
     assert utils.checksum(__file__) == utils.checksum(dst)
-    shutil.rmtree(os.path.join(tempfile.gettempdir(), new_dirs[0]))
+    shutil.rmtree(Path(tempfile.gettempdir()) / new_dirs[0])
 
 
-def test_remove_write_permissions():
-
+def test_remove_write_permissions() -> None:
     # create a new file
-    path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + ".tmp")
-    with open(path, mode="wb") as fp:
-        fp.write(b"hello")
+    path = Path(tempfile.gettempdir()) / f"{uuid.uuid4()}.tmp"
+    _ = path.write_bytes(b"hello")
 
-    # set to rwxrwxrwx
-    os.chmod(path, 0o777)
+    # set to rwxrwxrwx  # cSpell: ignore rwxrwxrwx
+    path.chmod(0o777)
 
     mode = stat.S_IMODE(os.lstat(path).st_mode)
-    if sys.platform == "win32":
-        assert mode == 0o666  # Windows does not have the Execute permission
+    if sys.platform == "win32":  # Windows does not have the Execute permission
+        assert mode == 0o666  # noqa: PLR2004
     else:
-        assert mode == 0o777
+        assert mode == 0o777  # noqa: PLR2004
 
     # can still modify it
-    with open(path, mode="ab") as fp:
-        fp.write(b" world")
-    with open(path, mode="rb") as fp:
+    with path.open("ab") as fp:
+        _ = fp.write(b" world")
+    with path.open("rb") as fp:
         assert fp.read() == b"hello world"
 
     utils.remove_write_permissions(path)
 
     # the Read and Execute permissions are preserved
     mode = stat.S_IMODE(os.lstat(path).st_mode)
-    if sys.platform == "win32":
-        assert mode == 0o444  # Windows does not have the Execute permission
+    if sys.platform == "win32":  # Windows does not have the Execute permission
+        assert mode == 0o444  # noqa: PLR2004
     else:
-        assert mode == 0o555
+        assert mode == 0o555  # noqa: PLR2004
 
     # cannot open the file to modify it
     for m in ["wb", "ab", "wt", "at", "w+", "w+b"]:
-        with pytest.raises(OSError):
-            open(path, mode=m)
+        with pytest.raises(OSError, match="denied"):
+            _ = path.open(m)
 
     # cannot delete the file (only valid on Windows)
     if sys.platform == "win32":
-        with pytest.raises(OSError):
-            os.remove(path)
+        with pytest.raises(OSError, match="denied"):
+            path.unlink()
 
     # can still read it
-    with open(path, mode="rb") as fp:
+    with path.open("rb") as fp:
         assert fp.read() == b"hello world"
 
-    # set to rw--wxrw-
-    os.chmod(path, 0o636)
+    # set to rw--wxrw-  # cSpell: ignore wxrw
+    path.chmod(0o636)
+
     # remove and check permissions
     utils.remove_write_permissions(path)
     mode = stat.S_IMODE(os.lstat(path).st_mode)
@@ -335,54 +352,63 @@ def test_remove_write_permissions():
         # Windows does not have the Execute permission
         # and if any of the Read permissions are enabled then it
         # is enabled for the User, Group and Others
-        assert mode == 0o444
+        assert mode == 0o444  # noqa: PLR2004
     else:
-        assert mode == 0o414
+        assert mode == 0o414  # noqa: PLR2004
 
     # clean up by deleting the file
-    os.chmod(path, 0o777)
-    os.remove(path)
+    path.chmod(0o777)
+    path.unlink()
 
 
-def test_is_file_readable():
+def test_is_file_readable() -> None:
     assert utils.is_file_readable(__file__)
+    assert utils.is_file_readable(__file__.encode())
+    assert utils.is_file_readable(Path(__file__))
 
-    for item in [None, "", __file__+"py", dict()]:
-        assert not utils.is_file_readable(item)
+    # Not a valid file path
+    assert not utils.is_file_readable("")
+    assert not utils.is_file_readable(__file__ + "py")
 
-    with pytest.raises(TypeError):
-        utils.is_file_readable(None, strict=True)
-
-    with pytest.raises(OSError):
-        utils.is_file_readable("", strict=True)
-
-    with pytest.raises(OSError):
-        utils.is_file_readable(__file__+"py", strict=True)
-
-
-def test_is_dir_accessible():
-    assert utils.is_dir_accessible(os.path.dirname(__file__))
-
-    for item in [None, "", __file__, dict()]:
-        assert not utils.is_dir_accessible(item)
+    # Not a PathLike object
+    assert not utils.is_file_readable(None)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    assert not utils.is_file_readable({})  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
 
     with pytest.raises(TypeError):
-        utils.is_dir_accessible(None, strict=True)
+        _ = utils.is_file_readable(None, strict=True)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
 
-    with pytest.raises(OSError):
-        utils.is_dir_accessible("", strict=True)
-
-    with pytest.raises(OSError):
-        utils.is_dir_accessible(__file__, strict=True)
+    with pytest.raises(OSError, match=r"does-not-exist.txt"):
+        _ = utils.is_file_readable("does-not-exist.txt", strict=True)
 
 
-def test_is_admin():
-    assert isinstance(utils.is_admin(), bool)
+def test_is_dir_accessible() -> None:
+    path = Path(__file__).parent
+    assert utils.is_dir_accessible(path)
+    assert utils.is_dir_accessible(str(path))
+    assert utils.is_dir_accessible(str(path).encode())
+
+    # Not a valid directory path
+    assert not utils.is_dir_accessible("")
+    assert not utils.is_dir_accessible(__file__)
+
+    # Not a PathLike object
+    assert not utils.is_dir_accessible(None)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    assert not utils.is_dir_accessible({})  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+
+    with pytest.raises(TypeError):
+        _ = utils.is_dir_accessible(None, strict=True)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+
+    with pytest.raises(OSError, match=r"test_utils\.py"):
+        _ = utils.is_dir_accessible(__file__, strict=True)
 
 
-@pytest.mark.skipif(utils.is_admin(), reason="don\'t run if already an admin")
+def test_is_admin() -> None:
+    assert utils.is_admin() in {True, False}
+
+
+@pytest.mark.skipif(utils.is_admin(), reason="don't run if already an admin")
 @pytest.mark.skipif(os.name != "nt", reason="non-Windows OS")
-def test_run_as_admin():
+def test_run_as_admin() -> None:  # noqa: PLR0915
     # Using verb=None as a keyword argument allows for testing the
     # 'run_as_admin' function without getting the UAC prompt,
     # but the test command must not require admin privileges.
@@ -393,7 +419,7 @@ def test_run_as_admin():
     # the subprocess.check_output internals.
 
     with pytest.raises(ValueError, match=r"args and/or an executable$"):
-        utils.run_as_admin()
+        _ = utils.run_as_admin()
 
     # Don't want Windows to return b'ECHO is on.\r\n'
     out = utils.run_as_admin(args="echo 1", verb=None)
@@ -410,11 +436,11 @@ def test_run_as_admin():
     assert out == b"hi\r\n"
 
     # run a batch file with spaces in the file path and in the arguments
-    file = os.path.join(tempfile.gettempdir(), "msl io batch script.bat")
-    with open(file, mode="wt") as fp:
-        fp.write("@ECHO OFF\r\n")
+    file = Path(tempfile.gettempdir()) / "msl io batch script.bat"
+    with file.open("wt") as fp:
+        _ = fp.write("@ECHO OFF\r\n")
         for i in range(1, 6):
-            fp.write(f"echo %{i}\r\n")
+            _ = fp.write(f"echo %{i}\r\n")
 
     expected = b"ECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\nECHO is off.\r\n"
     out = utils.run_as_admin(args=f'"{file}"', verb=None)
@@ -450,16 +476,14 @@ def test_run_as_admin():
 
     # change directory
     out = utils.run_as_admin(
-        args=[os.path.basename(file), "pi", "-p", "hel lo", "6", "last parameter received"],
-        cwd=os.path.dirname(file),
-        verb=None
+        args=[file.name, "pi", "-p", "hel lo", "6", "last parameter received"], cwd=file.parent, verb=None
     )
     assert out == expected
 
-    os.remove(file)
+    file.unlink()
 
     # call the Python interpreter
-    expected = subprocess.check_output([sys.executable, "-VV"])
+    expected = subprocess.check_output([sys.executable, "-VV"])  # noqa: S603
     out = utils.run_as_admin(args="-VV", executable=sys.executable, verb=None)
     assert out == expected
     out = utils.run_as_admin(args=f"{sys.executable} -VV", verb=None)
@@ -470,14 +494,14 @@ def test_run_as_admin():
     assert out == expected
 
     # run a python script
-    file = os.path.join(tempfile.gettempdir(), "msl_io_admin_test.py")
-    with open(file, mode="wt") as fp:
-        fp.write("import sys\r\n")
+    file = Path(tempfile.gettempdir()) / "msl_io_admin_test.py"
+    with file.open("wt") as fp:
+        _ = fp.write("import sys\r\n")
         # additional packages must be available since msl-io depends on them
-        fp.write("import numpy\r\n")
-        fp.write("print(sys.executable)\r\n")
-        fp.write("print(sys.argv[1:])\r\n")
-        fp.write('print("written to stderr", file=sys.stderr)\r\n')
+        _ = fp.write("import numpy\r\n")
+        _ = fp.write("print(sys.executable)\r\n")
+        _ = fp.write("print(sys.argv[1:])\r\n")
+        _ = fp.write('print("written to stderr", file=sys.stderr)\r\n')
 
     # no arguments
     expected = f"{sys.executable}\r\n[]\r\n".encode()
@@ -503,185 +527,290 @@ def test_run_as_admin():
 
     # change directory
     expected = f"{sys.executable}\r\n['1']\r\n".encode()
-    out = utils.run_as_admin(args=[sys.executable, os.path.basename(file), "1"], cwd=os.path.dirname(file), verb=None)
+    out = utils.run_as_admin(args=[sys.executable, file.name, "1"], cwd=file.parent, verb=None)
     assert out == expected
 
-    # capture_stderr=True
+    # set capture_stderr=True
     out = utils.run_as_admin(args=[sys.executable, file], capture_stderr=True, verb=None)
+    assert isinstance(out, bytes)
     assert b"written to stderr" in out
 
-    os.remove(file)
+    file.unlink()
 
     # raise some exceptions
     with pytest.raises(PermissionError):
-        utils.run_as_admin('sc create MSL-IO-TEST binPath= "C:\\hello world\\dummy.exe"', verb=None)
+        _ = utils.run_as_admin('sc create MSL-IO-TEST binPath= "C:\\hello world\\dummy.exe"', verb=None)
 
     with pytest.raises(PermissionError):
-        utils.run_as_admin(["sc", "create", "MSL-IO-TEST", "binPath=", "C:\\hello world\\dummy.exe"], verb=None)
+        _ = utils.run_as_admin(["sc", "create", "MSL-IO-TEST", "binPath=", "C:\\hello world\\dummy.exe"], verb=None)
 
     with pytest.raises(OSError, match=r"Set capture_stderr=True to see if more information is available.$"):
-        utils.run_as_admin("doesnotexist.exe", verb=None)
+        _ = utils.run_as_admin("doesnotexist.exe", verb=None)
 
     with pytest.raises(OSError, match=r"'doesnotexist.exe' is not recognized as an internal or external command"):
-        utils.run_as_admin("doesnotexist.exe", capture_stderr=True, verb=None)
+        _ = utils.run_as_admin("doesnotexist.exe", capture_stderr=True, verb=None)
 
     with pytest.raises(OSError, match=r"Set show=False to capture the stdout stream.$"):
-        utils.run_as_admin([sys.executable, "-c", "1/0"], show=True, verb=None)
+        _ = utils.run_as_admin([sys.executable, "-c", "1/0"], show=True, verb=None)
 
     with pytest.raises(OSError, match=r"Set capture_stderr=True to see if more information is available.$"):
-        utils.run_as_admin([sys.executable, "-c", "1/0"], verb=None)
+        _ = utils.run_as_admin([sys.executable, "-c", "1/0"], verb=None)
 
     with pytest.raises(OSError, match=r"Set capture_stderr=True to see if more information is available.\nHello!$"):
-        utils.run_as_admin([sys.executable, "-c", 'print("Hello!");1/0'], verb=None)
+        _ = utils.run_as_admin([sys.executable, "-c", 'print("Hello!");1/0'], verb=None)
 
     with pytest.raises(OSError, match=r"ZeroDivisionError:"):
-        utils.run_as_admin([sys.executable, "-c", "1/0"], capture_stderr=True, verb=None)
+        _ = utils.run_as_admin([sys.executable, "-c", "1/0"], capture_stderr=True, verb=None)
 
 
-def test_prepare_email():
-    temp = os.path.join(tempfile.gettempdir(), "793a7e5d-7e0e-4049-9e9b-f4383b7bb96a.tmp")
+def test_prepare_email() -> None:  # noqa: PLR0915
+    temp = Path(tempfile.gettempdir()) / "793a7e5d-7e0e-4049-9e9b-f4383b7bb96a.tmp"
 
-    def create(lines):
-        with open(temp, mode="wt") as fp:
-            fp.write("\n".join(lines))
+    def create(lines: list[str]) -> None:
+        _ = temp.write_text("\n".join(lines))
 
-    with pytest.raises(OSError):
-        utils._prepare_email("does-not-exist.ini", "", "")
+    with pytest.raises(OSError, match="does-not-exist.ini"):
+        _ = _prepare_email("does-not-exist.ini", "", "")
 
     create(["[smtp]", "[gmail]"])
     with pytest.raises(ValueError, match="Cannot specify both"):
-        utils._prepare_email(temp, "", None)
+        _ = _prepare_email(temp, "", None)
 
     create(["[unknown]"])
     with pytest.raises(ValueError, match="Must create either"):
-        utils._prepare_email(temp, "", None)
+        _ = _prepare_email(temp, "", None)
 
     for item in (["[smtp]"], ["[smtp]", "host=hostname"], ["[smtp]", "port=25"]):
         create(item)
         with pytest.raises(ValueError, match="Must specify the 'host' and 'port'"):
-            utils._prepare_email(temp, "", None)
+            _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "port=not-an-int"])
     with pytest.raises(ValueError, match="invalid literal for int()"):
-        utils._prepare_email(temp, "", None)
+        _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=smtp.example.com", "port=25"])
-    cfg = utils._prepare_email(temp, "", None)
-    assert cfg == {"type": "smtp", "to": [""], "from": "", "host": "smtp.example.com",
-                   "port": 25, "starttls": None, "username": None, "password": None}
+    cfg = _prepare_email(temp, "", None)
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == ""
+    assert cfg.host == "smtp.example.com"
+    assert cfg.port == 25  # noqa: PLR2004
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1"])
-    cfg = utils._prepare_email(temp, "name", None)
-    assert cfg == {"type": "smtp", "to": ["name"], "from": "name", "host": "h",
-                   "port": 1, "starttls": None, "username": None, "password": None}
+    cfg = _prepare_email(temp, "name", None)
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["name"]
+    assert cfg.frm == "name"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "domain=domain"])
-    cfg = utils._prepare_email(temp, "name", None)
-    assert cfg == {"type": "smtp", "to": ["name@domain"], "from": "name@domain", "host": "h",
-                   "port": 1, "starttls": None, "username": None, "password": None}
+    cfg = _prepare_email(temp, "name", None)
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["name@domain"]
+    assert cfg.frm == "name@domain"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "domain=@domain"])
-    cfg = utils._prepare_email(temp, ["name0", "name1", "name2"], None)
-    assert cfg == {"type": "smtp", "to": ["name0@domain", "name1@domain", "name2@domain"],
-                   "from": "name0@domain", "host": "h", "port": 1, "starttls": None,
-                   "username": None, "password": None}
+    cfg = _prepare_email(temp, ["name0", "name1", "name2"], None)
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["name0@domain", "name1@domain", "name2@domain"]
+    assert cfg.frm == "name0@domain"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "domain=@domain"])
-    cfg = utils._prepare_email(temp, "name@mail.com", None)
-    assert cfg == {"type": "smtp", "to": ["name@mail.com"], "from": "name@mail.com",
-                   "host": "h", "port": 1, "starttls": None, "username": None,
-                   "password": None}
+    cfg = _prepare_email(temp, "name@mail.com", None)
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["name@mail.com"]
+    assert cfg.frm == "name@mail.com"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "domain=@domain"])
-    cfg = utils._prepare_email(temp, ["you@mail.com", "me"], "me")
-    assert cfg == {"type": "smtp", "to": ["you@mail.com", "me@domain"],
-                   "from": "me@domain", "host": "h", "port": 1, "starttls": None,
-                   "username": None, "password": None}
+    cfg = _prepare_email(temp, ["you@mail.com", "me"], "me")
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["you@mail.com", "me@domain"]
+    assert cfg.frm == "me@domain"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is None
+    assert cfg.username is None
+    assert cfg.password is None
 
-    for item in ("yes", "YES", "1", "true", "True", "on", "On"):
-        create(["[smtp]", "host=h", "port=1", f"starttls={item}"])
-        cfg = utils._prepare_email(temp, "you", "me")
-        assert cfg == {"type": "smtp", "to": ["you"], "from": "me", "host": "h",
-                       "port": 1, "starttls": True, "username": None, "password": None}
+    for yes in ("yes", "YES", "1", "true", "True", "on", "On"):
+        create(["[smtp]", "host=h", "port=1", f"starttls={yes}"])
+        cfg = _prepare_email(temp, "you", "me")
+        assert isinstance(cfg, _SMTPConfig)
+        assert cfg.to == ["you"]
+        assert cfg.frm == "me"
+        assert cfg.host == "h"
+        assert cfg.port == 1
+        assert cfg.starttls is True
+        assert cfg.username is None
+        assert cfg.password is None
 
-    for item in ("no", "No", "0", "false", "False", "off", "Off"):
-        create(["[smtp]", "host=h", "port=1", f"starttls={item}"])
-        cfg = utils._prepare_email(temp, "you", "me")
-        assert cfg == {"type": "smtp", "to": ["you"], "from": "me", "host": "h",
-                       "port": 1, "starttls": False, "username": None, "password": None}
+    for no in ("no", "No", "0", "false", "False", "off", "Off"):
+        create(["[smtp]", "host=h", "port=1", f"starttls={no}"])
+        cfg = _prepare_email(temp, "you", "me")
+        assert isinstance(cfg, _SMTPConfig)
+        assert cfg.to == ["you"]
+        assert cfg.frm == "me"
+        assert cfg.host == "h"
+        assert cfg.port == 1
+        assert cfg.starttls is False
+        assert cfg.username is None
+        assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "username=user"])
     with pytest.raises(ValueError, match="Must specify the 'password'"):
-        utils._prepare_email(temp, "", None)
+        _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=h", "port=1", "password=pw"])
     with pytest.raises(ValueError, match="Must specify the 'username'"):
-        utils._prepare_email(temp, "", None)
+        _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=h", "port=1", "starttls=0", "username=uname", "password=pw"])
-    cfg = utils._prepare_email(temp, "you", "me@mail")
-    assert cfg == {"type": "smtp", "to": ["you"], "from": "me@mail", "host": "h",
-                   "port": 1, "starttls": False, "username": "uname", "password": "pw"}
+    cfg = _prepare_email(temp, "you", "me@mail")
+    assert isinstance(cfg, _SMTPConfig)
+    assert cfg.to == ["you"]
+    assert cfg.frm == "me@mail"
+    assert cfg.host == "h"
+    assert cfg.port == 1
+    assert cfg.starttls is False
+    assert cfg.username == "uname"
+    assert cfg.password == "pw"  # noqa: S105
 
     create(["[gmail]"])
-    cfg = utils._prepare_email(temp, "", None)
-    assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                   "account": None, "credentials": None, "scopes": None}
-    cfg = utils._prepare_email(temp, "me", None)
-    assert cfg == {"type": "gmail", "to": ["me"], "from": "me",
-                   "account": None, "credentials": None, "scopes": None}
+    cfg = _prepare_email(temp, "", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes is None
+
+    cfg = _prepare_email(temp, "me", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["me"]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes is None
 
     create(["[gmail]", "domain=domain"])
-    cfg = utils._prepare_email(temp, "me", None)
-    assert cfg == {"type": "gmail", "to": ["me"], "from": "me",
-                   "account": None, "credentials": None, "scopes": None}
+    cfg = _prepare_email(temp, "me", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["me"]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes is None
 
     create(["[gmail]", "account=mine", "domain=@gmail.com"])
-    cfg = utils._prepare_email(temp, "you", "me")
-    assert cfg == {"type": "gmail", "to": ["you@gmail.com"], "from": "me",
-                   "account": "mine", "credentials": None, "scopes": None}
+    cfg = _prepare_email(temp, "you", "me")
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["you@gmail.com"]
+    assert cfg.frm == "me"
+    assert cfg.account == "mine"
+    assert cfg.credentials is None
+    assert cfg.scopes is None
 
     create(["[gmail]", "credentials=path/to/oauth"])
-    cfg = utils._prepare_email(temp, ["email@corp.com", "me"], None)
-    assert cfg == {"type": "gmail", "to": ["email@corp.com", "me"], "from": "me",
-                   "account": None, "credentials": "path/to/oauth", "scopes": None}
+    cfg = _prepare_email(temp, ["email@corp.com", "me"], None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["email@corp.com", "me"]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials == "path/to/oauth"
+    assert cfg.scopes is None
 
     create(["[gmail]", "credentials=path\\to\\oauth", "account=work", "domain=ignored"])
-    cfg = utils._prepare_email(temp, "name@gmail.com", "name@email.com")
-    assert cfg == {"type": "gmail", "to": ["name@gmail.com"], "from": "name@email.com",
-                   "account": "work", "credentials": "path\\to\\oauth", "scopes": None}
+    cfg = _prepare_email(temp, "name@gmail.com", "name@email.com")
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["name@gmail.com"]
+    assert cfg.frm == "name@email.com"
+    assert cfg.account == "work"
+    assert cfg.credentials == "path\\to\\oauth"
+    assert cfg.scopes is None
 
     create(["[gmail]", "credentials=path\\to\\oauth", "account=work", "domain=domain"])
-    cfg = utils._prepare_email(temp, ["a", "b", "c@corp.net"], None)
-    assert cfg == {"type": "gmail", "to": ["a@domain", "b@domain", "c@corp.net"],
-                   "from": "me", "account": "work", "credentials": "path\\to\\oauth",
-                   "scopes": None}
+    cfg = _prepare_email(temp, ["a", "b", "c@corp.net"], None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == ["a@domain", "b@domain", "c@corp.net"]
+    assert cfg.frm == "me"
+    assert cfg.account == "work"
+    assert cfg.credentials == "path\\to\\oauth"
+    assert cfg.scopes is None
 
     create(["[gmail]", "scopes=a"])
-    cfg = utils._prepare_email(temp, "", None)
-    assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                   "account": None, "credentials": None, "scopes": ["a"]}
+    cfg = _prepare_email(temp, "", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes == ["a"]
 
-    create(["[gmail]", "scopes = ", " gmail", " gmail.send", " g",
-            " gmail.metadata", "", "", "", "account = work"])
-    cfg = utils._prepare_email(temp, "", "")
-    assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                   "account": "work", "credentials": None,
-                   "scopes": ["gmail", "gmail.send", "g", "gmail.metadata"]}
+    create(["[gmail]", "scopes = ", " gmail", " gmail.send", " g", " gmail.metadata", "", "", "", "account = work"])
+    cfg = _prepare_email(temp, "", "")
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == "me"
+    assert cfg.account == "work"
+    assert cfg.credentials is None
+    assert cfg.scopes == ["gmail", "gmail.send", "g", "gmail.metadata"]
 
     # file-like objects
-    with open(temp, mode="rt") as fp:
-        cfg = utils._prepare_email(fp, "", "")
-        assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                       "account": "work", "credentials": None,
-                       "scopes": ["gmail", "gmail.send", "g", "gmail.metadata"]}
+    with temp.open("rt") as f1:
+        cfg = _prepare_email(f1, "", "")
+        assert isinstance(cfg, _GMailConfig)
+        assert cfg.to == [""]
+        assert cfg.frm == "me"
+        assert cfg.account == "work"
+        assert cfg.credentials is None
+        assert cfg.scopes == ["gmail", "gmail.send", "g", "gmail.metadata"]
 
-    cfg = utils._prepare_email(StringIO("[gmail]"), "", None)
-    assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                   "account": None, "credentials": None, "scopes": None}
+    with temp.open("rb") as f2:
+        cfg = _prepare_email(f2, "", "")
+        assert isinstance(cfg, _GMailConfig)
+        assert cfg.to == [""]
+        assert cfg.frm == "me"
+        assert cfg.account == "work"
+        assert cfg.credentials is None
+        assert cfg.scopes == ["gmail", "gmail.send", "g", "gmail.metadata"]
 
-    cfg = utils._prepare_email(BytesIO(b"[gmail]"), "", None)
-    assert cfg == {"type": "gmail", "to": [""], "from": "me",
-                   "account": None, "credentials": None, "scopes": None}
+    cfg = _prepare_email(StringIO("[gmail]"), "", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes is None
 
-    os.remove(temp)
+    cfg = _prepare_email(BytesIO(b"[gmail]"), "", None)
+    assert isinstance(cfg, _GMailConfig)
+    assert cfg.to == [""]
+    assert cfg.frm == "me"
+    assert cfg.account is None
+    assert cfg.credentials is None
+    assert cfg.scopes is None
+
+    temp.unlink()

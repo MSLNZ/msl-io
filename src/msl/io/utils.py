@@ -1,162 +1,154 @@
-"""
-General functions.
-"""
-import ctypes
-import hashlib
+"""General functions."""
+
+from __future__ import annotations
+
 import logging
 import os
 import re
-import shutil
-import stat
 import subprocess
 import sys
-from configparser import ConfigParser
+from dataclasses import dataclass
 from datetime import datetime
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from smtplib import SMTP
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast, overload
 
 from .google_api import GMail
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, Sequence
+    from subprocess import Popen
+    from typing import IO, Any, AnyStr, Literal
+
+    from ._types import FileLike, PathLike, SupportsRead
+
 
 logger = logging.getLogger(__package__)
 
 
-def checksum(file, algorithm="sha256", chunk_size=65536, shake_length=256):
+def checksum(
+    file: PathLike | FileLike[bytes], *, algorithm: str = "sha256", chunk_size: int = 65536, shake_length: int = 256
+) -> str:
     """Get the checksum of a file.
 
     A checksum is a sequence of numbers and letters that act as a fingerprint
     for a file against which later comparisons can be made to detect errors or
-    changes in the file. It can be used to verify the integrity of the data.
+    changes in the file. It can be used to verify the integrity of the file.
 
-    Parameters
-    ----------
-    file : :term:`path-like <path-like object>` or :term:`file <file object>` object
-        A file to get the checksum of.
-    algorithm : :class:`str`, optional
-        The hash algorithm to use to compute the checksum.
-        See :mod:`hashlib` for more details.
-    chunk_size : :class:`int`, optional
-        The number of bytes to read at a time from the file. It is useful
-        to tweak this parameter when reading a large file to improve performance.
-    shake_length : :class:`int`, optional
-        The digest length to use for the ``SHAKE`` algorithm. See
-        :meth:`hashlib.shake.hexdigest` for more details.
+    Args:
+        file: A file to get the checksum of.
+        algorithm: The hash algorithm to use to compute the checksum. See [hashlib][] for more details.
+        chunk_size: The number of bytes to read at a time from the file. It is useful
+            to tweak this parameter when reading a large file to improve performance.
+        shake_length: The digest length to use for the `shake_128` or `shake_256` algorithm.
+            See [hashlib.shake.hexdigest][] for more details.
 
-    Returns
-    -------
-    :class:`str`
-        The checksum containing only hexadecimal digits.
+    Returns:
+        The checksum value (which only contains hexadecimal digits).
     """
-    def read(fp):
-        # read in chucks in case the file size is too large
-        # to load it into RAM all at once
+    import hashlib
+
+    def _read(fp: FileLike[bytes]) -> None:
+        # read in chucks to avoid loading the entire file at once
         while True:
             data = fp.read(chunk_size)
             if not data:
                 break
-            hash_cls.update(data)
+            _hash.update(data)
 
-    hash_cls = hashlib.new(algorithm)
+    _hash = hashlib.new(algorithm)
 
-    try:
-        with open(file, mode="rb") as f:
-            read(f)
-    except TypeError:
-        if not hasattr(file, "tell"):
-            raise
+    if isinstance(file, (str, bytes, os.PathLike)):
+        with Path(os.fsdecode(file)).open("rb") as f:
+            _read(f)
+    else:
         position = file.tell()
-        read(file)
-        file.seek(position)
+        _read(file)
+        _ = file.seek(position)
 
     try:
-        return hash_cls.hexdigest()
+        return _hash.hexdigest()
     except TypeError:
-        return hash_cls.hexdigest(shake_length)
+        return _hash.hexdigest(shake_length)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
 
 
-def copy(source, destination, overwrite=False, include_metadata=True, follow_symlinks=True):
+def copy(
+    source: PathLike,
+    destination: PathLike,
+    *,
+    overwrite: bool = False,
+    include_metadata: bool = True,
+    follow_symlinks: bool = True,
+) -> Path:
     """Copy a file.
 
-    Parameters
-    ----------
-    source : :term:`path-like object`
-        The path to a file to copy.
-    destination : :term:`path-like object`
-        A directory to copy the file to or a full path (i.e., includes the basename).
-        If the directory does not exist then it, and all intermediate directories,
-        will be created.
-    overwrite : :class:`bool`, optional
-        Whether to overwrite the `destination` file if it already exists.
-        If `destination` already exists and `overwrite` is :data:`False` then a
-        :exc:`FileExistsError` is raised.
-    include_metadata : :class:`bool`, optional
-        Whether to also copy information such as the file permissions,
-        the latest access time and latest modification time with the file.
-    follow_symlinks
-        Whether to follow symbolic links.
-        !!! note "Added in version 0.2"
+    Args:
+        source: The path to a file to copy.
+        destination: A directory to copy the file to or a full path (i.e., includes the basename).
+            If the directory does not exist then it, and all intermediate directories, will be created.
+        overwrite: Whether to overwrite the `destination` file if it already exists. If `destination`
+            already exists and `overwrite` is `False` then a [FileExistsError][] is raised.
+        include_metadata: Whether to also copy information such as the file permissions,
+            the latest access time and latest modification time with the file.
+        follow_symlinks: Whether to follow symbolic links.
+            !!! note "Added in version 0.2"
 
-    Returns
-    -------
-    :class:`str`
+    Returns:
         The path to where the file was copied.
     """
-    if os.path.isdir(destination) or is_dir_accessible(destination):
-        destination = os.path.join(destination, os.path.basename(source))
+    import shutil
+
+    src = Path(os.fsdecode(source))
+    dst = Path(os.fsdecode(destination))
+    if dst.is_dir():
+        dst = dst / src.name
     else:
-        dirs = os.path.dirname(destination)
-        if dirs:
-            os.makedirs(dirs, exist_ok=True)
+        dst.parent.mkdir(parents=True, exist_ok=True)
 
-    if not overwrite and (os.path.isfile(destination) or is_file_readable(destination)):
-        raise FileExistsError(f"Will not overwrite {destination!r}")
+    if not overwrite and dst.is_file():
+        msg = f"Will not overwrite {destination!r}"
+        raise FileExistsError(msg)
 
-    shutil.copyfile(source, destination, follow_symlinks=follow_symlinks)
+    _ = shutil.copyfile(src, dst, follow_symlinks=follow_symlinks)
     if include_metadata:
-        shutil.copystat(source, destination, follow_symlinks=follow_symlinks)
+        shutil.copystat(src, dst, follow_symlinks=follow_symlinks)
 
-    return destination
+    return dst
 
 
-def is_admin():
+def is_admin() -> bool:
     """Check if the current process is being run as an administrator.
 
-    Returns
-    -------
-    :class:`bool`
-        Whether the current process is being run as an administrator.
+    Returns:
+        `True` if the current process is being run as an administrator, otherwise `False`.
     """
+    import ctypes
+
     try:
-        return ctypes.windll.shell32.IsUserAnAdmin() == 1
+        is_admin: int = ctypes.windll.shell32.IsUserAnAdmin()
     except AttributeError:
-        try:
+        if sys.platform != "win32":
             return os.geteuid() == 0
-        except AttributeError:
-            return False
+        return False
+    else:
+        return is_admin == 1
 
 
-def is_dir_accessible(path, strict=False):
+def is_dir_accessible(path: PathLike, *, strict: bool = False) -> bool:
     """Check if a directory exists and is accessible.
 
-    An accessible directory is one that the user has
-    permission to access.
+    An accessible directory is one that the user has permission to access.
 
-    Parameters
-    ----------
-    path : :class:`str`
-        The directory to check.
-    strict : :class:`bool`, optional
-        Whether to raise the exception (if one occurs).
+    Args:
+        path: The directory to check.
+        strict: Whether to raise an exception if the directory is not accessible.
 
-    Returns
-    -------
-    :class:`bool`
+    Returns:
         Whether the directory exists and is accessible.
     """
-    cwd = os.getcwd()
+    cwd = Path.cwd()
     try:
         os.chdir(path)
-    except:
+    except (OSError, TypeError):
         if strict:
             raise
         return False
@@ -165,231 +157,217 @@ def is_dir_accessible(path, strict=False):
         return True
 
 
-def is_file_readable(file, strict=False):
+def is_file_readable(file: PathLike, *, strict: bool = False) -> bool:
     """Check if a file exists and is readable.
 
-    Parameters
-    ----------
-    file : :class:`str`
-        The file to check.
-    strict : :class:`bool`, optional
-        Whether to raise the exception (if one occurs).
+    Args:
+        file: The file to check.
+        strict: Whether to raise an exception if the file does not exist or is not readable.
 
-    Returns
-    -------
-    :class:`bool`
+    Returns:
         Whether the file exists and is readable.
     """
     try:
-        with open(file, mode="rb"):
+        with Path(os.fsdecode(file)).open("rb"):
             return True
-    except:
+    except (OSError, TypeError):
         if strict:
             raise
         return False
 
 
-def search(folder, pattern=None, levels=0, regex_flags=0, exclude_folders=None,
-           ignore_permission_error=True, ignore_hidden_folders=True, follow_symlinks=False):
-    r"""Search for files starting from a root folder.
+def search(  # noqa: C901, PLR0913
+    directory: PathLike,
+    *,
+    depth: int | None = 0,
+    include: str | re.Pattern[str] | None = None,
+    exclude: str | re.Pattern[str] | None = None,
+    flags: int = 0,
+    ignore_os_error: bool = True,
+    ignore_hidden_folders: bool = True,
+    follow_symlinks: bool = True,
+) -> Generator[Path]:
+    r"""Search for files starting from a root directory.
 
-    Parameters
-    ----------
-    folder : :class:`str`
-        The root folder to begin searching for files.
-    pattern : :class:`str`, optional
-        A regex string to use to filter the filenames. If :data:`None` then no
-        filtering is applied and all files are yielded. Examples:
+    Args:
+        directory: The root directory to begin searching for files.
+        depth: The number of sub-directories to recursively search for files.
+            If `0`, only files in `directory` are searched, if `1` then files in `directory`
+            and in one sub-directory are searched, etc. If `None`, search `directory` and
+            recursively search all sub-directories.
+        include: A regular-expression pattern to use to include files. If `None`, no filtering
+            is applied and all files are yielded (that are not `exclude`d). For example,
+            * `r'data'` &#8594; find files with the word `data` in the file path
+            * `r'\.png$'` &#8594; find files with the extension `.png`
+            * `r'\.jpe*g$'` &#8594; find files with the extension `.jpeg` or `.jpg`
+        exclude: A regular-expression pattern to use to exclude files. The `exclude` pattern
+            has precedence over the `include` pattern. For example,
+            * `r'bin'` &#8594; exclude all files that contain the word `bin` in the file path
+            * `r'bin|lib'` &#8594; exclude all files that contain the word `bin` or `lib` in the file path
+        flags: The flags to use to compile regular-expression pattern (if it is a [str][] type).
+        ignore_os_error: Whether to ignore an [OSError][], if one occurs, while iterating through a directory.
+            This type of error can occur if a directory does not have the appropriate read permission.
+        ignore_hidden_folders: Whether to ignore a hidden directory from the search. A hidden directory
+            starts with a `.` (a dot).
+        follow_symlinks: Whether to search for files by following symbolic links.
 
-            * ``r'data'`` :math:`\rightarrow` find all files with the word ``data``
-              in the filename
-
-            * ``r'\.png$'`` :math:`\rightarrow` find all files with the extension ``.png``
-
-            * ``r'\.jpe*g$'`` :math:`\rightarrow` find all files with the extension
-              ``.jpeg`` or ``.jpg``
-
-    levels : :class:`int`, optional
-        The number of sub-folder levels to recursively search for files.
-        If :data:`None` then search all sub-folders.
-    regex_flags : :class:`int`, optional
-        The flags to use to compile regex strings.
-    exclude_folders : :class:`str` or :class:`list` of :class:`str`, optional
-        The pattern of folder names to exclude from the search. Can be a regex
-        string. If :data:`None` then include all folders in the search. Examples:
-
-            * ``r'bin'`` :math:`\rightarrow` exclude all folders that contain the word ``bin``
-
-            * ``r'^My'`` :math:`\rightarrow` exclude all folders that start with the letters ``My``
-
-            * ``[r'bin', r'^My']`` which is equivalent to ``r'(bin|^My')`` :math:`\rightarrow` exclude
-              all folders that contain the word ``bin`` or start with the letters ``My``
-
-    ignore_permission_error : :class:`bool`, optional
-        Whether to ignore :exc:`PermissionError` exceptions when reading
-        the items within a folder.
-    ignore_hidden_folders : :class:`bool`, optional
-        Whether to ignore hidden folders from the search. A hidden folder
-        starts with a ``.`` (a dot).
-    follow_symlinks : :class:`bool`, optional
-        Whether to search for files by following symbolic links.
-
-    Yields
-    ------
-    :class:`str`
+    Yields:
         The path to a file.
     """
-    if levels is not None and levels < 0:
+    if depth is not None and depth < 0:
         return
 
-    if ignore_hidden_folders and os.path.basename(folder).startswith("."):
-        logger.debug("ignore hidden folder %r", folder)
+    folder = Path(os.fsdecode(directory))
+
+    if ignore_hidden_folders and folder.name.startswith("."):
+        logger.debug("search ignored hidden folder '%s'", folder)
         return
 
-    if exclude_folders:
-        if isinstance(exclude_folders, str):
-            exclude_folders = [exclude_folders]
+    if isinstance(exclude, str):
+        exclude = re.compile(exclude, flags=flags)
 
-        if isinstance(exclude_folders[0], str):
-            ex_compiled = [re.compile(ex, flags=regex_flags) for ex in exclude_folders]
-        else:  # the items should already be of type re.Pattern
-            ex_compiled = exclude_folders
+    if isinstance(include, str):
+        include = re.compile(include, flags=flags)
 
-        basename = os.path.basename(folder)
-        for exclude in ex_compiled:
-            if exclude.search(basename):
-                logger.debug("excluding folder %r", folder)
-                return
-    else:
-        ex_compiled = None
-
-    if ignore_permission_error:
-        try:
-            names = os.listdir(folder)
-        except PermissionError:
-            logger.debug("permission error %r", folder)
-            return
-    else:
-        names = os.listdir(folder)
-
-    if isinstance(pattern, str):
-        regex = re.compile(pattern, flags=regex_flags) if pattern else None
-    else:  # the value should already be of type re.Pattern
-        regex = pattern
-
-    for name in names:
-        path = folder + "/" + name
-        if os.path.isfile(path) or is_file_readable(path):
-            if regex is None or regex.search(name):
-                yield path
-        elif os.path.isdir(path) or (follow_symlinks and os.path.islink(path)):
-            for item in search(path,
-                               pattern=regex,
-                               levels=None if levels is None else levels - 1,
-                               regex_flags=regex_flags,
-                               exclude_folders=ex_compiled,
-                               ignore_permission_error=ignore_permission_error,
-                               ignore_hidden_folders=ignore_hidden_folders,
-                               follow_symlinks=follow_symlinks):
-                yield item
+    try:
+        with os.scandir(folder) as it:
+            for entry in it:
+                if entry.is_file():
+                    path = entry.path
+                    if exclude and exclude.search(path):
+                        logger.debug("search excluded file %r", path)
+                    elif include is None or include.search(path):
+                        yield Path(path)
+                elif entry.is_dir(follow_symlinks=follow_symlinks):
+                    yield from search(
+                        entry,
+                        depth=None if depth is None else depth - 1,
+                        include=include,
+                        exclude=exclude,
+                        flags=flags,
+                        ignore_os_error=ignore_os_error,
+                        ignore_hidden_folders=ignore_hidden_folders,
+                        follow_symlinks=follow_symlinks,
+                    )
+    except OSError:
+        logger.debug("search raised OSError for '%s'", folder)
+        if not ignore_os_error:
+            raise
 
 
-def send_email(config, recipients, sender=None, subject=None, body=None):
+@dataclass
+class _SMTPConfig:
+    frm: str
+    to: list[str]
+    host: str
+    port: int
+    starttls: bool | None
+    username: str | None
+    password: str | None
+
+
+@dataclass
+class _GMailConfig:
+    frm: str
+    to: list[str]
+    account: str | None
+    credentials: str | None
+    scopes: list[str] | None
+
+
+def send_email(
+    config: PathLike | SupportsRead[AnyStr],
+    recipients: str | list[str],
+    sender: str | None = None,
+    subject: str | None = None,
+    body: str | None = None,
+) -> None:
     """Send an email.
 
-    Parameters
-    ----------
-    config
-        A :term:`path-like object` or :term:`file-like object` of an INI-style
-        configuration file that contains information on how to send an email.
-        There are two ways to send an email -- Gmail API or SMTP server.
+    Args:
+        config: An INI-style configuration file that contains information on how to send
+            an email. There are two ways to send an email &mdash; Gmail API or SMTP server.
 
-        An example INI file to use the Gmail API is the following (see
-        :class:`~msl.io.google_api.GMail` for more details). Although all
-        key-value pairs are optional, a ``[gmail]`` section must exist to use
-        the Gmail API.
+            An example INI file to use the Gmail API is the following (see
+            [GMmail][msl.io.google_api.GMail] for more details). Although all
+            key-value pairs are optional, a `[gmail]` section must exist to use
+            the Gmail API. If a key is omitted, the value passed to
+            [GMmail][msl.io.google_api.GMail] is `None`
 
-        .. code-block:: ini
+            ```ini
+            [gmail]
+            account = work
+            credentials = path/to/client_secrets.json
+            scopes =
+                https://www.googleapis.com/auth/gmail.send
+                https://www.googleapis.com/auth/gmail.metadata
+            domain = @gmail.com
+            ```
 
-           [gmail]
-           account = work [default: None]
-           credentials = path/to/client_secrets.json [default: None]
-           scopes =       [default: None]
-             https://www.googleapis.com/auth/gmail.send
-             https://www.googleapis.com/auth/gmail.metadata
-           domain = @gmail.com [default: None]
+            An example INI file for an SMTP server is the following. Only the `host`
+            and `port` key-value pairs are required.
 
-        An example INI file for an SMTP server is the following. Only the `host`
-        and `port` key-value pairs are required.
+            ```ini
+            [smtp]
+            host = hostname or IP address of the SMTP server
+            port = port number to connect to on the SMTP server (e.g., 25)
+            starttls = true|yes|1|on -or- false|no|0|off (default: false)
+            username = the username to authenticate with (default: None)
+            password = the password for username (default: None)
+            domain = @company.com (default: None)
+            ```
 
-        .. code-block:: ini
+            !!! warning
+                Since this information is specified in plain text in the configuration
+                file, you should set the file permissions provided by your operating
+                system to ensure that your authentication credentials are safe.
 
-           [smtp]
-           host = hostname or IP address of the SMTP server
-           port = port number to connect to on the SMTP server
-           starttls = true|yes|1|on -or- false|no|0|off [default: false]
-           username = the username to authenticate with [default: None]
-           password = the password for username [default: None]
-           domain = @company.com [default: None]
-
-        .. warning::
-            Since this information is specified in plain text in the configuration
-            file, you should set the file permissions provided by your operating
-            system to ensure that your authentication credentials are safe.
-
-    recipients : :class:`str` or :class:`list` of :class:`str`
-        The email address(es) of the recipient(s). Can omit the ``@domain.com``
-        part if a ``domain`` key is specified in the `config` file. Can be the
-        value ``'me'`` if sending an email to yourself via Gmail.
-    sender : :class:`str`, optional
-        The email address of the sender. Can omit the ``@domain.com`` part
-        if a ``domain`` key is specified in the `config` file. If not
-        specified then it equals the value of the first `recipient` if using
-        SMTP or the value ``'me'`` if using Gmail.
-    subject : :class:`str`, optional
-        The text to include in the subject field.
-    body : :class:`str`, optional
-        The text to include in the body of the email. The text can be
-        enclosed in ``<html></html>`` tags to use HTML elements to format
-        the message.
+        recipients: The email address(es) of the recipient(s). Can omit the `@domain.com`
+            part if a `domain` key is specified in the `config` file. Can use the value
+            `'me'` if sending an email to yourself via Gmail.
+        sender: The email address of the sender. Can omit the `@domain.com` part
+            if a `domain` key is specified in the `config` file. If `sender` is not
+            specified, it becomes the value of the first `recipient` if using SMTP
+            or the value `'me'` if using Gmail.
+        subject: The text to include in the subject field.
+        body: The text to include in the body of the email. The text can be enclosed
+            in `<html></html>` tags to use HTML elements to format the message.
     """
     cfg = _prepare_email(config, recipients, sender)
-    if cfg["type"] == "smtp":
-        server = SMTP(host=cfg["host"], port=cfg["port"])
-        if cfg["starttls"]:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-        if cfg["username"] and cfg["password"]:
-            server.login(cfg["username"], cfg["password"])
-        msg = MIMEMultipart()
-        msg["From"] = cfg["from"]
-        msg["To"] = ", ".join(cfg["to"])
-        msg["Subject"] = subject or "(no subject)"
-        text = body or ""
-        subtype = "html" if text.startswith("<html>") else "plain"
-        msg.attach(MIMEText(text, subtype))
-        server.sendmail(cfg["from"], cfg["to"], msg.as_string())
-        server.quit()
+    if isinstance(cfg, _SMTPConfig):
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        from smtplib import SMTP
+
+        with SMTP(host=cfg.host, port=cfg.port) as server:
+            if cfg.starttls:
+                _ = server.ehlo()
+                _ = server.starttls()
+                _ = server.ehlo()
+            if cfg.username and cfg.password:
+                _ = server.login(cfg.username, cfg.password)
+            msg = MIMEMultipart()
+            msg["From"] = cfg.frm
+            msg["To"] = ", ".join(cfg.to)
+            msg["Subject"] = subject or "(no subject)"
+            text = body or ""
+            subtype = "html" if text.startswith("<html>") else "plain"
+            msg.attach(MIMEText(text, subtype))
+            _ = server.sendmail(cfg.frm, cfg.to, msg.as_string())
     else:
-        with GMail(account=cfg["account"], credentials=cfg["credentials"],
-                   scopes=cfg["scopes"]) as gmail:
-            gmail.send(cfg["to"], sender=cfg["from"], subject=subject, body=body)
+        with GMail(account=cfg.account, credentials=cfg.credentials, scopes=cfg.scopes) as gmail:
+            gmail.send(cfg.to, sender=cfg.frm, subject=subject, body=body)
 
 
-def _prepare_email(config, recipients, sender):
-    """Loads a configuration file to prepare for sending an email.
+def _prepare_email(  # noqa: C901, PLR0912
+    config: PathLike | SupportsRead[AnyStr], recipients: str | list[str], sender: str | None
+) -> _GMailConfig | _SMTPConfig:
+    """Loads a configuration file to prepare for sending an email."""
+    from configparser import ConfigParser
 
-    Returns a dict.
-    """
-    if hasattr(config, "read"):
-        contents = config.read()
-    else:
-        with open(config, mode="rt") as fp:
-            contents = fp.read()
-
+    contents = Path(os.fsdecode(config)).read_text() if isinstance(config, (str, bytes, os.PathLike)) else config.read()
     if isinstance(contents, bytes):
-        contents = contents.decode("utf-8")
+        contents = contents.decode()
 
     cp = ConfigParser()
     cp.read_string(contents)
@@ -397,9 +375,11 @@ def _prepare_email(config, recipients, sender):
     has_smtp = cp.has_section("smtp")
     has_gmail = cp.has_section("gmail")
     if has_smtp and has_gmail:
-        raise ValueError("Cannot specify both a 'gmail' and 'smtp' section")
+        msg = "Cannot specify both a 'gmail' and 'smtp' section"
+        raise ValueError(msg)
     if not (has_smtp or has_gmail):
-        raise ValueError("Must create either a 'gmail' or 'smtp' section")
+        msg = "Must create either a 'gmail' or 'smtp' section"
+        raise ValueError(msg)
 
     section = cp["gmail"] if has_gmail else cp["smtp"]
 
@@ -411,252 +391,234 @@ def _prepare_email(config, recipients, sender):
         recipients = [recipients]
 
     for i in range(len(recipients)):
-        if domain and "@" not in recipients[i] and \
-                (has_smtp or (has_gmail and recipients[i] != "me")):
+        if domain and "@" not in recipients[i] and (has_smtp or (has_gmail and recipients[i] != "me")):
             recipients[i] += domain
 
     if not sender:
-        if has_gmail:
-            sender = "me"
-        else:
-            sender = recipients[0]
-    elif domain and ("@" not in sender) and \
-            (has_smtp or (has_gmail and sender != "me")):
+        sender = "me" if has_gmail else recipients[0]
+    elif domain and ("@" not in sender) and (has_smtp or (has_gmail and sender != "me")):
         sender += domain
 
-    cfg = {"type": section.name, "to": recipients, "from": sender}
     if has_smtp:
         host, port = section.get("host"), section.getint("port")
         if not (host and port):
-            raise ValueError("Must specify the 'host' and 'port' of the SMTP server")
+            msg = "Must specify the 'host' and 'port' of the SMTP server"
+            raise ValueError(msg)
 
         username, password = section.get("username"), section.get("password")
         if username and not password:
-            raise ValueError("Must specify the 'password' since a "
-                             "'username' is specified")
-        elif password and not username:
-            raise ValueError("Must specify the 'username' since a "
-                             "'password' is specified")
+            msg = "Must specify the 'password' since a 'username' is specified"
+            raise ValueError(msg)
+        if password and not username:
+            msg = "Must specify the 'username' since a 'password' is specified"
+            raise ValueError(msg)
 
-        cfg.update({
-            "host": host,
-            "port": port,
-            "starttls": section.getboolean("starttls"),
-            "username": username,
-            "password": password,
-        })
-    else:
-        scopes = section.get("scopes")
-        cfg.update({
-            "account": section.get("account"),
-            "credentials": section.get("credentials"),
-            "scopes": scopes.split() if scopes else None
-        })
-    return cfg
+        return _SMTPConfig(
+            to=recipients,
+            frm=sender,
+            host=host,
+            port=port,
+            starttls=section.getboolean("starttls"),
+            username=username,
+            password=password,
+        )
+
+    scopes = section.get("scopes")
+    return _GMailConfig(
+        to=recipients,
+        frm=sender,
+        account=section.get("account"),
+        credentials=section.get("credentials"),
+        scopes=scopes.split() if scopes else None,
+    )
 
 
-def get_basename(obj):
-    """Get the :func:`~os.path.basename` of a file.
+def get_basename(obj: PathLike | IO[AnyStr]) -> str:
+    """Get the basename (the final path component) of a file.
 
-    Parameters
-    ----------
-    obj : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-        The object to get the :func:`~os.path.basename` of. If the object does not
-        support the :func:`~os.path.basename` function then the
-        :attr:`__name__ <definition.__name__>` of the `obj` is returned.
+    Args:
+        obj: The object to get the basename of. If `obj` is an in-memory file-like
+            object then the class [__name__][definition.__name__] of `obj` is returned.
 
-    Returns
-    -------
-    :class:`str`
+    Returns:
         The basename of `obj`.
     """
+    if isinstance(obj, (str, bytes, os.PathLike)):
+        return Path(os.fsdecode(obj)).name
+
     try:
-        return os.path.basename(obj)
-    except (TypeError, AttributeError):
-        try:
-            return os.path.basename(obj.name)
-        except AttributeError:
-            return obj.__class__.__name__
+        return Path(obj.name).name
+    except AttributeError:
+        return obj.__class__.__name__
 
 
-def git_head(directory):
-    """Get information about the ``HEAD`` of a repository.
+@dataclass(frozen=True)
+class GitHead:
+    """Information about the `HEAD` of a repository."""
 
-    This function requires that `git <https://git-scm.com/>`_ is installed
-    and that it is available on ``PATH``.
+    hash: str
+    timestamp: datetime
 
-    Parameters
-    ----------
-    directory : :class:`str`
-        A directory that is under version control.
+    @overload
+    def __getitem__(self, item: Literal["hash"]) -> str: ...
 
-    Returns
-    -------
-    :class:`dict` or :data:`None`
+    @overload
+    def __getitem__(self, item: Literal["timestamp"]) -> datetime: ...
+
+    def __getitem__(self, item: str) -> str | datetime:
+        """git_head() used to return a dict, treat the dataclass like a read-only dict."""
+        value: str | datetime = getattr(self, item)
+        return value
+
+
+def git_head(directory: PathLike) -> GitHead | None:
+    """Get information about the `HEAD` of a repository.
+
+    This function requires that [git](https://git-scm.com/) is installed and
+    that it is available on the `PATH` environment variable.
+
+    Args:
+        directory: A directory that is under version control.
+
+    Returns:
         Information about the most recent commit on the current branch.
         If `directory` is not a directory that is under version control
-        then returns :data:`None`.
+        then returns `None`.
     """
     cmd = ["git", "show", "-s", "--format=%H %ct", "HEAD"]
     try:
-        out = subprocess.check_output(cmd, cwd=directory, stderr=subprocess.PIPE)
+        out = subprocess.check_output(cmd, cwd=directory, stderr=subprocess.PIPE)  # noqa: S603
     except subprocess.CalledProcessError:
         return None
 
     sha, timestamp = out.split()
-    return {
-        "hash": sha.decode("ascii"),
-        "datetime": datetime.fromtimestamp(int(timestamp))
-    }
+    return GitHead(hash=sha.decode("ascii"), timestamp=datetime.fromtimestamp(int(timestamp)))  # noqa: DTZ006
 
 
-def remove_write_permissions(path):
+def remove_write_permissions(path: PathLike) -> None:
     """Remove all write permissions of a file.
 
     On Windows, this function will set the file attribute to be read only.
 
-    On linux and macOS, write permission is removed for the User,
+    On Linux and macOS, write permission is removed for the User,
     Group and Others. The read and execute permissions are preserved.
 
-    Parameters
-    ----------
-    path : :term:`path-like object`
-        The path to remove the write permissions of.
+    Args:
+        path: The path to remove the write permissions of.
     """
+    import stat
+
     current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
     disable_writing = ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH
-    os.chmod(path, current_permissions & disable_writing)
+    os.chmod(path, current_permissions & disable_writing)  # noqa: PTH101
 
 
-def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
-                 blocking=True, show=False, **kwargs):
+def run_as_admin(  # noqa: C901, PLR0912, PLR0913, PLR0915
+    args: PathLike | Sequence[PathLike] | None = None,
+    *,
+    executable: PathLike | None = None,
+    cwd: PathLike | None = None,
+    capture_stderr: bool = False,
+    blocking: bool = True,
+    show: bool = False,
+    **kwargs: Any,
+) -> int | bytes | Popen[Any]:
     """Run a process as an administrator and return its output.
 
-    Parameters
-    ----------
-    args : :class:`str` or :class:`list` of :class:`str`, optional
-        A sequence of program arguments or else a single string. Providing a
-        sequence of arguments is generally preferred, as it allows the module
-        to take care of any required escaping and quoting of arguments
-        (e.g., to permit spaces in file names).
-    executable : :class:`str`, optional
-        The executable to pass the `args` to.
-    cwd : :class:`str`, optional
-        The working directory for the elevated process.
-    capture_stderr : :class:`bool`, optional
-        Whether to send the stderr stream to stdout.
-    blocking : :class:`bool`, optional
-        Whether to wait for the process to finish before returning to the
-        calling program.
-    show : :class:`bool`, optional
-        Whether to show the elevated console (Windows only). If
-        :data:`True` then the stdout stream of the process is not captured.
-    kwargs
-        If the current process already has admin privileges or if the operating
-        system is not Windows then all additional keyword arguments are passed
-        to :func:`~subprocess.check_output`. Otherwise, only a `timeout` keyword
-        argument is used (Windows).
+    Args:
+        args: A sequence of program arguments or else a command string. Providing a sequence of
+            arguments is generally preferred, as it allows the subprocess to take care of any required
+            escaping and quoting of arguments (e.g., to permit spaces in file names).
+        executable: The executable to pass the `args` to.
+        cwd: The working directory to use for the elevated process.
+        capture_stderr: Whether to send the stderr stream to stdout.
+        blocking: Whether to wait for the process to finish before returning to the calling program.
+        show: Whether to show the elevated console (Windows only). If `True`, the stdout stream of
+            the process is not captured.
+        kwargs: If the current process already has admin privileges or if the operating system is
+            not Windows then all additional keyword arguments are passed to [subprocess.check_output][].
+            Otherwise, only a `timeout` keyword argument is used (Windows).
 
-    Returns
-    -------
-    :class:`bytes`, :class:`int` or :class:`~subprocess.Popen`
-        The returned object depends on whether the process is executed in blocking
-        or non-blocking mode. If blocking then :class:`bytes` are returned (the
-        stdout stream of the process). If non-blocking, then the returned object
-        will either be the :class:`~subprocess.Popen` instance that is running the
-        process (POSIX) or an :class:`int` which is the process ID (Windows).
-
-    Examples
-    --------
-    .. invisible-code-block: pycon
-
-       >>> SKIP_RUN_AS_ADMIN()
-
-    Import the modules
-
-    >>> import sys
-    >>> from msl.io import run_as_admin
-
-    Run a shell script
-
-    >>> run_as_admin(['./script.sh', '--message', 'hello world'])
-
-    Run a Python script
-
-    >>> run_as_admin([sys.executable, 'script.py', '--verbose'], cwd='D:\\\\My Scripts')
-
-    Create a service in the Windows registry and in the Service Control Manager database
-
-    >>> run_as_admin(['sc', 'create', 'MyLogger', 'binPath=', 'C:\\\\logger.exe', 'start=', 'auto'])
+    Returns:
+        The returned object depends on whether the process is executed in blocking or non-blocking mode
+        and whether Python is already running with admin privileges.
+        If blocking, [bytes][] are returned (the stdout stream of the process). If non-blocking, the
+        returned object will either be the [subprocess.Popen][] instance that is running the
+        process (POSIX) or an [int][] which is the process ID (Windows).
     """
     if not args and not executable:
-        raise ValueError("Must specify the args and/or an executable")
+        msg = "Must specify the args and/or an executable"
+        raise ValueError(msg)
 
     stderr = subprocess.STDOUT if capture_stderr else None
     process = subprocess.check_output if blocking else subprocess.Popen
 
     if is_admin():
-        return process(args, executable=executable, cwd=cwd,
-                       stderr=stderr, **kwargs)
+        if not args:
+            assert executable is not None  # noqa: S101
+            return process(executable, cwd=cwd, stderr=stderr, **kwargs)  # pyright: ignore[reportUnknownVariableType]
+        return process(args, executable=executable, cwd=cwd, stderr=stderr, **kwargs)  # pyright: ignore[reportUnknownVariableType]
 
-    if cwd is None:
-        cwd = os.getcwd()
+    exe = "" if executable is None else subprocess.list2cmdline([os.fsdecode(executable)])
 
     if os.name != "nt":
         if not args:
-            command = ["sudo", executable]
-        elif isinstance(args, str):
-            exe = executable or ""
-            command = f"sudo {exe} {args}"
+            command = ["sudo", exe]
+        elif isinstance(args, (str, bytes, os.PathLike)):
+            command = ["sudo", exe, os.fsdecode(args)]
         else:
-            exe = [executable] if executable else []
-            command = ["sudo"] + exe + list(args)
-        return process(command, cwd=cwd, stderr=stderr, **kwargs)
+            command = ["sudo", exe, *list(map(os.fsdecode, args))]
+        return process(command, cwd=cwd, stderr=stderr, **kwargs)  # pyright: ignore[reportUnknownVariableType]
 
     # Windows is more complicated
 
     if args is None:
         args = ""
+    elif isinstance(args, (bytes, os.PathLike)):
+        args = os.fsdecode(args)
 
     if not isinstance(args, str):
         args = subprocess.list2cmdline(args)
 
-    if executable is None:
-        executable = ""
-    else:
-        executable = subprocess.list2cmdline([executable])
+    cwd = os.getcwd() if not cwd else os.fsdecode(cwd)  # noqa: PTH109
 
     # the 'runas' verb starts in C:\WINDOWS\system32
     cd = subprocess.list2cmdline(["cd", "/d", cwd, "&&"])
 
     # check if a Python environment needs to be activated
     activate = ""
-    if executable == sys.executable or args.startswith(sys.executable):
+    if exe == sys.executable or args.startswith(sys.executable):
         conda = os.getenv("CONDA_PREFIX")  # conda
         venv = os.getenv("VIRTUAL_ENV")  # venv
         if conda:
             env = os.getenv("CONDA_DEFAULT_ENV")
-            assert env, "CONDA_DEFAULT_ENV environment variable does not exist"
+            if not env:
+                msg = "CONDA_DEFAULT_ENV environment variable does not exist"
+                raise ValueError(msg)
             if env == "base":
-                bat = os.path.join(conda, "Scripts", "activate.bat")
+                bat = Path(conda) / "Scripts" / "activate.bat"
             else:
-                bat = os.path.abspath(os.path.join(conda, os.pardir, os.pardir,
-                                                   "Scripts", "activate.bat"))
-            assert os.path.isfile(bat), f"Cannot find {bat!r}"
+                bat = Path(conda).parent.parent / "Scripts" / "activate.bat"
+            if not bat.is_file():
+                msg = f"Cannot find {bat}"
+                raise FileNotFoundError(msg)
             activate = subprocess.list2cmdline([bat, env, "&&"])
         elif venv:
-            bat = os.path.join(venv, "Scripts", "activate.bat")
-            assert os.path.isfile(bat), f"Cannot find {bat!r}"
+            bat = Path(venv) / "Scripts" / "activate.bat"
+            if not bat.is_file():
+                msg = f"Cannot find {bat}"
+                raise FileNotFoundError(msg)
             activate = subprocess.list2cmdline([bat, "&&"])
 
     # redirect stdout (stderr) to a file
-    redirect = ""
-    stdout_file = ""
+    redirect = None
+    stdout_file = None
     if not show:
-        import uuid
         import tempfile
-        stdout_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        r = [">", stdout_file]
+        import uuid
+
+        stdout_file = Path(tempfile.gettempdir()) / str(uuid.uuid4())
+        r = [">", str(stdout_file)]
         if capture_stderr:
             r.append("2>&1")
         redirect = subprocess.list2cmdline(r)
@@ -665,12 +627,13 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
             redirect = " " + redirect
 
     # the string that is passed to cmd.exe
-    params = f'/S /C "{cd} {activate} {executable} {args}"{redirect}'
+    params = f'/S /C "{cd} {activate} {exe} {args}"{redirect}'
 
-    from ctypes.wintypes import DWORD, ULONG, HWND, LPCWSTR, INT, HINSTANCE, HKEY, HANDLE
+    import ctypes
+    from ctypes.wintypes import DWORD, HANDLE, HINSTANCE, HKEY, HWND, INT, LPCWSTR, ULONG
 
     class ShellExecuteInfoW(ctypes.Structure):
-        _fields_ = [
+        _fields_ = (  # pyright: ignore[reportUnannotatedClassAttribute]
             ("cbSize", DWORD),
             ("fMask", ULONG),
             ("hwnd", HWND),
@@ -685,7 +648,8 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
             ("hkeyClass", HKEY),
             ("dwHotKey", DWORD),
             ("hIcon", HANDLE),
-            ("hProcess", HANDLE)]
+            ("hProcess", HANDLE),
+        )
 
     sei = ShellExecuteInfoW()
     sei.fMask = 0x00000040 | 0x00008000  # SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NO_CONSOLE
@@ -699,7 +663,7 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
         raise ctypes.WinError()
 
     if not blocking:
-        return sei.hProcess
+        return cast("int", sei.hProcess)
 
     kernel32 = ctypes.windll.kernel32
     timeout = kwargs.get("timeout", -1)  # INFINITE = -1
@@ -708,10 +672,9 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
     ret = kernel32.WaitForSingleObject(sei.hProcess, milliseconds)
     if ret == 0:  # WAIT_OBJECT_0
         stdout = b""
-        if stdout_file and os.path.isfile(stdout_file):
-            with open(stdout_file, mode="rb") as fp:
-                stdout = fp.read()
-            os.remove(stdout_file)
+        if stdout_file is not None and stdout_file.is_file():
+            stdout = stdout_file.read_bytes()
+            stdout_file.unlink()
 
         code = DWORD()
         if not kernel32.GetExitCodeProcess(sei.hProcess, ctypes.byref(code)):
@@ -724,29 +687,30 @@ def run_as_admin(args=None, executable=None, cwd=None, capture_stderr=False,
                 msg += "\nSet show=False to capture the stdout stream."
             else:
                 if not capture_stderr:
-                    msg += "\nSet capture_stderr=True to see if " \
-                           "more information is available."
+                    msg += "\nSet capture_stderr=True to see if more information is available."
                 if out_str:
                     msg += f"\n{out_str}"
-            raise ctypes.WinError(code=code.value, descr=msg)
+            raise ctypes.WinError(code.value, msg)
 
         kernel32.CloseHandle(sei.hProcess)
         return stdout
 
-    if ret == 0xFFFFFFFF:  # WAIT_FAILED
+    if ret == 0xFFFFFFFF:  # WAIT_FAILED  # noqa: PLR2004
         raise ctypes.WinError()
 
-    if ret == 0x00000080:  # WAIT_ABANDONED
-        msg = "The specified object is a mutex object that was not " \
-              "released by the thread that owned the mutex object before " \
-              "the owning thread terminated. Ownership of the mutex " \
-              "object is granted to the calling thread and the mutex state " \
-              "is set to non-signaled. If the mutex was protecting persistent " \
-              "state information, you should check it for consistency."
-    elif ret == 0x00000102:  # WAIT_TIMEOUT
-        msg = f"The timeout interval elapsed after {timeout} second(s) and the " \
-              "object's state is non-signaled."
+    if ret == 0x00000080:  # WAIT_ABANDONED  # noqa: PLR2004
+        msg = (
+            "The specified object is a mutex object that was not "
+            "released by the thread that owned the mutex object before "
+            "the owning thread terminated. Ownership of the mutex "
+            "object is granted to the calling thread and the mutex state "
+            "is set to non-signalled. If the mutex was protecting persistent "
+            "state information, you should check it for consistency."
+        )
+    elif ret == 0x00000102:  # WAIT_TIMEOUT  # noqa: PLR2004
+        msg = f"The timeout interval elapsed after {timeout} second(s) and the object's state is non-signalled."
     else:
         msg = f"Unknown return value 0x{ret:x}"
 
-    raise WindowsError("WaitForSingleObject: " + msg)
+    msg = f"WaitForSingleObject: {msg}"
+    raise OSError(msg)

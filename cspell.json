@@ -24,10 +24,15 @@
     ],
     "words": [
         "autouse",
+        "birthtime",
         "dset",
+        "geteuid",
         "levelname",
         "ndarray",
+        "NOCLOSEPROCESS",
         "pycon",
+        "ripemd",
+        "runas",
         "setflags"
     ]
 }
