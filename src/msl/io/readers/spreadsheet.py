@@ -1,84 +1,87 @@
-"""
-Generic class for spreadsheets.
-"""
+"""Generic class for spreadsheets."""
+
+from __future__ import annotations
+
+import os
 import re
 import string
+from abc import ABCMeta, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from .._types import PathLike  # noqa: TID252
 
 _cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
 
 
-class Spreadsheet:
+class Spreadsheet(metaclass=ABCMeta):
+    """Generic class for spreadsheets."""
 
-    def __init__(self, file):
+    def __init__(self, file: PathLike) -> None:
         """Generic class for spreadsheets.
 
-        Parameters
-        ----------
-        file : :class:`str`
-            The location of the spreadsheet on a local hard drive or on a network.
+        Args:
+            file: The location of the spreadsheet on a local hard drive or on a network.
         """
-        self._file = file
+        self._file: str = os.fsdecode(file)
 
     @property
-    def file(self):
-        """:class:`str`: The location of the spreadsheet on a local hard drive or on a network."""
+    def file(self) -> str:
+        """[str][] &mdash; The location of the spreadsheet on a local hard drive or on a network."""
         return self._file
 
-    def read(self, cell=None, sheet=None, as_datetime=True):
+    @abstractmethod
+    def read(  # type: ignore[misc]
+        self,
+        cell: str | None = None,
+        sheet: str | None = None,
+        *,
+        as_datetime: bool = True,
+    ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
-        Parameters
-        ----------
-        cell : :class:`str`, optional
-            The cell(s) to read. For example, ``C9`` will return a single value
-            and ``C9:G20`` will return all values in the specified range. If not
-            specified then returns all values in the specified `sheet`.
-        sheet : :class:`str`, optional
-            The name of the sheet to read the value(s) from. If there is only
-            one sheet in the spreadsheet then you do not need to specify the name
-            of the sheet.
-        as_datetime : :class:`bool`, optional
-            Whether dates should be returned as :class:`~datetime.datetime` or
-            :class:`~datetime.date` objects. If :data:`False` then dates are
-            returned as a string.
+        Args:
+            cell: The cell(s) to read. For example, `C9` will return a single value
+                and `C9:G20` will return all values in the specified range. If not
+                specified then returns all values in the specified `sheet`.
+            sheet: The name of the sheet to read the value(s) from. If there is only one
+                sheet in the spreadsheet then you do not need to specify the name of the sheet.
+            as_datetime: Whether dates should be returned as [datetime.datetime][] or
+                [datetime.date][] objects. If `False`, dates are returned as a string in
+                the format of the spreadsheet cell.
 
-        Returns
-        -------
-        The value(s) of the requested cell(s).
+        Returns:
+            The value(s) of the requested cell(s).
         """
-        raise NotImplementedError
 
-    def sheet_names(self):
+    @abstractmethod
+    def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the spreadsheet.
 
-        Returns
-        -------
-        :class:`tuple` of :class:`str`
+        Returns:
             The names of all sheets.
         """
-        raise NotImplementedError
 
     @staticmethod
-    def to_letters(index):
+    def to_letters(index: int) -> str:
         """Convert a column index to column letters.
 
-        Parameters
-        ----------
-        index : :class:`int`
-            The column index (zero based).
+        Args:
+            index: The column index (zero based).
 
-        Returns
-        -------
-        :class:`str`
+        Returns:
             The corresponding spreadsheet column letter(s).
 
-        Examples
-        --------
-        .. invisible-code-block: pycon
+        Examples:
+        <!-- invisible-code-block: pycon
+        >>> from msl.io.readers.spreadsheet import Spreadsheet
+        >>> to_letters = Spreadsheet.to_letters
 
-           >>> from msl.io.readers.spreadsheet import Spreadsheet
-           >>> to_letters = Spreadsheet.to_letters
+        -->
 
+        ```pycon
         >>> to_letters(0)
         'A'
         >>> to_letters(1)
@@ -89,8 +92,10 @@ class Spreadsheet:
         'AAA'
         >>> to_letters(494264)
         'ABCDE'
+
+        ```
         """
-        letters = []
+        letters: list[str] = []
         uppercase = string.ascii_uppercase
         while index >= 0:
             div, mod = divmod(index, 26)
@@ -99,94 +104,89 @@ class Spreadsheet:
         return "".join(letters[::-1])
 
     @staticmethod
-    def to_indices(cell):
+    def to_indices(cell: str) -> tuple[int | None, int]:
         """Convert a string representation of a cell to row and column indices.
 
-        Parameters
-        ----------
-        cell : :class:`str`
-            The cell. Can be letters only (a column) or letters and a number
-            (a column and a row).
+        Args:
+            cell: The cell. Can be letters only (a column) or letters and a number
+                (a column and a row).
 
-        Returns
-        -------
-        :class:`tuple`
+        Returns:
             The (row_index, column_index). If `cell` does not contain a row number
-            then the row index is :data:`None`. The row and column index are zero based.
+            then the row index is `None`. The row and column index are zero based.
 
-        Examples
-        --------
-        .. invisible-code-block: pycon
+        Examples:
+        <!-- invisible-code-block: pycon
+        >>> from msl.io.readers.spreadsheet import Spreadsheet
+        >>> to_indices = Spreadsheet.to_indices
 
-           >>> from msl.io.readers.spreadsheet import Spreadsheet
-           >>> to_indices = Spreadsheet.to_indices
+        -->
 
-        >>> to_indices('A')
+        ```pycon
+        >>> to_indices("A")
         (None, 0)
-        >>> to_indices('A1')
+        >>> to_indices("A1")
         (0, 0)
-        >>> to_indices('AA10')
+        >>> to_indices("AA10")
         (9, 26)
-        >>> to_indices('AAA111')
+        >>> to_indices("AAA111")
         (110, 702)
-        >>> to_indices('MSL123456')
+        >>> to_indices("MSL123456")
         (123455, 9293)
-        >>> to_indices('BIPM')
+        >>> to_indices("BIPM")
         (None, 41664)
+
+        ```
         """
         match = _cell_regex.match(cell)
         if not match:
-            raise ValueError(f"Invalid cell {cell!r}")
+            msg = f"Invalid cell {cell!r}"
+            raise ValueError(msg)
 
         letters, numbers = match.groups()
         row = max(0, int(numbers) - 1) if numbers else None
         uppercase = string.ascii_uppercase
-        col = sum(
-            (26**i) * (1+uppercase.index(c))
-            for i, c in enumerate(letters[::-1])
-        )
-        return row, col-1
+        col = sum((26**i) * (1 + uppercase.index(c)) for i, c in enumerate(letters[::-1]))
+        return row, col - 1
 
     @staticmethod
-    def to_slices(cells, row_step=None, column_step=None):
+    def to_slices(
+        cells: str, row_step: int | None = None, column_step: int | None = None
+    ) -> tuple[slice[int, int | None, int | None], slice[int, int, int | None]]:
         """Convert a range of cells to slices of row and column indices.
 
-        Parameters
-        ----------
-        cells : :class:`str`
-            The cells. Can be letters only (a column) or letters and a number
-            (a column and a row).
-        row_step : :class:`int`, optional
-            The step-by value for the row slice.
-        column_step : :class:`int`, optional
-            The step-by value for the column slice.
+        Args:
+            cells: The cells. Can be letters only (a column) or letters and a number
+                (a column and a row).
+            row_step: The step-by value for the row slice.
+            column_step: The step-by value for the column slice.
 
-        Returns
-        -------
-        :class:`slice`
-            The row slice.
-        :class:`slice`
-            The column slice.
+        Returns:
+            The row [slice][], the column [slice][].
 
-        Examples
-        --------
-        .. invisible-code-block: pycon
+        Examples:
+        <!-- invisible-code-block: pycon
+        >>> from msl.io.readers.spreadsheet import Spreadsheet
+        >>> to_slices = Spreadsheet.to_slices
 
-           >>> from msl.io.readers.spreadsheet import Spreadsheet
-           >>> to_slices = Spreadsheet.to_slices
+        -->
 
-        >>> to_slices('A:A')
+        ```pycon
+        >>> to_slices("A:A")
         (slice(0, None, None), slice(0, 1, None))
-        >>> to_slices('A:H')
+        >>> to_slices("A:H")
         (slice(0, None, None), slice(0, 8, None))
-        >>> to_slices('B2:M10')
+        >>> to_slices("B2:M10")
         (slice(1, 10, None), slice(1, 13, None))
-        >>> to_slices('A5:M100', row_step=2, column_step=4)
+        >>> to_slices("A5:M100", row_step=2, column_step=4)
         (slice(4, 100, 2), slice(0, 13, 4))
+
+        ```
         """
         split = cells.split(":")
-        if len(split) != 2:
-            raise ValueError(f"Invalid cell range {cells!r}")
+        if len(split) != 2:  # noqa: PLR2004
+            msg = f"Invalid cell range {cells!r}"
+            raise ValueError(msg)
 
         r1, c1 = Spreadsheet.to_indices(split[0])
         r2, c2 = Spreadsheet.to_indices(split[1])
@@ -194,6 +194,5 @@ class Spreadsheet:
             r1 = 0
         if r2 is not None:
             r2 += 1
-        if c2 is not None:
-            c2 += 1
+        c2 += 1
         return slice(r1, r2, row_step), slice(c1, c2, column_step)
