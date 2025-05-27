@@ -24,15 +24,24 @@
     ],
     "words": [
         "autouse",
+        "BIPM",
         "birthtime",
+        "chunksize",
         "dset",
+        "gdrive",
         "geteuid",
+        "googleapiclient",
+        "gsheets",
         "levelname",
         "ndarray",
         "NOCLOSEPROCESS",
+        "officedocument",
+        "openxmlformats",
         "pycon",
+        "resumable",
         "ripemd",
         "runas",
-        "setflags"
+        "setflags",
+        "spreadsheetml"
     ]
 }
