@@ -512,11 +512,11 @@ def test_gsheet_range_out_of_bounds():
 
 
 @skipif_no_sheets_readonly
-def test_gsheet_raises():
+def test_gsheet_raises() -> None:
 
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet"
 
     # invalid cell range
     for c in INVALID_CELL_RANGES:
         with pytest.raises(ValueError, match=r"Invalid cell"):
-            read_table(ssid, cells=c, sheet="StartA1", read_only=True, account="testing")
+            _ = read_table(ssid, cells=c, sheet="StartA1", account="testing")

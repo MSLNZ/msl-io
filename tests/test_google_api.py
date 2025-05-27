@@ -1,79 +1,83 @@
+# cSpell: words Iduh Flpy Qclelx JenftaLGAG Kmkjo Osxwk Ttpo LAPHCOphcOITR Angkm Zfhnha Yfkl nsufficient ftio Tgaa
+
+from __future__ import annotations
+
 import io
-import os
 import sys
 import tempfile
 import uuid
 from datetime import datetime
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
-from googleapiclient.errors import HttpError
+from google.auth.exceptions import RefreshError
+from googleapiclient.errors import (  # type: ignore[import-untyped] # pyright: ignore[reportMissingTypeStubs]
+    HttpError,  # pyright: ignore[reportUnknownVariableType]
+)
 
-from msl.io.google_api import GCell
-from msl.io.google_api import GCellType
-from msl.io.google_api import GDrive
-from msl.io.google_api import GMail
-from msl.io.google_api import GSheets
-from msl.io.google_api import GValueOption
+from msl.io.google_api import GCell, GCellType, GDrive, GMail, GSheets, GValueOption
 
 # all Google API tests require the necessary "token.json" file to be
 # available for a specific Google user's account
+dr: GDrive | None
 try:
     # dr -> drive, readonly
     dr = GDrive(account="testing", read_only=True)
-except:
+except (OSError, RefreshError):
     dr = None
 
+dw: GDrive | None
 try:
     # dw -> drive, writable
     dw = GDrive(account="testing", read_only=False)
-except:
+except (OSError, RefreshError):
     dw = None
 
+sr: GSheets | None
 try:
     # sr -> sheets, readonly
     sr = GSheets(account="testing", read_only=True)
-except:
+except (OSError, RefreshError):
     sr = None
 
+sw: GSheets | None
 try:
     # sw -> sheets, writeable
     sw = GSheets(account="testing", read_only=False)
-except:
+except (OSError, RefreshError):
     sw = None
 
+gmail: GMail | None
 try:
     gmail = GMail(account="testing")
-except:
+except (OSError, RefreshError):
     gmail = None
 
-skipif_no_gdrive_readonly = pytest.mark.skipif(
-    dr is None, reason="No GDrive readonly token"
-)
 
-skipif_no_gdrive_writeable = pytest.mark.skipif(
-    dw is None, reason="No GDrive writable token"
-)
+if TYPE_CHECKING:
+    from msl.io._types import MediaDownloadProgress
 
-skipif_no_sheets_readonly = pytest.mark.skipif(
-    sr is None, reason="No GSheets readonly token"
-)
 
-skipif_no_sheets_writeable = pytest.mark.skipif(
-    sw is None, reason="No GSheets writeable token"
-)
+skipif_no_gdrive_readonly = pytest.mark.skipif(dr is None, reason="No GDrive readonly token")
 
-skipif_no_gmail = pytest.mark.skipif(
-    gmail is None, reason="No Gmail token"
-)
+skipif_no_gdrive_writeable = pytest.mark.skipif(dw is None, reason="No GDrive writable token")
+
+skipif_no_sheets_readonly = pytest.mark.skipif(sr is None, reason="No GSheets readonly token")
+
+skipif_no_sheets_writeable = pytest.mark.skipif(sw is None, reason="No GSheets writeable token")
+
+skipif_no_gmail = pytest.mark.skipif(gmail is None, reason="No Gmail token")
 
 IS_WINDOWS = sys.platform == "win32"
 
 
 @skipif_no_sheets_readonly
-def test_gsheets_sheet_names():
+def test_gsheets_sheet_names() -> None:
     # MSL/msl-io-testing/empty-5.gsheet
+    assert sr is not None
     names = sr.sheet_names("1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY")
-    assert len(names) == 5
+    assert len(names) == 5  # noqa: PLR2004
     assert "Sheet1" in names
     assert "Sheet2" in names
     assert "Sheet3" in names
@@ -87,7 +91,7 @@ def test_gsheets_sheet_names():
 
     # table.gsheet
     names = sr.sheet_names("1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ")
-    assert len(names) == 6
+    assert len(names) == 6  # noqa: PLR2004
     assert "StartA1" in names
     assert "StartH22" in names
     assert "header only" in names
@@ -97,27 +101,29 @@ def test_gsheets_sheet_names():
 
 
 @skipif_no_sheets_readonly
-def test_gsheets_values():
+def test_gsheets_values() -> None:
     # MSL/msl-io-testing/empty-5
     empty_id = "1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY"
 
     # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
     lab_id = "1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4"
 
+    assert sr is not None
+
     # more than 1 sheet exists
     with pytest.raises(ValueError, match=r"You must specify a sheet name:"):
-        sr.values(empty_id)
+        _ = sr.values(empty_id)
 
     # empty sheets are okay
     for name in sr.sheet_names(empty_id):
         values = sr.values(empty_id, sheet=name)
         assert isinstance(values, list)
-        assert not values
+        assert values == [[]]
 
         # specifying the cells in an empty sheet is okay
         values = sr.values(empty_id, sheet=name, cells="A2:Z10")
         assert isinstance(values, list)
-        assert not values
+        assert values == [[]]
 
     # only 1 sheet exists, therefore we do not need to specify
     # a value for the 'sheet' kwarg since it is determined automatically
@@ -126,7 +132,7 @@ def test_gsheets_values():
         ["2021-04-03 12:36:10", "20.33", "49.82"],
         ["2021-04-03 12:37:10", "20.23", "46.06"],
         ["2021-04-03 12:38:10", "20.41", "47.06"],
-        ["2021-04-03 12:39:10", "20.29", "48.32"]
+        ["2021-04-03 12:39:10", "20.29", "48.32"],
     ]
     values = sr.values(lab_id)
     assert values == expected
@@ -135,7 +141,7 @@ def test_gsheets_values():
     assert values == [
         ["Timestamp", "2021-04-03 12:36:10", "2021-04-03 12:37:10", "2021-04-03 12:38:10", "2021-04-03 12:39:10"],
         ["Temperature", "20.33", "20.23", "20.41", "20.29"],
-        ["Humidity", "49.82", "46.06", "47.06", "48.32"]
+        ["Humidity", "49.82", "46.06", "47.06", "48.32"],
     ]
 
     values = sr.values(lab_id, cells="B2:C4", value_option="FORMATTED_VALUE")
@@ -152,13 +158,20 @@ def test_gsheets_values():
 
 
 @skipif_no_sheets_readonly
-def test_gsheets_to_datetime():
+def test_gsheets_to_datetime() -> None:
     expected = [
-        ["Timestamp", datetime(2021, 4, 3, 12, 36, 10), datetime(2021, 4, 3, 12, 37, 10),
-         datetime(2021, 4, 3, 12, 38, 10), datetime(2021, 4, 3, 12, 39, 10)],
+        [
+            "Timestamp",
+            datetime(2021, 4, 3, 12, 36, 10),  # noqa: DTZ001
+            datetime(2021, 4, 3, 12, 37, 10),  # noqa: DTZ001
+            datetime(2021, 4, 3, 12, 38, 10),  # noqa: DTZ001
+            datetime(2021, 4, 3, 12, 39, 10),  # noqa: DTZ001
+        ],
         ["Temperature", 20.33, 20.23, 20.41, 20.29],
-        ["Humidity", 49.82, 46.06, 47.06, 48.32]
+        ["Humidity", 49.82, 46.06, 47.06, 48.32],
     ]
+
+    assert sr is not None
 
     # MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment
     lab_id = "1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4"
@@ -166,29 +179,30 @@ def test_gsheets_to_datetime():
     values[0][1:] = [sr.to_datetime(t) for t in values[0][1:]]
     assert values == expected
 
-    values = sr.values(lab_id, value_option="UNFORMATTED_VALUE",
-                       datetime_option="FORMATTED_STRING", row_major=False)
+    values = sr.values(lab_id, value_option="UNFORMATTED_VALUE", datetime_option="FORMATTED_STRING", row_major=False)
     expected[0][1:] = [str(t) for t in expected[0][1:]]
     assert values == expected
 
 
 @skipif_no_sheets_readonly
-def test_gsheets_cells():
+def test_gsheets_cells() -> None:  # noqa: PLR0915
     # MSL/msl-io-testing/empty-5
     empty_id = "1Ua15pRGUH5qoU0c3Ipqrkzi9HBlm3nzqCn5O1IONfCY"
 
     # data-types
     datatypes_id = "1zMO4wk0IPC9I57dR5WoPTzlOX6g5-AcnwGFOEHrhIHU"
 
+    assert sr is not None
+
     # invalid spreadsheet_id
-    with pytest.raises(HttpError):
-        sr.cells(empty_id[:-1] + "A")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = sr.cells(empty_id[:-1] + "A")
 
     # valid spreadsheet_id, invalid sheet name
-    with pytest.raises(HttpError):
-        sr.cells(datatypes_id, ranges="invalid")
-    with pytest.raises(HttpError):
-        sr.cells(datatypes_id, ranges=["invalid"])
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = sr.cells(datatypes_id, ranges="invalid")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = sr.cells(datatypes_id, ranges=["invalid"])
 
     assert sr.cells(empty_id) == {"Sheet1": [], "Sheet2": [], "Sheet3": [], "Sheet4": [], "Sheet5": []}
 
@@ -199,9 +213,9 @@ def test_gsheets_cells():
 
     cells = sr.cells(datatypes_id)
     values = cells["Data Types"]
-    assert len(values) == 18
+    assert len(values) == 18  # noqa: PLR2004
 
-    assert len(values[0]) == 6
+    assert len(values[0]) == 6  # noqa: PLR2004
     assert values[0][0] == GCell(value="Automatic", type=GCellType.STRING, formatted="Automatic")
     assert values[0][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted="1.23")
     assert values[0][2] == GCell(value="string", type=GCellType.STRING, formatted="string")
@@ -209,97 +223,101 @@ def test_gsheets_cells():
     assert values[0][4] == GCell(value="0123456789", type=GCellType.STRING, formatted="0123456789")
     assert values[0][5] == GCell(value=36982, type=GCellType.DATE, formatted="1 April 2001")
 
-    assert len(values[1]) == 3
+    assert len(values[1]) == 3  # noqa: PLR2004
     assert values[1][0] == GCell(value="Plain text", type=GCellType.STRING, formatted="Plain text")
     assert values[1][1] == GCell(value="a b c d", type=GCellType.STRING, formatted="a b c d")
     assert values[1][2] == GCell(value="34", type=GCellType.STRING, formatted="34")
 
-    assert len(values[2]) == 2
+    assert len(values[2]) == 2  # noqa: PLR2004
     assert values[2][0] == GCell(value="Number", type=GCellType.STRING, formatted="Number")
     assert values[2][1] == GCell(value=1234.56789, type=GCellType.NUMBER, formatted="1,234.57")
 
-    assert len(values[3]) == 2
+    assert len(values[3]) == 2  # noqa: PLR2004
     assert values[3][0] == GCell(value="Percent", type=GCellType.STRING, formatted="Percent")
     assert values[3][1] == GCell(value=0.542, type=GCellType.PERCENT, formatted="54.20%")
 
-    assert len(values[4]) == 2
+    assert len(values[4]) == 2  # noqa: PLR2004
     assert values[4][0] == GCell(value="Scientific", type=GCellType.STRING, formatted="Scientific")
     assert values[4][1] == GCell(value=0.00321, type=GCellType.SCIENTIFIC, formatted="3.21E-03")
 
-    assert len(values[5]) == 3
+    assert len(values[5]) == 3  # noqa: PLR2004
     assert values[5][0] == GCell(value="Accounting", type=GCellType.STRING, formatted="Accounting")
     assert values[5][1] == GCell(value=99.95, type=GCellType.NUMBER, formatted=" $ 99.95 ")
     assert values[5][2] == GCell(value=-23.45, type=GCellType.NUMBER, formatted=" $ (23.45)")
 
-    assert len(values[6]) == 3
+    assert len(values[6]) == 3  # noqa: PLR2004
     assert values[6][0] == GCell(value="Financial", type=GCellType.STRING, formatted="Financial")
     assert values[6][1] == GCell(value=1.23, type=GCellType.NUMBER, formatted="1.23")
     assert values[6][2] == GCell(value=-1.23, type=GCellType.NUMBER, formatted="(1.23)")
 
-    assert len(values[7]) == 3
+    assert len(values[7]) == 3  # noqa: PLR2004
     assert values[7][0] == GCell(value="Currency", type=GCellType.STRING, formatted="Currency")
     assert values[7][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted="$99.95")
     assert values[7][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted="-$1.99")
 
-    assert len(values[8]) == 3
-    assert values[8][0] == GCell(
-        value="Currency (rounded)", type=GCellType.STRING, formatted="Currency (rounded)")
+    assert len(values[8]) == 3  # noqa: PLR2004
+    assert values[8][0] == GCell(value="Currency (rounded)", type=GCellType.STRING, formatted="Currency (rounded)")
     assert values[8][1] == GCell(value=99.95, type=GCellType.CURRENCY, formatted="$100")
     assert values[8][2] == GCell(value=-1.99, type=GCellType.CURRENCY, formatted="-$2")
 
-    assert len(values[9]) == 2
+    assert len(values[9]) == 2  # noqa: PLR2004
     assert values[9][0] == GCell(value="Date", type=GCellType.STRING, formatted="Date")
     assert values[9][1] == GCell(value=17738, type=GCellType.DATE, formatted="24/07/1948")
 
-    assert len(values[10]) == 3
+    assert len(values[10]) == 3  # noqa: PLR2004
     assert values[10][0] == GCell(value="Time", type=GCellType.STRING, formatted="Time")
     assert values[10][1] == GCell(value=0.2661689814814815, type=GCellType.TIME, formatted="06:23:17")
     assert values[10][2] == GCell(value=0.7378356481481482, type=GCellType.TIME, formatted="17:42:29")
 
-    assert len(values[11]) == 2
+    assert len(values[11]) == 2  # noqa: PLR2004
     assert values[11][0] == GCell(value="Date time", type=GCellType.STRING, formatted="Date time")
     assert values[11][1] == GCell(
-        value=34736.4303472222222222, type=GCellType.DATE_TIME, formatted="06/02/1995 10:19:42")
+        value=34736.4303472222222222, type=GCellType.DATE_TIME, formatted="06/02/1995 10:19:42"
+    )
 
-    assert len(values[12]) == 2
+    assert len(values[12]) == 2  # noqa: PLR2004
     assert values[12][0] == GCell(value="Duration", type=GCellType.STRING, formatted="Duration")
     assert values[12][1] == GCell(value=1.000023148148148, type=GCellType.TIME, formatted="24:00:02")
 
-    assert len(values[13]) == 2
+    assert len(values[13]) == 2  # noqa: PLR2004
     assert values[13][0] == GCell(value="Formula", type=GCellType.STRING, formatted="Formula")
     assert values[13][1] == GCell(value=6.747908247937978, type=GCellType.SCIENTIFIC, formatted="6.75E+00")
 
-    assert len(values[14]) == 3
+    assert len(values[14]) == 3  # noqa: PLR2004
     assert values[14][0] == GCell(value="Error", type=GCellType.STRING, formatted="Error")
     assert values[14][1] == GCell(
-        value="#DIV/0! (Function DIVIDE parameter 2 cannot be zero.)",
-        type=GCellType.ERROR,
-        formatted="#DIV/0!")
+        value="#DIV/0! (Function DIVIDE parameter 2 cannot be zero.)", type=GCellType.ERROR, formatted="#DIV/0!"
+    )
     assert values[14][2] == GCell(
-        value="#VALUE! (Function MULTIPLY parameter 2 expects number values. "
-              "But 'Currency' is a text and cannot be coerced to a number.)",
+        value=(
+            "#VALUE! (Function MULTIPLY parameter 2 expects number values. "
+            "But 'Currency' is a text and cannot be coerced to a number.)"
+        ),
         type=GCellType.ERROR,
-        formatted="#VALUE!")
+        formatted="#VALUE!",
+    )
 
-    assert len(values[15]) == 3
+    assert len(values[15]) == 3  # noqa: PLR2004
     assert values[15][0] == GCell(value="Empty", type=GCellType.STRING, formatted="Empty")
     assert values[15][1] == GCell(value=None, type=GCellType.EMPTY, formatted="")
-    assert values[15][2] == GCell(
-        value="<== keep B16 empty", type=GCellType.STRING, formatted="<== keep B16 empty")
+    assert values[15][2] == GCell(value="<== keep B16 empty", type=GCellType.STRING, formatted="<== keep B16 empty")
 
-    assert len(values[16]) == 3
+    assert len(values[16]) == 3  # noqa: PLR2004
     assert values[16][0] == GCell(value="Boolean", type=GCellType.STRING, formatted="Boolean")
     assert values[16][1] == GCell(value=True, type=GCellType.BOOLEAN, formatted="TRUE")
     assert values[16][2] == GCell(value=False, type=GCellType.BOOLEAN, formatted="FALSE")
 
-    assert len(values[17]) == 2
+    assert len(values[17]) == 2  # noqa: PLR2004
     assert values[17][0] == GCell(value="Custom", type=GCellType.STRING, formatted="Custom")
     assert values[17][1] == GCell(value=12345.6789, type=GCellType.NUMBER, formatted="12345 55/81")
 
 
 @skipif_no_sheets_writeable
 @skipif_no_gdrive_writeable
-def test_gsheets_create_move_delete():
+def test_gsheets_create_move_delete() -> None:
+    assert sw is not None
+    assert dw is not None
+
     sid = sw.create("no-sheet-names")
     assert sw.sheet_names(sid) == ("Sheet1",)
     dw.delete(sid)
@@ -314,41 +332,44 @@ def test_gsheets_create_move_delete():
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_shared_drives():
+def test_gdrive_shared_drives() -> None:
+    assert dr is not None
     assert dr.shared_drives() == {}
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_folder_id_exception():
+def test_gdrive_folder_id_exception() -> None:
     # the folder does not exist
     folders = [
         "DoesNotExist",
         "/Google Drive/MSL/DoesNotExist",
     ]
+
+    assert dr is not None
+
     if IS_WINDOWS:
         folders.append(r"C:\Users\username\Google Drive\MSL\DoesNotExist")
     for folder in folders:
         with pytest.raises(OSError, match=r"Not a valid Google Drive folder"):
-            dr.folder_id(folder)
+            _ = dr.folder_id(folder)
 
     # specified a valid file (which is not a folder)
-    files = [
-        "Single-Photon Generation and Detection.pdf",
-        "MSL/msl-io-testing/unique"
-    ]
+    files = ["Single-Photon Generation and Detection.pdf", "MSL/msl-io-testing/unique"]
     for file in files:
         with pytest.raises(OSError, match=r"Not a valid Google Drive folder"):
-            dr.folder_id(file)
+            _ = dr.folder_id(file)
 
     # specify an invalid parent ID
     assert dr.folder_id("MSL") == "14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi"
-    with pytest.raises(HttpError):
-        dr.folder_id("MSL", parent_id="INVALID_Kmkjo9aCQGysOsxwkTtpoJODi")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.folder_id("MSL", parent_id="INVALID_Kmkjo9aCQGysOsxwkTtpoJODi")
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_folder_id():
+def test_gdrive_folder_id() -> None:
     # relative to the root folder
+    assert dr is not None
+
     assert dr.folder_id("") == "root"
     assert dr.folder_id("/") == "root"
     assert dr.folder_id("Google Drive") == "root"
@@ -366,25 +387,37 @@ def test_gdrive_folder_id():
         assert dr.folder_id(r"MSL\msl-io-testing\f 1\f2\sub folder 3") == "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
 
     # relative to a parent folder
-    assert dr.folder_id("msl-io-testing", parent_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi") == "1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C"
-    assert dr.folder_id("msl-io-testing/f 1/f2", parent_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi") == "1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN"
+    assert (
+        dr.folder_id("msl-io-testing", parent_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi")
+        == "1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C"
+    )
+    assert (
+        dr.folder_id("msl-io-testing/f 1/f2", parent_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi")
+        == "1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN"
+    )
     assert dr.folder_id("f 1/f2", parent_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C") == "1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN"
     assert dr.folder_id("f2", parent_id="1mhQ_9iVF5AhbUb7Lq77qzuBbvZr150X9") == "1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN"
-    assert dr.folder_id("sub folder 3", parent_id="1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN") == "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
+    assert (
+        dr.folder_id("sub folder 3", parent_id="1NRD4klmRTQDkh5ZfhnhaHc6hDYfklMJN")
+        == "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
+    )
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_file_id_exception():
+def test_gdrive_file_id_exception() -> None:
     # file does not exist
     files = [
         "DoesNotExist",
         "/home/username/Google Drive/DoesNotExist.txt",
     ]
+
+    assert dr is not None
+
     if IS_WINDOWS:
         files.append(r"C:\Users\username\Google Drive\DoesNotExist.txt")
     for file in files:
         with pytest.raises(OSError, match=r"Not a valid Google Drive file"):
-            dr.file_id(file)
+            _ = dr.file_id(file)
 
     # specified a valid folder (which is not a file)
     folders = [
@@ -395,16 +428,16 @@ def test_gdrive_file_id_exception():
         folders.append(r"C:\Users\username\Google Drive\MSL")
     for folder in folders:
         with pytest.raises(OSError, match=r"Not a valid Google Drive file"):
-            dr.file_id(folder)
+            _ = dr.file_id(folder)
 
     # specify an invalid parent ID
     assert dr.file_id("unique", folder_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C") == "1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395"
-    with pytest.raises(HttpError):
-        dr.file_id("unique", folder_id="INVALID_NCuTWxmABs-w7JenftaLGAG9C")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.file_id("unique", folder_id="INVALID_NCuTWxmABs-w7JenftaLGAG9C")
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_file_id():
+def test_gdrive_file_id() -> None:
     # relative to the root folder
     files = {
         "Single-Photon Generation and Detection.pdf": "11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS",
@@ -415,23 +448,33 @@ def test_gdrive_file_id():
         files[r"C:\Users\username\Google Drive\MSL\msl-io-testing\unique"] = "1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395"
         files["MSL\\msl-io-testing\\f 1\\f2\\New Text Document.txt"] = "1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP"
 
+    assert dr is not None
+
     for file, id_ in files.items():
         assert dr.file_id(file) == id_
 
     # relative to a parent folder
     assert dr.file_id("unique", folder_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C") == "1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395"
-    assert dr.file_id("msl-io-testing/unique", folder_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi") == "1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395"
+    assert (
+        dr.file_id("msl-io-testing/unique", folder_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi")
+        == "1iaLNB_IZNxbFlpy-Z2-22WQGWy4wU395"
+    )
     assert dr.file_id("file.txt", folder_id="1wLAPHCOphcOITR37b8UB88eFW_FzeNQB") == "1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD"
-    assert dr.file_id("f 1/f2/New Text Document.txt", folder_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C") == "1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP"
+    assert (
+        dr.file_id("f 1/f2/New Text Document.txt", folder_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C")
+        == "1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP"
+    )
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_file_id_multiple():
+def test_gdrive_file_id_multiple() -> None:
     # multiple files with the same name in the same folder
     path = "MSL/msl-io-testing/f 1/electronics.xlsx"
 
-    with pytest.raises(OSError) as err:
-        dr.file_id(path)
+    assert dr is not None
+
+    with pytest.raises(OSError, match="Multiple") as err:
+        _ = dr.file_id(path)
     assert "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" in str(err.value)
     assert GSheets.MIME_TYPE in str(err.value)
 
@@ -445,11 +488,13 @@ def test_gdrive_file_id_multiple():
 
 @skipif_no_gdrive_readonly
 @skipif_no_gdrive_writeable
-def test_gdrive_create_delete_folder():
+def test_gdrive_create_delete_folder() -> None:
+    assert dr is not None
+    assert dw is not None
 
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match=r"[iI]nsufficient"):
-        dr.create_folder("TEST")
+    with pytest.raises(HttpError, match=r"[iI]nsufficient"):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.create_folder("TEST")
 
     u1 = str(uuid.uuid4())
     u2 = str(uuid.uuid4())
@@ -463,7 +508,7 @@ def test_gdrive_create_delete_folder():
     for folder in [u1, u2 + "/sub-2/a b c", u2 + "/sub-2", u2]:
         dw.delete(dw.folder_id(folder))
         with pytest.raises(OSError, match="Not a valid Google Drive folder"):
-            dw.folder_id(folder)
+            _ = dw.folder_id(folder)
 
     # create (relative to a parent folder)
     # ID of "MSL/msl-io-testing/f 1/f2/sub folder 3" is "1wLAPHCOphcOITR37b8UB88eFW_FzeNQB"
@@ -475,7 +520,7 @@ def test_gdrive_create_delete_folder():
     u3_id = dw.folder_id(u3, parent_id="1wLAPHCOphcOITR37b8UB88eFW_FzeNQB")
     u3_a_id = dw.folder_id("a", parent_id=u3_id)
     u3_a_b_id = dw.folder_id("b", parent_id=u3_a_id)
-    u3_a_b_c_id = dw.folder_id("c", parent_id=u3_a_b_id)
+    _ = dw.folder_id("c", parent_id=u3_a_b_id)
 
     # deleting a folder should also delete the children folders
     dw.delete(u3_id)
@@ -493,13 +538,15 @@ def test_gdrive_create_delete_folder():
     assert id1 != id2
     assert dw.is_folder("Temporary") is True
     with pytest.raises(OSError, match="^Multiple folders"):
-        dw.folder_id("Temporary")
+        _ = dw.folder_id("Temporary")
     dw.delete(id1)
     dw.delete(id2)
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_is_file():
+def test_gdrive_is_file() -> None:
+    assert dr is not None
+
     # relative to the root folder
     assert not dr.is_file("doesnotexist.txt")
     assert not dr.is_file("does/not/exist.txt")
@@ -520,13 +567,16 @@ def test_gdrive_is_file():
     assert not dr.is_file("New Text Document.txt", folder_id="1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C")
 
     # relative to an invalid parent folder
-    with pytest.raises(HttpError):
-        dr.is_file("unique", folder_id="INVALID_NCuTWxmABs-w7JenftaLGAG9C")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.is_file("unique", folder_id="INVALID_NCuTWxmABs-w7JenftaLGAG9C")
 
 
 @skipif_no_sheets_writeable
 @skipif_no_gdrive_writeable
-def test_gsheets_append():
+def test_gsheets_append() -> None:
+    assert sw is not None
+    assert dw is not None
+
     sid = sw.create("appending")
     sw.append(None, sid)
     sw.append([], sid)
@@ -545,7 +595,7 @@ def test_gsheets_append():
         ["11", "15"],
         ["12", "16"],
         ["13"],
-        ["", "17"]
+        ["", "17"],
     ]
     dw.delete(sid)
 
@@ -572,14 +622,17 @@ def test_gsheets_append():
         [],
         ["m", "p"],
         ["n", "q"],
-        ["o", "r"]
+        ["o", "r"],
     ]
     dw.delete(sid)
 
 
 @skipif_no_sheets_writeable
 @skipif_no_gdrive_writeable
-def test_gsheets_write():
+def test_gsheets_write() -> None:
+    assert sw is not None
+    assert dw is not None
+
     sid = sw.create("writing")
     sw.write(None, sid, "A1")
     sw.write([], sid, "A1")
@@ -597,9 +650,9 @@ def test_gsheets_write():
         ["6", "10", "14"],
     ]
 
-    values = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
+    values: list[list[str | int]] = [list(range(10)), list(range(10, 20)), list(range(20, 30)), list(range(30, 40))]
     sw.write(values, sid, "A2")
-    expected = [["", "", 0]]
+    expected: list[list[str | int]] = [["", "", 0]]
     expected.extend(values)
     expected.extend([[5, 9, 13], [6, 10, 14]])
     assert sw.values(sid, value_option=GValueOption.UNFORMATTED, sheet="Sheet1") == expected
@@ -609,7 +662,10 @@ def test_gsheets_write():
 
 @skipif_no_sheets_writeable
 @skipif_no_gdrive_writeable
-def test_gsheets_copy_rename_add_delete():
+def test_gsheets_copy_rename_add_delete() -> None:
+    assert sw is not None
+    assert dw is not None
+
     id1 = sw.create("spreadsheet1", sheet_names=["a", "b", "c"])
     id2 = sw.create("spreadsheet2")
 
@@ -622,7 +678,7 @@ def test_gsheets_copy_rename_add_delete():
     assert sw.sheet_names(id2) == ("Sheet1",)
     bid = sw.copy("b", id1, id2)
     assert sw.sheet_names(id2) == ("Sheet1", "Copy of b")
-    sw.copy(list(d_sheet.keys())[0], id1, id2)
+    _ = sw.copy(next(iter(d_sheet.keys())), id1, id2)
     assert sw.sheet_names(id2) == ("Sheet1", "Copy of b", "Copy of d")
 
     sw.rename_sheet(bid, "B - B", id2)
@@ -635,11 +691,11 @@ def test_gsheets_copy_rename_add_delete():
     assert sw.sheet_names(id1) == ("b", "c", "d", "e", "f", "g")
     sw.delete_sheets(bid, id2)
     assert sw.sheet_names(id2) == ("Sheet1", "Copy of d")
-    sw.delete_sheets(["g", list(d_sheet.keys())[0]], id1)
+    sw.delete_sheets(["g", next(iter(d_sheet.keys()))], id1)
     assert sw.sheet_names(id1) == ("b", "c", "e", "f")
 
     with pytest.raises(ValueError, match="no sheet named 'invalid'"):
-        sw.copy("invalid", id1, id2)
+        _ = sw.copy("invalid", id1, id2)
 
     with pytest.raises(ValueError, match="no sheet named 'invalid'"):
         sw.delete_sheets("invalid", id1)
@@ -651,7 +707,10 @@ def test_gsheets_copy_rename_add_delete():
 
 @skipif_no_sheets_writeable
 @skipif_no_gdrive_writeable
-def test_read_only():
+def test_read_only() -> None:
+    assert dw is not None
+    assert sw is not None
+
     # Although folders cannot be set to be in read-only mode,
     # test that calling is_read_only() does not raise an error
     fid = dw.create_folder("Read Only Test")
@@ -661,16 +720,16 @@ def test_read_only():
     # create a spreadsheet file
     fid = sw.create("Lockable")
     assert dw.is_read_only(fid) is False
-    sw.write("test", fid, "A1", "Sheet1")
-    dw.read_only(fid, True)
+    sw.write("test", fid, cell="A1", sheet="Sheet1")
+    dw.read_only(fid, True)  # noqa: FBT003
     assert dw.is_read_only(fid) is True
 
     # cannot create a new sheet
-    with pytest.raises(HttpError):
-        sw.add_sheets("Another Sheet", fid)
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = sw.add_sheets("Another Sheet", fid)
 
     # cannot rename
-    with pytest.raises(HttpError):
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
         dw.rename(fid, "New Name")
 
     # cannot delete
@@ -678,25 +737,27 @@ def test_read_only():
         dw.delete(fid)
 
     # cannot modify a cell
-    with pytest.raises(HttpError):
-        sw.write("test2", fid, "A2", "Sheet1")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        sw.write("test2", fid, cell="A2", sheet="Sheet1")
     assert sw.values(fid) == [["test"]]
 
     # setting the same value multiple times is okay
-    dw.read_only(fid, True)
-    dw.read_only(fid, True)
-    dw.read_only(fid, True)
+    dw.read_only(fid, True)  # noqa: FBT003
+    dw.read_only(fid, read_only=True)
+    dw.read_only(fid, read_only=True)
     assert dw.is_read_only(fid) is True
-    dw.read_only(fid, False)
-    dw.read_only(fid, False)
-    dw.read_only(fid, False)
+    dw.read_only(fid, read_only=False)
+    dw.read_only(fid, read_only=False)
+    dw.read_only(fid, read_only=False)
     assert dw.is_read_only(fid) is False
 
     dw.delete(fid)
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_is_folder():
+def test_gdrive_is_folder() -> None:
+    assert dr is not None
+
     # relative to the root folder
     assert not dr.is_folder("doesnotexist")
     assert not dr.is_folder("MSL/msl-io-testing/unique")
@@ -714,109 +775,113 @@ def test_gdrive_is_folder():
     assert dr.is_folder("msl-io-testing/f 1/f2", parent_id="14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi")
 
     # relative to an invalid parent folder
-    with pytest.raises(HttpError):
-        dr.is_folder("f2", parent_id="INVALID_F5AhbUb7Lq77qzuBbvZr150X9")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.is_folder("f2", parent_id="INVALID_F5AhbUb7Lq77qzuBbvZr150X9")
 
 
 @skipif_no_gdrive_readonly
 @skipif_no_gdrive_writeable
-def test_gdrive_upload():
-    temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + ".py")
-    with open(temp_file, mode="wt") as fp:
-        fp.write("from msl.io import GDrive")
+def test_gdrive_upload() -> None:
+    assert dw is not None
+    assert dr is not None
+
+    temp_file = Path(tempfile.gettempdir()) / f"{uuid.uuid4()}.py"
+    _ = temp_file.write_text("from msl.io import GDrive")
 
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match=r"[iI]nsufficient"):
-        dr.upload(temp_file)
+    with pytest.raises(HttpError, match=r"[iI]nsufficient"):  # pyright: ignore[reportUnknownArgumentType]
+        _ = dr.upload(temp_file)
 
-    file_id = dw.upload(
-        temp_file,
-        folder_id=dw.folder_id("MSL"),
-        mime_type="text/x-python"
-    )
+    file_id = dw.upload(temp_file, folder_id=dw.folder_id("MSL"), mime_type="text/x-python")
 
-    path = os.path.join("MSL", os.path.basename(temp_file))
+    path = Path("MSL") / temp_file.name
     assert dw.file_id(path, mime_type="text/x-python") == file_id
     assert dw.file_id(path) == file_id
     assert not dw.is_file(path, mime_type="application/x-python-code")
 
     dw.delete(file_id)
     assert not dw.is_file(path)
-    os.remove(temp_file)
+    temp_file.unlink()
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_download():
-    temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+def test_gdrive_download() -> None:
+    assert dr is not None
+
+    temp_file = Path(tempfile.gettempdir()) / str(uuid.uuid4())
 
     file_id = dr.file_id("MSL/msl-io-testing/file.txt")
 
     # cannot be a string IO object
     with pytest.raises(TypeError):
-        dr.download(file_id, save_to=io.StringIO())
-    with pytest.raises(TypeError):
-        dr.download(file_id, save_to=open("junk.txt", mode="wt"))
-    os.remove("junk.txt")  # clean up since it got created before the error was raised
+        dr.download(file_id, save_to=io.StringIO())  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    with pytest.raises(TypeError), Path("junk.txt").open("w") as f:
+        dr.download(file_id, save_to=f)  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
+    Path("junk.txt").unlink()  # clean up since it got created before the error was raised
 
     # a BytesIO object
     with io.BytesIO() as buffer:
         dr.download(file_id, save_to=buffer)
-        buffer.seek(0)
+        _ = buffer.seek(0)
         assert buffer.read() == b'in "msl-io-testing"'
 
     # a file handle in 'wb' mode
-    with open(temp_file, mode="wb") as fp:
-        dr.download(file_id, save_to=fp)
-    with open(temp_file, mode="rt") as fp:
-        assert fp.read() == 'in "msl-io-testing"'
-    os.remove(temp_file)  # clean up
+    with temp_file.open("wb") as fw:
+        dr.download(file_id, save_to=fw)
+    with temp_file.open("rt") as fr:
+        assert fr.read() == 'in "msl-io-testing"'
+    temp_file.unlink()
 
     # do not specify a value for the 'save_to' kwarg
     # therefore the filename is determined from the remote filename
     # and saved to the current working directory
     file_id = dr.file_id("MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt")
     dr.download(file_id)
-    with open("file.txt", mode="rt") as fp:
+    with Path("file.txt").open("rt") as fp:
         assert fp.read() == 'in "sub folder 3"'
-    os.remove("file.txt")  # clean up
+    Path("file.txt").unlink()  # clean up
 
     # save to a specific directory, use the remote filename
-    f = os.path.join(tempfile.gettempdir(), "file.txt")
-    if os.path.isfile(f):
-        os.remove(f)
-    assert not os.path.isfile(f)
+    f1 = Path(tempfile.gettempdir()) / "file.txt"
+    f1.unlink(missing_ok=True)
+    assert not f1.is_file()
     dr.download(file_id, save_to=tempfile.gettempdir())
-    with open(f, mode="rt") as fp:
+    with f1.open("rt") as fp:
         assert fp.read() == 'in "sub folder 3"'
-    os.remove(f)  # clean up
+    f1.unlink()
 
     # save to a specific file
-    assert not os.path.isfile(temp_file)
+    assert not temp_file.is_file()
     dr.download(file_id, save_to=temp_file)
-    with open(temp_file, mode="rb") as fp:
-        assert fp.read() == b'in "sub folder 3"'
-    os.remove(temp_file)  # clean up
+    with temp_file.open("rb") as f3:
+        assert f3.read() == b'in "sub folder 3"'
+    temp_file.unlink()  # clean up
 
     # use a callback
-    def handler(file):
+    def handler(file: MediaDownloadProgress) -> None:
         assert file.progress() == 1.0
-        assert file.total_size == 17
-        assert file.resumable_progress == 17
+        assert file.total_size == 17  # noqa: PLR2004
+        assert file.resumable_progress == 17  # noqa: PLR2004
+
     dr.download(file_id, save_to=temp_file, callback=handler)
-    os.remove(temp_file)  # clean up
+    temp_file.unlink()
 
 
 @skipif_no_gdrive_readonly
 @skipif_no_gdrive_writeable
-def test_gdrive_empty_trash():
+def test_gdrive_empty_trash() -> None:
+    assert dr is not None
+    assert dw is not None
+
     # instantiated in read-only mode
-    with pytest.raises(HttpError, match=r"[iI]nsufficient"):
+    with pytest.raises(HttpError, match=r"[iI]nsufficient"):  # pyright: ignore[reportUnknownArgumentType]
         dr.empty_trash()
     dw.empty_trash()
 
 
 @skipif_no_gdrive_readonly
-def test_gdrive_path():
+def test_gdrive_path() -> None:
+    assert dr is not None
     assert dr.path("0AFP6574OTgaaUk9PVA") == "My Drive"
     assert dr.path("11yaxZH93B0IhQZwfCeo2dXb-Iduh-4dS") == "My Drive/Single-Photon Generation and Detection.pdf"
     assert dr.path("14GYO5FIKmkjo9aCQGysOsxwkTtpoJODi") == "My Drive/MSL"
@@ -831,11 +896,16 @@ def test_gdrive_path():
     assert dr.path("1qW1QclelxZtJtKMigCgGH4ST3QoJ9zuP") == "My Drive/MSL/msl-io-testing/f 1/f2/New Text Document.txt"
     assert dr.path("1wLAPHCOphcOITR37b8UB88eFW_FzeNQB") == "My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3"
     assert dr.path("1CDS3cWDItXB1uLCPGq0uy6OJAngkmNoD") == "My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/file.txt"
-    assert dr.path("1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4") == "My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment"
+    assert (
+        dr.path("1FwzsFgN7w-HZXOlUAEMVMSOGpNHCj5NXvH6Xl7LyLp4")
+        == "My Drive/MSL/msl-io-testing/f 1/f2/sub folder 3/lab environment"
+    )
 
 
 @skipif_no_gdrive_writeable
-def test_gdrive_copy():
+def test_gdrive_copy() -> None:
+    assert dw is not None
+
     msl_io_testing_id = "1oB5i-YcNCuTWxmABs-w7JenftaLGAG9C"
     assert dw.path(msl_io_testing_id) == "My Drive/MSL/msl-io-testing"
 
@@ -850,7 +920,7 @@ def test_gdrive_copy():
     assert cid != file_txt_id
     assert dw.path(cid) == "My Drive/MSL/msl-io-testing/file.txt"
     with pytest.raises(OSError, match="^Multiple files"):
-        dw.file_id("file.txt", folder_id=msl_io_testing_id)
+        _ = dw.file_id("file.txt", folder_id=msl_io_testing_id)
     assert dw.is_file("file.txt", folder_id=msl_io_testing_id) is True
     dw.delete(cid)
     assert dw.is_file("file.txt", folder_id=msl_io_testing_id)
@@ -880,7 +950,9 @@ def test_gdrive_copy():
 
 
 @skipif_no_gdrive_writeable
-def test_gdrive_rename():
+def test_gdrive_rename() -> None:
+    assert dw is not None
+
     # rename a folder
     fid = dw.create_folder("My Folder")
     assert dw.path(fid) == "My Drive/My Folder"
@@ -900,7 +972,9 @@ def test_gdrive_rename():
 
 
 @skipif_no_gdrive_writeable
-def test_gdrive_move():
+def test_gdrive_move() -> None:
+    assert dw is not None
+
     # move a folder
     fid = dw.create_folder("X/Y/Z")
     assert dw.path(fid) == "My Drive/X/Y/Z"
@@ -920,9 +994,14 @@ def test_gdrive_move():
 
 
 @skipif_no_gmail
-def test_gmail_profile():
+def test_gmail_profile() -> None:
+    assert gmail is not None
     profile = gmail.profile()
+    assert profile.email_address.endswith("@gmail.com")
     assert profile["email_address"].endswith("@gmail.com")
+    assert profile.messages_total > 1
     assert profile["messages_total"] > 1
+    assert profile.threads_total > 1
     assert profile["threads_total"] > 1
+    assert isinstance(profile.history_id, str)
     assert isinstance(profile["history_id"], str)

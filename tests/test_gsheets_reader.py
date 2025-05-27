@@ -1,63 +1,64 @@
+# cSpell: ignore PSIQ Umvh Bfeme Agnw CEXTF Ecsh
+
+from __future__ import annotations
+
 from datetime import datetime
 
 import pytest
-from googleapiclient.errors import HttpError
+from google.auth.exceptions import RefreshError
+from googleapiclient.errors import (  # type: ignore[import-untyped] # pyright: ignore[reportMissingTypeStubs]
+    HttpError,  # pyright: ignore[reportUnknownVariableType]
+)
 
-from msl.io import GDrive
-from msl.io import GSheetsReader
-from msl.io.readers.gsheets import _google_file_id_regex
+from msl.io.google_api import GDrive
+from msl.io.readers.gsheets import GSheetsReader, _google_file_id_regex  # pyright: ignore[reportPrivateUsage]
 
+dr: GDrive | None
 try:
     # dr -> drive, readonly
     dr = GDrive(account="testing", read_only=True)
-except:
+except (OSError, RefreshError):
     dr = None
 
+sr: GSheetsReader | None
 try:
     # sr -> sheets, readonly
-    sr = GSheetsReader("1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo", account="testing", read_only=True)
-except:
+    sr = GSheetsReader("1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo", account="testing")
+except (OSError, RefreshError):
     sr = None
 
-skipif_no_gdrive_readonly = pytest.mark.skipif(
-    dr is None, reason="No GDrive readonly token"
-)
+skipif_no_gdrive_readonly = pytest.mark.skipif(dr is None, reason="No GDrive readonly token")
 
-skipif_no_sheets_readonly = pytest.mark.skipif(
-    sr is None, reason="No GSheets readonly token"
-)
+skipif_no_sheets_readonly = pytest.mark.skipif(sr is None, reason="No GSheets readonly token")
 
 
 @skipif_no_sheets_readonly
-def test_raises():
-    with pytest.raises(ValueError, match=r"Must instantiate GSheetsReader in read-only mode"):
-        GSheetsReader("does-not-matter", read_only=False)
-
+def test_raises() -> None:
     table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
     with pytest.raises(ValueError, match=r"You must specify the name of the sheet to read"):
-        GSheetsReader(table_gsheet_id, account="testing").read()
+        _ = GSheetsReader(table_gsheet_id, account="testing").read()
 
     table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
     with pytest.raises(ValueError, match=r"There is no sheet named"):
-        GSheetsReader(table_gsheet_id, account="testing").read(sheet="A1")
+        _ = GSheetsReader(table_gsheet_id, account="testing").read(sheet="A1")
 
     table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
-    with pytest.raises(HttpError):
-        GSheetsReader(table_gsheet_id, account="testing").read(sheet="SheetA1")
+    with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
+        _ = GSheetsReader(table_gsheet_id, account="testing").read(sheet="SheetA1")
 
 
 @skipif_no_sheets_readonly
-def test_cell():
+def test_cell() -> None:
     # lab_environment.gsheet
     ssid = "1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo"
     values = [("temperature", "humidity"), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
 
-    sheets = GSheetsReader(ssid, account="testing", read_only=True)
+    sheets = GSheetsReader(ssid, account="testing")
     assert sheets.file == ssid
     assert sheets.read() == values
     assert sheets.read(cell="A1") == "temperature"
     assert sheets.read(cell="A100") is None  # A100 is empty
-    assert sheets.read(cell="B5") == 48.32
+    assert sheets.read(cell="B5") == 48.32  # noqa: PLR2004
     assert sheets.read(cell="A3:B3") == [(20.23, 46.06)]
     assert sheets.read(cell="A6:B6") == []  # row 6 is empty
     assert sheets.read(cell="B:B") == [("humidity",), (49.82,), (46.06,), (47.06,), (48.32,)]
@@ -69,20 +70,30 @@ def test_cell():
 
 
 @skipif_no_sheets_readonly
-def test_sheet():
+def test_sheet() -> None:
     # table.gsheet
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
-    sheets = GSheetsReader(ssid, account="testing", read_only=True)
+    sheets = GSheetsReader(ssid, account="testing")
     assert sheets.file == ssid
     assert sheets.sheet_names() == ("StartA1", "StartH22", "header only", "empty", "column", "row")
     assert sheets.read(sheet="empty") == []
     assert sheets.read(sheet="header only") == [("Timestamp", "Value", "Valid", "ID")]
     assert sheets.read(sheet="column") == [
-        ("Value",), (20.1,), (25.4,), (19.4,), (11.8,), (24.6,), (20.7,), (21.8,), (19.2,), (18.6,), (16.4,)
+        ("Value",),
+        (20.1,),
+        (25.4,),
+        (19.4,),
+        (11.8,),
+        (24.6,),
+        (20.7,),
+        (21.8,),
+        (19.2,),
+        (18.6,),
+        (16.4,),
     ]
     assert sheets.read(sheet="row") == [
         ("Timestamp", "Value", "Valid", "ID"),
-        (datetime(2019, 9, 11, 14, 6, 55), 20.1, True, "sensor 1")
+        (datetime(2019, 9, 11, 14, 6, 55), 20.1, True, "sensor 1"),  # noqa: DTZ001
     ]
 
     assert sheets.read("A1:A1", sheet="StartA1") == [("Timestamp",)]
@@ -90,22 +101,22 @@ def test_sheet():
 
 
 @skipif_no_sheets_readonly
-def test_as_datetime():
+def test_as_datetime() -> None:
     # table.gsheet
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
-    sheets = GSheetsReader(ssid, account="testing", read_only=True)
+    sheets = GSheetsReader(ssid, account="testing")
     assert sheets.read(cell="A:A", sheet="StartA1", as_datetime=True) == [
         ("Timestamp",),
-        (datetime(2019, 9, 11, 14, 6, 55),),
-        (datetime(2019, 9, 11, 14, 6, 59),),
-        (datetime(2019, 9, 11, 14, 7, 3),),
-        (datetime(2019, 9, 11, 14, 7, 7),),
-        (datetime(2019, 9, 11, 14, 7, 11),),
-        (datetime(2019, 9, 11, 14, 7, 15),),
-        (datetime(2019, 9, 11, 14, 7, 19),),
-        (datetime(2019, 9, 11, 14, 7, 23),),
-        (datetime(2019, 9, 11, 14, 7, 27),),
-        (datetime(2019, 9, 11, 14, 7, 31),)
+        (datetime(2019, 9, 11, 14, 6, 55),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 6, 59),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 3),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 7),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 11),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 15),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 19),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 23),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 27),),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 31),),  # noqa: DTZ001
     ]
     assert sheets.read(cell="A:B", sheet="StartA1", as_datetime=False) == [
         ("Timestamp", "Value"),
@@ -124,19 +135,19 @@ def test_as_datetime():
 
 @skipif_no_gdrive_readonly
 @skipif_no_sheets_readonly
-def test_file_path():
+def test_file_path() -> None:
     path = "My Drive/MSL/msl-io-testing/empty-5.gsheet"
-    sheets = GSheetsReader(path, account="testing", read_only=True)
+    sheets = GSheetsReader(path, account="testing")
     assert sheets.file == path
     assert sheets.sheet_names() == ("Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5")
     assert sheets.read(sheet="Sheet1") == []
 
-    sheets = GSheetsReader("table", account="testing", read_only=True)
+    sheets = GSheetsReader("table", account="testing")
     assert sheets.file == "table"
     assert sheets.read(sheet="empty") == []
 
 
-def test_google_file_id_regex():
+def test_google_file_id_regex() -> None:
     assert _google_file_id_regex.search("1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ")
     assert _google_file_id_regex.search("1IemLij3ggB_S5ASO7qyPSIQUmvhWgBfemePn7guAJe4")
     assert _google_file_id_regex.search("1IemLij3ggB-S5ASO7qyPSIQUmvhWgBfemePn7guAJe4")
