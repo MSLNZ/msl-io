@@ -3,10 +3,21 @@
 from __future__ import annotations
 
 import os
-from typing import Protocol, TypeVar, Union  # pyright: ignore[reportDeprecated]
+from collections.abc import Sequence
+from types import EllipsisType
+from typing import Protocol, SupportsIndex, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][]{:target="_blank"}."""
+
+ShapeLike = SupportsIndex | Sequence[SupportsIndex]
+"""Anything that can be coerced to a shape tuple for an [ndarray][numpy.ndarray]."""
+
+ToIndex = SupportsIndex | slice | EllipsisType | None
+"""Anything that can be used as the `key` for [numpy.ndarray.__setitem__][]."""
+
+ToIndices = ToIndex | tuple[ToIndex, ...]
+"""Anything that can be used as the `key` for [numpy.ndarray.__setitem__][]."""
 
 _T_co = TypeVar("_T_co", str, bytes, covariant=True)
 

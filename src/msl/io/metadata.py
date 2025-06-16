@@ -1,65 +1,68 @@
-"""
-Provides information about other data.
-"""
-from collections.abc import MutableMapping
+"""Provides information about other data."""
+
+from __future__ import annotations
+
+from collections.abc import Iterable, MutableMapping
+from typing import Any
 
 import numpy as np
 
-from .dictionary import Dictionary
+from .freezable import FreezableMap
 
 
-class Metadata(Dictionary):
+class Metadata(FreezableMap[Any]):
+    """Provides information about other data."""
 
-    def __init__(self, read_only, vertex_name, **kwargs):
+    def __init__(self, *, read_only: bool, vertex_name: str, **kwargs: Any) -> None:
         """Provides information about other data.
 
-        Do not instantiate directly. A :class:`Metadata` object is created automatically
-        when :meth:`~msl.io.group.Group.create_dataset` or :meth:`~msl.io.group.Group.create_group`
-        is called.
+        !!! attention
+            Do not instantiate directly. A [Metadata][] object is created automatically
+            when [create_dataset][msl.io.group.Group.create_dataset] or
+            [create_group][msl.io.group.Group.create_group] is called.
 
-        Parameters
-        ----------
-        read_only : :class:`bool`
-            Whether :class:`Metadata` is to be accessed in read-only mode.
-        vertex_name : :class:`str`
-            The name of the :class:`~msl.io.vertex.Vertex` that :class:`Metadata` is associated with.
-        **kwargs
-            Key-value pairs that will be used to create the :class:`.Dictionary`.
+        Args:
+            read_only: Whether [Metadata][] is initialised in read-only mode.
+            vertex_name: The name of the [Vertex][] that [Metadata][] is associated with.
+            kwargs: Key-value pairs that will be used to create the mapping.
         """
-        super(Metadata, self).__init__(read_only, **kwargs)
-        self._vertex_name = vertex_name
+        super().__init__(read_only=read_only, **kwargs)
+        self._vertex_name: str = vertex_name
 
-    def __repr__(self):
-        return f"<Metadata {self._vertex_name!r} {super(Metadata, self).__repr__()}>"
+    def __repr__(self) -> str:
+        """Returns the string representation."""
+        joined = ", ".join(f"{k!r}: {v!r}" if isinstance(v, str) else f"{k!r}: {v}" for k, v in self._mapping.items())
+        return f"<Metadata {self._vertex_name!r} {{{joined}}}>"
 
-    def __getitem__(self, item):
+    def __getitem__(self, key: str) -> Any:
+        """Returns the value for the specified key."""
         try:
-            value = self._mapping[item]
+            value = self._mapping[key]
         except KeyError:
-            pass  # raise a more detailed error message below
+            msg = f"{key!r} is not in {self!r}"
+            raise KeyError(msg) from None
         else:
             if isinstance(value, MutableMapping):
-                return Metadata(self._read_only, self._vertex_name, **value)
+                return Metadata(read_only=self._read_only, vertex_name=self._vertex_name, **value)
             return value
-        self._raise_key_error(item)
 
-    def __delattr__(self, item):
+    def __delattr__(self, key: str) -> None:
+        """Maybe delete a key-value pair, only if the mapping is not in read-only mode."""
         self._raise_if_read_only()
         try:
-            del self._mapping[item]
-            return
+            del self._mapping[key]
         except KeyError as e:
-            msg = str(e)
-        raise AttributeError(msg)
+            raise AttributeError(str(e)) from None
 
-    def __getattr__(self, item):
+    def __getattr__(self, key: str) -> Any:
+        """Returns the value for the specified key."""
         try:
-            return self.__getitem__(item)
+            return self.__getitem__(key)
         except KeyError as e:
-            msg = str(e)
-        raise AttributeError(msg)
+            raise AttributeError(str(e)) from None
 
-    def __setattr__(self, item, value):
+    def __setattr__(self, item: str, value: Any) -> None:
+        """Maybe set a key-value pair, only if the map is not in read-only mode."""
         if item.endswith("read_only"):
             val = bool(value)
             self.__dict__["_read_only"] = val
@@ -70,48 +73,37 @@ class Metadata(Dictionary):
                         obj.setflags(write=not val)
             except KeyError:
                 pass
-        elif item == "_mapping" or item == "_vertex_name":
+        elif item in {"_mapping", "_vertex_name"}:
             self.__dict__[item] = value
         else:
             self._raise_if_read_only()
             self._mapping[item] = value
 
-    def copy(self, read_only=None):
-        """Create a copy of the :class:`Metadata`.
+    def copy(self, read_only: bool | None = None) -> Metadata:
+        """Create a copy of the [Metadata][].
 
-        Parameters
-        ----------
-        read_only : :class:`bool`, optional
-            Whether the copy should be created in read-only mode. If :data:`None` then
-            creates a copy using the mode for the :class:`Metadata` that is being copied.
+        Args:
+            read_only: Whether the copy should be created in read-only mode.
+                If `None`, creates a copy using the mode for the [Metadata][]
+                object that is being copied.
 
-        Returns
-        -------
-        :class:`Metadata`
-            A copy of the :class:`Metadata`.
+        Returns:
+            A copy of the [Metadata][].
         """
-        return Metadata(self._mode(read_only), self._vertex_name, **self._mapping)
+        ro = self._read_only if read_only is None else read_only
+        return Metadata(read_only=ro, vertex_name=self._vertex_name, **self._mapping)
 
-    def fromkeys(self, seq, value=None, read_only=None):
-        """Create a new :class:`Metadata` object with keys from `seq` and values set to `value`.
+    def fromkeys(self, seq: Iterable[str], value: Any = None, *, read_only: bool | None = None) -> Metadata:
+        """Create a new [Metadata][] object with keys from `seq` and values set to `value`.
 
-        Parameters
-        ----------
-        seq
-            Any iterable object that contains the names of the keys.
-        value : :class:`object`, optional
-            The default value to use for each key.
-        read_only : :class:`bool`, optional
-            Whether the returned object should be created in read-only mode. If
-            :data:`None` then uses the mode for the :class:`Metadata` that is used
-            to call this method.
+        Args:
+            seq: Any iterable object that contains the names of the keys.
+            value: The default value to use for each key.
+            read_only: Whether the returned [Metadata][] object should be initialised in read-only mode.
+                If `None`, uses the mode for the [Metadata][] that is used to call this method.
 
-        Returns
-        -------
-        :class:`Metadata`
-            A new :class:`Metadata` object.
+        Returns:
+            A new [Metadata][] object.
         """
-        return Metadata(self._mode(read_only), self._vertex_name, **dict((key, value) for key in seq))
-
-    def _mode(self, read_only):
-        return self._read_only if read_only is None else read_only
+        ro = self._read_only if read_only is None else read_only
+        return Metadata(read_only=ro, vertex_name=self._vertex_name, **dict.fromkeys(seq, value))

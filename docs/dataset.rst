@@ -11,7 +11,6 @@ and it can be accessed in read-only mode.
 
 .. invisible-code-block: pycon
 
-   >>> SKIP_IF_PYTHON_LESS_THAN_36()
    >>> from msl.io import JSONWriter
    >>> root = JSONWriter()
    >>> data = [(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)]
@@ -146,6 +145,8 @@ the returned object will be a :class:`numpy.ndarray` and therefore all
 :class:`~msl.io.metadata.Metadata` of the :class:`~msl.io.dataset.Dataset`\s
 that are involved in the operation are not included in the returned object.
 
+XXX Discuss merging Metadata.
+
 For example, suppose you have two :class:`~msl.io.dataset.Dataset`\s that
 contain the following information
 
@@ -166,25 +167,22 @@ contain the following information
    <Metadata '/dset2' {'temperature': 21.7}>
 
 You can directly add the :class:`~msl.io.dataset.Dataset`\s, but the *temperature*
-values in :class:`~msl.io.metadata.Metadata` are not included in the returned object
+value in :class:`~msl.io.metadata.Metadata` is overwritten such that ...
 
 .. code-block:: pycon
 
    >>> dset3 = dset1 + dset2
    >>> dset3
-   array([5., 7., 9.])
+   <Dataset 'add(/dset1,/dset2)' shape=(3,) dtype='<f8' (1 metadata)>
    >>> dset3.metadata
-   Traceback (most recent call last):
-     File "<input>", line 1, in <module>
-   AttributeError: 'numpy.ndarray' object has no attribute 'metadata'
+   <Metadata 'add(/dset1,/dset2)' {'temperature': 21.7}>
 
 You are responsible for keeping track of the :ref:`msl-io-metadata`
 in arithmetic operations, for example,
 
 .. code-block:: pycon
-
-   >>> temperatures = {'t1': dset1.metadata.temperature, 't2': dset2.metadata.temperature}
-   >>> dset3 = root.create_dataset('dset3', data=dset1+dset2, temperatures=temperatures)
+   >>> temperatures = {"t1": dset1.metadata.temperature, "t2": dset2.metadata.temperature}
+   >>> dset3 = root.create_dataset('dset3', data=dset3.data, temperatures=temperatures)
    >>> dset3
    <Dataset '/dset3' shape=(3,) dtype='<f8' (1 metadata)>
    >>> dset3.data

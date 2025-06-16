@@ -2,7 +2,7 @@ import pytest
 
 from msl.io.base import Root
 from msl.io.base import Writer
-from msl.io.dataset import Dataset
+from msl.io.vertex import Dataset
 
 
 def test_set_root():
@@ -13,7 +13,7 @@ def test_set_root():
     assert writer.file is None
     assert len(writer.metadata) == 0
 
-    for item in [dict(), tuple(), list(), None, Dataset("dset", None, False)]:
+    for item in [{}, (), [], None, Dataset(name="dset", parent=None, read_only=False)]:
         with pytest.raises(TypeError):
             writer.set_root(item)
 

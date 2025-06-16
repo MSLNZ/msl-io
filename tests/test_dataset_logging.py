@@ -1,32 +1,33 @@
 import logging
 import os
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped] # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
-from msl.io import JSONWriter, HDF5Writer, read
-from msl.io.dataset_logging import DatasetLogging
+from msl.io import HDF5Writer, JSONWriter, read
+from msl.io.vertex import DatasetLogging
 
 logger = logging.getLogger(__name__)
 
 num_initial_handlers = 0
 
 
-def setup_module():
+def setup_module() -> None:
     # Set the initial number of logging handlers.
     # Since pytest has its own this setup() function must be called
     # when pytest begins to test this module
-    global num_initial_handlers
+    global num_initial_handlers  # noqa: PLW0603
     num_initial_handlers = len(logging.getLogger().handlers)
 
 
-def test_create():
+def test_create() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
@@ -57,7 +58,7 @@ def test_create():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_create_and_require():
+def test_create_and_require() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
@@ -66,8 +67,8 @@ def test_create_and_require():
     assert dset.name == "/a/b/log"
     assert len(logging.getLogger().handlers) == num_initial_handlers + 1
 
-    with pytest.raises(ValueError):
-        root.create_dataset_logging(dset.name)
+    with pytest.raises(ValueError, match=r"not unique"):
+        _ = root.create_dataset_logging(dset.name)
     assert len(logging.getLogger().handlers) == num_initial_handlers + 1
 
     assert not dset.read_only
@@ -101,13 +102,13 @@ def test_create_and_require():
 
     logger.info("another info message")
     assert np.array_equal(dset["levelname"], ["DEBUG", "WARNING", "INFO", "CRITICAL", "ERROR", "INFO"])
-    assert np.array_equal(dset["message"], messages + ["another info message"])
+    assert np.array_equal(dset["message"],  [*messages, "another info message"])
 
     dset.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_create_multiple_same_root():
+def test_create_multiple_same_root() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
@@ -153,32 +154,33 @@ def test_create_multiple_same_root():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_requires_failures():
+def test_requires_failures() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
-    root.create_dataset("regular")
-    root.create_dataset_logging("logging")
+    _ = root.create_dataset("regular")
+    _ = root.create_dataset_logging("logging")
 
     assert np.array_equal(root.logging.dtype.names, ["asctime", "levelname", "name", "message"])
     with pytest.raises(ValueError, match=r"does not equal \('lineno', 'filename'\)"):
-        root.require_dataset_logging("logging", attributes=["lineno", "filename"])
+        _ = root.require_dataset_logging("logging", attributes=["lineno", "filename"])
 
     with pytest.raises(ValueError, match=r"not used for logging"):
-        root.require_dataset_logging("regular")
+        _ = root.require_dataset_logging("regular")
 
+    assert isinstance(root.logging, DatasetLogging)
     root.logging.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_filter_loggers():
+def test_filter_loggers() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     unlogger = logging.getLogger("unwanted")
 
     root = JSONWriter()
     dset = root.create_dataset_logging("log")
-    dset.addFilter(logging.Filter(__name__))
+    dset.add_filter(logging.Filter(__name__))
 
     logger.info("ok")
     unlogger.info("not in dataset")
@@ -191,11 +193,11 @@ def test_filter_loggers():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_save_then_read():
+def test_save_then_read() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
-    json = JSONWriter(file=os.path.join(tempfile.gettempdir(), "msl-io-junk.json"))
-    h5 = HDF5Writer(file=os.path.join(tempfile.gettempdir(), "msl-io-junk.h5"))
+    json = JSONWriter(file=Path(tempfile.gettempdir()) / "msl-io-junk.json")
+    h5 = HDF5Writer(file=Path(tempfile.gettempdir()) / "msl-io-junk.h5")
 
     json.create_dataset_logging("log", date_fmt="%H:%M:%S", extra="ABC")
     h5.require_dataset_logging("/a/b/c/d/e/log")  # doesn't exist so creates it
@@ -213,8 +215,8 @@ def test_save_then_read():
     json_2 = read(json.file)
     if h5py is not None:
         h5_2 = read(h5.file)
-        os.remove(h5.file)
-    os.remove(json.file)
+        Path(h5.file).unlink()
+    Path(json.file).unlink()
 
     # when a file is read, what was once a DatasetLogging object is loaded as a regular Dataset
     # but can be turned back into a DatasetLogging by calling require_dataset_logging()
@@ -305,7 +307,7 @@ def test_save_then_read():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_all_attributes():
+def test_all_attributes() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     attributes = [
@@ -344,15 +346,15 @@ def test_all_attributes():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_is_logging_dataset():
+def test_is_logging_dataset() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
-    root.create_dataset("/a/b/regular")
-    root.create_dataset_logging("log")
-    root.create_dataset("regular")
-    root.create_dataset_logging("/a/b/log")
-    root.create_dataset_logging("/a/b/log2")
+    _ = root.create_dataset("/a/b/regular")
+    _ = root.create_dataset_logging("log")
+    _ = root.create_dataset("regular")
+    _ = root.create_dataset_logging("/a/b/log")
+    _ = root.create_dataset_logging("/a/b/log2")
 
     log_dsets = [dset for dset in root.datasets() if root.is_dataset_logging(dset)]
 
@@ -370,27 +372,27 @@ def test_is_logging_dataset():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_invalid_attributes():
+def test_invalid_attributes() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
 
     # cannot be an empty list/tuple
-    with pytest.raises(ValueError):
-        root.create_dataset_logging("log", attributes=[])
-    with pytest.raises(ValueError):
-        root.create_dataset_logging("log", attributes=tuple())
+    with pytest.raises(ValueError, match=r"Must specify logging attributes"):
+        _ = root.create_dataset_logging("log", attributes=[])
+    with pytest.raises(ValueError, match=r"Must specify logging attributes"):
+        _ = root.create_dataset_logging("log", attributes=tuple())
 
     # every element must be a string
-    with pytest.raises(ValueError):
-        root.create_dataset_logging("log", attributes=[1, 2, 3])
-    with pytest.raises(ValueError):
-        root.create_dataset_logging("log", attributes=["1", "2", 3])
+    with pytest.raises(ValueError, match=r"as strings"):
+        _ = root.create_dataset_logging("log", attributes=[1, 2, 3])
+    with pytest.raises(ValueError, match=r"as strings"):
+        _ = root.create_dataset_logging("log", attributes=["1", "2", 3])
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_initial_shape():
+def test_initial_shape() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
@@ -417,7 +419,7 @@ def test_initial_shape():
     assert len(log4) == 0
 
     for i in range(num_records):
-        logging.info(i)  # just to be different, use the root logger
+        logging.info(i)  # just to be different, use the root logger  # noqa: LOG015
 
     assert len(log1) == 10000
     assert len(log2) == num_records
@@ -425,6 +427,7 @@ def test_initial_shape():
     assert len(log4) == 1267
 
     for dset in root.datasets():
+        assert isinstance(dset, DatasetLogging)
         dset.remove_empty_rows()
 
     assert len(log1) == num_records
@@ -439,16 +442,17 @@ def test_initial_shape():
         assert int(log4[i][3]) == i
 
     for dset in root.datasets():
+        assert isinstance(dset, DatasetLogging)
         dset.remove_handler()
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_initial_index_value():
+def test_initial_index_value() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
-    root = JSONWriter(file=os.path.join(tempfile.gettempdir(), "msl-io-junk.json"))
-    root.create_dataset_logging("log")
+    root = JSONWriter(file=Path(tempfile.gettempdir()) / "msl-io-junk.json")
+    _ = root.create_dataset_logging("log")
 
     n = 10
 
@@ -523,7 +527,7 @@ def test_initial_index_value():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_invalid_shape_or_size():
+def test_invalid_shape_or_size() -> None:
     root = JSONWriter()
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
@@ -544,29 +548,16 @@ def test_invalid_shape_or_size():
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_set_logger():
+def test_set_logger() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
     root.create_dataset_logging("log")
 
     for obj in [None, "no", JSONWriter, logging.INFO, logging.Formatter, logging.Handler]:
-        with pytest.raises(TypeError, match=r"Must be a logging.Logger object"):
+        with pytest.raises(AttributeError, match=r"no attribute 'level'"):
             root.log.set_logger(obj)
 
     root.log.set_logger(logger)
-    root.log.remove_handler()
-    assert len(logging.getLogger().handlers) == num_initial_handlers
-
-
-def test_hash():
-    assert len(logging.getLogger().handlers) == num_initial_handlers
-
-    root = JSONWriter()
-    root.create_dataset_logging("log")
-
-    # just tests that a hash value exists, don't care about the actual value
-    assert isinstance(hash(root.log), int)
-
     root.log.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers

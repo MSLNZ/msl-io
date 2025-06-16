@@ -24,6 +24,7 @@
     ],
     "words": [
         "autouse",
+        "behavior",
         "BIPM",
         "birthtime",
         "chunksize",
@@ -32,7 +33,9 @@
         "geteuid",
         "googleapiclient",
         "gsheets",
+        "intp",
         "levelname",
+        "levelno",
         "ndarray",
         "NOCLOSEPROCESS",
         "officedocument",
@@ -42,6 +45,7 @@
         "ripemd",
         "runas",
         "setflags",
-        "spreadsheetml"
+        "spreadsheetml",
+        "ufunc"
     ]
 }

@@ -29,7 +29,7 @@ class Root(Group):
             Key-value pairs that can be used as :class:`~msl.io.metadata.Metadata`
             for the :class:`~msl.io.base.Root`.
         """
-        super(Group, self).__init__("/", None, False, **metadata)
+        super(Group, self).__init__(name="/", parent=None, read_only=False, **metadata)
         self._file = file
 
     def __repr__(self):

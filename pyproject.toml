@@ -204,6 +204,7 @@ known-first-party = ["msl.io"]
     "D103", # undocumented-public-function
     "INP001", # implicit-namespace-package
     "S101", # Use of `assert` detected
+    "PLR2004", # magic-value-comparison
 ]
 
 [tool.ruff.lint.pydocstyle]

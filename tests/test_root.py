@@ -4,7 +4,7 @@ import types
 import pytest
 
 from msl.io.base import Root
-from msl.io.dataset import Dataset
+from msl.io.vertex import Dataset
 from msl.io.group import Group
 
 
@@ -854,7 +854,7 @@ def test_tree():
 def test_add_group():
     root = Root("some file")
 
-    for item in [dict(), tuple(), list(), None, Dataset("dset", None, False)]:
+    for item in [dict(), tuple(), list(), None, Dataset(name="dset", parent=None, read_only=False)]:
         with pytest.raises(TypeError):
             root.add_group("name", item)
 
@@ -985,15 +985,15 @@ def test_add_group():
 
 def test_add_dataset():
     root = Root("some file")
-    for item in [dict(), tuple(), list(), None, 1.0, Root("r"), Group("group", None, True)]:
+    for item in [{}, (), [], None, 1.0, Root("r"), Group(name="group", parent=None, read_only=True)]:
         with pytest.raises(TypeError):
             root.add_dataset("name", item)
 
     assert len(root) == 0
 
-    dset1 = Dataset("dset1", None, False, data=[1, 2, 3], dtype=int)
-    dset2 = Dataset("dset2", None, False, data=[4.0, 5.0, 6.0], foo="bar")
-    dset3 = Dataset("dset3", None, False, data=[-23.4, 1.78], one=1, two=2)
+    dset1 = Dataset(name="dset1", parent=None, read_only=False, data=[1, 2, 3], dtype=int)
+    dset2 = Dataset(name="dset2", parent=None, read_only=False, data=[4.0, 5.0, 6.0], foo="bar")
+    dset3 = Dataset(name="dset3", parent=None, read_only=False, data=[-23.4, 1.78], one=1, two=2)
 
     root.add_dataset("dset1_copy", dset1)
 
@@ -1035,7 +1035,7 @@ def test_add_dataset_logging():
 
     root = Root("some file")
     for item in [dict(), tuple(), list(), None, 1.0, Root("r"),
-                 Group("group", None, True), Dataset("d", None, True)]:
+                 Group(name="group", parent=None, read_only=True), Dataset(name="d", parent=None, read_only=True)]:
         with pytest.raises(TypeError):
             root.add_dataset_logging("name", item)
 

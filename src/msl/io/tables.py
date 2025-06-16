@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from .base import Reader
-from .dataset import Dataset
+from .vertex import Dataset
 from .readers import ExcelReader
 from .readers import GSheetsReader
 from .utils import get_basename
@@ -21,7 +21,7 @@ extension_delimiter_map = {".csv": ","}
 If the `delimiter` is not specified when calling the :func:`~msl.io.read_table` function then this
 extension-delimiter map is used to determine the value of the `delimiter`. If the file extension
 is not in the map then the value of the `delimiter` is :data:`None` (i.e., split columns by any
-whitespace). 
+whitespace).
 
 Examples
 --------
@@ -94,7 +94,7 @@ def read_table_text(file, **kwargs):
                 use_cols = [use_cols]
             header = [header[i] for i in use_cols]
 
-    return Dataset(get_basename(file), None, True, data=data, header=np.asarray(header, dtype=str))
+    return Dataset(name=get_basename(file), parent=None, read_only=True, data=data, header=np.asarray(header, dtype=str))
 
 
 def read_table_excel(file, cells=None, sheet=None, as_datetime=True, dtype=None, **kwargs):
@@ -226,5 +226,5 @@ def _spreadsheet_to_dataset(table, file, dtype):
         if len(data) == 1:  # a single row
             data = data[0]
 
-    return Dataset(get_basename(file), None, True, data=data,
+    return Dataset(name=get_basename(file), parent=None, read_only=True, data=data,
                    dtype=dtype, header=np.asarray(header, dtype=str))

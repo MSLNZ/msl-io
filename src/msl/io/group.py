@@ -1,291 +1,246 @@
-"""
-A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
-"""
-import re
+"""A [Group][] can contain sub-[Group][]s and/or [Dataset][msl.io.dataset.Dataset]s."""
 
-from .dataset import Dataset
-from .dataset_logging import DatasetLogging
-from .vertex import Vertex
+from __future__ import annotations
+
+import re
+from typing import TYPE_CHECKING
+
+from .vertex import Dataset, DatasetLogging, Vertex
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
+    from logging import Logger
+    from typing import Any
 
 
 class Group(Vertex):
+    """A [Group][] can contain sub-[Group][]s and/or [Dataset][msl.io.vertex.Dataset]s."""
 
-    def __init__(self, name, parent, read_only, **metadata):
-        """A :class:`Group` can contain sub-:class:`Group`\\s and/or :class:`~msl.io.dataset.Dataset`\\s.
+    def __init__(self, *, name: str, parent: Group | None, read_only: bool, **metadata: Any) -> None:
+        """A [Group][] can contain sub-[Group][]s and/or [Dataset][msl.io.vertex.Dataset]s.
 
-        Do not instantiate directly. Create a new :class:`Group` using
-        :meth:`~msl.io.group.Group.create_group`.
+        !!! attention
+            Do not instantiate directly. Create a new [Group][] using [create_group][msl.io.group.Group.create_group].
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of this :class:`Group`. Uses a naming convention analogous to UNIX
-            file systems where each :class:`~msl.io.group.Group` can be thought
-            of as a directory and where every subdirectory is separated from its
-            parent directory by the ``'/'`` character.
-        parent : :class:`Group`
-            The parent :class:`Group` to this :class:`Group`.
-        read_only : :class:`bool`
-            Whether the :class:`Group` is to be accessed in read-only mode.
-        **metadata
-            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for this :class:`Group`.
+        Args:
+            name: The name of this [Group][]. Uses a naming convention analogous to UNIX
+                file systems where each [Group][msl.io.group.Group] can be thought
+                of as a directory and where every subdirectory is separated from its
+                parent directory by the `"/"` character.
+            parent: The parent to this [Group][].
+            read_only: Whether the [Group][] is initialised in read-only mode.
+            metadata: All additional keyword arguments are used to create the
+                [Metadata][msl.io.metadata.Metadata] for this [Group][].
         """
-        super(Group, self).__init__(name, parent, read_only, **metadata)
+        super().__init__(name=name, parent=parent, read_only=read_only, **metadata)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Returns the string representation of the `Group`."""
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
         return f"<Group {self._name!r} ({g} groups, {d} datasets, {m} metadata)>"
 
-    def __getitem__(self, item):
-        if item and not item[0] == "/":
+    def __getitem__(self, item: str) -> Dataset | Group:
+        """Get an item from the `Group`."""
+        if item and item[0] != "/":
             item = "/" + item
+
         try:
             return self._mapping[item]
         except KeyError:
-            pass  # raise a more detailed error message below
-        self._raise_key_error(item)
+            msg = f"{item!r} is not in {self!r}"
+            raise KeyError(msg) from None
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Dataset | Group:
+        """Get an item from the `Group`."""
         try:
-            return self.__getitem__("/" + item)
+            return self.__getitem__(f"/{item}")
         except KeyError as e:
-            msg = str(e)
-        raise AttributeError(msg)
+            raise AttributeError(str(e)) from None
 
-    def __delattr__(self, item):
+    def __delattr__(self, item: str) -> None:
+        """Delete and item from the `Group`."""
         try:
             return self.__delitem__("/" + item)
         except KeyError as e:
-            msg = str(e)
-        raise AttributeError(msg)
+            raise AttributeError(str(e)) from None
 
     @staticmethod
-    def is_dataset(obj):
-        """Test whether an object is a :class:`~msl.io.dataset.Dataset`.
+    def is_dataset(obj: object) -> bool:
+        """Check if an object is an instance of [Dataset][msl.io.vertex.Dataset].
 
-        Parameters
-        ----------
-        obj : :class:`object`
-            The object to test.
+        Args:
+            obj: The object to check.
 
-        Returns
-        -------
-        :class:`bool`
-            Whether `obj` is an instance of :class:`~msl.io.dataset.Dataset`.
+        Returns:
+            Whether `obj` is an instance of [Dataset][msl.io.vertex.Dataset].
         """
         return isinstance(obj, Dataset)
 
     @staticmethod
-    def is_dataset_logging(obj):
-        """Test whether an object is a :class:`~msl.io.dataset_logging.DatasetLogging`.
+    def is_dataset_logging(obj: object) -> bool:
+        """Check if an object is an instance of [DatasetLogging][msl.io.vertex.DatasetLogging].
 
-        Parameters
-        ----------
-        obj : :class:`object`
-            The object to test.
+        Args:
+            obj: The object to check.
 
-        Returns
-        -------
-        :class:`bool`
-            Whether `obj` is an instance of :class:`~msl.io.dataset_logging.DatasetLogging`.
+        Returns:
+            Whether `obj` is an instance of [DatasetLogging][msl.io.vertex.DatasetLogging].
         """
         return isinstance(obj, DatasetLogging)
 
     @staticmethod
-    def is_group(obj):
-        """Test whether an object is a :class:`~msl.io.group.Group`.
+    def is_group(obj: object) -> bool:
+        """Check if an object is an instance of [Group][msl.io.group.Group].
 
-        Parameters
-        ----------
-        obj : :class:`object`
-            The object to test.
+        Args:
+            obj: The object to check.
 
-        Returns
-        -------
-        :class:`bool`
-            Whether `obj` is an instance of :class:`~msl.io.group.Group`.
+        Returns:
+            Whether `obj` is an instance of [Group][msl.io.group.Group].
         """
         return isinstance(obj, Group)
 
-    def datasets(self, exclude=None, include=None, flags=0):
-        """Get the :class:`~msl.io.dataset.Dataset`\\s in this :class:`Group`.
+    def datasets(self, *, exclude: str | None = None, include: str | None = None, flags: int = 0) -> Iterator[Dataset]:
+        """Yield the [Dataset][msl.io.vertex.Dataset]s in this [Group][].
 
-        Parameters
-        ----------
-        exclude : :class:`str`, optional
-            A regex pattern to use to exclude :class:`~msl.io.dataset.Dataset`\\s.
-            The :func:`re.search` function is used to compare the `exclude` regex
-            pattern with the `name` of each :class:`~msl.io.dataset.Dataset`. If
-            there is a match, the :class:`~msl.io.dataset.Dataset` is not yielded.
-        include : :class:`str`, optional
-            A regex pattern to use to include :class:`~msl.io.dataset.Dataset`\\s.
-            The :func:`re.search` function is used to compare the `include` regex
-            pattern with the `name` of each :class:`~msl.io.dataset.Dataset`. If
-            there is a match, the :class:`~msl.io.dataset.Dataset` is yielded.
-        flags : :class:`int`, optional
-            Regex flags that are passed to :func:`re.compile`.
+        Args:
+            exclude: A regular-expression pattern to use to exclude [Dataset][msl.io.vertex.Dataset]s.
+                The [re.search][] function is used to compare the `exclude` pattern
+                with the `name` of each [Dataset][msl.io.vertex.Dataset]. If
+                there is a match, the [Dataset][msl.io.vertex.Dataset] is not yielded.
+            include: A regular-expression pattern to use to include [Dataset][msl.io.vertex.Dataset]s.
+                The [re.search][] function is used to compare the `include` pattern
+                with the `name` of each [Dataset][msl.io.vertex.Dataset]. If
+                there is a match, the [Dataset][msl.io.vertex.Dataset] is yielded.
+            flags: Regular-expression flags that are passed to [re.compile][].
 
-        Yields
-        ------
-        :class:`~msl.io.dataset.Dataset`
-            The filtered :class:`~msl.io.dataset.Dataset`\\s based on the
-            `exclude` and `include` regex patterns. The `exclude` pattern
-            has more precedence than the `include` pattern if there is a
-            conflict.
+        Yields:
+            The filtered [Dataset][msl.io.vertex.Dataset]s based on the `exclude` and `include` patterns.
+            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
         """
-        e = False if exclude is None else re.compile(exclude, flags=flags)
-        i = False if include is None else re.compile(include, flags=flags)
+        e = None if exclude is None else re.compile(exclude, flags=flags)
+        i = None if include is None else re.compile(include, flags=flags)
         for obj in self._mapping.values():
-            if self.is_dataset(obj):
+            if isinstance(obj, Dataset):
                 if e and e.search(obj.name):
                     continue
                 if i and not i.search(obj.name):
                     continue
                 yield obj
 
-    def groups(self, exclude=None, include=None, flags=0):
-        """Get the sub-:class:`.Group`\\s of this :class:`.Group`.
+    def groups(self, *, exclude: str | None = None, include: str | None = None, flags: int = 0) -> Iterator[Group]:
+        """Yield the sub-[Group][]s of this [Group][].
 
-        Parameters
-        ----------
-        exclude : :class:`str`, optional
-            A regex pattern to use to exclude :class:`.Group`\\s. The
-            :func:`re.search` function is used to compare the `exclude` regex
-            pattern with the `name` of each :class:`.Group`. If there is a match,
-            the :class:`.Group` is not yielded.
-        include : :class:`str`, optional
-            A regex pattern to use to include :class:`.Group`\\s. The
-            :func:`re.search` function is used to compare the `include` regex
-            pattern with the `name` of each :class:`.Group`. If there is a match,
-            the :class:`.Group` is yielded.
-        flags : :class:`int`, optional
-            Regex flags that are passed to :func:`re.compile`.
+        Args:
+            exclude: A regular-expression pattern to use to exclude sub-[Group][msl.io.group.Group]s.
+                The [re.search][] function is used to compare the `exclude` pattern with the `name`
+                of each sub-[Group][]. If there is a match, the sub-[Group][] is not yielded.
+            include: A regular-expression pattern to use to include sub-[Group][]s. The
+                [re.search][] function is used to compare the `include` pattern with the
+                `name` of each sub-[Group][]. If there is a match, the sub-[Group][] is yielded.
+            flags: Regular-expression flags that are passed to [re.compile][].
 
-        Yields
-        ------
-        :class:`Group`
-            The filtered :class:`.Group`\\s based on the `exclude` and `include`
-            regex patterns. The `exclude` pattern has more precedence than the
-            `include` pattern if there is a conflict.
+        Yields:
+            The filtered sub-[Group][]s based on the `exclude` and `include` patterns.
+            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
         """
-        e = False if exclude is None else re.compile(exclude, flags=flags)
-        i = False if include is None else re.compile(include, flags=flags)
+        e = None if exclude is None else re.compile(exclude, flags=flags)
+        i = None if include is None else re.compile(include, flags=flags)
         for obj in self._mapping.values():
-            if self.is_group(obj):
+            if isinstance(obj, Group):
                 if e and e.search(obj.name):
                     continue
                 if i and not i.search(obj.name):
                     continue
                 yield obj
 
-    def descendants(self):
-        """Get all descendant (children) :class:`.Group`\\s of this :class:`.Group`.
+    def descendants(self) -> Iterator[Group]:
+        """Yield all descendant (children) [Group][]s of this [Group][].
 
-        Yields
-        ------
-        :class:`.Group`
-            The descendants of this :class:`.Group`.
+        Yields:
+            The descendants of this [Group][].
         """
         for obj in self._mapping.values():
-            if self.is_group(obj):
+            if isinstance(obj, Group):
                 yield obj
 
-    def ancestors(self):
-        """Get all ancestor (parent) :class:`.Group`\\s of this :class:`.Group`.
+    def ancestors(self) -> Iterator[Group]:
+        """Yield all ancestor (parent) [Group][]s of this [Group][].
 
-        Yields
-        ------
-        :class:`.Group`
-            The ancestors of this :class:`.Group`.
+        Yields:
+            The ancestors of this [Group][].
         """
         parent = self.parent
         while parent is not None:
             yield parent
             parent = parent.parent
 
-    def add_group(self, name, group):
-        """Add a :class:`Group`.
+    def add_group(self, name: str, group: Group) -> None:
+        """Add a [Group][].
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the new :class:`Group` to add.
-        group : :class:`Group`
-            The :class:`Group` to add. The :class:`~msl.io.dataset.Dataset`\\s and
-            :class:`~msl.io.metadata.Metadata` that are contained within the
-            `group` will be copied.
+        Args:
+            name: The name of the new [Group][] to add.
+            group: The [Group][] to add. The [Dataset][msl.io.vertex.Dataset]s and
+                [Metadata][msl.io.metadata.Metadata] that are contained within the
+                `group` will be copied.
         """
-        if not isinstance(group, Group):
-            raise TypeError(f"Must pass in a Group object, got {group!r}")
+        if not isinstance(group, Group):  # pyright: ignore[reportUnnecessaryIsInstance]
+            msg = f"Must pass in a Group object, got {group!r}"  # type: ignore[unreachable] # pyright: ignore[reportUnreachable]
+            raise TypeError(msg)
 
         name = "/" + name.strip("/")
 
         if not group:  # no sub-Groups or Datasets, only add the Metadata
-            self.create_group(name + group.name, **group.metadata.copy())
+            _ = self.create_group(name + group.name, **group.metadata.copy())
             return
 
         for key, vertex in group.items():
             n = name + key
-            if self.is_group(vertex):
-                self.create_group(n, read_only=vertex.read_only, **vertex.metadata.copy())
+            if isinstance(vertex, Group):
+                _ = self.create_group(n, read_only=vertex.read_only, **vertex.metadata.copy())
             else:  # must be a Dataset
-                self.create_dataset(
+                _ = self.create_dataset(
                     n, read_only=vertex.read_only, data=vertex.data.copy(), **vertex.metadata.copy()
                 )
 
-    def create_group(self, name, read_only=None, **metadata):
-        """Create a new :class:`Group`.
+    def create_group(self, name: str, *, read_only: bool | None = None, **metadata: Any) -> Group:
+        """Create a new [Group][].
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor[Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the new :class:`Group`.
-        read_only : :class:`bool`, optional
-            Whether to create this :class:`Group` in read-only mode.
-            If :data:`None` then uses the mode for this :class:`Group`.
-        **metadata
-            Key-value pairs that are used to create the :class:`~msl.io.metadata.Metadata`
-            for this :class:`Group`.
+        Args:
+            name: The name of the new [Group][].
+            read_only: Whether to create the new [Group][] in read-only mode.
+                If `None`, uses the mode for this [Group][].
+            metadata: All additional keyword arguments are used to create the [Metadata][msl.io.metadata.Metadata]
+                for the new [Group][].
 
-        Returns
-        -------
-        :class:`Group`
-            The new :class:`Group` that was created.
+        Returns:
+            The new [Group][] that was created.
         """
-        read_only, metadata = self._check(read_only, **metadata)
-        name, parent = self._create_ancestors(name, read_only)
-        return Group(name, parent, read_only, **metadata)
+        read_only, metadata = self._check(read_only=read_only, **metadata)
+        name, parent = self._create_ancestors(name, read_only=read_only)
+        return Group(name=name, parent=parent, read_only=read_only, **metadata)
 
-    def require_group(self, name, read_only=None, **metadata):
-        """Require that a :class:`Group` exists.
+    def require_group(self, name: str, read_only: bool | None = None, **metadata: Any) -> Group:
+        """Require that a [Group][] exists.
 
-        If the :class:`Group` exists then it will be returned if it does not exist
-        then it is created.
+        If the [Group][] exists, it will be returned otherwise it is created then returned.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Args:
+            name: The name of the [Group][] to require.
+            read_only: Whether to return the required [Group][] in read-only mode.
+                If `None`, uses the mode for this [Group][].
+            metadata: All additional keyword arguments are used as [Metadata][msl.io.metadata.Metadata]
+                for the required [Group][].
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the :class:`Group`.
-        read_only : :class:`bool`, optional
-            Whether to return the :class:`Group` in read-only mode.
-            If :data:`None` then uses the mode for this :class:`Group`.
-        **metadata
-            Key-value pairs that are used as :class:`~msl.io.metadata.Metadata`
-            for this :class:`Group`.
-
-        Returns
-        -------
-        :class:`Group`
-            The :class:`Group` that was created or that already existed.
+        Returns:
+            The required [Group][] that was created or that already existed.
         """
         name = "/" + name.strip("/")
         group_name = name if self.parent is None else self.name + name
@@ -297,73 +252,55 @@ class Group(Vertex):
                 return group
         return self.create_group(name, read_only=read_only, **metadata)
 
-    def add_dataset(self, name, dataset):
-        """Add a :class:`~msl.io.dataset.Dataset`.
+    def add_dataset(self, name: str, dataset: Dataset) -> None:
+        """Add a [Dataset][msl.io.vertex.Dataset].
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the new :class:`~msl.io.dataset.Dataset` to add.
-        dataset : :class:`~msl.io.dataset.Dataset`
-            The :class:`~msl.io.dataset.Dataset` to add. The :class:`~msl.io.dataset.Dataset`
-            and the :class:`~msl.io.metadata.Metadata` are copied.
+        Args:
+            name: The name of the new [Dataset][msl.io.vertex.Dataset] to add.
+            dataset: The [Dataset][msl.io.vertex.Dataset] to add. The data and the
+                [Metadata][msl.io.metadata.Metadata] in the [Dataset][msl.io.vertex.Dataset] are copied.
         """
-        if not isinstance(dataset, Dataset):
-            raise TypeError(f"Must pass in a Dataset object, got {dataset!r}")
+        if not isinstance(dataset, Dataset):  # pyright: ignore[reportUnnecessaryIsInstance]
+            msg = f"Must pass in a Dataset object, got {dataset!r}"  # type: ignore[unreachable] # pyright: ignore[reportUnreachable]
+            raise TypeError(msg)
 
         name = "/" + name.strip("/")
-        self.create_dataset(
-            name, read_only=dataset.read_only, data=dataset.data.copy(), **dataset.metadata.copy()
-        )
+        _ = self.create_dataset(name, read_only=dataset.read_only, data=dataset.data.copy(), **dataset.metadata.copy())
 
-    def create_dataset(self, name, read_only=None, **kwargs):
-        """Create a new :class:`~msl.io.dataset.Dataset`.
+    def create_dataset(self, name: str, *, read_only: bool | None = None, **kwargs: Any) -> Dataset:
+        """Create a new [Dataset][msl.io.vertex.Dataset].
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the new :class:`~msl.io.dataset.Dataset`.
-        read_only : :class:`bool`, optional
-            Whether to create this :class:`~msl.io.dataset.Dataset` in read-only mode.
-            If :data:`None` then uses the mode for this :class:`Group`.
-        **kwargs
-            Key-value pairs that are passed to :class:`~msl.io.dataset.Dataset`.
+        Args:
+            name: The name of the new [Dataset][msl.io.vertex.Dataset].
+            read_only: Whether to create this [Dataset][msl.io.vertex.Dataset] in read-only mode.
+                If `None`, uses the mode for this [Group][].
+            kwargs: All additional keyword arguments are passed to [Dataset][msl.io.vertex.Dataset].
 
-        Returns
-        -------
-        :class:`~msl.io.dataset.Dataset`
-            The new :class:`~msl.io.dataset.Dataset` that was created.
+        Returns:
+            The new [Dataset][msl.io.vertex.Dataset] that was created.
         """
-        read_only, kwargs = self._check(read_only, **kwargs)
-        name, parent = self._create_ancestors(name, read_only)
-        return Dataset(name, parent, read_only, **kwargs)
+        read_only, kwargs = self._check(read_only=read_only, **kwargs)
+        name, parent = self._create_ancestors(name, read_only=read_only)
+        return Dataset(name=name, parent=parent, read_only=read_only, **kwargs)
 
-    def require_dataset(self, name, read_only=None, **kwargs):
-        """Require that a :class:`~msl.io.dataset.Dataset` exists.
+    def require_dataset(self, name: str, *, read_only: bool | None = None, **kwargs: Any) -> Dataset:
+        """Require that a [Dataset][msl.io.vertex.Dataset] exists.
 
-        If the :class:`~msl.io.dataset.Dataset` exists then it will be returned
-        if it does not exist then it is created.
+        If the [Dataset][msl.io.vertex.Dataset] exists it will be returned, otherwise it is created then returned.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Args:
+            name: The name of the required [Dataset][msl.io.vertex.Dataset].
+            read_only: Whether to create the required [Dataset][msl.io.vertex.Dataset] in read-only mode.
+                If `None`, uses the mode for this [Group][].
+            kwargs: All additional keyword arguments are passed to [Dataset][msl.io.vertex.Dataset].
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the :class:`~msl.io.dataset.Dataset`.
-        read_only : :class:`bool`, optional
-            Whether to create this :class:`~msl.io.dataset.Dataset` in read-only mode.
-            If :data:`None` then uses the mode for this :class:`Group`.
-        **kwargs
-            Key-value pairs that are passed to :class:`~msl.io.dataset.Dataset`.
-
-        Returns
-        -------
-        :class:`~msl.io.dataset.Dataset`
-            The :class:`~msl.io.dataset.Dataset` that was created or that already existed.
+        Returns:
+            The [Dataset][msl.io.vertex.Dataset] that was created or that already existed.
         """
         name = "/" + name.strip("/")
         dataset_name = name if self.parent is None else self.name + name
@@ -378,82 +315,78 @@ class Group(Vertex):
                 return dataset
         return self.create_dataset(name, read_only=read_only, **kwargs)
 
-    def add_dataset_logging(self, name, dataset_logging):
-        """Add a :class:`~msl.io.dataset_logging.DatasetLogging`.
+    def add_dataset_logging(self, name: str, dataset_logging: DatasetLogging) -> None:
+        """Add a [DatasetLogging][msl.io.vertex.DatasetLogging].
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the new :class:`~msl.io.dataset_logging.DatasetLogging` to add.
-        dataset_logging : :class:`~msl.io.dataset_logging.DatasetLogging`
-            The :class:`~msl.io.dataset_logging.DatasetLogging` to add. The
-            :class:`~msl.io.dataset_logging.DatasetLogging` and the
-            :class:`~msl.io.metadata.Metadata` are copied.
+        Args:
+            name: The name of the new [DatasetLogging][msl.io.vertex.DatasetLogging] to add.
+            dataset_logging: The [DatasetLogging][msl.io.vertex.DatasetLogging] to add. The
+                data and [Metadata][msl.io.metadata.Metadata] are copied.
         """
-        if not isinstance(dataset_logging, DatasetLogging):
-            raise TypeError(f"Must pass in a DatasetLogging object, got {dataset_logging!r}")
+        if not isinstance(dataset_logging, DatasetLogging):  # pyright: ignore[reportUnnecessaryIsInstance]
+            msg = f"Must pass in a DatasetLogging object, got {dataset_logging!r}"  # type: ignore[unreachable] # pyright: ignore[reportUnreachable]
+            raise TypeError(msg)
 
         name = "/" + name.strip("/")
-        self.create_dataset_logging(
+        _ = self.create_dataset_logging(
             name,
             level=dataset_logging.level,
             attributes=dataset_logging.attributes,
             logger=dataset_logging.logger,
             date_fmt=dataset_logging.date_fmt,
             data=dataset_logging.data.copy(),
-            **dataset_logging.metadata.copy()
+            **dataset_logging.metadata.copy(),
         )
 
-    def create_dataset_logging(self, name, level="INFO", attributes=None, logger=None, date_fmt=None, **kwargs):
-        """Create a :class:`~msl.io.dataset.Dataset` that handles :mod:`logging` records.
+    def create_dataset_logging(
+        self,
+        name: str,
+        *,
+        level: str | int = "INFO",
+        attributes: Sequence[str] | None = None,
+        logger: Logger | None = None,
+        date_fmt: str | None = None,
+        **kwargs: Any,
+    ) -> DatasetLogging:
+        """Create a [Dataset][msl.io.vertex.Dataset] that handles [logging][] records.
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+        Automatically creates the ancestor [Group][]s if they do not exist.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            A name to associate with the :class:`~msl.io.dataset.Dataset`.
-        level : :class:`int` or :class:`str`, optional
-            The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` or :class:`tuple` of :class:`str`, optional
-            The :ref:`attribute names <logrecord-attributes>` to include in the
-            :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
-            If :data:`None` then uses ``asctime``, ``levelname``, ``name``, and ``message``.
-        logger : :class:`~logging.Logger`, optional
-            The :class:`~logging.Logger` that the :class:`~msl.io.dataset_logging.DatasetLogging` object
-            will be added to. If :data:`None` then it is added to the ``root`` :class:`~logging.Logger`.
-        date_fmt : :class:`str`, optional
-            The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
-            to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
-            If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
-        **kwargs
-            Additional keyword arguments are passed to :class:`~msl.io.dataset.Dataset`.
-            The default behaviour is to append every :ref:`logging record <log-record>`
-            to the :class:`~msl.io.dataset.Dataset`. This guarantees that the size of the
-            :class:`~msl.io.dataset.Dataset` is equal to the number of
-            :ref:`logging records <log-record>` that were added to it. However, this behaviour
-            can decrease the performance if many :ref:`logging records <log-record>` are
-            added often because a copy of the data in the :class:`~msl.io.dataset.Dataset` is
-            created for each :ref:`logging record <log-record>` that is added. You can improve
-            the performance by specifying an initial size of the :class:`~msl.io.dataset.Dataset`
-            by including a `shape` or a `size` keyword argument. This will also automatically
-            create additional empty rows in the :class:`~msl.io.dataset.Dataset`, that is
-            proportional to the size of the :class:`~msl.io.dataset.Dataset`, if the size of the
-            :class:`~msl.io.dataset.Dataset` needs to be increased. If you do this then you will
-            want to call :meth:`~msl.io.dataset_logging.DatasetLogging.remove_empty_rows` before
-            writing :class:`~msl.io.dataset_logging.DatasetLogging` to a file or interacting
-            with the data in :class:`~msl.io.dataset_logging.DatasetLogging` to remove the
-            extra rows that were created.
+        Args:
+            name: A name to associate with the [Dataset][msl.io.vertex.Dataset].
+            level: The [logging level][levels] to use.
+            attributes: The [attribute names][logrecord-attributes] to include in the
+                [Dataset][msl.io.vertex.Dataset] for each [logging record][log-record].
+                If `None`, uses _asctime_, _levelname_, _name_, and _message_.
+            logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.vertex.DatasetLogging] object
+                will be added to. If `None`, it is added to the `root` [Logger][logging.Logger].
+            date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
+                to use to represent the _asctime_ [attribute][logrecord-attributes] in.
+                If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.
+            kwargs: All additional keyword arguments are passed to [Dataset][msl.io.vertex.Dataset].
+                The default behaviour is to append every [logging record][log-record]
+                to the [Dataset][msl.io.vertex.Dataset]. This guarantees that the size of the
+                [Dataset][msl.io.vertex.Dataset] is equal to the number of
+                [logging records][log-record] that were added to it. However, this behaviour
+                can decrease the performance if many [logging records][log-record] are
+                added often because a copy of the data in the [Dataset][msl.io.vertex.Dataset] is
+                created for each [logging record][log-record] that is added. You can improve
+                the performance by specifying an initial size of the [Dataset][msl.io.vertex.Dataset]
+                by including a `shape` or a `size` keyword argument. This will also automatically
+                create additional empty rows in the [Dataset][msl.io.vertex.Dataset], that is
+                proportional to the size of the [Dataset][msl.io.vertex.Dataset], if the size of the
+                [Dataset][msl.io.vertex.Dataset] needs to be increased. If you do this then you will
+                want to call [remove_empty_rows][msl.io.vertex.DatasetLogging.remove_empty_rows] before
+                writing [DatasetLogging][msl.io.vertex.DatasetLogging] to a file or interacting
+                with the data in [DatasetLogging][msl.io.vertex.DatasetLogging] to remove the
+                _empty_ rows that were created.
 
-        Returns
-        -------
-        :class:`~msl.io.dataset_logging.DatasetLogging`
-            The :class:`~msl.io.dataset_logging.DatasetLogging` that was created.
+        Returns:
+            The [DatasetLogging][msl.io.vertex.DatasetLogging] that was created.
 
-        Examples
-        --------
+        Examples:
         >>> import logging
         >>> from msl.io import JSONWriter
         >>> logger = logging.getLogger('my_logger')
@@ -476,8 +409,8 @@ class Group(Vertex):
 
         >>> log_dset.remove_handler()
         """
-        read_only, metadata = self._check(False, **kwargs)
-        name, parent = self._create_ancestors(name, read_only)
+        read_only, metadata = self._check(read_only=False, **kwargs)
+        name, parent = self._create_ancestors(name, read_only=read_only)
         if attributes is None:
             # if the default attribute names are changed then update the `attributes`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
@@ -486,76 +419,75 @@ class Group(Vertex):
             # if the default date_fmt is changed then update the `date_fmt`
             # description in the docstring of create_dataset_logging() and require_dataset_logging()
             date_fmt = "%Y-%m-%dT%H:%M:%S.%f"
-        return DatasetLogging(name, parent, level=level, attributes=attributes,
-                              logger=logger, date_fmt=date_fmt, **metadata)
+        return DatasetLogging(
+            name=name, parent=parent, level=level, attributes=attributes, logger=logger, date_fmt=date_fmt, **metadata
+        )
 
-    def require_dataset_logging(self, name, level="INFO", attributes=None, logger=None, date_fmt=None, **kwargs):
-        """Require that a :class:`~msl.io.dataset.Dataset` exists for handling :mod:`logging` records.
+    def require_dataset_logging(
+        self,
+        name: str,
+        *,
+        level: str | int = "INFO",
+        attributes: Sequence[str] | None = None,
+        logger: Logger | None = None,
+        date_fmt: str | None = None,
+        **kwargs: Any,
+    ) -> DatasetLogging:
+        """Require that a [Dataset][msl.io.vertex.Dataset] exists for handling [logging][] records.
 
-        If the :class:`~msl.io.dataset_logging.DatasetLogging` exists then it will be returned
-        if it does not exist then it is created.
+        If the [DatasetLogging][msl.io.dataset_logging.DatasetLogging] exists it will be returned
+        otherwise it is created and then returned. Automatically creates the ancestor [Group][]s
+        if they do not exist.
 
-        Automatically creates the ancestor :class:`Group`\\s if they do not exist.
+            name: A name to associate with the [Dataset][msl.io.vertex.Dataset].
+            level: The [logging level][levels] to use.
+            attributes: The [attribute names][logrecord-attributes] to include in the
+                [Dataset][msl.io.vertex.Dataset] for each [logging record][log-record].
+                If `None`, uses _asctime_, _levelname_, _name_, and _message_.
+            logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.vertex.DatasetLogging] object
+                will be added to. If `None`, it is added to the `root` [Logger][logging.Logger].
+            date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
+                to use to represent the _asctime_ [attribute][logrecord-attributes] in.
+                If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.
+            kwargs: All additional keyword arguments are passed to [Dataset][msl.io.vertex.Dataset].
+                The default behaviour is to append every [logging record][log-record]
+                to the [Dataset][msl.io.vertex.Dataset]. This guarantees that the size of the
+                [Dataset][msl.io.vertex.Dataset] is equal to the number of
+                [logging records][log-record] that were added to it. However, this behaviour
+                can decrease the performance if many [logging records][log-record] are
+                added often because a copy of the data in the [Dataset][msl.io.vertex.Dataset] is
+                created for each [logging record][log-record] that is added. You can improve
+                the performance by specifying an initial size of the [Dataset][msl.io.vertex.Dataset]
+                by including a `shape` or a `size` keyword argument. This will also automatically
+                create additional empty rows in the [Dataset][msl.io.vertex.Dataset], that is
+                proportional to the size of the [Dataset][msl.io.vertex.Dataset], if the size of the
+                [Dataset][msl.io.vertex.Dataset] needs to be increased. If you do this then you will
+                want to call [remove_empty_rows][msl.io.vertex.DatasetLogging.remove_empty_rows] before
+                writing [DatasetLogging][msl.io.vertex.DatasetLogging] to a file or interacting
+                with the data in [DatasetLogging][msl.io.vertex.DatasetLogging] to remove the
+                _empty_ rows that were created.
 
-        Parameters
-        ----------
-        name : :class:`str`
-            A name to associate with the :class:`~msl.io.dataset.Dataset`.
-        level : :class:`int` or :class:`str`, optional
-            The :ref:`logging level <levels>` to use.
-        attributes : :class:`list` or :class:`tuple` of :class:`str`, optional
-            The :ref:`attribute names <logrecord-attributes>` to include in the
-            :class:`~msl.io.dataset.Dataset` for each :ref:`logging record <log-record>`.
-            If the :class:`~msl.io.dataset.Dataset` exists and if `attributes`
-            are specified, and they do not match those of the existing
-            :class:`~msl.io.dataset.Dataset`, then a :exc:`ValueError` is raised.
-            If :data:`None` and the :class:`~msl.io.dataset.Dataset` does not exist
-            then uses ``asctime``, ``levelname``, ``name``, and ``message``.
-        logger : :class:`~logging.Logger`, optional
-            The :class:`~logging.Logger` that the :class:`~msl.io.dataset_logging.DatasetLogging` object
-            will be added to. If :data:`None` then it is added to the ``root`` :class:`~logging.Logger`.
-        date_fmt : :class:`str`, optional
-            The :class:`~datetime.datetime` :ref:`format code <strftime-strptime-behavior>`
-            to use to represent the ``asctime`` :ref:`attribute <logrecord-attributes>` in.
-            If :data:`None` then uses the ISO 8601 format ``'%Y-%m-%dT%H:%M:%S.%f'``.
-        **kwargs
-            Additional keyword arguments are passed to :class:`~msl.io.dataset.Dataset`.
-            The default behaviour is to append every :ref:`logging record <log-record>`
-            to the :class:`~msl.io.dataset.Dataset`. This guarantees that the size of the
-            :class:`~msl.io.dataset.Dataset` is equal to the number of
-            :ref:`logging records <log-record>` that were added to it. However, this behaviour
-            can decrease the performance if many :ref:`logging records <log-record>` are
-            added often because a copy of the data in the :class:`~msl.io.dataset.Dataset` is
-            created for each :ref:`logging record <log-record>` that is added. You can improve
-            the performance by specifying an initial size of the :class:`~msl.io.dataset.Dataset`
-            by including a `shape` or a `size` keyword argument. This will also automatically
-            create additional empty rows in the :class:`~msl.io.dataset.Dataset`, that is
-            proportional to the size of the :class:`~msl.io.dataset.Dataset`, if the size of the
-            :class:`~msl.io.dataset.Dataset` needs to be increased. If you do this then you will
-            want to call :meth:`~msl.io.dataset_logging.DatasetLogging.remove_empty_rows` before
-            writing :class:`~msl.io.dataset_logging.DatasetLogging` to a file or interacting
-            with the data in :class:`~msl.io.dataset_logging.DatasetLogging` to remove the
-            extra rows that were created.
-
-        Returns
-        -------
-        :class:`~msl.io.dataset_logging.DatasetLogging`
-            The :class:`~msl.io.dataset_logging.DatasetLogging` that was created or
-            that already existed.
+        Returns:
+            The [DatasetLogging][msl.io.vertex.DatasetLogging] that was created or that already existed.
         """
         name = "/" + name.strip("/")
         dataset_name = name if self.parent is None else self.name + name
         for dataset in self.datasets():
             if dataset.name == dataset_name:
-                if ("logging_level" not in dataset.metadata) or \
-                        ("logging_level_name" not in dataset.metadata) or \
-                        ("logging_date_format" not in dataset.metadata):
-                    raise ValueError("The required Dataset was found but it is not used for logging")
+                if (
+                    ("logging_level" not in dataset.metadata)
+                    or ("logging_level_name" not in dataset.metadata)
+                    or ("logging_date_format" not in dataset.metadata)
+                ):
+                    msg = "The required Dataset was found but it is not used for logging"
+                    raise ValueError(msg)
 
                 if attributes and (dataset.dtype.names != tuple(attributes)):
-                    raise ValueError("The attribute names of the existing "
-                                     f"logging Dataset are {dataset.dtype.names} which does not equal {tuple(attributes)}"
-                                     )
+                    msg = (
+                        f"The attribute names of the existing logging Dataset are "
+                        f"{dataset.dtype.names} which does not equal {tuple(attributes)}"
+                    )
+                    raise ValueError(msg)
 
                 if isinstance(dataset, DatasetLogging):
                     return dataset
@@ -565,59 +497,59 @@ class Group(Vertex):
                 data = dataset.data.copy()
 
                 # remove the existing Dataset from its descendants, itself and its ancestors
-                groups = tuple(self.descendants()) + (self,) + tuple(self.ancestors())
+                groups = (*tuple(self.descendants()), self, *tuple(self.ancestors()))
                 for group in groups:
                     for dset in group.datasets():
                         if dset is dataset:
                             key = "/" + dset.name.lstrip(group.name)
-                            del group._mapping[key]
+                            del group._mapping[key]  # noqa: SLF001
                             break
 
                 # temporarily make this Group not in read-only mode
                 original_read_only_mode = bool(self._read_only)
-                self._read_only = False
+                self._read_only: bool = False
                 kwargs.update(meta)
-                dset = self.create_dataset_logging(name, level=level, attributes=data.dtype.names,
-                                                   logger=logger, date_fmt=meta.logging_date_format,
-                                                   data=data, **kwargs)
+                dset = self.create_dataset_logging(
+                    name,
+                    level=level,
+                    attributes=data.dtype.names,
+                    logger=logger,
+                    date_fmt=meta.logging_date_format,
+                    data=data,
+                    **kwargs,
+                )
                 self._read_only = original_read_only_mode
                 return dset
 
-        return self.create_dataset_logging(name, level=level, attributes=attributes,
-                                           logger=logger, date_fmt=date_fmt, **kwargs)
+        return self.create_dataset_logging(
+            name, level=level, attributes=attributes, logger=logger, date_fmt=date_fmt, **kwargs
+        )
 
-    def remove(self, name):
-        """Remove a :class:`Group` or a :class:`~msl.io.dataset.Dataset`.
+    def remove(self, name: str) -> Dataset | Group | None:
+        """Remove a [Group][] or a [Dataset][msl.io.vertex.Dataset].
 
-        Parameters
-        ----------
-        name : :class:`str`
-            The name of the :class:`Group` or :class:`~msl.io.dataset.Dataset` to remove.
+        Args:
+            name: The name of the [Group][] or [Dataset][msl.io.vertex.Dataset] to remove.
 
-        Returns
-        -------
-        :class:`Group`, :class:`~msl.io.dataset.Dataset` or :data:`None`
-            The :class:`Group` or :class:`~msl.io.dataset.Dataset` that was
-            removed or :data:`None` if there was no :class:`Group` or
-            :class:`~msl.io.dataset.Dataset` with the specified `name`.
+        Returns:
+            The [Group][] or [Dataset][msl.io.vertex.Dataset] that was removed or `None` if
+            there was no [Group][] or [Dataset][msl.io.vertex.Dataset] with the specified `name`.
         """
         name = "/" + name.strip("/")
         return self.pop(name, None)
 
-    def _check(self, read_only, **kwargs):
+    def _check(self, *, read_only: bool | None, **kwargs: Any) -> tuple[bool, dict[str, Any]]:
         self._raise_if_read_only()
         kwargs.pop("parent", None)
         if read_only is None:
             return self._read_only, kwargs
         return read_only, kwargs
 
-    def _create_ancestors(self, name, read_only):
+    def _create_ancestors(self, name: str, *, read_only: bool) -> tuple[str, Group]:
         # automatically create the ancestor Groups if they do not already exist
         names = name.strip("/").split("/")
-        parent = self
+        parent: Group = self
         for n in names[:-1]:
-            if n not in parent:
-                parent = Group(n, parent, read_only)
-            else:
-                parent = parent[n]
+            parent = Group(name=n, parent=parent, read_only=read_only) if n not in parent else parent[n]
+            assert isinstance(parent, Group)  # noqa: S101
         return names[-1], parent

@@ -1,12 +1,11 @@
-from collections.abc import MutableMapping, KeysView, ItemsView, ValuesView
+from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
 
 import pytest
 
 from msl.io.metadata import Metadata
 
 
-def test_behaves_like_dict():
-
+def test_behaves_like_dict() -> None:  # noqa: PLR0915
     meta = Metadata(read_only=False, vertex_name="", x=1)
     assert isinstance(meta, MutableMapping)
     assert len(meta) == 1
@@ -21,7 +20,7 @@ def test_behaves_like_dict():
     assert isinstance(cp, Metadata)
     assert id(cp) != id(meta)
     assert not cp.read_only
-    assert cp._vertex_name == meta._vertex_name
+    assert cp._vertex_name == meta._vertex_name  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert cp["x"] == 1
     cp["x"] = 2
     assert cp["x"] == 2
@@ -81,14 +80,14 @@ def test_behaves_like_dict():
 
     # test setdefault()
     assert "foo" not in meta
-    meta.setdefault("xxx")
+    assert meta.setdefault("xxx") is None
     assert meta["xxx"] is None
     meta.setdefault("foo", "bar")
     assert meta["foo"] == "bar"
 
     # test update()
     assert len(meta) == 2
-    meta.update(dict(a=1, b=2, c=3, hello="world!"))
+    meta.update({"a": 1, "b": 2, "c": 3, "hello": "world!"})
     assert len(meta) == 6
     assert meta["xxx"] is None
     assert meta["foo"] == "bar"
@@ -101,54 +100,53 @@ def test_behaves_like_dict():
     expected_values = [None, "bar", 1, 2, 3, "world!"]
 
     # test items()
-    items = meta.items()
-    assert isinstance(items, ItemsView)
-    keys = [k for k in expected_keys]
-    values = [v for v in expected_values]
+    items_view = meta.items()
+    assert isinstance(items_view, ItemsView)
+    keys = list(expected_keys)
+    values = list(expected_values)
     count = 0
-    for key, value in items:
+    for key, value in items_view:
         assert key in keys
-        keys.pop(keys.index(key))
+        assert keys.pop(keys.index(key)) == key
         assert value in values
-        values.pop(values.index(value))
+        assert values.pop(values.index(value)) == value
         count += 1
     assert count == 6
 
     # test keys()
-    keys = meta.keys()
-    assert isinstance(keys, KeysView)
-    keys_ = [k for k in expected_keys]
+    keys_view = meta.keys()
+    assert isinstance(keys_view, KeysView)
+    keys_ = list(expected_keys)
     count = 0
-    for key in keys:
+    for key in keys_view:
         assert key in keys_
-        keys_.pop(keys_.index(key))
+        assert keys_.pop(keys_.index(key)) == key
         count += 1
     assert count == 6
 
     # test values()
-    values = meta.values()
-    assert isinstance(values, ValuesView)
-    values_ = [v for v in expected_values]
+    values_view = meta.values()
+    assert isinstance(values_view, ValuesView)
+    values_ = list(expected_values)
     count = 0
-    for value in values:
+    for value in values_view:
         assert value in values_
-        values_.pop(values_.index(value))
+        assert values_.pop(values_.index(value)) == value
         count += 1
     assert count == 6
 
     # test iter()
     count = 0
-    keys_ = [k for k in expected_keys]
+    keys_ = list(expected_keys)
     for key in iter(meta):
         assert isinstance(key, str)
         assert key in keys_
-        keys_.pop(keys_.index(key))
+        assert keys_.pop(keys_.index(key)) == key
         count += 1
     assert count == 6
 
 
-def test_attribute_access():
-
+def test_attribute_access() -> None:
     meta = Metadata(read_only=True, vertex_name="", x=1, FOO="BaR")
     assert meta["x"] == 1
     assert meta.x == 1
@@ -162,7 +160,7 @@ def test_attribute_access():
         _ = meta["something"]
 
 
-def test_nested_dict_as_value():
+def test_nested_dict_as_value() -> None:
     meta = Metadata(read_only=True, vertex_name="", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
     assert meta["none"] is None
     assert meta.none is None
@@ -171,9 +169,9 @@ def test_nested_dict_as_value():
     assert meta.nested["dict1"].dict2["dict3"] == (1, 2, 3)
 
     with pytest.raises(AttributeError):
-        _ = meta.none.read_only  # meta.none is not a Metadata object
+        _ = meta.none.read_only  # type: ignore[attr-defined]
     with pytest.raises(AttributeError):
-        _ = meta["none"].read_only  # meta['none'] is not a Metadata object
+        _ = meta["none"].read_only  # type: ignore[attr-defined]
 
     # test that all Metadata objects have the same read-only mode
     assert meta.read_only
@@ -189,57 +187,56 @@ def test_nested_dict_as_value():
     assert not meta.nested.dict1.dict2.read_only
 
 
-def test_read_only():
-
+def test_read_only() -> None:  # noqa: PLR0915
     meta = Metadata(read_only=True, vertex_name="", foo="bar")
     assert meta.read_only
 
     # cannot modify an existing value (key access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta["foo"] = 1
 
     # cannot modify an existing value (attrib access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.foo = 1
 
     # cannot delete a key (key access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         del meta["foo"]
 
     # cannot delete a key (attrib access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         del meta.foo
 
     # cannot create a new key-value pair (key access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta["anything"] = -1
 
     # cannot create a new key-value pair (attrib access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.anything = -1
 
     # cannot do an update()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.update({"whatever": 1.234})
 
     # cannot do a pop()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.pop("foo")
 
     # cannot do a popitem()
-    with pytest.raises(ValueError):
-        meta.popitem()
+    with pytest.raises(ValueError, match="read-only mode"):
+        _ = meta.popitem()
 
     # cannot do a setdefault(), default value
-    with pytest.raises(ValueError):
-        meta.setdefault("new_key")
+    with pytest.raises(ValueError, match="read-only mode"):
+        _ = meta.setdefault("new_key")
 
     # cannot do a setdefault(), custom value
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.setdefault("new_key", "new_value")
 
     # cannot do a clear()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.clear()
 
     # make sure that meta has the expected data
@@ -267,10 +264,10 @@ def test_read_only():
     meta.update({"whatever": 1.234})
 
     # can do a setdefault(), default value
-    meta.setdefault("none_value")
+    assert meta.setdefault("none_value") is None
 
     # can do a setdefault(), custom value
-    meta.setdefault("custom", "new_value")
+    assert meta.setdefault("custom", "new_value") == "new_value"
 
     # make sure that meta has the expected data
     assert len(meta) == 6
@@ -310,9 +307,9 @@ def test_read_only():
     assert meta.read_only
 
     # cannot create a new key-value pair (key access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta["anything"] = -1
 
     # cannot create a new key-value pair (attrib access)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="read-only mode"):
         meta.anything = -1
