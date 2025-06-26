@@ -16,7 +16,9 @@ class JSONReader(Reader):
     @staticmethod
     def can_read(file, **kwargs):
         """Checks if the text ``MSL JSONWriter`` is in the first line of the file."""
+
         if isinstance(file, BufferedIOBase):
+            print("BufferedIOBase")
             text = Reader.get_bytes(file, 21, 34).decode()
         else:
             text = Reader.get_lines(file, 1, **kwargs)[0][20:34]

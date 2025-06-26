@@ -2,14 +2,8 @@
 
 from __future__ import annotations
 
-import sys
-from collections.abc import ItemsView, KeysView, ValuesView
+from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
 from typing import TYPE_CHECKING, TypeVar
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # pyright: ignore[reportUnreachable]
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

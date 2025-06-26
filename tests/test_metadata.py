@@ -6,7 +6,7 @@ from msl.io.metadata import Metadata
 
 
 def test_behaves_like_dict() -> None:  # noqa: PLR0915
-    meta = Metadata(read_only=False, vertex_name="", x=1)
+    meta = Metadata(read_only=False, node_name="", x=1)
     assert isinstance(meta, MutableMapping)
     assert len(meta) == 1
     assert meta["x"] == 1
@@ -20,7 +20,7 @@ def test_behaves_like_dict() -> None:  # noqa: PLR0915
     assert isinstance(cp, Metadata)
     assert id(cp) != id(meta)
     assert not cp.read_only
-    assert cp._vertex_name == meta._vertex_name  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert cp._node_name == meta._node_name  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert cp["x"] == 1
     cp["x"] = 2
     assert cp["x"] == 2
@@ -147,7 +147,7 @@ def test_behaves_like_dict() -> None:  # noqa: PLR0915
 
 
 def test_attribute_access() -> None:
-    meta = Metadata(read_only=True, vertex_name="", x=1, FOO="BaR")
+    meta = Metadata(read_only=True, node_name="", x=1, FOO="BaR")
     assert meta["x"] == 1
     assert meta.x == 1
     assert meta["FOO"] == "BaR"
@@ -161,7 +161,7 @@ def test_attribute_access() -> None:
 
 
 def test_nested_dict_as_value() -> None:
-    meta = Metadata(read_only=True, vertex_name="", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
+    meta = Metadata(read_only=True, node_name="", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
     assert meta["none"] is None
     assert meta.none is None
     assert meta["nested"]["dict1"]["dict2"]["dict3"] == (1, 2, 3)
@@ -188,7 +188,7 @@ def test_nested_dict_as_value() -> None:
 
 
 def test_read_only() -> None:  # noqa: PLR0915
-    meta = Metadata(read_only=True, vertex_name="", foo="bar")
+    meta = Metadata(read_only=True, node_name="", foo="bar")
     assert meta.read_only
 
     # cannot modify an existing value (key access)

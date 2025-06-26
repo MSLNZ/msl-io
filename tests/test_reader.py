@@ -5,18 +5,18 @@ from io import StringIO
 
 import pytest
 
-from msl.io import Reader
-from msl.io.base import Root
+from msl.io.readers import JSONReader
+from msl.io.base import Root, Reader
 
 
 def test_get_root():
-    root = Reader("")
+    root = JSONReader("")
     assert isinstance(root, Root)
     assert not root.read_only
 
 
 def test_instantiate():
-    reader = Reader("aaa.bbb")
+    reader = JSONReader("aaa.bbb")
     assert reader.file == "aaa.bbb"
 
 
@@ -194,13 +194,3 @@ def test_get_extension():
     path = os.path.join(os.path.dirname(__file__), "samples", "test_file_for_static_Reader_lines")
     with open(path, mode="rt") as fp:
         assert Reader.get_extension(fp) == ""
-
-
-def test_override_methods():
-
-    # the subclass must override this method
-    with pytest.raises(NotImplementedError):
-        Reader("").read()
-
-    # the subclass must override this method
-    assert not Reader("").can_read("")

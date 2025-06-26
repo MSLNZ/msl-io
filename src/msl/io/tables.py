@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from .base import Reader
-from .vertex import Dataset
+from .node import Dataset
 from .readers import ExcelReader
 from .readers import GSheetsReader
 from .utils import get_basename

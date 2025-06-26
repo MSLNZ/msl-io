@@ -1,7 +1,9 @@
 import re
 
-from msl.io import JSONWriter
+from msl.io import JSONWriter, Root
+from msl.io.node import Group
 
+import pytest
 
 def test_datasets_exclude():
     w = JSONWriter()
@@ -504,3 +506,24 @@ def test_descendants():
     assert len(descendants) == 2
     assert descendants[0].name == "/a/B/c/d/e"
     assert descendants[1].name == "/a/B/c/d/e/kiwi"
+
+
+def test_invalid_name() -> None:
+    root = Root("")
+
+    v = Group(name="this is ok", parent=root, read_only=True)
+    assert v.read_only
+    assert v.name == "/this is ok"
+
+    # the name must be a non-empty string
+    with pytest.raises(ValueError, match="cannot be an empty string"):
+        _ = Group(name="", parent=root, read_only=True)
+
+    # the name cannot contain a '/'
+    for n in ["/", "/a", "a/b", "ab/"]:
+        with pytest.raises(ValueError, match="cannot contain the '/' character"):
+            _ = Group(name=n, parent=root, read_only=True)
+
+    # check that the name is forced to be unique
+    with pytest.raises(ValueError, match="is not unique"):
+        _ = Group(name="this is ok", parent=root, read_only=True)

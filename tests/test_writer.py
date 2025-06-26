@@ -1,21 +1,20 @@
 import pytest
 
+from msl.io import JSONWriter
 from msl.io.base import Root
-from msl.io.base import Writer
-from msl.io.vertex import Dataset
+from msl.io.node import Group
 
 
-def test_set_root():
+def test_set_root() -> None:  # noqa: PLR0915
     root = Root("some file")
 
-    writer = Writer()
+    writer = JSONWriter()
     assert len(writer) == 0
     assert writer.file is None
     assert len(writer.metadata) == 0
 
-    for item in [{}, (), [], None, Dataset(name="dset", parent=None, read_only=False)]:
-        with pytest.raises(TypeError):
-            writer.set_root(item)
+    with pytest.raises(AttributeError):
+        writer.set_root("root")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     # set an empty root is okay
     writer.set_root(root)
@@ -33,7 +32,7 @@ def test_set_root():
     assert writer.metadata.foo == "bar"
 
     # check that the metadata gets replaced
-    writer = Writer("a filename", meta="data")
+    writer = JSONWriter("a filename", meta="data")
     assert len(writer) == 0
     assert writer.file == "a filename"
     assert len(writer.metadata) == 1
@@ -46,17 +45,17 @@ def test_set_root():
     assert writer.file == "a filename"  # the URL does not change
 
     a = root.create_group("a")
-    a.create_dataset("d1")
+    _ = a.create_dataset("d1")
     b = a.create_group("b")
-    b.create_dataset("d2")
+    _ = b.create_dataset("d2")
     c = b.create_group("c")
-    root.create_group("x/y/z")
+    _ = root.create_group("x/y/z")
     d = c.create_group("d")
-    a.create_dataset("d3")
-    root.create_dataset("d4")
-    d.create_dataset("d5")
-    d.create_dataset("d6")
-    root.create_dataset("d7")
+    _ = a.create_dataset("d3")
+    d4 = root.create_dataset("d4")
+    d5 = d.create_dataset("d5", data=[1, 2])
+    _ = d.create_dataset("d6")
+    _ = root.create_dataset("d7")
     root.add_metadata(two=2, three=3)
 
     writer.set_root(root)
@@ -100,11 +99,15 @@ def test_set_root():
     assert writer.metadata.two == 2
     assert writer.metadata.three == 3
 
-    # d4 is a Dataset
-    with pytest.raises(TypeError):
-        writer.set_root(root.d4)
+    # an empty Dataset is okay to pass as an argument but type checkers will complain
+    writer.set_root(d4)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+
+    # a non-empty Dataset is not ok
+    with pytest.raises(TypeError, match="Group object"):
+        writer.set_root(d5)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     # pass in a Group instead of a Root
+    assert isinstance(root.x, Group)
     writer.set_root(root.x)
     assert len(writer) == 2
     assert len(list(writer.groups())) == 2

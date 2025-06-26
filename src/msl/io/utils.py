@@ -433,7 +433,7 @@ def _prepare_email(  # noqa: C901, PLR0912
     )
 
 
-def get_basename(obj: PathLike | IO[AnyStr]) -> str:
+def get_basename(obj: PathLike | IO[str] | IO[bytes]) -> str:
     """Get the basename (the final path component) of a file.
 
     Args:

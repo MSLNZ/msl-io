@@ -12,7 +12,7 @@ except ImportError:
     h5py = None
 
 from msl.io import HDF5Writer, JSONWriter, read
-from msl.io.vertex import DatasetLogging
+from msl.io.node import DatasetLogging
 
 logger = logging.getLogger(__name__)
 

@@ -4,8 +4,8 @@ import types
 import pytest
 
 from msl.io.base import Root
-from msl.io.vertex import Dataset
-from msl.io.group import Group
+from msl.io.node import Dataset
+from msl.io.node import Group
 
 
 def test_instantiation():

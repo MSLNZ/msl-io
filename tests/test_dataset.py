@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from msl.io.vertex import Dataset
+from msl.io import Root
+from msl.io.node import Dataset
 
 
 def test_instantiate() -> None:
@@ -683,3 +684,28 @@ def test_name_metadata_merged() -> None:
     assert repr(d) == "<Dataset 'sqrt(subtract(add(/c,b),add(/a)))' shape=(3,) dtype='<f8' (4 metadata)>"
     assert d.metadata == {"fruit": "apple", "one": 1, "hello": "world", "eat": "cake"}
     assert np.array_equal(d, np.sqrt([7+4-2, 8+5-3, 9+6-4]))
+
+
+def test_invalid_name() -> None:
+    d = Dataset(name="this is ok", parent=None, read_only=True)
+    assert d.read_only
+    assert d.name == "this is ok"
+
+    # the name must be a non-empty string
+    with pytest.raises(ValueError, match="cannot be an empty string"):
+        _ = Dataset(name="", parent=None, read_only=True)
+
+    # the name can contain a '/' if the parent is None
+    d = Dataset(name="/a", parent=None, read_only=True)
+    assert d.name == "/a"
+
+    # the name cannot contain a '/' if the parent is not None
+    for n in ["/", "/a", "a/b", "ab/"]:
+        with pytest.raises(ValueError, match="cannot contain the '/' character"):
+            _ = Dataset(name=n, parent=Root(""), read_only=True)
+
+    # check that the name is forced to be unique if the parent is not None
+    root = Root("")
+    _ = root.create_group("msl")
+    with pytest.raises(ValueError, match="is not unique"):
+        _ = Dataset(name="msl", parent=root, read_only=True)

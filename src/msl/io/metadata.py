@@ -1,4 +1,4 @@
-"""Provides information about other data."""
+"""Provides information about data."""
 
 from __future__ import annotations
 
@@ -11,28 +11,28 @@ from .freezable import FreezableMap
 
 
 class Metadata(FreezableMap[Any]):
-    """Provides information about other data."""
+    """Provides information about data."""
 
-    def __init__(self, *, read_only: bool, vertex_name: str, **kwargs: Any) -> None:
-        """Provides information about other data.
+    def __init__(self, *, read_only: bool, node_name: str, **kwargs: Any) -> None:
+        """Provides information about data.
 
         !!! attention
             Do not instantiate directly. A [Metadata][] object is created automatically
-            when [create_dataset][msl.io.group.Group.create_dataset] or
-            [create_group][msl.io.group.Group.create_group] is called.
+            when [create_dataset][msl.io.node.Group.create_dataset] or
+            [create_group][msl.io.node.Group.create_group] is called.
 
         Args:
             read_only: Whether [Metadata][] is initialised in read-only mode.
-            vertex_name: The name of the [Vertex][] that [Metadata][] is associated with.
+            node_name: The name of the node that the [Metadata][] is associated with.
             kwargs: Key-value pairs that will be used to create the mapping.
         """
         super().__init__(read_only=read_only, **kwargs)
-        self._vertex_name: str = vertex_name
+        self._node_name: str = node_name
 
     def __repr__(self) -> str:
         """Returns the string representation."""
         joined = ", ".join(f"{k!r}: {v!r}" if isinstance(v, str) else f"{k!r}: {v}" for k, v in self._mapping.items())
-        return f"<Metadata {self._vertex_name!r} {{{joined}}}>"
+        return f"<Metadata {self._node_name!r} {{{joined}}}>"
 
     def __getitem__(self, key: str) -> Any:
         """Returns the value for the specified key."""
@@ -43,7 +43,7 @@ class Metadata(FreezableMap[Any]):
             raise KeyError(msg) from None
         else:
             if isinstance(value, MutableMapping):
-                return Metadata(read_only=self._read_only, vertex_name=self._vertex_name, **value)
+                return Metadata(read_only=self._read_only, node_name=self._node_name, **value)
             return value
 
     def __delattr__(self, key: str) -> None:
@@ -73,7 +73,7 @@ class Metadata(FreezableMap[Any]):
                         obj.setflags(write=not val)
             except KeyError:
                 pass
-        elif item in {"_mapping", "_vertex_name"}:
+        elif item in {"_mapping", "_node_name"}:
             self.__dict__[item] = value
         else:
             self._raise_if_read_only()
@@ -91,7 +91,7 @@ class Metadata(FreezableMap[Any]):
             A copy of the [Metadata][].
         """
         ro = self._read_only if read_only is None else read_only
-        return Metadata(read_only=ro, vertex_name=self._vertex_name, **self._mapping)
+        return Metadata(read_only=ro, node_name=self._node_name, **self._mapping)
 
     def fromkeys(self, seq: Iterable[str], value: Any = None, *, read_only: bool | None = None) -> Metadata:
         """Create a new [Metadata][] object with keys from `seq` and values set to `value`.
@@ -106,4 +106,4 @@ class Metadata(FreezableMap[Any]):
             A new [Metadata][] object.
         """
         ro = self._read_only if read_only is None else read_only
-        return Metadata(read_only=ro, vertex_name=self._vertex_name, **dict.fromkeys(seq, value))
+        return Metadata(read_only=ro, node_name=self._node_name, **dict.fromkeys(seq, value))
