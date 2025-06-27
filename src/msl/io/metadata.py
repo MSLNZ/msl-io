@@ -79,7 +79,7 @@ class Metadata(FreezableMap[Any]):
             self._raise_if_read_only()
             self._mapping[item] = value
 
-    def copy(self, read_only: bool | None = None) -> Metadata:
+    def copy(self, *, read_only: bool | None = None) -> Metadata:
         """Create a copy of the [Metadata][].
 
         Args:
