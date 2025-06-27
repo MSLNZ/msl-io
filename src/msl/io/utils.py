@@ -45,7 +45,7 @@ def checksum(
     Returns:
         The checksum value (which only contains hexadecimal digits).
     """
-    import hashlib
+    import hashlib  # noqa: PLC0415
 
     def _read(fp: FileLike[bytes]) -> None:
         # read in chucks to avoid loading the entire file at once
@@ -95,7 +95,7 @@ def copy(
     Returns:
         The path to where the file was copied.
     """
-    import shutil
+    import shutil  # noqa: PLC0415
 
     src = Path(os.fsdecode(source))
     dst = Path(os.fsdecode(destination))
@@ -121,7 +121,7 @@ def is_admin() -> bool:
     Returns:
         `True` if the current process is being run as an administrator, otherwise `False`.
     """
-    import ctypes
+    import ctypes  # noqa: PLC0415
 
     try:
         is_admin: int = ctypes.windll.shell32.IsUserAnAdmin()
@@ -335,9 +335,9 @@ def send_email(
     """
     cfg = _prepare_email(config, recipients, sender)
     if isinstance(cfg, _SMTPConfig):
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
-        from smtplib import SMTP
+        from email.mime.multipart import MIMEMultipart  # noqa: PLC0415
+        from email.mime.text import MIMEText  # noqa: PLC0415
+        from smtplib import SMTP  # noqa: PLC0415
 
         with SMTP(host=cfg.host, port=cfg.port) as server:
             if cfg.starttls:
@@ -363,7 +363,7 @@ def _prepare_email(  # noqa: C901, PLR0912
     config: PathLike | SupportsRead[AnyStr], recipients: str | list[str], sender: str | None
 ) -> _GMailConfig | _SMTPConfig:
     """Loads a configuration file to prepare for sending an email."""
-    from configparser import ConfigParser
+    from configparser import ConfigParser  # noqa: PLC0415
 
     contents = Path(os.fsdecode(config)).read_text() if isinstance(config, (str, bytes, os.PathLike)) else config.read()
     if isinstance(contents, bytes):
@@ -506,7 +506,7 @@ def remove_write_permissions(path: PathLike) -> None:
     Args:
         path: The path to remove the write permissions of.
     """
-    import stat
+    import stat  # noqa: PLC0415
 
     current_permissions = stat.S_IMODE(os.lstat(path).st_mode)
     disable_writing = ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH
@@ -614,8 +614,8 @@ def run_as_admin(  # noqa: C901, PLR0912, PLR0913, PLR0915
     redirect = None
     stdout_file = None
     if not show:
-        import tempfile
-        import uuid
+        import tempfile  # noqa: PLC0415
+        import uuid  # noqa: PLC0415
 
         stdout_file = Path(tempfile.gettempdir()) / str(uuid.uuid4())
         r = [">", str(stdout_file)]
@@ -629,8 +629,8 @@ def run_as_admin(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # the string that is passed to cmd.exe
     params = f'/S /C "{cd} {activate} {exe} {args}"{redirect}'
 
-    import ctypes
-    from ctypes.wintypes import DWORD, HANDLE, HINSTANCE, HKEY, HWND, INT, LPCWSTR, ULONG
+    import ctypes  # noqa: PLC0415
+    from ctypes.wintypes import DWORD, HANDLE, HINSTANCE, HKEY, HWND, INT, LPCWSTR, ULONG  # noqa: PLC0415
 
     class ShellExecuteInfoW(ctypes.Structure):
         _fields_ = (  # pyright: ignore[reportUnannotatedClassAttribute]
