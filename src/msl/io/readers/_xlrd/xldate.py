@@ -55,7 +55,7 @@ class XLDateBadTuple(XLDateError):
     pass
 
 
-def xldate_as_tuple(xldate, datemode):
+def xldate_as_tuple(xldate: float, datemode: int) -> tuple[int, int, int, int, int, int]:
     """
     Convert an Excel number (presumed to represent a date, a datetime or a time) into
     a tuple suitable for feeding to datetime or mx.DateTime constructors.

@@ -76,9 +76,9 @@ class GSheetsReader(Spreadsheet):
         sheets = GSheetsReader("1TI3pM-534SZ5DQTEZ-7HCI04648f8ZpLGbfHWJu9FSo")
         ```
         """
+        file = os.fsdecode(file)
         super().__init__(file)
 
-        file = os.fsdecode(file)
         path, ext = os.path.splitext(file)  # noqa: PTH122
         folders, _ = os.path.split(path)
 

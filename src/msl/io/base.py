@@ -7,7 +7,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from .node import Group
 from .utils import get_basename
@@ -192,14 +192,34 @@ class Reader(Root, ABC):
                 when reading the file.
         """
 
+    @overload
     @staticmethod
-    def get_lines(  # noqa: PLR0912
+    def get_lines(
         file: IO[str] | PathLike,
         *lines: int | None,
         remove_empty_lines: bool = False,
         encoding: str | None = "utf-8",
         errors: Literal["strict", "ignore"] | None = "strict",
-    ) -> list[str]:
+    ) -> list[str]: ...
+
+    @overload
+    @staticmethod
+    def get_lines(
+        file: IO[bytes],
+        *lines: int | None,
+        remove_empty_lines: bool = False,
+        encoding: str | None = "utf-8",
+        errors: Literal["strict", "ignore"] | None = "strict",
+    ) -> list[bytes]: ...
+
+    @staticmethod
+    def get_lines(  # noqa: PLR0912
+        file: IO[bytes] | IO[str] | PathLike,
+        *lines: int | None,
+        remove_empty_lines: bool = False,
+        encoding: str | None = "utf-8",
+        errors: Literal["strict", "ignore"] | None = "strict",
+    ) -> list[bytes] | list[str]:
         """Return lines from a file.
 
         Args:
@@ -228,7 +248,7 @@ class Reader(Root, ABC):
         if (len(lines) > 1) and (lines[0] is not None) and (lines[0] > 0):
             lines = (lines[0] - 1, *lines[1:])
 
-        result: list[str]
+        result: list[bytes] | list[str]
         # itertools.islice does not support negative indices, but want to allow
         # getting the last "N" lines from a file.
         if any(val < 0 for val in lines if val):
@@ -237,7 +257,7 @@ class Reader(Root, ABC):
                     result = [line.rstrip() for line in f]
             else:
                 position = file.tell()
-                result = [line.rstrip() for line in file]
+                result = [line.rstrip() for line in file]  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
                 _ = file.seek(position)
 
             assert lines  # noqa: S101
@@ -257,11 +277,11 @@ class Reader(Root, ABC):
                     result = [line.rstrip() for line in itertools.islice(f, *lines)]
             else:
                 position = file.tell()
-                result = [line.rstrip() for line in itertools.islice(file, *lines)]
+                result = [line.rstrip() for line in itertools.islice(file, *lines)]  # type: ignore[attr-defined]  # pyright: ignore[reportAssignmentType]
                 _ = file.seek(position)
 
         if remove_empty_lines:
-            return [line for line in result if line]
+            return [line for line in result if line]  # type: ignore[return-value]  # pyright: ignore[reportReturnType]
         return result
 
     @staticmethod
@@ -298,7 +318,7 @@ class Reader(Root, ABC):
                 size = 0
 
             if size == 0:
-                with path.open() as f:
+                with path.open("rb") as f:
                     _ = f.seek(0, os.SEEK_END)
                     size = f.tell()
         else:

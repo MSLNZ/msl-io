@@ -1,74 +1,90 @@
-"""
-Reader for the HDF5_ file format.
+"""Reader for the [HDF5] file format.
 
-.. attention::
-   This Reader loads the entire HDF5_ file in memory. If you need to use any of
-   the more advanced features of an HDF5_ file, it is best to directly load
-   the file using H5py_.
+!!! attention
+    This Reader loads the entire [HDF5] file in memory. If you need to use any
+    of the more advanced features of an [HDF5] file, it is best to directly load
+    the file using [H5py](https://www.h5py.org/).
 
-.. _HDF5: https://www.hdfgroup.org/
-.. _H5py: https://www.h5py.org/
+[HDF5]: https://www.hdfgroup.org/
 """
+# pyright: reportUnknownMemberType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false, reportIndexIssue=false, reportOptionalMemberAccess=false, reportMissingTypeStubs=false, reportUnknownVariableType=false
+
+from __future__ import annotations
+
 import os
+from io import BufferedIOBase
+from typing import TYPE_CHECKING
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]
 except ImportError:
     h5py = None
 
-from ..base import Reader, register
+from msl.io.base import Reader, register
+
+if TYPE_CHECKING:
+    from typing import IO, Any
+
+    from msl.io._types import PathLike
 
 
 @register
 class HDF5Reader(Reader):
-    """Reader for the HDF5_ file format."""
+    """Reader for the [HDF5](https://www.hdfgroup.org/) file format."""
 
     @staticmethod
-    def can_read(file, **kwargs):
-        """The HDF5_ file format has a standard signature_.
+    def can_read(file: IO[str] | IO[bytes] | PathLike, **kwargs: Any) -> bool:  # noqa: ARG004
+        r"""The [HDF5] file format has a standard [signature].
 
-        The first 8 bytes are ``\\x89HDF\\r\\n\\x1a\\n``.
+        The first 8 bytes must be `\\x89HDF\\r\\n\\x1a\\n`.
 
-        .. _signature: https://support.hdfgroup.org/HDF5/doc/H5.format.html#Superblock
+        [HDF5]: https://www.hdfgroup.org/
+        [signature]: https://support.hdfgroup.org/HDF5/doc/H5.format.html#Superblock
+
+        Args:
+            file: The file to check.
+            kwargs: All keyword arguments are ignored.
         """
-        return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
+        if isinstance(file, (bytes, str, os.PathLike, BufferedIOBase)):
+            return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
+        return False
 
-    def read(self, **kwargs):
-        """Reads the HDF5_ file.
+    def read(self, **kwargs: Any) -> None:
+        """Reads the [HDF5](https://www.hdfgroup.org/) file.
 
-        Parameters
-        ----------
-        **kwargs
-            All key-value pairs are passed to :class:`~h5py.File`.
+        Args:
+            kwargs: All keyword arguments are passed to [h5py.File][].
         """
         if h5py is None:
-            raise ImportError(
-                "You must install h5py to read HDF5 files, run\n"
-                "  pip install h5py"
-            )
+            msg = "You must install h5py to read HDF5 files, run\n  pip install h5py"
+            raise ImportError(msg)
 
-        def convert(name, obj):
+        def convert(name: str, obj: object) -> None:
             head, tail = os.path.split(name)
             s = self["/" + head] if head else self
             if isinstance(obj, h5py.Dataset):
-                s.create_dataset(tail, data=obj[:], **obj.attrs)
+                _ = s.create_dataset(tail, data=obj[:], **obj.attrs)
             elif isinstance(obj, h5py.Group):
-                s.create_group(tail, **obj.attrs)
+                _ = s.create_group(tail, **obj.attrs)
             else:
-                assert False, f"Unhandled HDF5Reader object {obj}"
+                msg = f"Should never get here, unhandled h5py object {obj}"
+                raise TypeError(msg)
 
-        def h5_open(name):
-            with h5py.File(name, mode="r", **kwargs) as h5:
+        def h5_open(f: BufferedIOBase) -> None:
+            with h5py.File(f, mode="r", **kwargs) as h5:
                 self.add_metadata(**h5.attrs)
-                h5.visititems(convert)
+                h5.visititems(convert)  # cSpell: ignore visititems
 
         # Calling h5py.File on a file on a mapped drive could raise
         # an OSError. This occurred when a local folder was shared
         # and then mapped on the same computer. Opening the file
         # using open() and then passing in the file handle to
         # h5py.File is more universal
-        if hasattr(self.file, "read"):  # already a file-like object
+        if isinstance(self.file, BufferedIOBase):
             h5_open(self.file)
-        else:
-            with open(self.file, mode="rb") as fp:
+        elif isinstance(self.file, (bytes, str, os.PathLike)):
+            with open(self.file, mode="rb") as fp:  # noqa: PTH123
                 h5_open(fp)
+        else:
+            msg = f"Should never get here, file type is {type(self.file)}"
+            raise TypeError(msg)

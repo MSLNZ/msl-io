@@ -1,72 +1,101 @@
-"""
-Read and write data files.
-"""
+"""Read and write data files."""
+
+from __future__ import annotations
+
+import os
+from typing import TYPE_CHECKING
 
 from .__about__ import __author__, __copyright__, __version__, version_tuple
-from .base import Reader, _readers, register
-from .base import Root
-from .base import Writer
-from .google_api import GCellType
-from .google_api import GDateTimeOption
-from .google_api import GDrive
-from .google_api import GMail
-from .google_api import GSheets
-from .google_api import GValueOption
-from .readers import ExcelReader
-from .readers import GSheetsReader
-from .tables import extension_delimiter_map
-from .tables import read_table_excel
-from .tables import read_table_gsheets
-from .tables import read_table_text
-from .utils import checksum
-from .utils import copy
-from .utils import git_head
-from .utils import is_admin
-from .utils import is_dir_accessible
-from .utils import is_file_readable
-from .utils import logger
-from .utils import remove_write_permissions
-from .utils import run_as_admin
-from .utils import search
-from .utils import send_email
-from .writers import HDF5Writer
-from .writers import JSONWriter
+from .base import (
+    Reader,
+    Root,
+    Writer,
+    _readers,  # pyright: ignore[reportPrivateUsage]
+    register,
+)
+from .google_api import GCellType, GDateTimeOption, GDrive, GMail, GSheets, GValueOption
+from .readers import ExcelReader, GSheetsReader
+from .tables import extension_delimiter_map, read_table_excel, read_table_gsheets, read_table_text
+from .utils import (
+    checksum,
+    copy,
+    git_head,
+    is_admin,
+    is_dir_accessible,
+    is_file_readable,
+    logger,
+    remove_write_permissions,
+    run_as_admin,
+    search,
+    send_email,
+)
+from .writers import HDF5Writer, JSONWriter
+
+if TYPE_CHECKING:
+    from typing import IO, Any
+
+    from ._types import PathLike
+    from .node import Dataset
 
 
-def read(file, **kwargs):
-    """Read a file that has a :ref:`Reader <io-readers>` implemented.
+__all__: list[str] = [
+    "ExcelReader",
+    "GCellType",
+    "GDateTimeOption",
+    "GDrive",
+    "GMail",
+    "GSheets",
+    "GSheetsReader",
+    "GValueOption",
+    "HDF5Writer",
+    "JSONWriter",
+    "Reader",
+    "Root",
+    "Writer",
+    "__about__",
+    "__author__",
+    "__copyright__",
+    "__version__",
+    "checksum",
+    "copy",
+    "extension_delimiter_map",
+    "git_head",
+    "is_admin",
+    "is_dir_accessible",
+    "is_file_readable",
+    "register",
+    "remove_write_permissions",
+    "run_as_admin",
+    "search",
+    "send_email",
+    "version_tuple",
+]
 
-    Parameters
-    ----------
-    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-        The file to read. For example, it could be a :class:`str` representing
-        a file system path or a stream.
-    **kwargs
-        All keyword arguments are passed to the
-        :meth:`Reader.can_read() <msl.io.base.Reader.can_read>`
-        and :meth:`Reader.read() <msl.io.base.Reader.read>` methods.
 
-    Returns
-    -------
-    :class:`~msl.io.base.Reader`
+def read(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Reader:
+    """Read a file that has a [Reader][io-readers] implemented.
+
+    Args:
+        file: The file to read.
+        kwargs: All keyword arguments are passed to the [can_read][msl.io.base.Reader.can_read]
+            and [read][msl.io.base.Reader.read] methods.
+
+    Returns:
         The data from the file.
-
-    Raises
-    ------
-    OSError
-        If no :class:`~msl.io.base.Reader` exists to be able to read
-        the specified file.
     """
-    if hasattr(file, "as_posix"):  # a pathlib.Path object
-        file = str(file)
+    if isinstance(file, (bytes, str, os.PathLike)):
+        file = os.fsdecode(file)
+        readable = is_file_readable(file, strict=True)
+    else:
+        readable = hasattr(file, "read")
 
-    if hasattr(file, "read") or is_file_readable(file, strict=True):
+    if readable:
         logger.debug("finding Reader for %r", file)
         for r in _readers:
             logger.debug("checking %s", r.__name__)
             try:
                 can_read = r.can_read(file, **kwargs)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 logger.debug("%s: %s [%s]", e.__class__.__name__, e, r.__name__)
                 continue
 
@@ -77,10 +106,11 @@ def read(file, **kwargs):
                 root.read_only = True
                 return root
 
-    raise OSError(f"No Reader exists to read {file!r}")
+    msg = f"No Reader exists to read {file!r}"
+    raise OSError(msg)
 
 
-def read_table(file, **kwargs):
+def read_table(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
     """Read data in a table format from a file.
 
     A *table* has the following properties:
@@ -89,32 +119,23 @@ def read_table(file, **kwargs):
     2. All rows have the same number of columns.
     3. All data values in a column have the same data type.
 
-    Parameters
-    ----------
-    file : :term:`path-like <path-like object>` or :term:`file-like <file object>`
-        The file to read. For example, it could be a :class:`str` representing
-        a file system path or a stream. If `file` is a Google Sheets spreadsheet
-        then `file` must end with ``.gsheet`` even if the ID of the spreadsheet
-        is specified.
-    **kwargs
-        If the file is an Excel spreadsheet then the keyword arguments are passed to
-        :func:`~msl.io.tables.read_table_excel`. If a Google Sheets spreadsheet then
-        the keyword arguments are passed to :func:`~msl.io.tables.read_table_gsheets`.
-        Otherwise, all keyword arguments are passed to :func:`~msl.io.tables.read_table_text`.
+    Args:
+        file: The file to read. If `file` is a Google Sheets spreadsheet then `file` must end
+            with `.gsheet` even if the ID of the spreadsheet is specified.
+        kwargs: If the file is an Excel spreadsheet then the keyword arguments are passed to
+            [read_table_excel][msl.io.tables.read_table_excel]. If a Google Sheets spreadsheet then
+            the keyword arguments are passed to [read_table_gsheets][msl.io.tables.read_table_gsheets].
+            Otherwise, all keyword arguments are passed to [read_table_text][msl.io.tables.read_table_text].
 
-    Returns
-    -------
-    :class:`~msl.io.dataset.Dataset`
-        The table as a :class:`~msl.io.dataset.Dataset`. The header is included as metadata.
+    Returns:
+        The table as a [Dataset][msl.io.node.Dataset]. The header is included as metadata.
     """
-    extn = Reader.get_extension(file).lower()
-    if extn.startswith(".xls"):
+    ext = Reader.get_extension(file).lower()
+    if ext.startswith(".xls"):
         return read_table_excel(file, **kwargs)
-    elif extn == ".gsheet":
-        if hasattr(file, "as_posix"):  # a pathlib.Path object
-            file = str(file)
-        elif hasattr(file, "name"):  # a TextIOWrapper object
-            file = file.name
-        return read_table_gsheets(file[:-7], **kwargs)  # ignore the extension
-    else:
-        return read_table_text(file, **kwargs)
+
+    if ext == ".gsheet":
+        file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
+        return read_table_gsheets(file.removesuffix(".gsheet"), **kwargs)
+
+    return read_table_text(file, **kwargs)

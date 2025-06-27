@@ -1,6 +1,9 @@
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
+
+from __future__ import annotations
+
 import mmap
 import struct
 from struct import unpack
@@ -10,6 +13,7 @@ from . import compdoc, formatting, sheet
 from .biffh import *
 from .formula import *
 from .timemachine import *
+from .sheet import Sheet
 
 
 empty_cell = sheet.empty_cell # for exposure to the world ...
@@ -52,7 +56,7 @@ def open_workbook_xls(filename=None,
                       file_contents=None,
                       encoding_override=None,
                       formatting_info=False, on_demand=False, ragged_rows=False,
-                      ignore_workbook_corruption=False):
+                      ignore_workbook_corruption=False) -> Book:
     t0 = perf_counter()
     bk = Book()
     try:
@@ -281,7 +285,7 @@ class Book(BaseObject):
     #:   1904 system (the Excel for Macintosh default).
     #:
     #: Defaults to 0 in case it's not specified in the file.
-    datemode = 0
+    datemode: int = 0
 
     #: Version of BIFF (Binary Interchange File Format) used to create the file.
     #: Latest is 8.0 (represented here as 80), introduced with Excel 97.
@@ -448,7 +452,7 @@ class Book(BaseObject):
         for i in range(self.nsheets):
             yield self.sheet_by_index(i)
 
-    def sheet_by_name(self, sheet_name):
+    def sheet_by_name(self, sheet_name: str) -> Sheet:
         """
         :param sheet_name: Name of the sheet required.
         :returns: A :class:`~xlrd.sheet.Sheet`.
@@ -470,7 +474,7 @@ class Book(BaseObject):
         else:
             return self.sheet_by_name(item)
 
-    def sheet_names(self):
+    def sheet_names(self) -> list[str]:
         """
         :returns:
           A list of the names of all the worksheets in the workbook file.
@@ -510,7 +514,7 @@ class Book(BaseObject):
                 raise XLRDError('No sheet named <%r>' % sheet_name_or_index)
         self._sheet_list[sheetx] = None
 
-    def release_resources(self):
+    def release_resources(self) -> None:
         """
         This method has a dual purpose. You can call it to release
         memory-consuming objects and (possibly) a memory-mapped file

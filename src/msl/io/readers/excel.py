@@ -1,38 +1,68 @@
-"""
-Read an Excel spreadsheet (.xls and .xlsx).
-"""
-from datetime import datetime
+"""Read an Excel spreadsheet (.xls and .xlsx)."""
 
-from . import _xlrd
+from __future__ import annotations
+
+import os
+from datetime import datetime
+from typing import TYPE_CHECKING
+
+from ._xlrd import (
+    XL_CELL_BOOLEAN,
+    XL_CELL_DATE,
+    XL_CELL_EMPTY,
+    XL_CELL_ERROR,
+    XL_CELL_NUMBER,
+    XLRDError,
+    error_text_from_code,
+    open_workbook,
+    xldate_as_tuple,
+)
 from .spreadsheet import Spreadsheet
+
+if TYPE_CHECKING:
+    import sys
+    from typing import Any
+
+    from .._types import PathLike  # noqa: TID252
+    from ._xlrd import Book
+    from ._xlrd.sheet import Sheet
+
+    # the Self type was added in Python 3.11 (PEP 673)
+    # using TypeVar is equivalent for < 3.11
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing import TypeVar
+
+        Self = TypeVar("Self", bound="ExcelReader")  # pyright: ignore[reportUnreachable]
 
 
 class ExcelReader(Spreadsheet):
+    """Read an Excel spreadsheet (.xls and .xlsx files)."""
 
-    def __init__(self, file, **kwargs):
-        """Read an Excel spreadsheet (.xls and .xlsx).
+    def __init__(self, file: PathLike, **kwargs: Any) -> None:
+        """Read an Excel spreadsheet (.xls and .xlsx files).
 
-        This class simply provides a convenience for reading information
-        from Excel spreadsheets. It is not registered as a :class:`~msl.io.base.Reader`
+        This class simply provides a convenience for reading information from
+        Excel spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]
         because the information in an Excel spreadsheet is unstructured and therefore
         one cannot generalize how to parse an Excel spreadsheet to create a
-        :class:`~msl.io.base.Root`.
+        [Root][msl.io.base.Root].
 
-        Parameters
-        ----------
-        file : :class:`str`
-            The location of an Excel spreadsheet on a local hard drive or on a network.
-        **kwargs
-            All keyword arguments are passed to :func:`~xlrd.open_workbook`. Can use
-            an `encoding` keyword argument as an alias for `encoding_override`. The
-            default `on_demand` value is :data:`True`.
+        Args:
+            file: The path to an Excel spreadsheet file.
+            kwargs: All keyword arguments are passed to [xlrd.open_workbook][]. Can use
+                an `encoding` keyword argument as an alias for `encoding_override`. The
+                default `on_demand` value is `True`.
 
-        Examples
-        --------
-        >>> from msl.io import ExcelReader  # doctest: +SKIP
-        >>> excel = ExcelReader('lab_environment.xlsx')  # doctest: +SKIP
+        Examples:
+        ```python
+        from msl.io import ExcelReader
+        excel = ExcelReader("lab_environment.xlsx")
+        ```
         """
-        super(ExcelReader, self).__init__(file)
+        f = os.fsdecode(file)
+        super().__init__(f)
 
         # change the default on_demand value
         if "on_demand" not in kwargs:
@@ -43,51 +73,50 @@ class ExcelReader(Spreadsheet):
         if encoding is not None:
             kwargs["encoding_override"] = encoding
 
-        self._workbook = _xlrd.open_workbook(file, **kwargs)
+        self._workbook: Book = open_workbook(f, **kwargs)
 
-    def __enter__(self):
+    def __enter__(self: Self) -> Self:  # noqa: PYI019
+        """Enter a context manager."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *ignore: object) -> None:
+        """Exit the context manager."""
         self.close()
 
     @property
-    def workbook(self):
-        """:class:`~xlrd.book.Book`: The workbook instance."""
+    def workbook(self) -> Book:
+        """[xlrd.book.Book][] &mdash; The workbook instance."""
         return self._workbook
 
-    def close(self):
-        """Calls :meth:`~xlrd.book.Book.release_resources`."""
+    def close(self) -> None:
+        """Close the workbook."""
         self._workbook.release_resources()
 
-    def read(self, cell=None, sheet=None, as_datetime=True):
+    def read(
+        self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+    ) -> Any | list[tuple[Any, ...]]:
         """Read values from the Excel spreadsheet.
 
-        Parameters
-        ----------
-        cell : :class:`str`, optional
-            The cell(s) to read. For example, ``C9`` will return a single value
-            and ``C9:G20`` will return all values in the specified range. If not
-            specified then returns all values in the specified `sheet`.
-        sheet : :class:`str`, optional
-            The name of the sheet to read the value(s) from. If there is only
-            one sheet in the spreadsheet then you do not need to specify the name
-            of the sheet.
-        as_datetime : :class:`bool`, optional
-            Whether dates should be returned as :class:`~datetime.datetime` or
-            :class:`~datetime.date` objects. If :data:`False` then dates are
-            returned as an ISO 8601 string.
+        Args:
+            cell: The cell(s) to read. For example, `C9` will return a single value
+                and `C9:G20` will return all values in the specified range. If not
+                specified then returns all values in the specified `sheet`.
+            sheet: The name of the sheet to read the value(s) from. If there is only
+                one sheet in the spreadsheet then you do not need to specify the name
+                of the sheet.
+            as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
+                [date][datetime.date] objects. If `False` then dates are returned as an
+                ISO 8601 string.
 
-        Returns
-        -------
+        Returns:
         The value(s) of the requested cell(s).
 
-        Examples
-        --------
-        .. invisible-code-block: pycon
+        Examples:
+        <!-- invisible-code-block: pycon
+        >>> from msl.io import ExcelReader
+        >>> excel = ExcelReader('./tests/samples/lab_environment.xlsx')
 
-           >>> from msl.io import ExcelReader
-           >>> excel = ExcelReader('./tests/samples/lab_environment.xlsx')
+        -->
 
         >>> excel.read()
         [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
@@ -102,23 +131,31 @@ class ExcelReader(Spreadsheet):
         """
         if not sheet:
             names = self.sheet_names()
-            if len(names) > 1:
-                raise ValueError("{!r} contains the following sheets:\n  {}\n"
-                                 "You must specify the name of the sheet to read"
-                                 .format(self._file, ", ".join(repr(n) for n in names)))
-            sheet_name = names[0]
+            if len(names) == 1:
+                sheet_name = names[0]
+            elif not names:
+                msg = "Cannot determine the names of the sheets in the Excel file"
+                raise ValueError(msg)
+            else:
+                sheets = ", ".join(repr(n) for n in names)
+                msg = (
+                    f"{self.file!r} contains the following sheets:\n  {sheets}\n"
+                    f"You must specify the name of the sheet to read"
+                )
+                raise ValueError(msg)
         else:
             sheet_name = sheet
 
         try:
-            sheet = self._workbook.sheet_by_name(sheet_name)
-        except _xlrd.XLRDError:
+            _sheet = self._workbook.sheet_by_name(sheet_name)
+        except XLRDError:
             msg = f"There is no sheet named {sheet_name!r} in {self._file!r}"
             raise ValueError(msg) from None
 
         if not cell:
-            return [tuple(self._value(sheet, r, c, as_datetime) for c in range(sheet.ncols))
-                    for r in range(sheet.nrows)]
+            return [
+                tuple(self._value(_sheet, r, c, as_datetime) for c in range(_sheet.ncols)) for r in range(_sheet.nrows)
+            ]
 
         split = cell.split(":")
         r1, c1 = self.to_indices(split[0])
@@ -127,49 +164,50 @@ class ExcelReader(Spreadsheet):
 
         if len(split) == 1:
             try:
-                return self._value(sheet, r1, c1, as_datetime)
+                return self._value(_sheet, r1, c1, as_datetime=as_datetime)
             except IndexError:
-                return
+                return None
 
-        if r1 >= sheet.nrows or c1 >= sheet.ncols:
+        if r1 >= _sheet.nrows or c1 >= _sheet.ncols:
             return []
 
         r2, c2 = self.to_indices(split[1])
-        r2 = sheet.nrows if r2 is None else min(r2+1, sheet.nrows)
-        c2 = min(c2+1, sheet.ncols)
-        return [tuple(self._value(sheet, r, c, as_datetime) for c in range(c1, c2))
-                for r in range(r1, r2)]
+        r2 = _sheet.nrows if r2 is None else min(r2 + 1, _sheet.nrows)
+        c2 = min(c2 + 1, _sheet.ncols)
+        return [tuple(self._value(_sheet, r, c, as_datetime) for c in range(c1, c2)) for r in range(r1, r2)]
 
-    def sheet_names(self):
+    def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the Excel spreadsheet.
 
-        Returns
-        -------
-        :class:`tuple` of :class:`str`
+        Returns:
             The names of all sheets.
         """
         return tuple(self._workbook.sheet_names())
 
-    def _value(self, sheet, row, col, as_datetime):
+    def _value(self, sheet: Sheet, row: int, col: int, as_datetime: bool) -> Any:  # noqa: FBT001, PLR0911
         """Get the value of a cell."""
         cell = sheet.cell(row, col)
         t = cell.ctype
-        if t == _xlrd.XL_CELL_NUMBER:
+        if t == XL_CELL_NUMBER:
             if cell.value.is_integer():
                 return int(cell.value)
             return cell.value
-        elif t == _xlrd.XL_CELL_DATE:
-            dt = datetime(*_xlrd.xldate_as_tuple(cell.value, self._workbook.datemode))
+
+        if t == XL_CELL_DATE:
+            tup = xldate_as_tuple(cell.value, self._workbook.datemode)
+            dt = datetime(*tup)  # noqa: DTZ001
             if dt.hour + dt.minute + dt.second + dt.microsecond == 0:
-                dt = dt.date()
-            if as_datetime:
-                return dt
-            return str(dt)
-        elif t == _xlrd.XL_CELL_BOOLEAN:
+                _date = dt.date()
+                return _date if as_datetime else str(_date)
+            return dt if as_datetime else str(dt)
+
+        if t == XL_CELL_BOOLEAN:
             return bool(cell.value)
-        elif t == _xlrd.XL_CELL_EMPTY:
+
+        if t == XL_CELL_EMPTY:
             return None
-        elif t == _xlrd.XL_CELL_ERROR:
-            return _xlrd.error_text_from_code[cell.value]
-        else:
-            return cell.value.strip()
+
+        if t == XL_CELL_ERROR:
+            return error_text_from_code[cell.value]
+
+        return cell.value.strip()

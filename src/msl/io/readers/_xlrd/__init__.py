@@ -1,8 +1,12 @@
 # Copyright (c) 2005-2012 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
+
+from __future__ import annotations
+
 import os
 import sys
+from typing import TextIO
 import zipfile
 
 from . import timemachine
@@ -18,6 +22,18 @@ from .info import __VERSION__, __version__
 from .sheet import empty_cell
 from .xldate import XLDateError, xldate_as_datetime, xldate_as_tuple
 from .xlsx import open_workbook_2007_xml
+
+__all__: list[str] = [
+  "Book",
+  "XLRDError",
+  "XL_CELL_NUMBER",
+  "XL_CELL_DATE",
+  "XL_CELL_BOOLEAN",
+  "XL_CELL_EMPTY",
+  "XL_CELL_ERROR",
+  "error_text_from_code",
+  "xldate_as_tuple",
+]
 
 #: descriptions of the file types :mod:`xlrd` can :func:`inspect <inspect_format>`.
 FILE_FORMAT_DESCRIPTIONS = {
@@ -85,17 +101,17 @@ def inspect_format(path=None, content=None):
     return fmt, zf, component_names
 
 
-def open_workbook(filename=None,
-                  logfile=sys.stdout,
-                  verbosity=0,
-                  use_mmap=True,
-                  file_contents=None,
-                  encoding_override=None,
-                  formatting_info=False,
-                  on_demand=False,
-                  ragged_rows=False,
-                  ignore_workbook_corruption=False
-                  ):
+def open_workbook(filename: str | None = None,
+                  logfile: TextIO = sys.stdout,
+                  verbosity: int = 0,
+                  use_mmap: bool = True,
+                  file_contents: str | None = None,
+                  encoding_override: str | None = None,
+                  formatting_info: bool = False,
+                  on_demand: bool = False,
+                  ragged_rows: bool = False,
+                  ignore_workbook_corruption: bool = False
+                  )-> Book:
     """
     Open a spreadsheet file for data extraction.
 

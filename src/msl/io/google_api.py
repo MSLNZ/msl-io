@@ -149,7 +149,7 @@ class GoogleAPI:
         self.close()
 
     @property
-    def service(self) -> Any:  # type: ignore[misc]
+    def service(self) -> Any:
         """The Resource object with methods for interacting with the API service."""
         return self._service
 
@@ -1183,7 +1183,7 @@ class GSheets(GoogleAPI):
         return _range
 
     @staticmethod
-    def _values(values: Any | list[Any] | tuple[Any, ...] | list[list[Any]] | tuple[tuple[Any, ...], ...]) -> Any:  # type: ignore[misc]
+    def _values(values: Any | list[Any] | tuple[Any, ...] | list[list[Any]] | tuple[tuple[Any, ...], ...]) -> Any:
         """The append() and update() API methods require a list of lists."""
         if not isinstance(values, (list, tuple)):
             return [[values]]
@@ -1308,9 +1308,9 @@ class GMail(GoogleAPI):
             body: The text to include in the body of the email. The text can be enclosed in
                 `<html></html>` tags to use HTML elements to format the message.
         """
-        from base64 import b64encode
-        from email.mime.multipart import MIMEMultipart
-        from email.mime.text import MIMEText
+        from base64 import b64encode  # noqa: PLC0415
+        from email.mime.multipart import MIMEMultipart  # noqa: PLC0415
+        from email.mime.text import MIMEText  # noqa: PLC0415
 
         if isinstance(recipients, str):
             recipients = [recipients]

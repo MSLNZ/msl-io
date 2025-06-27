@@ -2,30 +2,27 @@
 
 from __future__ import annotations
 
-import os
 import re
 import string
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any
 
-    from .._types import PathLike  # noqa: TID252
-
 _cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
 
 
-class Spreadsheet(metaclass=ABCMeta):
+class Spreadsheet(ABC):
     """Generic class for spreadsheets."""
 
-    def __init__(self, file: PathLike) -> None:
+    def __init__(self, file: str) -> None:
         """Generic class for spreadsheets.
 
         Args:
             file: The location of the spreadsheet on a local hard drive or on a network.
         """
-        self._file: str = os.fsdecode(file)
+        self._file: str = file
 
     @property
     def file(self) -> str:

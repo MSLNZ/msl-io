@@ -1,8 +1,12 @@
 # Copyright (c) 2005-2013 Stephen John Machin, Lingfo Pty Ltd
 # This module is part of the xlrd package, which is released under a
 # BSD-style licence.
+
+from __future__ import annotations
+
 from array import array
 from struct import calcsize, unpack
+from typing import Any
 
 from .biffh import *
 from .formatting import Format, nearest_colour_index
@@ -72,13 +76,13 @@ class Sheet(BaseObject):
     book = None
 
     #: Number of rows in sheet. A row index is in ``range(thesheet.nrows)``.
-    nrows = 0
+    nrows: int = 0
 
     #: Nominal number of columns in sheet. It is one more than the maximum
     #: column index found, ignoring trailing empty cells.
     #: See also the ``ragged_rows`` parameter to :func:`~xlrd.open_workbook`
     #: and :meth:`~xlrd.sheet.Sheet.row_len`.
-    ncols = 0
+    ncols: int = 0
 
 
     #: The map from a column index to a :class:`Colinfo` object. Often there is
@@ -397,7 +401,7 @@ class Sheet(BaseObject):
         # self._put_cell_rows_appended = 0
         # self._put_cell_cells_appended = 0
 
-    def cell(self, rowx, colx):
+    def cell(self, rowx: int, colx: int) -> Cell:
         """
         :class:`Cell` object in the given row and column.
         """
@@ -2317,10 +2321,10 @@ class Cell(BaseObject):
 
     __slots__ = ['ctype', 'value', 'xf_index']
 
-    def __init__(self, ctype, value, xf_index=None):
-        self.ctype = ctype
-        self.value = value
-        self.xf_index = xf_index
+    def __init__(self, ctype: int, value: Any, xf_index: Any = None) -> None:
+        self.ctype: int = ctype
+        self.value: Any = value
+        self.xf_index: Any = xf_index
 
     def __repr__(self):
         if self.xf_index is None:

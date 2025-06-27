@@ -1,41 +1,48 @@
-"""
-Helper functions for the tests
-"""
-import os
+"""Helper functions for the tests."""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 
 from msl.io import read
 
+if TYPE_CHECKING:
+    from typing import Any, Literal
 
-def read_sample(filename, **kwargs):
+    from msl.io.base import Reader, Root
+    from msl.io.metadata import Metadata
+    from msl.io.node import Dataset
+
+
+def read_sample(filename: str, **kwargs: Any) -> Reader:
     """Read a file in the 'samples' directory.
 
-    Parameters
-    ----------
-    filename : str
-        The name of the file in the samples/ directory
+    Args:
+        filename: The name of the file in the samples/ directory
+        kwargs: Passed to `read` function.
 
-    Returns
-    -------
-    A root object
+    Returns:
+        A root object
     """
-    return read(os.path.join(os.path.dirname(__file__), "samples", filename), **kwargs)
+    return read(Path(__file__).parent / "samples" / filename, **kwargs)
 
 
-def metadata_equal(m1, m2):
+def metadata_equal(m1: Metadata, m2: Metadata) -> Literal[True]:
     """Assert that two Metadata objects are equal."""
     assert len(m1) == len(m2)
     for k1, v1 in m1.items():
         v2 = m2[k1]
         if isinstance(v1, (list, tuple, np.ndarray)):
-            assert np.array_equal(v1, v2), f"{v1}\n{v2}"
+            assert np.array_equal(v1, v2), f"{v1}\n{v2}"  # pyright: ignore[reportUnknownArgumentType]
         else:
             assert v1 == v2, f"{v1} != {v2}"
     return True
 
 
-def datasets_equal(d1, d2):
+def datasets_equal(d1: Dataset, d2: Dataset) -> Literal[True]:
     """Assert that two Dataset objects are equal."""
     assert d1.name == d2.name, f"{d1.name} != {d2.name}"
     assert np.array_equal(d1.data, d2.data), f"{d1.data}\n{d2.data}"
@@ -43,7 +50,7 @@ def datasets_equal(d1, d2):
     return True
 
 
-def roots_equal(r1, r2):
+def roots_equal(r1: Root, r2: Root) -> Literal[True]:
     """Assert that two Root objects are equal."""
     assert metadata_equal(r1.metadata, r2.metadata)
 

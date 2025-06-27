@@ -813,7 +813,7 @@ def open_workbook_2007_xml(zf,
                            use_mmap=0,
                            formatting_info=0,
                            on_demand=0,
-                           ragged_rows=0):
+                           ragged_rows=0) -> XLSXBook:
     bk = XLSXBook()
     bk.x12zf = zf
     bk.x12component_names = component_names
