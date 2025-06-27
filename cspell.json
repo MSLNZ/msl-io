@@ -28,6 +28,7 @@
         "BIPM",
         "birthtime",
         "chunksize",
+        "datemode",
         "dset",
         "gdrive",
         "geteuid",
@@ -36,8 +37,11 @@
         "intp",
         "levelname",
         "levelno",
+        "loadtxt",
+        "ncols",
         "ndarray",
         "NOCLOSEPROCESS",
+        "nrows",
         "officedocument",
         "openxmlformats",
         "pycon",
@@ -45,7 +49,12 @@
         "ripemd",
         "runas",
         "setflags",
+        "Shindo",
+        "skiprows",
         "spreadsheetml",
-        "ufunc"
+        "ufunc",
+        "uncert",
+        "usecols",
+        "xldate"
     ]
 }
