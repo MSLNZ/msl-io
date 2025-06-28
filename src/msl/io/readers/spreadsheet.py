@@ -30,7 +30,7 @@ class Spreadsheet(ABC):
         return self._file
 
     @abstractmethod
-    def read(  # type: ignore[misc]
+    def read(
         self,
         cell: str | None = None,
         sheet: str | None = None,
