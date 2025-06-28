@@ -1,56 +1,62 @@
+"""Configuration file for doctests."""  # cSpell: ignore doctests
+
+from __future__ import annotations
+
 import os
-import sys
+from typing import TYPE_CHECKING
 
 import pytest
+from google.auth.exceptions import GoogleAuthError
+
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
 from msl.io.google_api import GSheets
 
+if TYPE_CHECKING:
+    from typing import Callable
+
+
 os.environ["MSL_IO_RUNNING_TESTS"] = "True"
 
 
-@pytest.fixture(autouse=True)
-def doctest_skipif(doctest_namespace):
-    # Don't want to test the output from some of the doctests if Python < 3.6
-    #
-    # In Python 2.7 the Dataset.__repr__ method displays the
-    # shape of the ndarray. Since there is a "long" numeric type in
-    # Python 2.7 the representation of the shape can have an "L" in it.
-    # Therefore, we don't want to deal with the following:
-    # Expected:
-    #   <Dataset '/my_dataset' shape=(5,) dtype='|V16' (2 metadata)>
-    # Got:
-    #   <Dataset '/my_dataset' shape=(5L,) dtype='|V16' (2 metadata)>
-    #
-    # In Python 3.6 the order of keyword arguments is preserved
-    # See PEP 468 -- Preserving the order of **kwargs
-    # Therefore, we don't want to deal with the following:
-    # Expected:
-    #     <Metadata '/' {'one': 1, 'two': 2}>
-    # Got:
-    #     <Metadata '/' {'two': 2, 'one': 1}>
-    if sys.version_info[:2] < (3, 6):
-        ver = lambda: pytest.skip("Python < 3.6")
-    else:
-        ver = lambda: None
+try:
+    _ = GSheets(account="testing", read_only=True)
+except (OSError, GoogleAuthError):
+    has_read_token = False
+else:
+    has_read_token = True
 
-    # 32-bit wheels for h5py are not available for Python 3.9+
+
+def check_h5py() -> None:
+    """Skip doctest if h5py is not installed.
+
+    h5py 2.10.0 was the last release to provide wheels for Windows x86 on PyPI (Python <= 3.8).
+    """
     if h5py is None:
-        h5 = lambda: pytest.skip("h5py not installed")
-    else:
-        h5 = lambda: None
+        pytest.skip("h5py not installed")
 
-    try:
-        GSheets(account="testing", read_only=True)
-    except:
-        sheets_read_token = lambda: pytest.skip("Google API tokens not available")
-    else:
-        sheets_read_token = lambda: None
 
-    doctest_namespace["SKIP_IF_PYTHON_LESS_THAN_36"] = ver
-    doctest_namespace["SKIP_IF_NO_H5PY"] = h5
-    doctest_namespace["SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN"] = sheets_read_token
-    doctest_namespace["SKIP_RUN_AS_ADMIN"] = lambda: pytest.skip("Illustrative examples")
+def skip_admin() -> None:
+    """Skip run-as-admin doctest."""
+    pytest.skip("illustrative examples")
+
+
+def check_sheets_read_token() -> None:
+    """Skip doctest if the GSheet API token is not available."""
+    if not has_read_token:
+        pytest.skip("GSheet API token not available")
+
+
+@pytest.fixture(autouse=True)
+def doctest_skipif(doctest_namespace: dict[str, Callable[[], None]]) -> None:
+    """Inject skipif conditions for doctest."""
+    doctest_namespace.update(
+        {
+            "SKIP_IF_NO_H5PY": check_h5py,
+            "SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN": check_sheets_read_token,
+            "SKIP_RUN_AS_ADMIN": skip_admin,
+        }
+    )

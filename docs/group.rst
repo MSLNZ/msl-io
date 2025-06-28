@@ -14,7 +14,6 @@ the names of :class:`~msl.io.group.Group` members, and the *values* are the memb
 
 .. invisible-code-block: pycon
 
-   >>> SKIP_IF_PYTHON_LESS_THAN_36()
    >>> from msl.io import JSONWriter
    >>> root = JSONWriter('example.json')
    >>> c = root.create_group('a/b/c')

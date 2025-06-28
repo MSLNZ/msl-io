@@ -13,7 +13,6 @@ having the following :class:`~msl.io.metadata.Metadata`
 
 .. invisible-code-block: pycon
 
-   >>> SKIP_IF_PYTHON_LESS_THAN_36()
    >>> from msl.io import JSONWriter
    >>> root = JSONWriter()
    >>> root.add_metadata(voltage=1.2)

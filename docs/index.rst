@@ -31,7 +31,7 @@ Getting Started
    >>> Path("my_file.h5").unlink(missing_ok=True)
    >>> Path("my_file.json").unlink(missing_ok=True)
    >>> Path("my_table.csv").unlink(missing_ok=True)
-   >>> SKIP_IF_PYTHON_LESS_THAN_36() or SKIP_IF_NO_H5PY()
+   >>> SKIP_IF_NO_H5PY()
 
 .. _msl-io-write:
 
