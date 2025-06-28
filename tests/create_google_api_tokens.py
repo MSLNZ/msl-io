@@ -5,8 +5,8 @@ from msl.io import GDrive, GMail, GSheets, constants
 account = "testing"
 credentials = constants.MSL_IO_DIR / f"{account}-client-secret.json"
 
-_ = GMail(account=account, credentials=credentials)
-_ = GSheets(account=account, credentials=credentials, read_only=True)  # type: ignore[assignment]
-_ = GSheets(account=account, credentials=credentials, read_only=False)  # type: ignore[assignment]
-_ = GDrive(account=account, credentials=credentials, read_only=True)  # type: ignore[assignment]
-_ = GDrive(account=account, credentials=credentials, read_only=False)  # type: ignore[assignment]
+m = GMail(account=account, credentials=credentials)
+s = GSheets(account=account, credentials=credentials, read_only=True)
+s = GSheets(account=account, credentials=credentials, read_only=False)
+d = GDrive(account=account, credentials=credentials, read_only=True)
+d = GDrive(account=account, credentials=credentials, read_only=False)
