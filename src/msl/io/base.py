@@ -42,20 +42,15 @@ class Root(Group):
             metadata: All keyword arguments are used as [Metadata][msl.io.metadata.Metadata].
         """
         super().__init__(name="/", parent=None, read_only=False, **metadata)
-        self._file: IO[str] | IO[bytes] | PathLike | None = file
+        self._root_file: IO[str] | IO[bytes] | PathLike | None = file
 
     def __repr__(self) -> str:
         """Returns the string representation of the Root."""
-        b = get_basename(self._file) if self._file is not None else "None"
+        b = get_basename(self._root_file) if self._root_file is not None else "None"
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
         return f"<{self.__class__.__name__} {b!r} ({g} groups, {d} datasets, {m} metadata)>"
-
-    @property
-    def file(self) -> IO[str] | IO[bytes] | PathLike | None:
-        """IO[str] | IO[bytes] | PathLike | None &mdash; The file object that is associated with the [Root][]."""
-        return self._file
 
     def tree(self, *, indent: int = 2) -> str:
         """Returns a representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure).
@@ -82,7 +77,13 @@ class Writer(Root, ABC):
             metadata: All keyword arguments are used as [Metadata][msl.io.metadata.Metadata].
         """
         super().__init__(file, **metadata)
+        self._file: IO[str] | IO[bytes] | PathLike | None = file
         self._context_kwargs: dict[str, Any] = {}
+
+    @property
+    def file(self) -> IO[str] | IO[bytes] | PathLike | None:
+        """IO[str] | IO[bytes] | PathLike | None &mdash; The file object associated with the [Writer][msl.io.base.Writer]."""  # noqa: E501
+        return self._file
 
     def set_root(self, root: Group) -> None:
         """Set a new [Root][] for the [Writer][].
@@ -94,7 +95,7 @@ class Writer(Root, ABC):
             the [Writer][] was created does not change.
 
         Args:
-            root: The new [Root][].
+            root: The new `root`.
         """
         self.clear()
         self.metadata.clear()
@@ -152,17 +153,18 @@ class Writer(Root, ABC):
 class Reader(Root, ABC):
     """Base class for an abstract Reader."""
 
-    def __init__(self, file: IO[str] | IO[bytes] | PathLike) -> None:
+    def __init__(self, file: IO[str] | IO[bytes] | str) -> None:
         """Base class for an abstract Reader.
 
         Args:
             file: The file to read.
         """
         super().__init__(file)
+        self._file: IO[str] | IO[bytes] | str = file
 
     @staticmethod
     @abstractmethod
-    def can_read(file: IO[str] | IO[bytes] | PathLike, **kwargs: Any) -> bool:
+    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
         """Whether this [Reader][msl.io.base.Reader] can read the file specified by `file`.
 
         !!! important
@@ -177,12 +179,16 @@ class Reader(Root, ABC):
             Either `True` (can read) or `False` (cannot read).
         """
 
+    @property
+    def file(self) -> IO[str] | IO[bytes] | str:
+        """IO[str] | IO[bytes] | str &mdash; The file object associated with the [Reader][msl.io.base.Reader]."""
+        return self._file
+
     @abstractmethod
     def read(self, **kwargs: Any) -> None:
         """Read the file.
 
-        The file can be accessed by the [file][msl.io.base.Root.file]
-        property of the [Reader][msl.io.base.Reader], i.e., `self.file`
+        The file to read can be accessed by the [file][msl.io.base.Reader.file] property.
 
         !!! important
             You must override this method.
