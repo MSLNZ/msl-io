@@ -7,50 +7,49 @@ from io import BytesIO
 import pytest
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
-from tests.helper import read_sample
-from tests.helper import roots_equal
-from msl.io import JSONWriter
-from msl.io import read
+from msl.io import JSONWriter, read
 from msl.io.readers import JSONReader
+from tests.helper import read_sample, roots_equal
 
 
-def test_raises():
+def test_raises() -> None:
     # file does not exist
     with pytest.raises(OSError, match=r"No such file"):
-        read("does_not.exist")
+        _ = read("does_not.exist")
 
     # unicode filename
     with pytest.raises(OSError, match=r"No such file"):
-        read("Filé döes ñot éxist")
+        _ = read("Filé döes ñot éxist")  # cSpell: ignore Filé döes ñot éxist
 
     # no Reader class exists to read this test_read.py file
     with pytest.raises(OSError, match=r"No Reader exists"):
-        read(__file__)
+        _ = read(__file__)
 
     # unicode filename
     with pytest.raises(OSError, match=r"No Reader exists"):
-        read_sample("uñicödé")
+        _ = read_sample("uñicödé")  # cSpell: ignore uñicödé
 
 
 @pytest.mark.skipif(h5py is None, reason="h5py is not installed")
-def test_unicode_filename():
+def test_unicode_filename() -> None:
     root = read_sample("uñicödé.h5")
     assert root.metadata.is_unicode
+    assert isinstance(root.file, str)
     assert root.file.endswith("uñicödé.h5")
     assert "café" in root
     assert "/café" in root
-    assert "café/caña" in root
+    assert "café/caña" in root  # cSpell: ignore caña
     assert "/café/caña" in root
     assert "caña" in root["café"]
     assert "/caña" in root["/café"]
-    assert "cafécaña" not in root
+    assert "cafécaña" not in root  # cSpell: ignore cafécaña
 
 
-def test_socket():
+def test_socket() -> None:
     # test that we can read/write a Root object from a socket stream
 
     # get any available port
@@ -60,7 +59,7 @@ def test_socket():
     sock.close()
 
     # the server will run in a separate thread
-    def start_server():
+    def start_server() -> None:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind(("localhost", port))
         server.listen(1)
@@ -101,7 +100,8 @@ def test_socket():
     thread.join()
 
 
-def test_pathlib():
+def test_pathlib() -> None:
     root1 = read_sample("json_sample.json")
+    assert isinstance(root1.file, str)
     root2 = read(pathlib.Path(root1.file))
     assert roots_equal(root1, root2)

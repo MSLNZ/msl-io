@@ -1,185 +1,186 @@
 import re
 
+import pytest
+
 from msl.io import JSONWriter, Root
 from msl.io.node import Group
 
-import pytest
 
-def test_datasets_exclude():
+def test_datasets_exclude() -> None:  # noqa: PLR0915
     w = JSONWriter()
     assert len(list(w.datasets())) == 0
 
-    w.create_dataset("pear", data=[1, 2, 3])  # ignore leading /
-    w.create_dataset("/a/B/c/apple", data=[1, 2, 3])
-    w.create_dataset("/a/strawberry", data=[1, 2, 3])
-    w.create_dataset("a/b/banana", data=[1, 2, 3])  # ignore leading /
-    w.create_dataset("/a/melon", data=[1, 2, 3])
-    w.create_dataset("/a/B/c/d/e/kiwi", data=[1, 2, 3])
+    _ = w.create_dataset("pear", data=[1, 2, 3])  # ignore leading /
+    _ = w.create_dataset("/a/B/c/apple", data=[1, 2, 3])
+    _ = w.create_dataset("/a/strawberry", data=[1, 2, 3])
+    _ = w.create_dataset("a/b/banana", data=[1, 2, 3])  # ignore leading /
+    _ = w.create_dataset("/a/melon", data=[1, 2, 3])
+    _ = w.create_dataset("/a/B/c/d/e/kiwi", data=[1, 2, 3])
 
     # do not exclude datasets
-    dsets = list(w.datasets())
-    assert len(dsets) == 6
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/B/c/apple"
-    assert dsets[2].name == "/a/strawberry"
-    assert dsets[3].name == "/a/b/banana"
-    assert dsets[4].name == "/a/melon"
-    assert dsets[5].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets())
+    assert len(datasets) == 6
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/B/c/apple"
+    assert datasets[2].name == "/a/strawberry"
+    assert datasets[3].name == "/a/b/banana"
+    assert datasets[4].name == "/a/melon"
+    assert datasets[5].name == "/a/B/c/d/e/kiwi"
 
     # exclude all datasets with 'e' in the name
-    dsets = list(w.datasets(exclude="e"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/b/banana"
+    datasets = list(w.datasets(exclude="e"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/b/banana"
 
     # only '/a/B/c/apple' should get excluded
-    dsets = list(w.datasets(exclude="ApPl", flags=re.IGNORECASE))
-    assert len(dsets) == 5
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/strawberry"
-    assert dsets[2].name == "/a/b/banana"
-    assert dsets[3].name == "/a/melon"
-    assert dsets[4].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets(exclude="ApPl", flags=re.IGNORECASE))
+    assert len(datasets) == 5
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/strawberry"
+    assert datasets[2].name == "/a/b/banana"
+    assert datasets[3].name == "/a/melon"
+    assert datasets[4].name == "/a/B/c/d/e/kiwi"
 
     # everything in the '/a/B' Group should get excluded
-    dsets = list(w.datasets(exclude="/a/B"))
-    assert len(dsets) == 4
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/strawberry"
-    assert dsets[2].name == "/a/b/banana"
-    assert dsets[3].name == "/a/melon"
+    datasets = list(w.datasets(exclude="/a/B"))
+    assert len(datasets) == 4
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/strawberry"
+    assert datasets[2].name == "/a/b/banana"
+    assert datasets[3].name == "/a/melon"
 
     # everything in the '/a/B' and '/a/b' Groups should get excluded
-    dsets = list(w.datasets(exclude="/a/(B|b)"))
-    assert len(dsets) == 3
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/strawberry"
-    assert dsets[2].name == "/a/melon"
+    datasets = list(w.datasets(exclude="/a/(B|b)"))
+    assert len(datasets) == 3
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/strawberry"
+    assert datasets[2].name == "/a/melon"
 
     # look at a subGroup
-    dsets = list(w["/a/B/c"].datasets())
-    assert len(dsets) == 2
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w["/a/B/c"].datasets())
+    assert len(datasets) == 2
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/B/c/d/e/kiwi"
 
-    dsets = list(w.a.B.c.datasets())
-    assert len(dsets) == 2
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.a.B.c.datasets())
+    assert len(datasets) == 2
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/B/c/d/e/kiwi"
 
     # exclude everything with an 'e'
-    dsets = list(w["/a/B/c"].datasets(exclude="e"))
-    assert len(dsets) == 0
+    datasets = list(w["/a/B/c"].datasets(exclude="e"))
+    assert len(datasets) == 0
 
-    dsets = list(w.a.B.c.datasets(exclude="e"))
-    assert len(dsets) == 0
+    datasets = list(w.a.B.c.datasets(exclude="e"))
+    assert len(datasets) == 0
 
     # exclude everything in the 'e/' Group
-    dsets = list(w["/a/B/c"].datasets(exclude="e/"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/B/c/apple"
+    datasets = list(w["/a/B/c"].datasets(exclude="e/"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/B/c/apple"
 
-    dsets = list(w.a.B.c.datasets(exclude="e/"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/B/c/apple"
+    datasets = list(w.a.B.c.datasets(exclude="e/"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/B/c/apple"
 
 
-def test_datasets_include():
+def test_datasets_include() -> None:  # noqa: PLR0915
     w = JSONWriter()
     assert len(list(w.datasets())) == 0
 
-    w.create_dataset("pear", data=[1, 2, 3])  # ignore leading /
-    w.create_dataset("a/B/c/apple", data=[1, 2, 3])  # ignore leading /
-    w.create_dataset("/a/strawberry", data=[1, 2, 3])
-    w.create_dataset("/a/b/banana", data=[1, 2, 3])
-    w.create_dataset("/a/melon", data=[1, 2, 3])
-    w.create_dataset("/a/B/c/d/e/kiwi", data=[1, 2, 3])
+    _ = w.create_dataset("pear", data=[1, 2, 3])  # ignore leading /
+    _ = w.create_dataset("a/B/c/apple", data=[1, 2, 3])  # ignore leading /
+    _ = w.create_dataset("/a/strawberry", data=[1, 2, 3])
+    _ = w.create_dataset("/a/b/banana", data=[1, 2, 3])
+    _ = w.create_dataset("/a/melon", data=[1, 2, 3])
+    _ = w.create_dataset("/a/B/c/d/e/kiwi", data=[1, 2, 3])
 
     # include all datasets
-    dsets = list(w.datasets())
-    assert len(dsets) == 6
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/B/c/apple"
-    assert dsets[2].name == "/a/strawberry"
-    assert dsets[3].name == "/a/b/banana"
-    assert dsets[4].name == "/a/melon"
-    assert dsets[5].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets())
+    assert len(datasets) == 6
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/B/c/apple"
+    assert datasets[2].name == "/a/strawberry"
+    assert datasets[3].name == "/a/b/banana"
+    assert datasets[4].name == "/a/melon"
+    assert datasets[5].name == "/a/B/c/d/e/kiwi"
 
     # include all datasets with 'e' in the name
-    dsets = list(w.datasets(include="e"))
-    assert len(dsets) == 5
-    assert dsets[0].name == "/pear"
-    assert dsets[1].name == "/a/B/c/apple"
-    assert dsets[2].name == "/a/strawberry"
-    assert dsets[3].name == "/a/melon"
-    assert dsets[4].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets(include="e"))
+    assert len(datasets) == 5
+    assert datasets[0].name == "/pear"
+    assert datasets[1].name == "/a/B/c/apple"
+    assert datasets[2].name == "/a/strawberry"
+    assert datasets[3].name == "/a/melon"
+    assert datasets[4].name == "/a/B/c/d/e/kiwi"
 
     # only '/a/B/c/apple' should get included
-    dsets = list(w.datasets(include="ApPl", flags=re.IGNORECASE))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/B/c/apple"
+    datasets = list(w.datasets(include="ApPl", flags=re.IGNORECASE))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/B/c/apple"
 
     # everything in the '/a/B' Group should get included
-    dsets = list(w.datasets(include="/a/B"))
-    assert len(dsets) == 2
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets(include="/a/B"))
+    assert len(datasets) == 2
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/B/c/d/e/kiwi"
 
     # everything in the '/a/B' and '/a/b' Groups should get included
-    dsets = list(w.datasets(include="/a/(B|b)"))
-    assert len(dsets) == 3
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/b/banana"
-    assert dsets[2].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.datasets(include="/a/(B|b)"))
+    assert len(datasets) == 3
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/b/banana"
+    assert datasets[2].name == "/a/B/c/d/e/kiwi"
 
     # look at a subGroup
-    dsets = list(w["/a/B/c"].datasets())
-    assert len(dsets) == 2
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w["/a/B/c"].datasets())
+    assert len(datasets) == 2
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/B/c/d/e/kiwi"
 
-    dsets = list(w.a.B.c.datasets())
-    assert len(dsets) == 2
-    assert dsets[0].name == "/a/B/c/apple"
-    assert dsets[1].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.a.B.c.datasets())
+    assert len(datasets) == 2
+    assert datasets[0].name == "/a/B/c/apple"
+    assert datasets[1].name == "/a/B/c/d/e/kiwi"
 
     # include everything with 'pear'
-    dsets = list(w["/a/B/c"].datasets(include="pear"))
-    assert len(dsets) == 0
+    datasets = list(w["/a/B/c"].datasets(include="pear"))
+    assert len(datasets) == 0
 
-    dsets = list(w.a.B.c.datasets(include="pear"))
-    assert len(dsets) == 0
+    datasets = list(w.a.B.c.datasets(include="pear"))
+    assert len(datasets) == 0
 
-    dsets = list(w.datasets(include="/pear"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/pear"
+    datasets = list(w.datasets(include="/pear"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/pear"
 
     # include everything in the 'e/' Group
-    dsets = list(w["/a/B/c"].datasets(include="e/"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w["/a/B/c"].datasets(include="e/"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/B/c/d/e/kiwi"
 
-    dsets = list(w.a.B.c.datasets(include="e/"))
-    assert len(dsets) == 1
-    assert dsets[0].name == "/a/B/c/d/e/kiwi"
+    datasets = list(w.a.B.c.datasets(include="e/"))
+    assert len(datasets) == 1
+    assert datasets[0].name == "/a/B/c/d/e/kiwi"
 
     # exclude and include
-    dsets = list(w["/a/B/c"].datasets(exclude="kiwi", include="e/"))
-    assert len(dsets) == 0
+    datasets = list(w["/a/B/c"].datasets(exclude="kiwi", include="e/"))
+    assert len(datasets) == 0
 
-    dsets = list(w.a.B.c.datasets(exclude="kiwi", include="e/"))
-    assert len(dsets) == 0
+    datasets = list(w.a.B.c.datasets(exclude="kiwi", include="e/"))
+    assert len(datasets) == 0
 
 
-def test_groups_exclude():
+def test_groups_exclude() -> None:  # noqa: PLR0915
     w = JSONWriter()
     assert len(list(w.groups())) == 0
 
-    w.create_group("pear")  # ignore leading /
-    w.create_group("a/B/c/apple")  # ignore leading /
-    w.create_group("/a/strawberry")
-    w.create_group("/a/b/banana")
-    w.create_group("/a/melon")
-    w.create_group("/a/B/c/d/e/kiwi")
+    _ = w.create_group("pear")  # ignore leading /
+    _ = w.create_group("a/B/c/apple")  # ignore leading /
+    _ = w.create_group("/a/strawberry")
+    _ = w.create_group("/a/b/banana")
+    _ = w.create_group("/a/melon")
+    _ = w.create_group("/a/B/c/d/e/kiwi")
 
     # do not exclude any Groups
     groups = list(w.groups())
@@ -278,16 +279,16 @@ def test_groups_exclude():
     assert groups[2].name == "/a/B/c/d/e"
 
 
-def test_groups_include():
+def test_groups_include() -> None:  # noqa: PLR0915
     w = JSONWriter()
     assert len(list(w.groups())) == 0
 
-    w.create_group("pear")  # ignore leading /
-    w.create_group("a/B/c/apple")
-    w.create_group("/a/strawberry")
-    w.create_group("a/b/banana")  # ignore leading /
-    w.create_group("/a/melon")
-    w.create_group("/a/B/c/d/e/kiwi")
+    _ = w.create_group("pear")  # ignore leading /
+    _ = w.create_group("a/B/c/apple")
+    _ = w.create_group("/a/strawberry")
+    _ = w.create_group("a/b/banana")  # ignore leading /
+    _ = w.create_group("/a/melon")
+    _ = w.create_group("/a/B/c/d/e/kiwi")
 
     # include all Groups
     groups = list(w.groups())
@@ -391,16 +392,16 @@ def test_groups_include():
     assert groups[1].name == "/a/B/c/d/e/kiwi"
 
 
-def test_ancestors():
+def test_ancestors() -> None:
     w = JSONWriter()
     assert len(list(w.ancestors())) == 0
 
-    w.create_group("pear")  # ignore leading /
-    w.create_group("a/B/c/apple")  # ignore leading /
-    w.create_group("/a/strawberry")
-    w.create_group("a/b/banana")  # ignore leading /
-    w.create_group("/a/melon")
-    w.create_group("/a/B/c/d/e/kiwi")
+    _ = w.create_group("pear")  # ignore leading /
+    _ = w.create_group("a/B/c/apple")  # ignore leading /
+    _ = w.create_group("/a/strawberry")
+    _ = w.create_group("a/b/banana")  # ignore leading /
+    _ = w.create_group("/a/melon")
+    _ = w.create_group("/a/B/c/d/e/kiwi")
 
     ancestors = list(w.ancestors())
     assert len(ancestors) == 0
@@ -442,16 +443,16 @@ def test_ancestors():
     assert ancestors[3].name == "/"
 
 
-def test_descendants():
+def test_descendants() -> None:  # noqa: PLR0915
     w = JSONWriter()
     assert len(list(w.descendants())) == 0
 
-    w.create_group("pear")  # ignore leading /
-    w.create_group("a/B/c/apple")  # ignore leading /
-    w.create_group("/a/strawberry")
-    w.create_group("/a/b/banana")
-    w.create_group("/a/melon")
-    w.create_group("/a/B/c/d/e/kiwi")
+    _ = w.create_group("pear")  # ignore leading /
+    _ = w.create_group("a/B/c/apple")  # ignore leading /
+    _ = w.create_group("/a/strawberry")
+    _ = w.create_group("/a/b/banana")
+    _ = w.create_group("/a/melon")
+    _ = w.create_group("/a/B/c/d/e/kiwi")
 
     descendants = list(w.descendants())
     assert len(descendants) == 12

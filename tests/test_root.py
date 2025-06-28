@@ -4,13 +4,11 @@ import types
 import pytest
 
 from msl.io.base import Root
-from msl.io.node import Dataset
-from msl.io.node import Group
+from msl.io.node import Dataset, DatasetLogging, Group
 
 
-def test_instantiation():
+def test_instantiation() -> None:
     root = Root("some.file")
-    assert root.file == "some.file"
     assert root.name == "/"
     assert not root.read_only
     assert not root.metadata.read_only
@@ -19,15 +17,12 @@ def test_instantiation():
     assert str(root).startswith("<Root")
 
     root = Root("C:\\path\\to\\a\\windows.file")
-    assert root.file == "C:\\path\\to\\a\\windows.file"
     assert root.name == "/"
 
     root = Root(r"\\network\drive with multiple\spa ces.file")
-    assert root.file == "\\\\network\\drive with multiple\\spa ces.file"
     assert root.name == "/"
 
     root = Root("/home/another.xxx")
-    assert root.file == "/home/another.xxx"
     assert root.name == "/"
     assert not root.read_only
     assert not root.metadata.read_only
@@ -35,7 +30,6 @@ def test_instantiation():
     assert len(root.metadata) == 0
 
     root = Root("/home/another.xxx", one=1, two=2, three=3)
-    assert root.file == "/home/another.xxx"
     assert root.name == "/"
     assert not root.read_only
     assert not root.metadata.read_only
@@ -45,7 +39,7 @@ def test_instantiation():
     root.read_only = True
 
     # cannot add metadata
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         root.add_metadata(four=4, five=5)
 
     root.read_only = False
@@ -53,12 +47,12 @@ def test_instantiation():
     assert root.metadata == {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
 
 
-def test_create_group():
+def test_create_group() -> None:
     root = Root("")
 
     # must specify a name for the group
     with pytest.raises(TypeError):
-        root.create_group(read_only=True)
+        root.create_group(read_only=True)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
 
     assert not root.read_only
     assert not root.metadata.read_only
@@ -66,8 +60,8 @@ def test_create_group():
     root.read_only = True
 
     # cannot create a group since root is in read-only mode
-    with pytest.raises(ValueError):
-        root.create_group("xxx")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.create_group("xxx")
 
     root.read_only = False
     assert not root.read_only
@@ -110,8 +104,8 @@ def test_create_group():
 
     # check that we can make root read only again
     root.read_only = True
-    with pytest.raises(ValueError):
-        root.create_group("xxx")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.create_group("xxx")
 
     # check that the subgroups of root make sense
     assert len(root) == 4
@@ -122,12 +116,12 @@ def test_create_group():
     assert "xxx" not in root
 
 
-def test_create_dataset():
+def test_create_dataset() -> None:  # noqa: PLR0915
     root = Root("")
 
     # must specify a name for the dataset
     with pytest.raises(TypeError):
-        root.create_dataset()
+        root.create_dataset()  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
 
     assert not root.read_only
     assert not root.metadata.read_only
@@ -135,14 +129,14 @@ def test_create_dataset():
     root.read_only = True
 
     # cannot create a dataset if root is in read-only mode
-    with pytest.raises(ValueError):
-        root.create_dataset("xxx")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.create_dataset("xxx")
 
     root.read_only = False
     assert not root.read_only
     assert not root.metadata.read_only
 
-    # create an emtpy dataset (no data, no metadata)
+    # create an empty dataset (no data, no metadata)
     d1 = root.create_dataset("data1")
     assert root.is_dataset(d1)
     assert isinstance(d1, Dataset)
@@ -193,8 +187,8 @@ def test_create_dataset():
 
     # check that we can make root read only again
     root.read_only = True
-    with pytest.raises(ValueError):
-        root.create_dataset("xxx")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.create_dataset("xxx")
 
     # check that the datasets of root make sense
     assert len(root) == 5
@@ -206,7 +200,7 @@ def test_create_dataset():
     assert "xxx" not in root
 
 
-def test_accessing_subgroups_subdatasets():
+def test_accessing_subgroups_sub_datasets() -> None:  # noqa: PLR0915
     root = Root("")
 
     a = root.create_group("a")
@@ -252,7 +246,7 @@ def test_accessing_subgroups_subdatasets():
     assert root.a.b.c.d.d2 is root["a"]["b"]["c"]["d"]["d2"]
     assert root.a.b.c.d.d3 is root["a"]["b"]["c"]["d"]["d3"]
 
-    assert root["a"].b["c"].d is root["/a/b/c/d"]
+    assert root["a"].b["c"].d is root["/a/b/c/d"]  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
 
     assert root.a.d1 is a["d1"]
     assert root.a.b is a["b"]
@@ -269,21 +263,21 @@ def test_accessing_subgroups_subdatasets():
     assert cc["d"] is root["a"]["b"]["c"]["d"]
 
     with pytest.raises(KeyError):
-        xxx = root["xxx"]
+        _ = root["xxx"]
 
     with pytest.raises(AttributeError):
-        xxx = root.xxx
+        _ = root.xxx
 
 
-def test_in_not_in():
+def test_in_not_in() -> None:
     root = Root("")
 
     a = root.create_group("a")
-    a.create_dataset("first dataset")
+    _ = a.create_dataset("first dataset")
     b = a.create_group("b")
     c = b.create_group("c")
     d = c.create_group("d")
-    d.create_dataset("second dataset")
+    _ = d.create_dataset("second dataset")
 
     assert "xxx" not in root
     assert "/" not in root
@@ -305,7 +299,7 @@ def test_in_not_in():
     assert "/a/b/c/d/second dataset" in root
 
 
-def test_read_only_propagates():
+def test_read_only_propagates() -> None:  # noqa: PLR0915
     root = Root("")
 
     g1 = root.create_group("g1")
@@ -335,7 +329,7 @@ def test_read_only_propagates():
     root.read_only = True
     assert root.read_only
     assert root.metadata.read_only
-    assert g1.read_only
+    assert g1.read_only  # type: ignore[unreachable]
     assert g1.metadata.read_only
     assert d1.read_only
     assert d1.metadata.read_only
@@ -366,7 +360,7 @@ def test_read_only_propagates():
     assert not g4.metadata.read_only
 
 
-def test_datasets_groups():
+def test_datasets_groups() -> None:
     root = Root("")
 
     d0 = root.create_dataset("d0")
@@ -378,12 +372,12 @@ def test_datasets_groups():
     g4 = g3.create_group("g4")
 
     # cannot create 2 sub-Groups with the same key
-    with pytest.raises(ValueError):
-        root.create_group("g1")
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = root.create_group("g1")
 
     # cannot create 2 Datasets with the same key
-    with pytest.raises(ValueError):
-        g3.create_group("d3")
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = g3.create_group("d3")
 
     assert isinstance(root.datasets(), types.GeneratorType)
     datasets = list(root.datasets())
@@ -415,41 +409,41 @@ def test_datasets_groups():
         del root_items[key]
 
 
-def test_delete_vertex():
+def test_delete_vertex() -> None:  # noqa: PLR0915
     root = Root("")
 
-    root.create_group("g1")
+    _ = root.create_group("g1")
     g2 = root.create_group("g2")
-    g2.create_group("a")
-    g2.create_dataset("b")
+    _ = g2.create_group("a")
+    _ = g2.create_dataset("b")
     c = g2.create_group("c")
-    root.create_group("g3")
-    c.create_dataset("cd1")
-    c.create_dataset("cd2")
-    c.create_group("cg3")
+    _ = root.create_group("g3")
+    _ = c.create_dataset("cd1")
+    _ = c.create_dataset("cd2")
+    _ = c.create_group("cg3")
 
     with pytest.raises(KeyError):  # invalid key
         del root["x"]
 
     with pytest.raises(KeyError):  # invalid key
-        del root["x"]["y"]
+        del root["x"]["y"]  # pyright: ignore[reportIndexIssue]
 
     with pytest.raises(AttributeError):  # invalid attribute
         del root.x
 
     with pytest.raises(AttributeError):  # invalid attribute
-        del root.x.y
+        del root.x.y  # pyright: ignore[reportAttributeAccessIssue]
 
     root.read_only = True
 
-    with pytest.raises(ValueError):  # read-only mode
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
         del root["g1"]
 
-    with pytest.raises(ValueError):  # read-only mode
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
         del root.g2
 
-    with pytest.raises(ValueError):  # read-only mode
-        del root.g2.c.cd1
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
+        del root.g2.c.cd1  # pyright: ignore[reportAttributeAccessIssue]
 
     assert "/g1" in root
     assert "/g2" in root
@@ -476,14 +470,14 @@ def test_delete_vertex():
 
     root.read_only = True
 
-    with pytest.raises(ValueError):  # read-only mode
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
         del root["g2"]
 
-    with pytest.raises(ValueError):  # read-only mode
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
         del root.g2
 
-    with pytest.raises(ValueError):  # read-only mode
-        del root.g2.c.cg3
+    with pytest.raises(ValueError, match=r"read-only"):  # read-only mode
+        del root.g2.c.cg3  # pyright: ignore[reportAttributeAccessIssue]
 
     root.read_only = False
 
@@ -497,7 +491,7 @@ def test_delete_vertex():
     assert "/g2/c/cg3" in root
     assert "/g3" in root
 
-    del root["g2"]["c"]["cg3"]
+    del root["g2"]["c"]["cg3"]  # type: ignore[union-attr]  # pyright: ignore[reportIndexIssue]
     assert "/g2" in root
     assert "/g2/b" in root
     assert "/g2/c" in root
@@ -506,7 +500,7 @@ def test_delete_vertex():
     assert "/g2/c/cg3" not in root
     assert "/g3" in root
 
-    del root.g2.b
+    del root.g2.b  # pyright: ignore[reportAttributeAccessIssue]
     assert "/g2" in root
     assert "/g2/b" not in root
     assert "/g2/c" in root
@@ -525,24 +519,24 @@ def test_delete_vertex():
     assert len(root) == 0
 
 
-def test_auto_create_subgroups():
+def test_auto_create_subgroups() -> None:
     root = Root("")
 
     assert len(list(root.groups())) == 0
     assert len(list(root.datasets())) == 0
 
-    root.create_group("a/group2/c/group4/d/group6")
-    root.create_dataset("/w/x/y/z", shape=(10,))
+    _ = root.create_group("a/group2/c/group4/d/group6")
+    _ = root.create_dataset("/w/x/y/z", shape=(10,))
 
     # intermediate Groups get created automatically
-    with pytest.raises(ValueError):
-        root.create_group("a/group2/c")
-    with pytest.raises(ValueError):
-        root.create_group("/w/x")
+    with pytest.raises(ValueError, match="unique"):
+        _ = root.create_group("a/group2/c")
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = root.create_group("/w/x")
 
     assert len(list(root.groups())) == 9
 
-    root.a.group2.c.group4.create_group("/m/n")
+    _ = root.a.group2.c.group4.create_group("/m/n")
 
     assert len(list(root.groups())) == 11
 
@@ -564,7 +558,7 @@ def test_auto_create_subgroups():
     assert root["/w/x/y/z"].shape == (10,)
 
 
-def test_requires():
+def test_requires() -> None:  # noqa: PLR0915
     root = Root("")
 
     #
@@ -587,19 +581,19 @@ def test_requires():
 
     # try to add Metadata to a Group that is read only
     root.read_only = True
-    with pytest.raises(ValueError):
-        root.require_group("a", two=2)
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.require_group("a", two=2)
     # read-only mode
-    with pytest.raises(ValueError):
-        a.create_group("b")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = a.create_group("b")
 
     root.read_only = False
     b = a.create_group("b")
-    with pytest.raises(ValueError):
-        a.create_group("b")
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = a.create_group("b")
     assert root.require_group("a/b") is b
 
-    root.require_group("/a/b/c/d/e/", foo="bar")
+    _ = root.require_group("/a/b/c/d/e/", foo="bar")
     assert "a" in root
     assert "b" in a
     assert "c" in root.a.b
@@ -640,7 +634,7 @@ def test_requires():
     assert bb.metadata.read_only
     assert len(root.aa.bb.metadata) == 1
     assert root.aa.bb.metadata.hello == "world"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         bb.add_metadata(one=1)
     bb.read_only = False
     bb.add_metadata(one=1)
@@ -649,7 +643,7 @@ def test_requires():
     assert root.aa.bb.metadata.one == 1
     assert root.aa.read_only
     assert root.aa.metadata.read_only
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         root.aa.add_metadata(two=2)
 
     # require root.aa.bb but change the read-only value
@@ -658,14 +652,14 @@ def test_requires():
     assert bb2 is root.aa.bb
     assert bb2.read_only
     assert root.aa.bb.read_only
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         bb2.add_metadata(three=3)
 
     #
     # Datasets
     #
-    with pytest.raises(ValueError):
-        root.require_dataset("a")  # 'a' is already a Group but we are creating a Dataset
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = root.require_dataset("a")  # 'a' is already a Group but we are creating a Dataset
     w = root.require_dataset("w")
     assert root.is_dataset(w)
     assert "w" in root
@@ -691,21 +685,21 @@ def test_requires():
 
     # try to add Metadata to a Dataset that is read only
     root.read_only = True
-    with pytest.raises(ValueError):
-        root.require_dataset("w", two=2)
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.require_dataset("w", two=2)
     # read-only mode
-    with pytest.raises(ValueError):
-        root.create_dataset("x")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.create_dataset("x")
 
     # add a Dataset to the 'a' Group
     root.read_only = False
     x = a.create_dataset("x")
-    with pytest.raises(ValueError):
-        a.create_dataset("x")
+    with pytest.raises(ValueError, match=r"unique"):
+        _ = a.create_dataset("x")
     assert root.require_dataset("/a/x") is x
 
     # add a Dataset to the 'b' Group, create the necessary sub-Groups automatically
-    root.require_dataset("/b/x/y/z", data=[1, 2, 3, 4], foo="bar")
+    _ = root.require_dataset("/b/x/y/z", data=[1, 2, 3, 4], foo="bar")
     assert root.is_group(root.b)
     assert root.is_group(root.b.x)
     assert root.is_group(root.b.x.y)
@@ -722,6 +716,7 @@ def test_requires():
     assert "foo" in root.b.x.y.z.metadata
     assert root.b.x.y.z.metadata.foo == "bar"
     assert root.b.x.y.z.shape == (4,)
+    assert isinstance(root.b.x.y.z, Dataset)
     assert root.b.x.y.z.tolist() == [1, 2, 3, 4]
     assert root.b.x.y.z.max() == 4
 
@@ -737,7 +732,7 @@ def test_requires():
     assert yy.metadata.read_only
     assert len(root.xx.yy.metadata) == 1
     assert root.xx.yy.metadata.hello == "world"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         yy.add_metadata(one=1)
     yy.read_only = False
     yy.add_metadata(one=1)
@@ -746,7 +741,7 @@ def test_requires():
     assert root.xx.yy.metadata.one == 1
     assert root.xx.read_only
     assert root.xx.metadata.read_only
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         root.xx.add_metadata(two=2)
 
     # require root.xx.yy but change the read-only value
@@ -755,39 +750,41 @@ def test_requires():
     assert yy2 is root.xx.yy
     assert yy2.read_only
     assert root.xx.yy.read_only
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"read-only"):
         yy2.add_metadata(three=3)
 
     # make sure that calling require_dataset from a sub-Group works properly
+    assert isinstance(root.a, Group)
     a = root.a
     assert a.require_dataset("x") is x
     assert a.require_dataset("/x") is root.a.x
+    assert isinstance(root["b"], Group)
     b = root["b"]
     assert b.require_dataset("x/y/z") is root.b.x.y.z
-    x = root["b"]["x"]
-    assert x.require_dataset("/y/z") is root.b.x.y.z
+    x = root["b"]["x"]  # type: ignore[assignment]
+    assert x.require_dataset("/y/z") is root.b.x.y.z  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
     y = root["b"]["x"]["y"]
-    assert y.require_dataset("/z/") is root.b.x.y.z
-    assert root["b"]["x"]["y"].require_dataset("z") is root.b.x.y.z
+    assert y.require_dataset("/z/") is root.b.x.y.z  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
+    assert root["b"]["x"]["y"].require_dataset("z") is root.b.x.y.z  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
     xx = root.xx
     assert xx.require_dataset("yy") is root["xx"]["yy"]
     assert root.xx.require_dataset("yy/") is yy2
 
 
-def test_tree():
+def test_tree() -> None:
     root = Root("")
     a = root.create_group("a")
-    a.create_dataset("d1")
+    _ = a.create_dataset("d1")
     b = a.create_group("b")
-    b.create_dataset("d2")
+    _ = b.create_dataset("d2")
     c = b.create_group("c")
-    root.create_group("x/y/z")
+    _ = root.create_group("x/y/z")
     d = c.create_group("d")
-    a.create_dataset("d3")
-    root.create_dataset("d4")
-    d.create_dataset("d5")
-    d.create_dataset("d6")
-    root.create_dataset("d7")
+    _ = a.create_dataset("d3")
+    _ = root.create_dataset("d4")
+    _ = d.create_dataset("d5")
+    _ = d.create_dataset("d6")
+    _ = root.create_dataset("d7")
 
     tree = """
 <Root '' (7 groups, 7 datasets, 0 metadata)>
@@ -809,7 +806,7 @@ def test_tree():
     assert root.tree() == tree[1:]  # skip the first line
 
     # use del instead of Group.remove()
-    del root.a.b.c
+    del root.a.b.c  # pyright: ignore[reportAttributeAccessIssue]
 
     tree = """
 <Root '' (5 groups, 5 datasets, 0 metadata)>
@@ -827,7 +824,7 @@ def test_tree():
     assert root.tree() == tree[1:]  # skip the first line
 
     # use Group.remove() instead of del
-    root.remove("a")
+    assert root.remove("a") is a
 
     tree = """
 <Root '' (3 groups, 2 datasets, 0 metadata)>
@@ -851,12 +848,12 @@ def test_tree():
     assert root.tree(indent=5) == tree[1:]  # skip the first line
 
 
-def test_add_group():
+def test_add_group() -> None:  # noqa: PLR0915
     root = Root("some file")
 
-    for item in [dict(), tuple(), list(), None, Dataset(name="dset", parent=None, read_only=False)]:
+    for item in [{}, (), [], None, Dataset(name="dset", parent=None, read_only=False)]:  # type: ignore[var-annotated]  # pyright: ignore[reportUnknownVariableType]
         with pytest.raises(TypeError):
-            root.add_group("name", item)
+            root.add_group("name", item)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     root2 = Root("New")
     assert len(root2) == 0
@@ -906,7 +903,7 @@ def test_add_group():
     assert len(root2.A.B.C.metadata) == 0
     assert len(root2.A.B.C.c.metadata) == 2
     assert root2.A.B.C.c.metadata.x == "x"
-    assert root2["A"]["B"].C["c"].metadata["y"] == "y"
+    assert root2["A"]["B"].C["c"].metadata["y"] == "y"  # type: ignore[union-attr]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
 
     # verify root's tree
     assert len(root) == 3
@@ -923,8 +920,8 @@ def test_add_group():
     assert root.c.metadata.y == "y"
 
     # add some Datasets to root
-    root.b.create_dataset("/x", data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    root.c.create_dataset("y/z", shape=(3, 4), meta="data")
+    _ = root.b.create_dataset("/x", data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    _ = root.c.create_dataset("y/z", shape=(3, 4), meta="data")
     assert "x" in root.b
     assert "z" in root.c.y
 
@@ -948,7 +945,7 @@ def test_add_group():
     assert len(root2.A.B.C.metadata) == 0
     assert len(root2.A.B.C.c.metadata) == 2
     assert root2.A.B.C.c.metadata.x == "x"
-    assert root2["A"]["B"].C["c"].metadata["y"] == "y"
+    assert root2["A"]["B"].C["c"].metadata["y"] == "y"  # type: ignore[union-attr]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
     assert len(root2.old.a.metadata) == 2
     assert root2.old.a.metadata.one == 1
     assert root2.old.a.metadata.foo == "bar"
@@ -961,7 +958,7 @@ def test_add_group():
     assert root2.old.b.metadata.two == 2
     assert len(root2.old.c.metadata) == 2
     assert root2.old.c.metadata.x == "x"
-    assert root2.old["c"].metadata["y"] == "y"
+    assert root2.old["c"].metadata["y"] == "y"  # type: ignore[union-attr]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
     assert len(root2.old.c.y.metadata) == 0
     assert len(root2.old.c.y.z.metadata) == 1
     assert root2.old.c.y.z.metadata.meta == "data"
@@ -977,17 +974,18 @@ def test_add_group():
     # the data in the Dataset is a copy
     assert root2.old.b.x.data is not root.b.x.data
     assert root2.old.c.y.z.data is not root.c.y.z.data
+    assert isinstance(root2.old.b.x, Dataset)
     root2.old.b.x[:] = 1
-    assert sum(root2.old.b.x.data) == 10
-    for val in root.b.x.data.tolist():
-        assert val == 0
+    assert sum(root2.old.b.x) == 10
+    assert isinstance(root.b.x, Dataset)
+    assert sum(root.b.x.tolist()) == 0
 
 
-def test_add_dataset():
+def test_add_dataset() -> None:
     root = Root("some file")
-    for item in [{}, (), [], None, 1.0, Root("r"), Group(name="group", parent=None, read_only=True)]:
+    for item in [{}, (), [], None, 1.0, Root("r"), Group(name="group", parent=None, read_only=True)]:  # type: ignore[var-annotated]  # pyright: ignore[reportUnknownVariableType]
         with pytest.raises(TypeError):
-            root.add_dataset("name", item)
+            root.add_dataset("name", item)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     assert len(root) == 0
 
@@ -1000,6 +998,7 @@ def test_add_dataset():
     d = root.create_group("a/b/c/d")
     c = d.parent
     assert c is root.a.b.c
+    assert c is not None
     c.add_dataset("dset2_copy", dset2)
 
     c.add_dataset("/x/y/dset3_copy", dset3)
@@ -1025,33 +1024,43 @@ def test_add_dataset():
     assert c.dset2_copy.metadata.foo == "bar"
     assert len(c.x.y.dset3_copy.metadata) == 2
     assert c.x.y.dset3_copy.metadata["one"] == 1
-    assert c["x"]["y"]["dset3_copy"].metadata.two == 2
+    assert isinstance(c["x"]["y"]["dset3_copy"], Dataset)
+    assert c["x"]["y"]["dset3_copy"].metadata.two == 2  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType]
 
 
-def test_add_dataset_logging():
+def test_add_dataset_logging() -> None:  # noqa: PLR0915
     num_initial_handlers = len(logging.getLogger().handlers)
 
     logger = logging.getLogger("test_add_dataset_logging")
 
     root = Root("some file")
-    for item in [dict(), tuple(), list(), None, 1.0, Root("r"),
-                 Group(name="group", parent=None, read_only=True), Dataset(name="d", parent=None, read_only=True)]:
+    for item in [  # type: ignore[var-annotated]  # pyright: ignore[reportUnknownVariableType]
+        {},
+        (),
+        [],
+        None,
+        1.0,
+        Root("r"),
+        Group(name="group", parent=None, read_only=True),
+        Dataset(name="d", parent=None, read_only=True),
+    ]:
         with pytest.raises(TypeError):
-            root.add_dataset_logging("name", item)
+            root.add_dataset_logging("name", item)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     assert len(root) == 0
     assert len(logger.handlers) == 0
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
-    dsetlog1 = root.create_dataset_logging("dsetlog1", level="DEBUG", attributes=["levelname", "message"],
-                                           logger=logger, date_fmt="%H-%M")
+    dset_log1 = root.create_dataset_logging(
+        "dset_log1", level="DEBUG", attributes=["levelname", "message"], logger=logger, date_fmt="%H-%M"
+    )
 
     logger.info("bang!")
 
     root2 = Root("some file")
-    root2.create_group("a/b/c")
+    _ = root2.create_group("a/b/c")
     b = root2.a.b
-    b.add_dataset_logging("x/y/dsetlog2", dsetlog1)
+    _ = b.add_dataset_logging("x/y/dset_log2", dset_log1)
 
     assert len(logger.handlers) == 2
     assert len(logging.getLogger().handlers) == num_initial_handlers
@@ -1059,69 +1068,80 @@ def test_add_dataset_logging():
     logger.debug("hello")
     logger.info("world")
 
-    dsetlog1.remove_handler()
+    dset_log1.remove_handler()
     assert len(logger.handlers) == 1
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     logger.warning("foo")
     logger.error("bar")
 
-    assert dsetlog1.metadata["logging_level"] == logging.DEBUG
-    assert dsetlog1.metadata.logging_level_name == "DEBUG"
-    assert dsetlog1.metadata.logging_date_format == "%H-%M"
-    assert dsetlog1.level == logging.DEBUG
-    assert dsetlog1.date_fmt == "%H-%M"
-    assert dsetlog1.logger is logger
-    assert all(a == b for a, b in zip(dsetlog1.attributes, ["levelname", "message"]))
+    assert dset_log1.metadata["logging_level"] == logging.DEBUG
+    assert dset_log1.metadata.logging_level_name == "DEBUG"
+    assert dset_log1.metadata.logging_date_format == "%H-%M"
+    assert dset_log1.level == logging.DEBUG
+    assert dset_log1.date_fmt == "%H-%M"
+    assert dset_log1.logger is logger
+    assert all(a == b for a, b in zip(dset_log1.attributes, ["levelname", "message"]))
 
-    assert b.x.y.dsetlog2.metadata["logging_level"] == logging.DEBUG
-    assert b.x.y.dsetlog2.metadata.logging_level_name == "DEBUG"
-    assert b.x.y.dsetlog2.metadata.logging_date_format == "%H-%M"
-    assert b.x.y.dsetlog2.level == logging.DEBUG
-    assert b.x.y.dsetlog2.date_fmt == "%H-%M"
-    assert b.x.y.dsetlog2.logger is logger
-    assert all(a == b for a, b in zip(dsetlog1.attributes, b.x.y.dsetlog2.attributes))
+    assert b.x.y.dset_log2.metadata["logging_level"] == logging.DEBUG
+    assert b.x.y.dset_log2.metadata.logging_level_name == "DEBUG"
+    assert b.x.y.dset_log2.metadata.logging_date_format == "%H-%M"
+    assert b.x.y.dset_log2.level == logging.DEBUG
+    assert b.x.y.dset_log2.date_fmt == "%H-%M"
+    assert b.x.y.dset_log2.logger is logger
+    assert all(a == b for a, b in zip(dset_log1.attributes, b.x.y.dset_log2.attributes))
 
-    assert root.dsetlog1.data.size == 3
-    row = root.dsetlog1.data[0]
-    assert row["levelname"] == "INFO" and row["message"] == "bang!"
-    row = root.dsetlog1.data[1]
-    assert row["levelname"] == "DEBUG" and row["message"] == "hello"
-    row = root.dsetlog1.data[2]
-    assert row["levelname"] == "INFO" and row["message"] == "world"
+    assert root.dset_log1.data.size == 3
+    assert isinstance(root.dset_log1, DatasetLogging)
+    row = root.dset_log1.data[0]
+    assert row["levelname"] == "INFO"
+    assert row["message"] == "bang!"
+    row = root.dset_log1.data[1]
+    assert row["levelname"] == "DEBUG"
+    assert row["message"] == "hello"
+    row = root.dset_log1.data[2]
+    assert row["levelname"] == "INFO"
+    assert row["message"] == "world"
 
-    assert root2.a.b.x.y.dsetlog2.data.size == 5
+    assert root2.a.b.x.y.dset_log2.data.size == 5
     y = b.x.y
-    row = root.dsetlog1.data[0]
-    assert row["levelname"] == "INFO" and row["message"] == "bang!"
-    row = y.dsetlog2.data[1]
-    assert row["levelname"] == "DEBUG" and row["message"] == "hello"
-    row = y.dsetlog2.data[2]
-    assert row["levelname"] == "INFO" and row["message"] == "world"
-    row = y.dsetlog2.data[3]
-    assert row["levelname"] == "WARNING" and row["message"] == "foo"
-    row = y.dsetlog2.data[4]
-    assert row["levelname"] == "ERROR" and row["message"] == "bar"
+    row = root.dset_log1[0]
+    assert row["levelname"] == "INFO"
+    assert row["message"] == "bang!"
+    assert isinstance(y.dset_log2, DatasetLogging)
+    row = y.dset_log2[1]
+    assert row["levelname"] == "DEBUG"
+    assert row["message"] == "hello"
+    row = y.dset_log2[2]
+    assert row["levelname"] == "INFO"
+    assert row["message"] == "world"
+    row = y.dset_log2[3]
+    assert row["levelname"] == "WARNING"
+    assert row["message"] == "foo"
+    row = y.dset_log2[4]
+    assert row["levelname"] == "ERROR"
+    assert row["message"] == "bar"
 
-    root2.a.b.x.y.dsetlog2.remove_handler()
+    assert isinstance(root2.a.b.x.y.dset_log2, DatasetLogging)
+    root2.a.b.x.y.dset_log2.remove_handler()
 
     assert len(logger.handlers) == 0
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_remove():
+def test_remove() -> None:  # noqa: PLR0915
     root = Root("")
     a = root.create_group("a")
-    a.create_dataset("d1")
+    _ = a.create_dataset("d1")
     b = a.create_group("b")
-    b.create_dataset("d2")
+    _ = b.create_dataset("d2")
     c = b.create_group("c")
     z = root.create_group("x/y/z")
     d = c.create_group("d")
-    a.create_dataset("d3")
-    root.create_dataset("d4")
-    d.create_dataset("d5")
-    d.create_dataset("d6")
+    _ = a.create_dataset("d3")
+    _ = root.create_dataset("d4")
+    _ = d.create_dataset("d5")
+    _ = d.create_dataset("d6")
     d7 = root.create_dataset("d7")
 
     assert len(root) == 14
@@ -1168,8 +1188,8 @@ def test_remove():
 
     # cannot remove in read-only mode
     root.read_only = True
-    with pytest.raises(ValueError):
-        root.remove("a")
+    with pytest.raises(ValueError, match=r"read-only"):
+        _ = root.remove("a")
     assert len(root) == 12
     assert "a" in root
 
@@ -1197,8 +1217,8 @@ def test_remove():
     assert "a/b/c/d/d5" not in root
     assert "a/b/c/d/d6" not in root
     assert d2 is d
-    with pytest.raises(ValueError):  # root.a.b is still in read-only mode
-        root.a.b.remove("c")
+    with pytest.raises(ValueError, match=r"read-only"):  # root.a.b is still in read-only mode
+        _ = root.a.b.remove("c")
 
     # remove Group 'a'
     root.read_only = False
@@ -1218,12 +1238,12 @@ def test_remove():
 
     # Check that removing an Group/Dataset also removes it from the descendants
     root = Root("")
-    root.require_group("g1/g2/g3/g4")
-    root.require_dataset("g1/d0")
+    _ = root.require_group("g1/g2/g3/g4")
+    _ = root.require_dataset("g1/d0")
     d1 = root.require_dataset("g1/g2/d1")
-    root.require_dataset("g1/g2/d2")
+    _ = root.require_dataset("g1/g2/d2")
     d3 = root.require_dataset("g1/g2/g3/d3")
-    root.require_dataset("g1/g2/g3/g4/d4")
+    _ = root.require_dataset("g1/g2/g3/g4/d4")
 
     assert len(root) == 9
     assert len(list(root.groups())) == 4
@@ -1313,18 +1333,18 @@ def test_remove():
     assert root.remove("a/b/c/d") is None
 
 
-def test_get_ancestors():
+def test_get_ancestors() -> None:
     root = Root("")
 
     assert isinstance(root.ancestors(), types.GeneratorType)
     assert len(tuple(root.ancestors())) == 0
 
-    root.create_group("a/b/c/d/e/f/g/h")
-    root.a.create_dataset("dataset")
+    _ = root.create_group("a/b/c/d/e/f/g/h")
+    _ = root.a.create_dataset("dataset")
 
     x = root.create_group("x")
-    x.require_group("y/z")
-    root.x.y.create_dataset("dataset")
+    _ = x.require_group("y/z")
+    _ = root.x.y.create_dataset("dataset")
 
     ancestors = tuple(root.a.b.c.d.ancestors())
     assert len(ancestors) == 4
@@ -1356,23 +1376,23 @@ def test_get_ancestors():
     assert ancestors[0] is root
 
 
-def test_remove_same_endswith():
-    def create_new_root():
+def test_remove_same_endswith() -> None:  # noqa: PLR0915
+    def create_new_root() -> Root:
         r = Root("")
-        r.create_dataset("dset")
+        _ = r.create_dataset("dset")
         a = r.create_group("a")
-        a.create_dataset("dset")
+        _ = a.create_dataset("dset")
         b = r.create_group("b")
-        b.create_dataset("dset")
+        _ = b.create_dataset("dset")
         c = b.create_group("c")
-        c.create_dataset("dset")
-        c.create_group("b")
+        _ = c.create_dataset("dset")
+        _ = c.create_group("b")
         d = r.create_group("d")
-        d.create_dataset("dset")
-        d.create_group("c")
-        d.c.create_dataset("dset")
+        _ = d.create_dataset("dset")
+        _ = d.create_group("c")
+        _ = d.c.create_dataset("dset")
         e = c.create_group("e")
-        e.create_dataset("dset")
+        _ = e.create_dataset("dset")
         return r
 
     root = create_new_root()

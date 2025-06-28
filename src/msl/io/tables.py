@@ -44,6 +44,7 @@ You can customize your own map by adding key-value pairs
 
 """
 
+
 def read_table_text(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
     """Read a data table from a text-based file.
 

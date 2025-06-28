@@ -58,7 +58,7 @@ def test_cell() -> None:
     assert sheets.read() == values
     assert sheets.read(cell="A1") == "temperature"
     assert sheets.read(cell="A100") is None  # A100 is empty
-    assert sheets.read(cell="B5") == 48.32  # noqa: PLR2004
+    assert sheets.read(cell="B5") == 48.32
     assert sheets.read(cell="A3:B3") == [(20.23, 46.06)]
     assert sheets.read(cell="A6:B6") == []  # row 6 is empty
     assert sheets.read(cell="B:B") == [("humidity",), (49.82,), (46.06,), (47.06,), (48.32,)]

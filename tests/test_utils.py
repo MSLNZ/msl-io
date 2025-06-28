@@ -34,12 +34,12 @@ def test_search() -> None:
         assert file.name == "__init__.py"
 
     files = list(utils.search(d, include=r"__init__\.py$", depth=None, exclude=r"v?env"))
-    assert len(files) == 4  # noqa: PLR2004
+    assert len(files) == 4
     for file in files:
         assert file.name == "__init__.py"
 
     files = list(utils.search(d, include=r"__init__\.py(?!c)", depth=None, exclude=r"readers|v?env"))
-    assert len(files) == 2  # noqa: PLR2004
+    assert len(files) == 2
     for file in files:
         assert file.name == "__init__.py"
 
@@ -73,7 +73,7 @@ def test_search() -> None:
     assert len(files) > 1
 
     files = list(utils.search(d, include=r"\.(toml|json)$"))
-    assert len(files) == 2  # noqa: PLR2004
+    assert len(files) == 2
 
     files = list(utils.search("does-not-exist"))
     assert len(files) == 0
@@ -87,13 +87,13 @@ def test_git_head() -> None:
 
     head = utils.git_head(root_dir)
     assert head is not None
-    assert len(head.hash) == 40  # noqa: PLR2004
+    assert len(head.hash) == 40
     assert all(char.isalnum() for char in head.hash)
     assert all(char.isalnum() for char in head["hash"])
     assert isinstance(head.hash, str)
     assert isinstance(head.timestamp, datetime.datetime)
-    assert head.timestamp.year > 2024  # noqa: PLR2004
-    assert head["timestamp"].year > 2024  # noqa: PLR2004
+    assert head.timestamp.year > 2024
+    assert head["timestamp"].year > 2024
 
     head = utils.git_head(str(root_dir))
     assert head is not None
@@ -220,9 +220,9 @@ def test_copy() -> None:  # noqa: C901, PLR0915
                     return False
             elif "time" in attr:  # times can be approximate
                 if attr.endswith("ns"):
-                    if abs(src_value - dst_value) > 1e4:  # noqa: PLR2004
+                    if abs(src_value - dst_value) > 1e4:
                         return False
-                elif abs(src_value - dst_value) > 1e-4:  # noqa: PLR2004
+                elif abs(src_value - dst_value) > 1e-4:
                     return False
             elif attr == "st_dev" and sys.platform == "win32" and os.getenv("GITHUB_ACTIONS"):
                 # the ST_DEV values are not equal if the tests are run
@@ -309,9 +309,9 @@ def test_remove_write_permissions() -> None:
 
     mode = stat.S_IMODE(os.lstat(path).st_mode)
     if sys.platform == "win32":  # Windows does not have the Execute permission
-        assert mode == 0o666  # noqa: PLR2004
+        assert mode == 0o666
     else:
-        assert mode == 0o777  # noqa: PLR2004
+        assert mode == 0o777
 
     # can still modify it
     with path.open("ab") as fp:
@@ -324,9 +324,9 @@ def test_remove_write_permissions() -> None:
     # the Read and Execute permissions are preserved
     mode = stat.S_IMODE(os.lstat(path).st_mode)
     if sys.platform == "win32":  # Windows does not have the Execute permission
-        assert mode == 0o444  # noqa: PLR2004
+        assert mode == 0o444
     else:
-        assert mode == 0o555  # noqa: PLR2004
+        assert mode == 0o555
 
     # cannot open the file to modify it
     for m in ["wb", "ab", "wt", "at", "w+", "w+b"]:
@@ -352,9 +352,9 @@ def test_remove_write_permissions() -> None:
         # Windows does not have the Execute permission
         # and if any of the Read permissions are enabled then it
         # is enabled for the User, Group and Others
-        assert mode == 0o444  # noqa: PLR2004
+        assert mode == 0o444
     else:
-        assert mode == 0o414  # noqa: PLR2004
+        assert mode == 0o414
 
     # clean up by deleting the file
     path.chmod(0o777)
@@ -595,7 +595,7 @@ def test_prepare_email() -> None:  # noqa: PLR0915
     assert cfg.to == [""]
     assert cfg.frm == ""
     assert cfg.host == "smtp.example.com"
-    assert cfg.port == 25  # noqa: PLR2004
+    assert cfg.port == 25
     assert cfg.starttls is None
     assert cfg.username is None
     assert cfg.password is None

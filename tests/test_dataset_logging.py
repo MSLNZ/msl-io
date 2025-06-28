@@ -1,5 +1,4 @@
 import logging
-import os
 import tempfile
 from pathlib import Path
 
@@ -52,7 +51,7 @@ def test_create() -> None:
     logger.error("bar")
 
     assert len(dset) == 3
-    assert dset[ dset["levelname"] == "ERROR"]["message"] == "bar"
+    assert dset[dset["levelname"] == "ERROR"]["message"] == "bar"
 
     dset.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers
@@ -83,7 +82,7 @@ def test_create_and_require() -> None:
         "you should not do that so please be careful!",
         "tell me something useful",
         "NO!!!",
-        "this is an error, cannot do that"
+        "this is an error, cannot do that",
     ]
 
     logger.debug(messages[0])
@@ -102,7 +101,7 @@ def test_create_and_require() -> None:
 
     logger.info("another info message")
     assert np.array_equal(dset["levelname"], ["DEBUG", "WARNING", "INFO", "CRITICAL", "ERROR", "INFO"])
-    assert np.array_equal(dset["message"],  [*messages, "another info message"])
+    assert np.array_equal(dset["message"], [*messages, "another info message"])
 
     dset.remove_handler()
     assert len(logging.getLogger().handlers) == num_initial_handlers
@@ -122,7 +121,7 @@ def test_create_multiple_same_root() -> None:
         "you should not do that so please be careful!",
         "tell me something useful",
         "NO!!!",
-        "this is an error, cannot do that"
+        "this is an error, cannot do that",
     ]
 
     logger.debug(messages[0])
@@ -161,7 +160,7 @@ def test_requires_failures() -> None:
     _ = root.create_dataset("regular")
     _ = root.create_dataset_logging("logging")
 
-    assert np.array_equal(root.logging.dtype.names, ["asctime", "levelname", "name", "message"])
+    assert np.array_equal(root.logging.dtype.names, ["asctime", "levelname", "name", "message"])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     with pytest.raises(ValueError, match=r"does not equal \('lineno', 'filename'\)"):
         _ = root.require_dataset_logging("logging", attributes=["lineno", "filename"])
 
@@ -176,14 +175,14 @@ def test_requires_failures() -> None:
 def test_filter_loggers() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
-    unlogger = logging.getLogger("unwanted")
+    un_logger = logging.getLogger("unwanted")
 
     root = JSONWriter()
     dset = root.create_dataset_logging("log")
     dset.add_filter(logging.Filter(__name__))
 
     logger.info("ok")
-    unlogger.info("not in dataset")
+    un_logger.info("not in dataset")
 
     assert len(dset) == 1
     assert dset["message"] == "ok"
@@ -193,14 +192,14 @@ def test_filter_loggers() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_save_then_read() -> None:
+def test_save_then_read() -> None:  # noqa: C901, PLR0912, PLR0915
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     json = JSONWriter(file=Path(tempfile.gettempdir()) / "msl-io-junk.json")
     h5 = HDF5Writer(file=Path(tempfile.gettempdir()) / "msl-io-junk.h5")
 
-    json.create_dataset_logging("log", date_fmt="%H:%M:%S", extra="ABC")
-    h5.require_dataset_logging("/a/b/c/d/e/log")  # doesn't exist so creates it
+    _ = json.create_dataset_logging("log", date_fmt="%H:%M:%S", extra="ABC")
+    _ = h5.require_dataset_logging("/a/b/c/d/e/log")  # doesn't exist so creates it
 
     assert isinstance(json.log, DatasetLogging)
     assert isinstance(h5.a.b.c.d.e.log, DatasetLogging)
@@ -212,30 +211,35 @@ def test_save_then_read() -> None:
     if h5py is not None:
         h5.write(mode="w")
 
+    assert isinstance(json.file, Path)
+    assert isinstance(h5.file, Path)
+
     json_2 = read(json.file)
     if h5py is not None:
         h5_2 = read(h5.file)
         Path(h5.file).unlink()
+    else:
+        h5_2 = None
     Path(json.file).unlink()
 
     # when a file is read, what was once a DatasetLogging object is loaded as a regular Dataset
     # but can be turned back into a DatasetLogging by calling require_dataset_logging()
     assert not isinstance(json_2.log, DatasetLogging)
-    if h5py is not None:
+    if h5_2 is not None:
         assert not isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
     assert json_2.is_dataset(json_2.log)
-    if h5py is not None:
+    if h5_2 is not None:
         assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
 
     # convert the Dataset to DatasetLogging
-    json_2.require_dataset_logging(json_2.log.name)
-    if h5py is not None:
-        h5_2.a.b.c.require_dataset_logging("/d/e/log")
+    _ = json_2.require_dataset_logging(json_2.log.name)
+    if h5_2 is not None:
+        _ = h5_2.a.b.c.require_dataset_logging("/d/e/log")
     assert isinstance(json_2.log, DatasetLogging)
-    if h5py is not None:
+    if h5_2 is not None:
         assert isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
     assert json_2.is_dataset(json_2.log)
-    if h5py is not None:
+    if h5_2 is not None:
         assert h5_2.is_dataset(h5_2.a.b.c.d.e.log)
 
     assert len(json_2.log.metadata) == 4
@@ -244,24 +248,15 @@ def test_save_then_read() -> None:
     assert json_2.log.metadata.logging_level_name == "INFO"
     assert json_2.log.metadata.logging_date_format == "%H:%M:%S"
 
-    if h5py is not None:
+    if h5_2 is not None:
         assert len(h5_2.a.b.c.d.e.log.metadata) == 3
         assert h5_2.a.b.c.d.e.log.metadata["logging_level"] == logging.INFO
         assert h5_2.a.b.c.d.e.log.metadata.logging_level_name == "INFO"
         assert h5_2.a.b.c.d.e.log.metadata.logging_date_format == "%Y-%m-%dT%H:%M:%S.%f"
 
     assert np.array_equal(json_2.log["message"], ["hello world", "foo"])
-    if h5py is not None:
-        if h5py.version.version_tuple.major < 3:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"],
-                ["hello world", "foo"]
-            )
-        else:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"],
-                [b"hello world", b"foo"]
-            )
+    if h5_2 is not None:
+        assert np.array_equal(h5_2.a.b.c.d.e.log["message"], [b"hello world", b"foo"])  # type: ignore[arg-type] # pyright: ignore[reportArgumentType]
 
     json.log.remove_handler()
 
@@ -269,39 +264,26 @@ def test_save_then_read() -> None:
     assert np.array_equal(json.log["message"], ["hello world", "foo"])
     assert np.array_equal(h5.a.b.c.d.e.log["message"], ["hello world", "foo", "baz"])
     assert np.array_equal(json_2.log["message"], ["hello world", "foo", "baz"])
-    if h5py is not None:
-        if h5py.version.version_tuple.major < 3:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"],
-                ["hello world", "foo", "baz"]
-            )
-        else:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"].tolist(),
-                [b"hello world", b"foo", "baz"]
-            )
+    if h5_2 is not None:
+        assert np.array_equal(h5_2.a.b.c.d.e.log["message"].tolist(), [b"hello world", b"foo", "baz"])  # type: ignore[arg-type, operator] # pyright: ignore[reportCallIssue, reportUnknownArgumentType]
 
     h5.a.b.c.d.e.log.remove_handler()
 
-    logger.warning("ooops...")
+    logger.warning("ooops...")  # cSpell: ignore ooops
     logger.error("YIKES!")
     assert np.array_equal(json.log["message"], ["hello world", "foo"])
     assert np.array_equal(h5.a.b.c.d.e.log["message"], ["hello world", "foo", "baz"])
     assert np.array_equal(json_2.log["message"], ["hello world", "foo", "baz", "ooops...", "YIKES!"])
-    if h5py is not None:
-        if h5py.version.version_tuple.major < 3:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"],
-                ["hello world", "foo", "baz", "ooops...", "YIKES!"]
-            )
-        else:
-            assert np.array_equal(
-                h5_2.a.b.c.d.e.log["message"].tolist(),
-                [b"hello world", b"foo", "baz", "ooops...", "YIKES!"]
-            )
+    if h5_2 is not None:
+        assert isinstance(h5_2.a.b.c.d.e.log["message"], np.ndarray)
+        assert np.array_equal(
+            h5_2.a.b.c.d.e.log["message"].tolist(),  # pyright: ignore[reportCallIssue, reportUnknownArgumentType]
+            [b"hello world", b"foo", "baz", "ooops...", "YIKES!"],  # type: ignore[arg-type]
+        )
 
     json_2.log.remove_handler()
-    if h5py is not None:
+    if h5_2 is not None:
+        assert isinstance(h5_2.a.b.c.d.e.log, DatasetLogging)
         h5_2.a.b.c.d.e.log.remove_handler()
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
@@ -311,9 +293,23 @@ def test_all_attributes() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     attributes = [
-        "asctime", "created", "filename", "funcName", "levelname",
-        "levelno", "lineno", "message", "module", "msecs", "name", "pathname",
-        "process", "processName", "relativeCreated", "thread", "threadName"
+        "asctime",
+        "created",
+        "filename",
+        "funcName",
+        "levelname",
+        "levelno",
+        "lineno",
+        "message",
+        "module",
+        "msecs",  # cSpell: ignore msecs
+        "name",
+        "pathname",
+        "process",
+        "processName",
+        "relativeCreated",
+        "thread",
+        "threadName",
     ]
 
     json = JSONWriter()
@@ -356,12 +352,12 @@ def test_is_logging_dataset() -> None:
     _ = root.create_dataset_logging("/a/b/log")
     _ = root.create_dataset_logging("/a/b/log2")
 
-    log_dsets = [dset for dset in root.datasets() if root.is_dataset_logging(dset)]
+    log_datasets = [dset for dset in root.datasets() if root.is_dataset_logging(dset)]
 
     assert len(list(root.items())) == 7
     assert len(list(root.descendants())) == 2
     assert len(list(root.datasets())) == 5
-    assert len(log_dsets) == 3
+    assert len(log_datasets) == 3
 
     assert len(logging.getLogger().handlers) == num_initial_handlers + 3
 
@@ -381,13 +377,13 @@ def test_invalid_attributes() -> None:
     with pytest.raises(ValueError, match=r"Must specify logging attributes"):
         _ = root.create_dataset_logging("log", attributes=[])
     with pytest.raises(ValueError, match=r"Must specify logging attributes"):
-        _ = root.create_dataset_logging("log", attributes=tuple())
+        _ = root.create_dataset_logging("log", attributes=())
 
     # every element must be a string
     with pytest.raises(ValueError, match=r"as strings"):
-        _ = root.create_dataset_logging("log", attributes=[1, 2, 3])
+        _ = root.create_dataset_logging("log", attributes=[1, 2, 3])  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
     with pytest.raises(ValueError, match=r"as strings"):
-        _ = root.create_dataset_logging("log", attributes=["1", "2", 3])
+        _ = root.create_dataset_logging("log", attributes=["1", "2", 3])  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
@@ -448,7 +444,7 @@ def test_initial_shape() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
 
-def test_initial_index_value() -> None:
+def test_initial_index_value() -> None:  # noqa: PLR0915
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter(file=Path(tempfile.gettempdir()) / "msl-io-junk.json")
@@ -463,25 +459,27 @@ def test_initial_index_value() -> None:
 
     root.write(mode="w")
 
+    assert isinstance(root.file, Path)
     root2 = read(root.file)
     root3 = read(root.file)
 
     # specify more than n elements
-    root2.require_dataset_logging(root.log.name, size=n+5)
+    _ = root2.require_dataset_logging(root.log.name, size=n + 5)
 
     # specify less than n elements which automatically gets increased to n
     # also specify shape as an integer which gets cast to a 1-d tuple
-    root3.require_dataset_logging(root.log.name, shape=n-5)
+    _ = root3.require_dataset_logging(root.log.name, shape=n - 5)
 
     assert len(logging.getLogger().handlers) == num_initial_handlers + 3
 
-    os.remove(root.file)
+    root.file.unlink()
 
-    assert root2.log.size == n+5
+    assert root2.log.size == n + 5
     assert root3.log.size == n  # gets increased to n
 
+    assert isinstance(root.log, DatasetLogging)
     root.log.remove_handler()
-    for i in range(n, 2*n):
+    for i in range(n, 2 * n):
         logger.info("message %d", i)
 
     assert root.log.size == n
@@ -489,19 +487,21 @@ def test_initial_index_value() -> None:
     assert root3.log.size == 27
 
     root.log.remove_empty_rows()
+    assert isinstance(root2.log, DatasetLogging)
     root2.log.remove_empty_rows()
+    assert isinstance(root3.log, DatasetLogging)
     root3.log.remove_empty_rows()
 
     assert root.log.size == n
-    assert root2.log.size == 2*n
-    assert root3.log.size == 2*n
+    assert root2.log.size == 2 * n
+    assert root3.log.size == 2 * n
 
     root2.log.remove_handler()
-    for i in range(2*n, 3*n):
+    for i in range(2 * n, 3 * n):
         logger.info("message %d", i)
 
     assert root.log.size == n
-    assert root2.log.size == 2*n
+    assert root2.log.size == 2 * n
     assert root3.log.size == 39
 
     root.log.remove_empty_rows()
@@ -509,20 +509,20 @@ def test_initial_index_value() -> None:
     root3.log.remove_empty_rows()
 
     assert root.log.size == n
-    assert root2.log.size == 2*n
-    assert root3.log.size == 3*n
+    assert root2.log.size == 2 * n
+    assert root3.log.size == 3 * n
 
     messages1 = root["log"]["message"]
     messages2 = root2["log"]["message"]
     messages3 = root3["log"]["message"]
-    for i in range(3*n):
+    for i in range(3 * n):
         if i < n:
-            assert messages1[i] == "message %d" % i
-        if i < 2*n:
-            assert messages2[i] == "message %d" % i
-        assert messages3[i] == "message %d" % i
+            assert messages1[i] == f"message {i}"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+        if i < 2 * n:
+            assert messages2[i] == f"message {i}"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+        assert messages3[i] == f"message {i}"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
 
-    root3["log"].remove_handler()
+    root3["log"].remove_handler()  # type: ignore[operator]  # pyright: ignore[reportCallIssue]
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
@@ -531,19 +531,19 @@ def test_invalid_shape_or_size() -> None:
     root = JSONWriter()
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
-        root.create_dataset_logging("log", shape=())
+        _ = root.create_dataset_logging("log", shape=())
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
-        root.create_dataset_logging("log", shape=[])
+        _ = root.create_dataset_logging("log", shape=[])
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
-        root.create_dataset_logging("log", shape=(10, 5))
+        _ = root.create_dataset_logging("log", shape=(10, 5))
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
-        root.create_dataset_logging("log", shape=(-1,))
+        _ = root.create_dataset_logging("log", shape=(-1,))
 
     with pytest.raises(ValueError, match=r"Invalid shape"):
-        root.create_dataset_logging("log", size=-1)
+        _ = root.create_dataset_logging("log", size=-1)
 
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
@@ -552,11 +552,13 @@ def test_set_logger() -> None:
     assert len(logging.getLogger().handlers) == num_initial_handlers
 
     root = JSONWriter()
-    root.create_dataset_logging("log")
+    _ = root.create_dataset_logging("log")
+
+    assert isinstance(root.log, DatasetLogging)
 
     for obj in [None, "no", JSONWriter, logging.INFO, logging.Formatter, logging.Handler]:
         with pytest.raises(AttributeError, match=r"no attribute 'level'"):
-            root.log.set_logger(obj)
+            root.log.set_logger(obj)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     root.log.set_logger(logger)
     root.log.remove_handler()

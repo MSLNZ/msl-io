@@ -1,8 +1,9 @@
-from tests.helper import read_sample
+from msl.io.node import Dataset
 from msl.io.readers import DRSReader
+from tests.helper import read_sample
 
 
-def test_drs():
+def test_drs() -> None:
     root = read_sample("Lamp_15082018_4.DAT")
     assert isinstance(root, DRSReader)
 
@@ -31,7 +32,9 @@ def test_drs():
     log636 = root["run1"]["scan1"]["log-F636"]
     log637 = root["run1"]["scan1"]["log-F637"]
     assert root.is_dataset(dat)
+    assert isinstance(dat, Dataset)
     assert root.is_dataset(log636)
+    assert isinstance(log636, Dataset)
     assert root.is_dataset(log637)
     assert dat["F636"][1] == 2.98123609
     assert dat["u(F636)"][1] == 0.00066831
@@ -41,7 +44,9 @@ def test_drs():
     log636 = root["run3"]["scan1"]["log-F636"]
     log637 = root["run3"]["scan1"]["log-F637"]
     assert root.is_dataset(dat)
+    assert isinstance(dat, Dataset)
     assert root.is_dataset(log636)
+    assert isinstance(log636, Dataset)
     assert root.is_dataset(log637)
     assert dat["F636"][3] == 0.90075543
     assert dat["u(F636)"][3] == 0.00032893

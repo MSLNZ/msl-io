@@ -20,33 +20,38 @@ if TYPE_CHECKING:
 
 # the data in the Excel, CVS and TXT files that are tested contain the following
 header = np.asarray(["timestamp", "val1", "uncert1", "val2", "uncert2"], dtype=str)
-data = np.asarray([
-    ("2019-09-11 14:06:55", -0.505382, 0.000077, 0.501073, 0.000079),
-    ("2019-09-11 14:06:59", -0.505191, 0.000066, 0.500877, 0.000083),
-    ("2019-09-11 14:07:03", -0.505308, 0.000086, 0.500988, 0.000087),
-    ("2019-09-11 14:07:07", -0.505250, 0.000119, 0.500923, 0.000120),
-    ("2019-09-11 14:07:11", -0.505275, 0.000070, 0.500965, 0.000088),
-    ("2019-09-11 14:07:15", -0.505137, 0.000079, 0.500817, 0.000085),
-    ("2019-09-11 14:07:19", -0.505073, 0.000099, 0.500786, 0.000084),
-    ("2019-09-11 14:07:23", -0.505133, 0.000088, 0.500805, 0.000076),
-    ("2019-09-11 14:07:27", -0.505096, 0.000062, 0.500759, 0.000062),
-    ("2019-09-11 14:07:31", -0.505072, 0.000142, 0.500739, 0.000149),
-], dtype="U19,f8,f8,f8,f8")
+data = np.asarray(
+    [
+        ("2019-09-11 14:06:55", -0.505382, 0.000077, 0.501073, 0.000079),
+        ("2019-09-11 14:06:59", -0.505191, 0.000066, 0.500877, 0.000083),
+        ("2019-09-11 14:07:03", -0.505308, 0.000086, 0.500988, 0.000087),
+        ("2019-09-11 14:07:07", -0.505250, 0.000119, 0.500923, 0.000120),
+        ("2019-09-11 14:07:11", -0.505275, 0.000070, 0.500965, 0.000088),
+        ("2019-09-11 14:07:15", -0.505137, 0.000079, 0.500817, 0.000085),
+        ("2019-09-11 14:07:19", -0.505073, 0.000099, 0.500786, 0.000084),
+        ("2019-09-11 14:07:23", -0.505133, 0.000088, 0.500805, 0.000076),
+        ("2019-09-11 14:07:27", -0.505096, 0.000062, 0.500759, 0.000062),
+        ("2019-09-11 14:07:31", -0.505072, 0.000142, 0.500739, 0.000149),
+    ],
+    dtype="U19,f8,f8,f8,f8",
+)
 
 # the data in the GSheet spreadsheet
 gsheet_header = np.asarray(["Timestamp", "Value", "Valid", "ID"])
-gsheet_data = np.asarray([
-    (datetime(2019, 9, 11, 14, 6, 55), 20.1, True, "sensor 1"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 6, 59), 25.4, False, "sensor 2"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 3), 19.4, True, "sensor 3"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 7), 11.8, False, "sensor 4"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 11), 24.6, False, "sensor 5"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 15), 20.7, True, "sensor 1"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 19), 21.8, True, "sensor 2"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 23), 19.2, True, "sensor 3"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 27), 18.6, False, "sensor 4"),  # noqa: DTZ001
-    (datetime(2019, 9, 11, 14, 7, 31), 16.4, False, "sensor 5"),  # noqa: DTZ001
-])
+gsheet_data = np.asarray(
+    [
+        (datetime(2019, 9, 11, 14, 6, 55), 20.1, True, "sensor 1"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 6, 59), 25.4, False, "sensor 2"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 3), 19.4, True, "sensor 3"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 7), 11.8, False, "sensor 4"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 11), 24.6, False, "sensor 5"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 15), 20.7, True, "sensor 1"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 19), 21.8, True, "sensor 2"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 23), 19.2, True, "sensor 3"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 27), 18.6, False, "sensor 4"),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 31), 16.4, False, "sensor 5"),  # noqa: DTZ001
+    ]
+)
 
 
 INVALID_CELL_RANGES = ["", ":", "A", "A:", "1", "ZZ", "AB", "A-B", "A1D10", "A1-D10"]
@@ -57,7 +62,6 @@ def get_url(extension: str) -> Path:
 
 
 def test_raises() -> None:
-
     # file does not exist
     with pytest.raises(FileNotFoundError):
         _ = read_table("does not exist")
@@ -85,13 +89,15 @@ def test_excel_range_out_of_bounds() -> None:
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"dtype": data.dtype}),
-     (".txt", {"dtype": data.dtype, "delimiter": "\t"}),
-     (".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
-     (".xls", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154051"})]
+    [
+        (".csv", {"dtype": data.dtype}),
+        (".txt", {"dtype": data.dtype, "delimiter": "\t"}),
+        (".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
+        (".xls", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154051"}),
+    ],
 )
 def test_fetch_all_data(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
@@ -102,13 +108,15 @@ def test_fetch_all_data(ext: str, kwargs: dict[str, Any]) -> None:  # type: igno
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"usecols": (1, 2, 3, 4)}),
-     (".txt", {"usecols": (1, 2, 3, 4), "delimiter": "\t"}),
-     (".xls", {"sheet": "A1", "cells": "B1:E11"}),
-     (".xls", {"sheet": "BH11", "cells": "BI11:BL21"}),
-     (".xlsx", {"sheet": "A1", "cells": "B1:E11"}),
-     (".xlsx", {"sheet": "BH11", "cells": "BI11:BL21"}),
-     (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AFB154051"})]
+    [
+        (".csv", {"usecols": (1, 2, 3, 4)}),
+        (".txt", {"usecols": (1, 2, 3, 4), "delimiter": "\t"}),
+        (".xls", {"sheet": "A1", "cells": "B1:E11"}),
+        (".xls", {"sheet": "BH11", "cells": "BI11:BL21"}),
+        (".xlsx", {"sheet": "A1", "cells": "B1:E11"}),
+        (".xlsx", {"sheet": "BH11", "cells": "BI11:BL21"}),
+        (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AFB154051"}),
+    ],
 )
 def test_ignore_timestamp_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     floats = np.asarray([[e["f1"], e["f2"], e["f3"], e["f4"]] for e in data])
@@ -120,13 +128,15 @@ def test_ignore_timestamp_column(ext: str, kwargs: dict[str, Any]) -> None:  # t
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"usecols": 1}),
-     (".txt", {"usecols": 1, "delimiter": "\t"}),
-     (".xls", {"sheet": "A1", "cells": "B1:B11"}),
-     (".xls", {"sheet": "BH11", "cells": "BI11:BI21"}),
-     (".xlsx", {"sheet": "A1", "cells": "B1:B11"}),
-     (".xlsx", {"sheet": "BH11", "cells": "BI11:BI21"}),
-     (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"})]
+    [
+        (".csv", {"usecols": 1}),
+        (".txt", {"usecols": 1, "delimiter": "\t"}),
+        (".xls", {"sheet": "A1", "cells": "B1:B11"}),
+        (".xls", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".xlsx", {"sheet": "A1", "cells": "B1:B11"}),
+        (".xlsx", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"}),
+    ],
 )
 def test_single_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
@@ -137,13 +147,15 @@ def test_single_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignor
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"dtype": data.dtype, "max_rows": 1}),
-     (".txt", {"dtype": data.dtype, "max_rows": 1, "delimiter": "\t"}),
-     (".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
-     (".xls", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154042"})]
+    [
+        (".csv", {"dtype": data.dtype, "max_rows": 1}),
+        (".txt", {"dtype": data.dtype, "max_rows": 1, "delimiter": "\t"}),
+        (".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
+        (".xls", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154042"}),
+    ],
 )
 def test_single_row(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
@@ -153,11 +165,13 @@ def test_single_row(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[m
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".xls", {"sheet": "A1", "cells": "A1:E1"}),
-     (".xls", {"sheet": "BH11", "cells": "BH11:BL11"}),
-     (".xlsx", {"sheet": "A1", "cells": "A1:E1"}),
-     (".xlsx", {"sheet": "BH11", "cells": "BH11:BL11"}),
-     (".xlsx", {"sheet": "AEX154041", "cells": "AEX154041:AFB154041"})]
+    [
+        (".xls", {"sheet": "A1", "cells": "A1:E1"}),
+        (".xls", {"sheet": "BH11", "cells": "BH11:BL11"}),
+        (".xlsx", {"sheet": "A1", "cells": "A1:E1"}),
+        (".xlsx", {"sheet": "BH11", "cells": "BH11:BL11"}),
+        (".xlsx", {"sheet": "AEX154041", "cells": "AEX154041:AFB154041"}),
+    ],
 )
 def test_header_only(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
@@ -174,19 +188,22 @@ dt = {"names": header, "formats": [object, float, float, float, float]}
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"dtype": dt, "converters": {0: to_datetime}, "encoding": "bytes"}),
-     (".txt", {"dtype": dt, "converters": {0: to_datetime}, "delimiter": "\t", "encoding": "bytes"}),
-     (".xls", {"dtype": dt, "sheet": "A1"}),
-     (".xls", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
-     (".xlsx", {"dtype": dt, "sheet": "A1"}),
-     (".xlsx", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
-     (".xlsx", {"dtype": dt, "sheet": "AEX154041", "cells": "AEX154041:AFB154051"})]
+    [
+        (".csv", {"dtype": dt, "converters": {0: to_datetime}, "encoding": "bytes"}),
+        (".txt", {"dtype": dt, "converters": {0: to_datetime}, "delimiter": "\t", "encoding": "bytes"}),
+        (".xls", {"dtype": dt, "sheet": "A1"}),
+        (".xls", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
+        (".xlsx", {"dtype": dt, "sheet": "A1"}),
+        (".xlsx", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
+        (".xlsx", {"dtype": dt, "sheet": "AEX154041", "cells": "AEX154041:AFB154051"}),
+    ],
 )
 def test_datetime_objects(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     datetimes = np.asarray([to_datetime(item.encode()) for item in data["f0"]], dtype=object)
-    data_datetimes = np.asarray([  # pyright: ignore[reportUnknownVariableType, reportCallIssue]
-        (a, b, c, d, e) for a, b, c, d, e in zip(datetimes, data["f1"], data["f2"], data["f3"], data["f4"])
-    ], dtype=dt)  # type: ignore[call-overload]  # pyright: ignore[reportArgumentType]
+    data_datetimes = np.asarray(  # pyright: ignore[reportUnknownVariableType, reportCallIssue]
+        [(a, b, c, d, e) for a, b, c, d, e in zip(datetimes, data["f1"], data["f2"], data["f3"], data["f4"])],
+        dtype=dt,  # type: ignore[call-overload]  # pyright: ignore[reportArgumentType]
+    )
 
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, header)
@@ -197,8 +214,7 @@ def test_datetime_objects(ext: str, kwargs: dict[str, Any]) -> None:  # type: ig
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"dtype": data.dtype, "skiprows": 5}),
-     (".txt", {"dtype": data.dtype, "delimiter": "\t", "skiprows": 5})]
+    [(".csv", {"dtype": data.dtype, "skiprows": 5}), (".txt", {"dtype": data.dtype, "delimiter": "\t", "skiprows": 5})],
 )
 def test_skip_rows_5(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     new_header = ["2019-09-11 14:07:11", "-0.505275", "0.000070", "0.500965", "0.000088"]
@@ -210,29 +226,26 @@ def test_skip_rows_5(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"skiprows": 3, "usecols": (1, 4)}),
-     (".txt", {"skiprows": 3, "usecols": (1, 4), "delimiter": "\t"})]
+    [(".csv", {"skiprows": 3, "usecols": (1, 4)}), (".txt", {"skiprows": 3, "usecols": (1, 4), "delimiter": "\t"})],
 )
 def test_skip_rows_use_cols(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     h = ["-0.505308", "0.000087"]
-    d = [[-0.505250, 0.000120],
-         [-0.505275, 0.000088],
-         [-0.505137, 0.000085],
-         [-0.505073, 0.000084],
-         [-0.505133, 0.000076],
-         [-0.505096, 0.000062],
-         [-0.505072, 0.000149]]
+    d = [
+        [-0.505250, 0.000120],
+        [-0.505275, 0.000088],
+        [-0.505137, 0.000085],
+        [-0.505073, 0.000084],
+        [-0.505133, 0.000076],
+        [-0.505096, 0.000062],
+        [-0.505072, 0.000149],
+    ]
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, h)
     assert np.array_equal(dset.data, d)
     assert dset.shape == (7, 2)
 
 
-@pytest.mark.parametrize(
-    ("ext", "kwargs"),
-    [(".csv", {"skiprows": 100}),
-     (".txt", {"skiprows": 100})]
-)
+@pytest.mark.parametrize(("ext", "kwargs"), [(".csv", {"skiprows": 100}), (".txt", {"skiprows": 100})])
 def test_skip_rows_100(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
     assert dset.metadata.header.size == 0
@@ -241,8 +254,7 @@ def test_skip_rows_100(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignor
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".csv", {"dtype": data.dtype, "delimiter": ","}),
-     (".txt", {"dtype": data.dtype, "delimiter": "\t"})]
+    [(".csv", {"dtype": data.dtype, "delimiter": ","}), (".txt", {"dtype": data.dtype, "delimiter": "\t"})],
 )
 def test_text_file_like(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     def assert_dataset(dataset: Dataset) -> None:
@@ -290,8 +302,10 @@ def test_text_file_like(ext: str, kwargs: dict[str, Any]) -> None:  # type: igno
 
 @pytest.mark.parametrize(
     ("ext", "kwargs"),
-    [(".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
-     (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False})]
+    [
+        (".xls", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
+        (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
+    ],
 )
 def test_excel_file_pointer(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     with get_url(ext).open(mode="rt") as ft:
@@ -421,7 +435,7 @@ def test_gsheets_all_data() -> None:
     # ID of the table.gsheet file
     table_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
 
-    dset = read_table(table_id+".gsheet", account="testing", sheet="StartA1")
+    dset = read_table(table_id + ".gsheet", account="testing", sheet="StartA1")
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
@@ -429,7 +443,7 @@ def test_gsheets_all_data() -> None:
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
-    dset = read_table(table_id+".gsheet", account="testing", sheet="StartH22")
+    dset = read_table(table_id + ".gsheet", account="testing", sheet="StartH22")
     assert dset.metadata.header.size == 11
     assert dset.shape == (31, 11)
     for i in range(20):
@@ -440,7 +454,7 @@ def test_gsheets_all_data() -> None:
         assert np.array_equal(dset[i][:7], [None] * 7)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         assert np.array_equal(dset[i][7:], row)
 
-    dset = read_table(table_id+".gsheet", account="testing", sheet="StartH22", cells="H22")
+    dset = read_table(table_id + ".gsheet", account="testing", sheet="StartH22", cells="H22")
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data)
 
@@ -524,20 +538,21 @@ def test_gsheets_cell_range() -> None:
 @skipif_no_sheets_readonly
 def test_gsheet_range_out_of_bounds() -> None:
     for c in ["A100", "J1:M10"]:
-        dset = read_table("1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet",
-                          cells=c, account="testing", sheet="StartA1")
+        dset = read_table(
+            "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet", cells=c, account="testing", sheet="StartA1"
+        )
         assert dset.metadata.header.size == 0
         assert dset.size == 0
 
-    dset = read_table("1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet",
-                      cells="A1:Z100", account="testing", sheet="StartA1")
+    dset = read_table(
+        "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet", cells="A1:Z100", account="testing", sheet="StartA1"
+    )
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset.data, gsheet_data)
 
 
 @skipif_no_sheets_readonly
 def test_gsheet_raises() -> None:
-
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet"
 
     # invalid cell range

@@ -1,35 +1,35 @@
 import os
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
-from tests.helper import read_sample
-from tests.helper import roots_equal
-from msl.io import HDF5Writer
-from msl.io import JSONWriter
-from msl.io import read
+from msl.io import HDF5Writer, JSONWriter, Reader, read
+from msl.io.node import Dataset
 from msl.io.readers import JSONReader
+from tests.helper import read_sample, roots_equal
 
 
-def test_read_write_convert():
+def test_read_write_convert() -> None:  # noqa: PLR0915
     root1 = read_sample("json_sample.json")
 
     # write as JSON then read
     writer = JSONWriter(tempfile.gettempdir() + "/msl-json-writer-temp.json")
     writer.write(root=root1, mode="w")
+    assert isinstance(writer.file, str)
     root2 = read(writer.file)
     assert root2.file == writer.file
     assert roots_equal(root1, root2)
-    os.remove(writer.file)
+    os.remove(writer.file)  # noqa: PTH107
 
     # convert to HDF5 then back to JSON
-    hdf5_writer = HDF5Writer(tempfile.gettempdir() + "/msl-hdf5-writer-temp.h5")
+    hdf5_writer = HDF5Writer(Path(tempfile.gettempdir()) / "msl-hdf5-writer-temp.h5")
     # HDF5 does not support "null". So, reload the JSON file and pop the metadata
     # that contain "null" before writing the HDF5 file
     temp = read_sample("json_sample.json")
@@ -39,20 +39,23 @@ def test_read_write_convert():
     assert "null" not in temp.metadata
     array_mixed_null = temp.metadata.pop("array_mixed_null")
     assert isinstance(array_mixed_null, np.ndarray)
-    assert np.array_equal(array_mixed_null, ["a", False, 5, 72.3, "hey", None])
+    assert np.array_equal(array_mixed_null, ["a", False, 5, 72.3, "hey", None])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert "array_mixed_null" not in temp.metadata
+    root3 = None
     if h5py is not None:
         hdf5_writer.write(root=temp, mode="w")
+        assert isinstance(hdf5_writer.file, Path)
         root_hdf5 = read(hdf5_writer.file)
-        os.remove(hdf5_writer.file)
+        hdf5_writer.file.unlink()
         writer2 = JSONWriter(tempfile.gettempdir() + "/msl-json-writer-temp2.json")
         writer2.write(root=root_hdf5, mode="w")
+        assert isinstance(writer2.file, str)
         root3 = read(writer2.file)
         assert root3.file == writer2.file
-        os.remove(writer2.file)
+        os.remove(writer2.file)  # noqa: PTH107
 
     roots = [root1, root2]
-    if h5py is not None:
+    if h5py is not None and root3 is not None:
         roots.append(root3)
 
     for root in roots:
@@ -92,17 +95,17 @@ def test_read_write_convert():
         assert root.metadata.array_numbers.tolist() == [1, 2.3, 4, -4e99]
 
         # make sure the Metadata values are read only
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata["new_key"] = "new value"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             del root.metadata.foo
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.boolean = False
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.array_strings[0] = "new string"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             del root.metadata.array_var_strings
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.array_numbers[:] = [-9, -8, -7, -6]
 
         root.read_only = False
@@ -124,15 +127,15 @@ def test_read_write_convert():
         root.read_only = True
 
         # make sure the Metadata values are read only again
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             del root.metadata.new_key
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.boolean = True
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.array_strings[-1] = "another string"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             del root.metadata.array_var_strings
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             root.metadata.array_numbers[:] = [11, 22, 33, 44]
 
         assert "conditions" in root
@@ -152,7 +155,7 @@ def test_read_write_convert():
         assert isinstance(root["my_data"].data, np.ndarray)
         assert root["my_data"].shape == (4, 5)
         assert root["my_data"].dtype.str == "<i4"
-        assert np.array_equal(root["my_data"], np.arange(20).reshape(4, 5))
+        assert np.array_equal(root["my_data"], np.arange(20).reshape(4, 5))  # pyright: ignore[reportArgumentType]
 
         assert len(root.a.metadata) == 0
 
@@ -166,6 +169,7 @@ def test_read_write_convert():
         assert len(c.metadata) == 0
 
         dset = root.a.b.dataset2
+        assert isinstance(dset, Dataset)
         assert root.is_dataset(dset)
         assert len(dset.metadata) == 1
         # use tolist() not np.array_equal
@@ -184,9 +188,9 @@ def test_read_write_convert():
         assert dset["e"].tolist() == [8, 9]
 
         # make sure the ndarray's are read only
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             dset.metadata.fibonacci[4] = -9
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             dset["e"] = [-1, 0]
 
         root.read_only = False
@@ -199,13 +203,13 @@ def test_read_write_convert():
         root.read_only = True
 
         # make sure the ndarray's are read only again
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             dset.metadata.fibonacci[4] = 0
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"read-only"):
             dset["a"][0] = "foo"
 
 
-def test_raises():
+def test_raises() -> None:
     root = read_sample("json_sample.json")
 
     writer = JSONWriter()
@@ -215,18 +219,16 @@ def test_raises():
     with pytest.raises(ValueError, match=r"must specify a file"):
         writer.write(root=root)
 
-    # root must be a Root
-    with pytest.raises(TypeError, match=r"Root"):
-        writer.write(file="whatever", root=list(root.datasets())[0])
-    with pytest.raises(TypeError, match=r"Root"):
-        writer.write(file="whatever", root=list(root.groups())[0])
-    with pytest.raises(TypeError, match=r"Root"):
-        writer.write(file="whatever", root="Root")
+    # root must be a Group object
+    with pytest.raises(TypeError, match=r"Group"):
+        writer.write(file="whatever", root=next(iter(root.datasets())))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    with pytest.raises(TypeError, match=r"Group"):
+        writer.write(file="whatever", root="Root")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     # cannot overwrite a file by default
-    file = tempfile.gettempdir() + "/msl-json-writer-temp.json"
-    with open(file, mode="wt") as fp:
-        fp.write("Hi")
+    file = Path(tempfile.gettempdir()) / "msl-json-writer-temp.json"
+    with file.open("w") as fp:
+        _ = fp.write("Hi")
     with pytest.raises(OSError, match=r"File exists"):
         writer.write(file=file, root=root)
     with pytest.raises(OSError, match=r"File exists"):
@@ -234,7 +236,7 @@ def test_raises():
 
     # invalid mode
     for m in ["r", "z"]:
-        with pytest.raises(ValueError, match=r"([i|I]nvalid\s)?mode"):
+        with pytest.raises(ValueError, match=r"([i|I]nvalid\s)?mode"):  # cSpell: ignore nvalid
             writer.write(file=file, root=root, mode=m)
 
     # r+ is a valid mode, but the file must already exist
@@ -250,16 +252,16 @@ def test_raises():
     assert roots_equal(root, read(file))
     writer.write(file=file, root=root, mode="a")
     assert roots_equal(root, read(file))
-    os.remove(file)
+    file.unlink()
 
 
-def test_pretty_printing():
+def test_pretty_printing() -> None:
     root = read_sample("json_sample.json")
     root.read_only = False
 
-    root.create_dataset("aaa", data=np.ones((3, 3, 3)))
+    _ = root.create_dataset("aaa", data=np.ones((3, 3, 3)))
 
-    w = JSONWriter(tempfile.gettempdir() + "/msl-json-writer-temp.json")
+    w = JSONWriter(Path(tempfile.gettempdir()) / "msl-json-writer-temp.json")
     w.save(root=root, mode="w", sort_keys=True, separators=(", ", ": "))
 
     expected = """#File created with: MSL JSONWriter version 1.0
@@ -333,7 +335,8 @@ def test_pretty_printing():
 }
 """.splitlines()
 
-    with open(w.file, mode="rt") as fp:
+    assert isinstance(w.file, Path)
+    with w.file.open() as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
 
     assert len(expected) == len(written)
@@ -341,11 +344,11 @@ def test_pretty_printing():
         assert expected[i] == written[i]
 
     # make sure that we can still read the file
-    root = read_sample(w.file)
+    root = read_sample(str(w.file))
 
     # change the indentation to be 0
     w.save(root=root, mode="w", sort_keys=True, indent=0, separators=(", ", ": "))
-    with open(w.file, mode="rt") as fp:
+    with w.file.open() as fp:
         written = [line.rstrip() for line in fp.read().splitlines()]
     assert len(expected) == len(written)
     for i in range(len(expected)):
@@ -353,18 +356,18 @@ def test_pretty_printing():
 
     # change the indentation to be None
     w.save(root=root, mode="w", sort_keys=True, indent=None, separators=(",", ":"))
-    with open(w.file, mode="rt") as fp:
+    with w.file.open() as fp:
         written = fp.read().splitlines()
     assert len(written) == 2
     assert written[0] == "#File created with: MSL JSONWriter version 1.0"
     assert written[1].startswith('{"a":{"b":{"apple":')
     assert written[1].endswith('},"null":null}')
 
-    os.remove(w.file)
+    w.file.unlink()
 
 
-def test_unicode():
-    def do_asserts(r):
+def test_unicode() -> None:
+    def do_asserts(r: Reader) -> None:
         assert len(r.metadata) == 2
         assert "μ" in r.metadata
         assert "\u03bc" in r.metadata
@@ -374,15 +377,16 @@ def test_unicode():
         assert r.metadata.unit == "°C"
         assert r.metadata.unit == "\xb0C"
 
-    root = read_sample("uñicödé.json")
+    root = read_sample("uñicödé.json")  # cSpell: ignore uñicödé
     do_asserts(root)
 
     for b in [False, True]:
         writer = JSONWriter(tempfile.gettempdir() + "/msl-json-writer-temp.json")
         writer.save(root=root, ensure_ascii=b, mode="w")
 
+        assert isinstance(writer.file, str)
         root2 = read(writer.file)
         do_asserts(root2)
         assert roots_equal(root, root2)
 
-        os.remove(writer.file)
+        os.remove(writer.file)  # noqa: PTH107

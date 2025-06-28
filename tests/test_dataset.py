@@ -560,13 +560,13 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert d.metadata == {"one": 1}
     assert np.array_equal(d, np.array([10, 20, 30]))
 
-    d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10., 20., 30.]), neg_one=-1)
+    d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10.0, 20.0, 30.0]), neg_one=-1)
     d /= 10
     assert isinstance(d, Dataset)
     assert d.name == "divide(/d)"
     assert d.parent is None
     assert d.metadata == {"neg_one": -1}
-    assert np.array_equal(d, np.array([1., 2., 3.]))
+    assert np.array_equal(d, np.array([1.0, 2.0, 3.0]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10, 20, 30]))
     d //= 5
@@ -636,8 +636,8 @@ def test_assignments() -> None:  # noqa: PLR0915
 def test_numpy_function() -> None:
     # np.xxx() is also valid syntax with a Dataset
 
-    array = np.array([1., 2., 3.])
-    d1 = Dataset(name="d1", parent=None, read_only=True, data=[1., 2., 3.], one=1)
+    array = np.array([1.0, 2.0, 3.0])
+    d1 = Dataset(name="d1", parent=None, read_only=True, data=[1.0, 2.0, 3.0], one=1)
 
     cos = np.cos(d1)
     assert isinstance(cos, Dataset)  # type: ignore[unreachable]
@@ -683,7 +683,7 @@ def test_name_metadata_merged() -> None:
     d = np.sqrt(c + b - a)
     assert repr(d) == "<Dataset 'sqrt(subtract(add(/c,b),add(/a)))' shape=(3,) dtype='<f8' (4 metadata)>"
     assert d.metadata == {"fruit": "apple", "one": 1, "hello": "world", "eat": "cake"}
-    assert np.array_equal(d, np.sqrt([7+4-2, 8+5-3, 9+6-4]))
+    assert np.array_equal(d, np.sqrt([7 + 4 - 2, 8 + 5 - 3, 9 + 6 - 4]))
 
 
 def test_invalid_name() -> None:

@@ -1,6 +1,5 @@
-import os
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
+from pathlib import Path
 
 import pytest
 
@@ -8,49 +7,48 @@ from msl.io import ExcelReader
 from msl.io.readers._xlrd import Book
 
 
-def test_raises():
-
-    file = os.path.join(os.path.dirname(__file__), "samples", "table.xls")
+def test_raises() -> None:
+    file = Path(__file__).parent / "samples" / "table.xls"
 
     # file does not exist
-    with pytest.raises(OSError):
-        ExcelReader("does not exist")
+    with pytest.raises(OSError, match=r"does not exist"):
+        _ = ExcelReader("does not exist")
 
     # more than one sheet in the Excel workbook
     with pytest.raises(ValueError, match=r"You must specify the name of the sheet"):
-        ExcelReader(file).read()
+        _ = ExcelReader(file).read()
 
     # the sheet does not exist in the Excel workbook
     with pytest.raises(ValueError, match=r"There is no sheet named"):
-        ExcelReader(file).read(sheet="XXXYYYZZZ")
+        _ = ExcelReader(file).read(sheet="XXXYYYZZZ")  # cSpell:ignore XXXYYYZZZ
 
 
-def test_on_demand_default():
-    file = os.path.join(os.path.dirname(__file__), "samples", "table.xlsx")
+def test_on_demand_default() -> None:
+    file = Path(__file__).parent / "samples" / "table.xlsx"
     excel = ExcelReader(file)
     assert excel.workbook.on_demand is True
 
 
 @pytest.mark.parametrize("on_demand", [True, False])
-def test_cell(on_demand):
-    file = os.path.join(os.path.dirname(__file__), "samples", "table.xlsx")
+def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
+    file = Path(__file__).parent / "samples" / "table.xlsx"
     excel = ExcelReader(file, on_demand=on_demand)
     assert excel.workbook.on_demand is on_demand
     values = [
         ("timestamp", "val1", "uncert1", "val2", "uncert2"),
-        (datetime(2019, 9, 11, 14, 6, 55), -0.505382, 0.000077, 0.501073, 0.000079),
-        (datetime(2019, 9, 11, 14, 6, 59), -0.505191, 0.000066, 0.500877, 0.000083),
-        (datetime(2019, 9, 11, 14, 7, 3), -0.505308, 0.000086, 0.500988, 0.000087),
-        (datetime(2019, 9, 11, 14, 7, 7), -0.505250, 0.000119, 0.500923, 0.000120),
-        (datetime(2019, 9, 11, 14, 7, 11), -0.505275, 0.000070, 0.500965, 0.000088),
-        (datetime(2019, 9, 11, 14, 7, 15), -0.505137, 0.000079, 0.500817, 0.000085),
-        (datetime(2019, 9, 11, 14, 7, 19), -0.505073, 0.000099, 0.500786, 0.000084),
-        (datetime(2019, 9, 11, 14, 7, 23), -0.505133, 0.000088, 0.500805, 0.000076),
-        (datetime(2019, 9, 11, 14, 7, 27), -0.505096, 0.000062, 0.500759, 0.000062),
-        (datetime(2019, 9, 11, 14, 7, 31), -0.505072, 0.000142, 0.500739, 0.000149)
+        (datetime(2019, 9, 11, 14, 6, 55), -0.505382, 0.000077, 0.501073, 0.000079),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 6, 59), -0.505191, 0.000066, 0.500877, 0.000083),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 3), -0.505308, 0.000086, 0.500988, 0.000087),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 7), -0.505250, 0.000119, 0.500923, 0.000120),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 11), -0.505275, 0.000070, 0.500965, 0.000088),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 15), -0.505137, 0.000079, 0.500817, 0.000085),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 19), -0.505073, 0.000099, 0.500786, 0.000084),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 23), -0.505133, 0.000088, 0.500805, 0.000076),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 27), -0.505096, 0.000062, 0.500759, 0.000062),  # noqa: DTZ001
+        (datetime(2019, 9, 11, 14, 7, 31), -0.505072, 0.000142, 0.500739, 0.000149),  # noqa: DTZ001
     ]
 
-    assert excel.file == file
+    assert excel.file == str(file)
     assert excel.sheet_names() == ("A1", "BH11", "AEX154041")
     assert isinstance(excel.workbook, Book)
     sheet = excel.workbook.sheet_by_name("A1")
@@ -128,7 +126,7 @@ def test_cell(on_demand):
     assert excel.read(cell="A:E", sheet="BH11") == [tuple(None for _ in range(5)) for _ in range(21)]
     new = [tuple(None for _ in range(6))]
     for row in values:
-        new.append((None,) + row)
+        new.append((None, *row))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: PERF401
     assert excel.read(cell="BG10:BM22", sheet="BH11") == new
     assert excel.read(cell="BK20:BL21", sheet="BH11") == [row[-2:] for row in values[-2:]]
     assert excel.read(cell="AEX154041:AFB154051", sheet="AEX154041") == values
@@ -142,9 +140,9 @@ def test_cell(on_demand):
 
 
 @pytest.mark.parametrize("on_demand", [True, False])
-def test_datatypes(on_demand):
+def test_datatypes(on_demand: bool) -> None:  # noqa: FBT001
     # the following workbook only contains 1 sheet, so we don't have to specify the sheet
-    file = os.path.join(os.path.dirname(__file__), "samples", "excel_datatypes.xlsx")
+    file = str(Path(__file__).parent / "samples" / "excel_datatypes.xlsx")
     excel = ExcelReader(file, on_demand=on_demand)
     assert excel.workbook.on_demand is on_demand
     assert excel.file == file
@@ -152,7 +150,7 @@ def test_datatypes(on_demand):
     assert excel.sheet_names() == ("Sheet1",)
     assert excel.read(cell="A1") == 1.23  # '$1.23'
     assert excel.read(cell="B1") is True
-    assert excel.read(cell="C1") == datetime(2019, 9, 13, 13, 20, 22)
+    assert excel.read(cell="C1") == datetime(2019, 9, 13, 13, 20, 22)  # noqa: DTZ001
     assert excel.read(cell="C1", as_datetime=False) == "2019-09-13 13:20:22"
     assert excel.read(cell="D1") == date(2019, 9, 13)
     assert excel.read(cell="D1", as_datetime=False) == "2019-09-13"

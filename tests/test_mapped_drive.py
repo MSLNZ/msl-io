@@ -1,71 +1,65 @@
 import os
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
-from tests.helper import metadata_equal
-from tests.helper import roots_equal
-from msl.io import HDF5Writer
-from msl.io import JSONWriter
-from msl.io import copy
-from msl.io import is_dir_accessible
-from msl.io import read
-from msl.io import read_table
+from msl.io import HDF5Writer, JSONWriter, copy, is_dir_accessible, read, read_table
+from tests.helper import metadata_equal, roots_equal
 
 # the Z: drive (if it exists) is a mapped drive to the "Photometry & Radiometry" folder
 folder = r"Z:\transfer"
 
-skipif_not_mapped = pytest.mark.skipif(
-    not is_dir_accessible(folder),
-    reason="mapped drive not available"
-)
+skipif_not_mapped = pytest.mark.skipif(not is_dir_accessible(folder), reason="mapped drive not available")
 
 
 @skipif_not_mapped
 @pytest.mark.skipif(h5py is None, reason="h5py is not installed")
-def test_hdf5():
-    root = read(os.path.join(os.path.dirname(__file__), "samples", "hdf5_sample.h5"))
-    w = HDF5Writer(os.path.join(folder, "msl-io-testing.h5"))
+def test_hdf5() -> None:
+    root = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
+    w = HDF5Writer(os.path.join(folder, "msl-io-testing.h5"))  # noqa: PTH118
     w.write(root=root, mode="w")
+    assert isinstance(w.file, str)
     assert roots_equal(root, read(w.file))
-    os.remove(w.file)
+    os.remove(w.file)  # noqa: PTH107
 
 
 @skipif_not_mapped
-def test_json():
-    root = read(os.path.join(os.path.dirname(__file__), "samples", "json_sample.json"))
-    w = JSONWriter(os.path.join(folder, "msl-io-testing.json"))
+def test_json() -> None:
+    root = read(Path(__file__).parent / "samples" / "json_sample.json")
+    w = JSONWriter(os.path.join(folder, "msl-io-testing.json"))  # noqa: PTH118
     w.write(root=root, mode="w")
+    assert isinstance(w.file, str)
     assert roots_equal(root, read(w.file))
-    os.remove(w.file)
+    os.remove(w.file)  # noqa: PTH107
 
 
 @skipif_not_mapped
-def test_copy_and_table():
-    tables = {
+def test_copy_and_table() -> None:
+    tables: dict[str, tuple[str, dict[str, str]]] = {
         "table.csv": ("msl-io-testing.csv", {}),
         "table.txt": ("msl-io-testing.txt", {}),
         "table.xls": ("msl-io-testing.xls", {"sheet": "A1"}),
     }
     for original, (file, kwargs) in tables.items():
-        source = os.path.join(os.path.dirname(__file__), "samples", original)
+        source = Path(__file__).parent / "samples" / original
         d1 = read_table(source, dtype=object, **kwargs)
-        destination1 = os.path.join(folder)
-        destination2 = os.path.join(folder, file)
-        destination3 = os.path.join(folder, "msl-io-testing", "subfolder", file)
+        destination1 = os.path.join(folder)  # noqa: PTH118
+        destination2 = os.path.join(folder, file)  # noqa: PTH118
+        destination3 = os.path.join(folder, "msl-io-testing", "subfolder", file)  # noqa: PTH118
         for i, dest in enumerate([destination1, destination2, destination3]):
-            dest = copy(source, dest, overwrite=True)
+            _dest = copy(source, dest, overwrite=True)
             d2 = read_table(dest, dtype=object, **kwargs)
             if i == 0:
                 assert d1.name == d2.name
             assert np.array_equal(d1.data, d2.data)
             assert metadata_equal(d1.metadata, d2.metadata)
-            os.remove(dest)
-        sub_folder = os.path.dirname(destination3)
-        os.rmdir(sub_folder)
-        os.rmdir(os.path.dirname(sub_folder))
+            os.remove(_dest)  # noqa: PTH107
+        sub_folder = os.path.dirname(destination3)  # noqa: PTH120
+        os.rmdir(sub_folder)  # noqa: PTH106
+        os.rmdir(os.path.dirname(sub_folder))  # noqa: PTH106, PTH120
