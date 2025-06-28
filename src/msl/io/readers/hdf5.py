@@ -3,20 +3,19 @@
 !!! attention
     This Reader loads the entire [HDF5] file in memory. If you need to use any
     of the more advanced features of an [HDF5] file, it is best to directly load
-    the file using [H5py](https://www.h5py.org/).
+    the file using [h5py](https://www.h5py.org/).
 
 [HDF5]: https://www.hdfgroup.org/
 """
-# pyright: reportUnknownMemberType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false, reportIndexIssue=false, reportOptionalMemberAccess=false, reportMissingTypeStubs=false, reportUnknownVariableType=false
 
 from __future__ import annotations
 
 import os
 from io import BufferedIOBase
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, no_type_check
 
 try:
-    import h5py  # type: ignore[import-untyped]
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
@@ -25,15 +24,13 @@ from msl.io.base import Reader, register
 if TYPE_CHECKING:
     from typing import IO, Any
 
-    from msl.io._types import PathLike
-
 
 @register
 class HDF5Reader(Reader):
     """Reader for the [HDF5](https://www.hdfgroup.org/) file format."""
 
     @staticmethod
-    def can_read(file: IO[str] | IO[bytes] | PathLike, **kwargs: Any) -> bool:  # noqa: ARG004
+    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:  # noqa: ARG004
         r"""The [HDF5] file format has a standard [signature].
 
         The first 8 bytes must be `\\x89HDF\\r\\n\\x1a\\n`.
@@ -45,7 +42,7 @@ class HDF5Reader(Reader):
             file: The file to check.
             kwargs: All keyword arguments are ignored.
         """
-        if isinstance(file, (bytes, str, os.PathLike, BufferedIOBase)):
+        if isinstance(file, (str, BufferedIOBase)):
             return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
         return False
 
@@ -59,6 +56,7 @@ class HDF5Reader(Reader):
             msg = "You must install h5py to read HDF5 files, run\n  pip install h5py"
             raise ImportError(msg)
 
+        @no_type_check
         def convert(name: str, obj: object) -> None:
             head, tail = os.path.split(name)
             s = self["/" + head] if head else self
@@ -70,6 +68,7 @@ class HDF5Reader(Reader):
                 msg = f"Should never get here, unhandled h5py object {obj}"
                 raise TypeError(msg)
 
+        @no_type_check
         def h5_open(f: BufferedIOBase) -> None:
             with h5py.File(f, mode="r", **kwargs) as h5:
                 self.add_metadata(**h5.attrs)
@@ -82,7 +81,7 @@ class HDF5Reader(Reader):
         # h5py.File is more universal
         if isinstance(self.file, BufferedIOBase):
             h5_open(self.file)
-        elif isinstance(self.file, (bytes, str, os.PathLike)):
+        elif isinstance(self.file, str):
             with open(self.file, mode="rb") as fp:  # noqa: PTH123
                 h5_open(fp)
         else:

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from io import BufferedIOBase
 from typing import TYPE_CHECKING
 
@@ -14,10 +13,9 @@ from msl.io.base import Reader, register
 if TYPE_CHECKING:
     from typing import IO, Any
 
-    from numpy.typing import ArrayLike, NDArray
+    from numpy.typing import NDArray
 
-    from msl.io._types import PathLike
-    from msl.io.node import Dataset, Group
+    from msl.io.node import Group
 
 
 @register
@@ -25,21 +23,22 @@ class JSONReader(Reader):
     """Read a file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter]."""
 
     @staticmethod
-    def can_read(file: IO[str] | IO[bytes] | PathLike, **kwargs: Any) -> bool:
+    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
         """Checks if the text `MSL JSONWriter` is in the first line of the file..
 
         Args:
             file: The file to check.
             kwargs: All keyword arguments are passed to [get_lines][msl.io.base.Reader.get_lines].
         """
-        if isinstance(file, (bytes, str, os.PathLike, BufferedIOBase)):
+        text: bytes | str
+        if isinstance(file, (str, BufferedIOBase)):
             text = Reader.get_bytes(file, 21, 34)
         else:
             text = Reader.get_lines(file, 1, **kwargs)[0][20:34]
 
-        if isinstance(text, bytes):
-            text = text.decode()
-        return text == "MSL JSONWriter"
+        if isinstance(text, str):
+            text = text.encode()
+        return text == b"MSL JSONWriter"
 
     def read(self, **kwargs: Any) -> None:  # noqa: C901
         """Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].
@@ -58,21 +57,18 @@ class JSONReader(Reader):
             "errors": kwargs.pop("errors", "strict"),
         }
 
-        if isinstance(self.file, (bytes, str, os.PathLike)):
+        if isinstance(self.file, str):
             with open(self.file, mode="rt", **open_kwargs) as fp:  # noqa: PTH123, UP015
                 _ = fp.readline()  # skip the first line
                 dict_ = json.loads(fp.read(), **kwargs)
-        elif self.file is not None:
+        else:
             _ = self.file.readline()  # skip the first line
             data = self.file.read()
             if isinstance(data, bytes):
                 data = data.decode(**open_kwargs)
             dict_ = json.loads(data, **kwargs)
-        else:
-            msg = f"Should never get here, file type is {type(self.file)}"
-            raise TypeError(msg)
 
-        def list_to_ndarray(list_: ArrayLike) -> NDArray[Any]:
+        def list_to_ndarray(list_: list[Any]) -> NDArray[Any]:
             # convert a Metadata value to ndarray because one can easily make ndarray read only
             # use dtype=object because it guarantees that the data types are preserved
             # for example,
@@ -83,7 +79,7 @@ class JSONReader(Reader):
             # also a regular Python list stores items as objects
             return np.asarray(list_, dtype=object)
 
-        def create_group(parent: Group | None, name: str, node: Group | Dataset) -> None:
+        def create_group(parent: Group | None, name: str, node: dict[str, Any]) -> None:
             group = self if parent is None else parent.create_group(name)
             for key, value in node.items():
                 if not isinstance(value, dict):  # Metadata
@@ -109,7 +105,7 @@ class JSONReader(Reader):
                             kws[d_key] = d_val
                     _ = group.create_dataset(key, **kws)
                 else:  # use recursion to create a sub-Group
-                    create_group(group, key, value)  # pyright: ignore[reportArgumentType]
+                    create_group(group, key, value)  # pyright: ignore[reportUnknownArgumentType]
 
         # create the root group
         create_group(None, "", dict_)

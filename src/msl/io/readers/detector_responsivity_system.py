@@ -14,7 +14,6 @@ from msl.io.base import Reader, register
 if TYPE_CHECKING:
     from typing import IO, Any
 
-    from msl.io._types import PathLike
     from msl.io.node import Group
 
 
@@ -23,7 +22,7 @@ class DRSReader(Reader):
     """Reader for the Detector Responsivity System from Light Standards at MSL."""
 
     @staticmethod
-    def can_read(file: IO[str] | IO[bytes] | PathLike, **kwargs: Any) -> bool:  # noqa: ARG004
+    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:  # noqa: ARG004
         """Checks if the first line starts with `DRS` and ends with `Shindo`.
 
         Args:
