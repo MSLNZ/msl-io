@@ -1,118 +1,124 @@
-"""
-Writer for the HDF5_ file format.
+"""Writer for the [HDF5](https://www.hdfgroup.org/) file format.
 
-.. attention::
-   requires that the h5py_ package is installed.
-
-.. _HDF5: https://www.hdfgroup.org/
-.. _h5py: https://www.h5py.org/
+!!! attention
+    Requires the [h5py](https://www.h5py.org/) package to be installed.
 """
+
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING, no_type_check
 
 import numpy as np
 
 try:
-    import h5py
+    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
     h5py = None
 
-from ..base import Root
-from ..base import Writer
-from ..metadata import Metadata
-from ..utils import is_file_readable
+from msl.io.base import Writer
+from msl.io.metadata import Metadata
+from msl.io.node import Group
+from msl.io.utils import is_file_readable
+
+if TYPE_CHECKING:
+    from io import BufferedIOBase
+    from typing import IO, Any
+
+    from msl.io._types import PathLike
 
 
 class HDF5Writer(Writer):
-    """Create a HDF5_ writer.
+    """Create a [HDF5](https://www.hdfgroup.org/) writer.
 
-    You can use :class:`HDF5Writer` as a :ref:`context manager <with>`.
+    You can use [HDF5Writer][] as a [context manager][with].
     For example,
 
-    .. code-block:: python
-
-        with HDF5Writer('my_file.h5') as root:
-            root.create_dataset('dset', data=[1, 2, 3])
+    ```python
+    with HDF5Writer('my_file.h5') as root:
+        root.create_dataset('dset', data=[1, 2, 3])
+    ```
 
     This will automatically write `root` to the specified file when
-    the :ref:`with <with>` block exits.
+    the [with][] block exits.
     """
 
-    def write(self, file=None, root=None, **kwargs):
-        """Write to a HDF5_ file.
+    def write(  # noqa: C901, PLR0912, PLR0915
+        self, file: IO[str] | IO[bytes] | PathLike | None = None, *, root: Group | None = None, **kwargs: Any
+    ) -> None:
+        """Write to a [HDF5](https://www.hdfgroup.org/) file.
 
-        Parameters
-        ----------
-        file : :term:`path-like <path-like object>` or :term:`file-like <file object>`, optional
-            The file to write the `root` to. If :data:`None` then uses the value of
-            `file` that was specified when :class:`HDF5Writer` was instantiated.
-        root : :class:`~msl.io.base.Root`, optional
-            Write `root` in HDF5_ format. If :data:`None` then write the
-            :class:`~msl.io.group.Group`\\s and :class:`~msl.io.dataset.Dataset`\\s
-            in this :class:`HDF5Writer`.
-        **kwargs
-            All key-value pairs are passed to :class:`~h5py.File`.
+        Args:
+            file: The file to write the `root` to. If `None` then uses the value of
+                `file` that was specified when [HDF5Writer][] was instantiated.
+            root: Write `root` in [HDF5](https://www.hdfgroup.org/) format. If `None` then write the
+                [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
+                in this [HDF5Writer][].
+            kwargs: All additional keyword arguments are passed to [h5py.File][].
         """
         if h5py is None:
-            raise ImportError(
-                "You must install h5py to write HDF5 files, run\n"
-                "  pip install h5py"
-            )
+            msg = "You must install h5py to write HDF5 files, run\n  pip install h5py"
+            raise ImportError(msg)
 
         if file is None:
             file = self.file
         if not file:
-            raise ValueError("You must specify a file to write the root to")
+            msg = "You must specify a file to write the root to"
+            raise ValueError(msg)
 
         if root is None:
             root = self
-        elif not isinstance(root, Root):
-            raise TypeError("The root parameter must be a Root object")
+        elif not isinstance(root, Group):  # pyright: ignore[reportUnnecessaryIsInstance]
+            msg = "The root parameter must be a Group object"  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
+            raise TypeError(msg)
 
         if "mode" not in kwargs:
             kwargs["mode"] = "x"  # Create file, fail if exists
 
-        def check_ndarray_dtype(obj):
+        @no_type_check
+        def check_ndarray_dtype(obj: Any) -> Any:  # noqa: C901, PLR0911, PLR0912
             if not isinstance(obj, np.ndarray):
                 return obj
 
             # h5py variable-length string
-            vstr = h5py.special_dtype(vlen=str)
+            v_str = h5py.special_dtype(vlen=str)
 
             if obj.dtype.names is not None:
                 convert, dtype = False, []
                 for n in obj.dtype.names:
                     typ = obj.dtype.fields[n][0]
                     if isinstance(obj[n].item(0), str):
-                        dtype.append((n, vstr))
+                        dtype.append((n, v_str))
                         convert = True
                     else:
                         dtype.append((n, typ))
                 if convert:
                     return obj.astype(dtype=dtype)
                 return obj
-            elif obj.dtype.char == "U":
-                return obj.astype(dtype=vstr)
-            elif obj.dtype.char == "O":
+            if obj.dtype.char == "U":
+                return obj.astype(dtype=v_str)
+            if obj.dtype.char == "O":
                 has_complex = False
                 for item in obj.flat:
                     if isinstance(item, str):
                         return obj.astype(dtype="S")
-                    elif isinstance(item, np.complexfloating):
+                    if isinstance(item, np.complexfloating):
                         has_complex = True
                     elif item is None:
                         return obj  # let h5py raise the error that HDF5 does not support NULL
                 if has_complex:
                     return obj.astype(dtype=complex)
                 return obj.astype(dtype=float)
-            else:
-                return obj
+            return obj
 
-        def meta_to_dict(metadata):
-            return dict((k, meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v))
-                        for k, v in metadata.items())
+        def meta_to_dict(metadata: Metadata) -> dict[str, dict[str, Any] | Any]:
+            return {
+                k: meta_to_dict(v) if isinstance(v, Metadata) else check_ndarray_dtype(v) for k, v in metadata.items()
+            }
 
-        def h5_open(name):
-            with h5py.File(name, **kwargs) as h5:
+        @no_type_check
+        def h5_open(f: BufferedIOBase) -> None:
+            with h5py.File(f, **kwargs) as h5:
                 h5.attrs.update(**meta_to_dict(root.metadata))
                 for name, value in root.items():
                     if self.is_dataset(value):
@@ -128,21 +134,21 @@ class HDF5Writer(Writer):
         # an OSError. This occurred when a local folder was shared and then
         # mapped on the same computer. Opening the file using open() and then
         # passing in the file handle to h5py.File is more universal
-        if hasattr(file, "write"):  # already a file-like object
-            h5_open(file)
-        else:
+        if isinstance(file, (bytes, str, os.PathLike)):
             m = kwargs["mode"]
             if m in ["x", "w-"]:
-                if os.path.isfile(file) or is_file_readable(file):
-                    raise OSError(
-                        f"File exists {file!r}\n"
-                        "Specify mode='w' if you want to overwrite it."
-                    )
+                if os.path.isfile(file) or is_file_readable(file):  # noqa: PTH113
+                    msg = f"File exists {file!r}\nSpecify mode='w' if you want to overwrite it."
+                    raise FileExistsError(msg)
             elif m == "r+":
-                if not (os.path.isfile(file) or is_file_readable(file)):
-                    raise OSError(f"File does not exist {file!r}")
+                if not (os.path.isfile(file) or is_file_readable(file)):  # noqa: PTH113
+                    msg = f"File does not exist {file!r}"
+                    raise FileNotFoundError(msg)
             elif m not in ["w", "a"]:
-                raise ValueError(f"Invalid mode {m!r}")
+                msg = f"Invalid mode {m!r}"
+                raise ValueError(msg)
 
-            with open(file, mode="w+b") as fp:
+            with open(file, mode="w+b") as fp:  # noqa: PTH123
                 h5_open(fp)
+        else:
+            h5_open(file)
