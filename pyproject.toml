@@ -112,7 +112,6 @@ data_file = ".cache/coverage/.coverage"
 branch = true
 omit = [
     "src/msl/io/readers/_xlrd/*",
-    "src/msl/io/writers/_py3_json_encoder.py",
 ]
 
 [tool.coverage.report]
