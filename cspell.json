@@ -20,7 +20,8 @@
         "cspell.json",
         "mkdocs.yml",
         "pyproject.toml",
-        "src/msl/io/readers/_xlrd/*"
+        "src/msl/io/readers/_xlrd/*",
+        "tests/samples/*"
     ],
     "words": [
         "autouse",
@@ -28,6 +29,7 @@
         "BIPM",
         "birthtime",
         "chunksize",
+        "complexfloating",
         "datemode",
         "dset",
         "gdrive",
@@ -42,6 +44,7 @@
         "ndarray",
         "NOCLOSEPROCESS",
         "nrows",
+        "nsheets",
         "officedocument",
         "openxmlformats",
         "pycon",
@@ -50,11 +53,13 @@
         "runas",
         "setflags",
         "Shindo",
+        "skipkeys",
         "skiprows",
         "spreadsheetml",
         "ufunc",
         "uncert",
         "usecols",
+        "vlen",
         "xldate"
     ]
 }
