@@ -55,7 +55,7 @@ class ExcelReader(Spreadsheet):
                 an `encoding` keyword argument as an alias for `encoding_override`. The
                 default `on_demand` value is `True`.
 
-        Examples:
+        **Examples:**
         ```python
         from msl.io import ExcelReader
         excel = ExcelReader("lab_environment.xlsx")
@@ -95,7 +95,7 @@ class ExcelReader(Spreadsheet):
     def read(
         self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
     ) -> Any | list[tuple[Any, ...]]:
-        """Read values from the Excel spreadsheet.
+        """Read cell values from the Excel spreadsheet.
 
         Args:
             cell: The cell(s) to read. For example, `C9` will return a single value
@@ -111,23 +111,26 @@ class ExcelReader(Spreadsheet):
         Returns:
         The value(s) of the requested cell(s).
 
-        Examples:
+        **Examples:**
         <!-- invisible-code-block: pycon
         >>> from msl.io import ExcelReader
         >>> excel = ExcelReader('./tests/samples/lab_environment.xlsx')
 
         -->
 
+        ```pycon
         >>> excel.read()
         [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
-        >>> excel.read('B2')
+        >>> excel.read("B2")
         49.82
-        >>> excel.read('A:A')
+        >>> excel.read("A:A")
         [('temperature',), (20.33,), (20.23,), (20.41,), (20.29,)]
-        >>> excel.read('A1:B1')
+        >>> excel.read("A1:B1")
         [('temperature', 'humidity')]
-        >>> excel.read('A2:B4')
+        >>> excel.read("A2:B4")
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
+
+        ```
         """
         if not sheet:
             names = self.sheet_names()

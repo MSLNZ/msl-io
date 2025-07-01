@@ -1,13 +1,3 @@
-"""Reader for the [HDF5] file format.
-
-!!! attention
-    This Reader loads the entire [HDF5] file in memory. If you need to use any
-    of the more advanced features of an [HDF5] file, it is best to directly load
-    the file using [h5py](https://www.h5py.org/).
-
-[HDF5]: https://www.hdfgroup.org/
-"""
-
 from __future__ import annotations
 
 import os
@@ -27,20 +17,28 @@ if TYPE_CHECKING:
 
 @register
 class HDF5Reader(Reader):
-    """Reader for the [HDF5](https://www.hdfgroup.org/) file format."""
+    """Reader for the [HDF5](https://www.hdfgroup.org/){:target="_blank"} file format.
+
+    !!! attention
+        This Reader loads the entire [HDF5]{:target="_blank"} file in memory. If you need to use any
+        of the more advanced features of an [HDF5]{:target="_blank"} file, it is best to directly load
+        the file using [h5py](https://www.h5py.org/){:target="_blank"}.
+
+    [HDF5]: https://www.hdfgroup.org/
+    """
 
     @staticmethod
     def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:  # noqa: ARG004
-        r"""The [HDF5] file format has a standard [signature].
+        r"""Checks if the file has the [HDF5 signature]{:target="_blank"}.
 
-        The first 8 bytes must be `\\x89HDF\\r\\n\\x1a\\n`.
-
-        [HDF5]: https://www.hdfgroup.org/
-        [signature]: https://support.hdfgroup.org/HDF5/doc/H5.format.html#Superblock
+        [HDF5 signature]: https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t11.html#subsec_fmt11_boot_super
 
         Args:
             file: The file to check.
             kwargs: All keyword arguments are ignored.
+
+        Returns:
+            Whether the first 8 bytes are `\x89HDF\r\n\x1a\n`.
         """
         if isinstance(file, (str, BufferedIOBase)):
             return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
@@ -50,7 +48,7 @@ class HDF5Reader(Reader):
         """Reads the [HDF5](https://www.hdfgroup.org/) file.
 
         Args:
-            kwargs: All keyword arguments are passed to [h5py.File][].
+            kwargs: All keyword arguments are passed to [h5py.File][]{:target="_blank"}.
         """
         if h5py is None:
             msg = "You must install h5py to read HDF5 files, run\n  pip install h5py"

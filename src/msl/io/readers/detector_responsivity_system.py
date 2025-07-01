@@ -1,6 +1,4 @@
-"""Reader for the Detector Responsivity System from Light Standards at MSL."""
 # cSpell: ignore Tprobe NPLC
-
 from __future__ import annotations
 
 import re
@@ -19,7 +17,7 @@ if TYPE_CHECKING:
 
 @register
 class DRSReader(Reader):
-    """Reader for the Detector Responsivity System from Light Standards at MSL."""
+    """Reader for the Detector Responsivity System in MSL Light Standards."""
 
     @staticmethod
     def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:  # noqa: ARG004
@@ -28,6 +26,9 @@ class DRSReader(Reader):
         Args:
             file: The file to check.
             kwargs: All keyword arguments are ignored.
+
+        Returns:
+            Whether `file` was acquired in the DRS laboratory.
         """
         if Reader.get_extension(file).lower() != ".dat":
             return False

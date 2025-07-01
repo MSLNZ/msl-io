@@ -1,5 +1,3 @@
-"""Writer for a [JSON](https://www.json.org/) file format."""
-
 from __future__ import annotations
 
 import json
@@ -23,58 +21,48 @@ if TYPE_CHECKING:
 
 
 class JSONWriter(Writer):
-    """Create a [JSON](https://www.json.org/) writer.
+    """Writer for a [JSON](https://www.json.org/) file format.
 
-    You can use [JSONWriter][] as a [context manager][with].
-    For example,
+    You can use this Writer as a [context manager][with]{:target="_blank"}, for example,
 
-    ```pycon
-    >>> with JSONWriter("example.json") as root:
-    ...     dset = root.create_dataset("dset", data=[1, 2, 3])
-    ...     root.update_context_kwargs(indent=4)
-
+    ```python
+    with JSONWriter("my_file.json") as root:
+        root.update_context_kwargs(indent=4)
+        dset = root.create_dataset("dset", data=[1, 2, 3])
     ```
 
-    <!-- invisible-code-block: pycon
-    >>> import os
-    >>> os.remove("example.json")
-
-    -->
-
-    This will automatically write `root` to the specified file using `indent=4`
-    as a keyword argument to the [write][msl.io.base.Writer.write] method when
-    the [with][] block exits.
+    This will automatically write `root` to the specified file using four spaces as the indentation
+    level (instead of the default value of two spaces) when the [with][]{:target="_blank"} block exits.
     """
 
     def write(  # noqa: C901, PLR0912, PLR0915
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, *, root: Group | None = None, **kwargs: Any
+        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
     ) -> None:
-        """Write to a [JSON](https://www.json.org/) file.
+        """Write to a [JSON](https://www.json.org/){:target="_blank"} file.
 
-        The first line in the output file contains a description that the
-        file was created by the [JSONWriter][]. It begins with a `#` and
-        contains a version number.
+        The first line in the output file contains a description that the file was created by the
+        [JSONWriter][msl.io.writers.json_.JSONWriter]. It begins with a `#` and contains a version number.
 
-        Version 1.0 specifications
+        Version 1.0 specifications:
 
-            * Use the `dtype` and `data` keys to uniquely identify a
-              [JSON](https://www.json.org/) object as a [Dataset][msl.io.node.Dataset].
+        * Use the *dtype* and *data* keys to uniquely identify a
+          [JSON](https://www.json.org/){:target="_blank"} object as a [Dataset][msl.io.node.Dataset].
 
-            * If a [Metadata][msl.io.metadata.Metadata] `key` has a `value` that is a
-              [Metadata][msl.io.metadata.Metadata] object then the `key` becomes the name
-              of a [Group][msl.io.node.Group] and the `value` becomes
-              [Metadata][msl.io.metadata.Metadata] of that [Group][msl.io.group.Group].
+        * If a [Metadata][msl.io.metadata.Metadata] *key* has a *value* that is a
+          [Metadata][msl.io.metadata.Metadata] object then the *key* becomes the name
+          of a [Group][msl.io.node.Group] and the *value* becomes
+          [Metadata][msl.io.metadata.Metadata] of that [Group][msl.io.node.Group].
 
         Args:
-            file: The file to write the `root` to. If `None` then uses the value of
-                `file` that was specified when [JSONWriter][] was instantiated.
-            root: Write `root` in JSON_ format. If `None` then write the
-                [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
-                in this [JSONWriter][].
+            file: The file to write a *root* to. If `None` then uses the value of
+                `file` that was specified when [JSONWriter][msl.io.writers.json_.JSONWriter] was instantiated.
+            root: Write `root` in [JSON](https://www.json.org/){:target="_blank"} format.
+                If `None` then write the [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
+                in the Writer instance. This argument is useful when converting between different file formats.
             kwargs: Accepts `mode`, `encoding` and `errors` keyword arguments which are passed
-                to [open][]. The default `encoding` value is `utf-8` and the default
+                to [open][]{:target="_blank"}. The default `encoding` value is `utf-8` and the default
                 `errors` value is `strict`. All additional keyword arguments are passed to
-                [json.dump][]. The default indentation is 2.
+                [json.dump][]{:target="_blank"}. The default indentation level is `2`.
         """
         if file is None:
             file = self.file

@@ -181,8 +181,8 @@ class GDrive(GoogleAPI):
             [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration)
             policy.
 
-        .. _Media type: https://www.iana.org/assignments/media-types/media-types.xhtml
-        .. _Drive MIME type: https://developers.google.com/drive/api/guides/mime-types
+        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
+        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Args:
             account: Since a person may have multiple Google accounts, and multiple people
@@ -279,10 +279,13 @@ class GDrive(GoogleAPI):
 
         Args:
             file: The path to a Google Drive file.
-            mime_type: The `Drive MIME type`_ or `Media type`_ to use to filter the results.
+            mime_type: The [Drive MIME type] or [Media type] to use to filter the results.
             folder_id: The ID of the folder that `file` is relative to. If not specified, `file`
                 is relative to the `My Drive` root folder. If `file` is in a `Shared drive` then
                 you must specify the ID of the parent folder.
+
+        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
+        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Returns:
             The file ID.
@@ -320,10 +323,13 @@ class GDrive(GoogleAPI):
 
         Args:
             file: The path to a Google Drive file.
-            mime_type: The `Drive MIME type`_ or `Media type`_ to use to filter the results.
+            mime_type: The [Drive MIME type] or [Media type] to use to filter the results.
             folder_id: The ID of the folder that `file` is relative to. If not specified, `file`
                 is relative to the `My Drive` root folder. If `file` is in a `Shared drive` then
                 you must specify the ID of the parent folder.
+
+        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
+        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Returns:
             Whether the file exists.
@@ -427,13 +433,16 @@ class GDrive(GoogleAPI):
             file: The file to upload.
             folder_id: The ID of the folder to upload the file to. If not specified,
                 uploads to the `My Drive` root folder.
-            mime_type: The [Drive MIME type][] or [Media type][] of the file (e.g., `'text/csv'`).
+            mime_type: The [Drive MIME type] or [Media type] of the file (e.g., `'text/csv'`).
                 If not specified then a type will be guessed based on the file extension.
             resumable: Whether the upload can be resumed.
             chunk_size: The file will be uploaded in chunks of this many bytes. Only used
                 if `resumable` is `True`. Specify a value of -1 if the file is to be uploaded
                 in a single chunk. Note that Google App Engine has a 5MB limit per request size,
                 so you should not set `chunk_size` to be &gt; 5MB or to -1 if the file size is &gt; 5MB.
+
+        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
+        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Returns:
             The ID of the file that was uploaded.
@@ -571,9 +580,8 @@ class GDrive(GoogleAPI):
     def shared_drives(self) -> dict[str, str]:
         """Returns the IDs and names of all `Shared drives`.
 
-        Args:
-            The keys are the IDs of the shared drives and the values are the
-            names of the shared drives.
+        Returns:
+            The keys are the IDs of the shared drives and the values are the names of the shared drives.
         """
         drives: dict[str, str] = {}
         next_page_token = ""
@@ -1067,10 +1075,11 @@ class GSheets(GoogleAPI):
                 from. If not specified then returns all values that are in `sheet`.
             row_major: Whether to return the values in row-major or column-major order.
             value_option: How values should be represented in the output. If a [str][],
-                it must be equal to one of the values in [GValueOption][].
+                it must be equal to one of the values in [GValueOption][msl.io.google_api.GValueOption].
             datetime_option: How dates, times, and durations should be represented in the
-                output. If a [str][], it must be equal to one of the values in [GDateTimeOption][].
-                This argument is ignored if `value_option` is [GValueOption.FORMATTED][].
+                output. If a [str][], it must be equal to one of the values in
+                [GDateTimeOption][msl.io.google_api.GDateTimeOption]. This argument is ignored if `value_option` is
+                [GValueOption.FORMATTED][msl.io.google_api.GValueOption.FORMATTED].
 
         Returns:
         -------

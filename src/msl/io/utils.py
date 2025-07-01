@@ -40,7 +40,7 @@ def checksum(
         chunk_size: The number of bytes to read at a time from the file. It is useful
             to tweak this parameter when reading a large file to improve performance.
         shake_length: The digest length to use for the `shake_128` or `shake_256` algorithm.
-            See [hashlib.shake.hexdigest][] for more details.
+            See [hexdigest][hashlib.shake.hexdigest] for more details.
 
     Returns:
         The checksum value (which only contains hexadecimal digits).
@@ -197,13 +197,17 @@ def search(  # noqa: C901, PLR0913
             recursively search all sub-directories.
         include: A regular-expression pattern to use to include files. If `None`, no filtering
             is applied and all files are yielded (that are not `exclude`d). For example,
-            * `r'data'` &#8594; find files with the word `data` in the file path
-            * `r'\.png$'` &#8594; find files with the extension `.png`
-            * `r'\.jpe*g$'` &#8594; find files with the extension `.jpeg` or `.jpg`
+
+            * `r"data"` &#8594; find files with the word `data` in the file path
+            * `r"\.png$"` &#8594; find files with the extension `.png`
+            * `r"\.jpe*g$"` &#8594; find files with the extension `.jpeg` or `.jpg`
+
         exclude: A regular-expression pattern to use to exclude files. The `exclude` pattern
             has precedence over the `include` pattern. For example,
-            * `r'bin'` &#8594; exclude all files that contain the word `bin` in the file path
-            * `r'bin|lib'` &#8594; exclude all files that contain the word `bin` or `lib` in the file path
+
+            * `r"bin"` &#8594; exclude all files that contain the word `bin` in the file path
+            * `r"bin|lib"` &#8594; exclude all files that contain the word `bin` or `lib` in the file path
+
         flags: The flags to use to compile regular-expression pattern (if it is a [str][] type).
         ignore_os_error: Whether to ignore an [OSError][], if one occurs, while iterating through a directory.
             This type of error can occur if a directory does not have the appropriate read permission.
@@ -454,7 +458,12 @@ def get_basename(obj: PathLike | IO[str] | IO[bytes]) -> str:
 
 @dataclass(frozen=True)
 class GitHead:
-    """Information about the `HEAD` of a repository."""
+    """Information about the [HEAD]{:target="_blank"} of a git repository.
+
+    This class is returned from the [git_head][msl.io.utils.git_head] function.
+
+    [HEAD]: https://git-scm.com/docs/gitglossary#def_HEAD
+    """
 
     hash: str
     timestamp: datetime
@@ -472,18 +481,20 @@ class GitHead:
 
 
 def git_head(directory: PathLike) -> GitHead | None:
-    """Get information about the `HEAD` of a repository.
+    """Get information about the [HEAD]{:target="_blank"} of a repository.
 
-    This function requires that [git](https://git-scm.com/) is installed and
+    This function requires that [git](https://git-scm.com/){:target="_blank"} is installed and
     that it is available on the `PATH` environment variable.
+
+    [HEAD]: https://git-scm.com/docs/gitglossary#def_HEAD
 
     Args:
         directory: A directory that is under version control.
 
     Returns:
         Information about the most recent commit on the current branch.
-        If `directory` is not a directory that is under version control
-        then returns `None`.
+            If `directory` is not a directory that is under version control
+            then returns `None`.
     """
     cmd = ["git", "show", "-s", "--format=%H %ct", "HEAD"]
     try:

@@ -1,4 +1,4 @@
-"""Node objects."""
+"""Node objects in the hierarchical tree."""
 
 from __future__ import annotations
 
@@ -45,13 +45,13 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
         """A `Dataset` functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata].
 
         !!! attention
-            Do not instantiate directly. Create a new [Dataset][] using the
-            [create_dataset][msl.io.group.Group.create_dataset] method.
+            Do not instantiate directly. Create a new [Dataset][msl.io.node.Dataset] using the
+            [create_dataset][msl.io.node.Group.create_dataset] method.
 
         Args:
-            name: A name to associate with this [Dataset][].
-            parent: The parent [Group][msl.io.group.Group] to the [Dataset][].
-            read_only: Whether the [Dataset][] is initialised in read-only mode.
+            name: A name to associate with this [Dataset][msl.io.node.Dataset].
+            parent: The parent [Group][msl.io.node.Group] to the [Dataset][msl.io.node.Dataset].
+            read_only: Whether the [Dataset][msl.io.node.Dataset] is initialised in read-only mode.
             shape: See [numpy.ndarray][]. Only used if `data` is `None`.
             dtype: See [numpy.ndarray][]. Only used if `data` is `None` or if
                 `data` is not a [numpy.ndarray][] instance.
@@ -64,7 +64,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
                 an array-like object which will be passed to [numpy.asarray][],
                 as well as `dtype` and `order`, to be used as the underlying data.
             metadata: All other key-value pairs will be used as
-                [Metadata][msl.io.metadata.Metadata] for this [Dataset][].
+                [Metadata][msl.io.metadata.Metadata] for this [Dataset][msl.io.node.Dataset].
         """
         name = _unix_name(name, parent)
         self._name: str = name
@@ -76,6 +76,8 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
             self._data = np.ndarray(shape, dtype=dtype, buffer=buffer, offset=offset, strides=strides, order=order)
         elif isinstance(data, np.ndarray):
             self._data = data
+        elif isinstance(data, Dataset):
+            self._data = data.data
         else:
             self._data = np.asarray(data, dtype=dtype, order=order)
 
@@ -157,36 +159,37 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
 
     @property
     def name(self) -> str:
-        """[str][] &mdash; The name of this [Dataset][]."""
+        """[str][] &mdash; The name of this [Dataset][msl.io.node.Dataset]."""
         return self._name
 
     @property
     def parent(self) -> Group | None:
-        """[Group][msl.io.group.Group] | None &mdash; The parent of this [Dataset][]."""
+        """[Group][msl.io.node.Group] | None &mdash; The parent of this [Dataset][msl.io.node.Dataset]."""
         return self._parent
 
     @property
     def metadata(self) -> Metadata:
-        """[Metadata][msl.io.metadata.Metadata] &mdash; The metadata for this [Dataset][]."""
+        """[Metadata][msl.io.metadata.Metadata] &mdash; The metadata for this [Dataset][msl.io.node.Dataset]."""
         return self._metadata
 
     def add_metadata(self, **metadata: Any) -> None:
-        """Add metadata to the [Dataset][].
+        """Add metadata to the [Dataset][msl.io.node.Dataset].
 
         Args:
-            metadata: Key-value pairs to add to the [Metadata][msl.io.metadata.Metadata] for this [Dataset][].
+            metadata: Key-value pairs to add to the [Metadata][msl.io.metadata.Metadata] for this
+                [Dataset][msl.io.node.Dataset].
         """
         self._metadata.update(**metadata)
 
     def copy(self, *, read_only: bool | None = None) -> Dataset:
-        """Create a copy of this [Dataset][].
+        """Create a copy of this [Dataset][msl.io.node.Dataset].
 
         Args:
             read_only: Whether the copy should be created in read-only mode. If `None`,
-                creates a copy using the mode for the [Dataset][] that is being copied.
+                creates a copy using the mode for the [Dataset][msl.io.node.Dataset] that is being copied.
 
         Returns:
-            A copy of this [Dataset][].
+            A copy of this [Dataset][msl.io.node.Dataset].
         """
         return Dataset(
             name=self._name,
@@ -198,11 +201,11 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
 
     @property
     def data(self) -> NDArray[Any]:
-        """[numpy.ndarray][] &mdash; The data of the [Dataset][].
+        """[numpy.ndarray][] &mdash; The data of the [Dataset][msl.io.node.Dataset].
 
         !!! note
             You do not have to call this attribute to access the underlying [numpy.ndarray][].
-            You can directly call any [numpy.ndarray][] attribute from the [Dataset][] instance.
+            You can directly call any [numpy.ndarray][] attribute from the [Dataset][msl.io.node.Dataset] instance.
             For example,
 
             <!-- invisible-code-block: pycon
@@ -236,7 +239,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
 
     @property
     def read_only(self) -> bool:
-        """[bool][] &mdash; Whether the [Dataset][] is in read-only mode.
+        """[bool][] &mdash; Whether the [Dataset][msl.io.node.Dataset] is in read-only mode.
 
         This is equivalent to setting the `WRITEABLE` property in [numpy.ndarray.setflags][].
         """
@@ -266,8 +269,8 @@ class DatasetLogging(Dataset):
         """A [Dataset][msl.io.node.Dataset] that handles [logging][] records.
 
         !!! attention
-            Do not instantiate directly. Create a new [DatasetLogging][] using
-            [create_dataset_logging][msl.io.group.Group.create_dataset_logging].
+            Do not instantiate directly. Create a new [DatasetLogging][msl.io.node.DatasetLogging] using
+            [create_dataset_logging][msl.io.node.Group.create_dataset_logging].
 
         Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
@@ -385,7 +388,7 @@ class DatasetLogging(Dataset):
 
     @property
     def attributes(self) -> tuple[str, ...]:
-        """[tuple][] of [str][] &mdash; The [attribute names][logrecord-attributes] that are logged."""
+        """[tuple][][[str][]] &mdash; The [attribute names][logrecord-attributes] that are logged."""
         return self._attributes
 
     @property
@@ -453,24 +456,25 @@ class DatasetLogging(Dataset):
 
 
 class Group(FreezableMap["Dataset | Group"]):
-    """A [Group][] can contain sub-[Group][]s and/or [Dataset][msl.io.node.Dataset]s."""
+    """A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s."""  # noqa: E501
 
     def __init__(self, *, name: str, parent: Group | None, read_only: bool, **metadata: Any) -> None:
-        """A [Group][] can contain sub-[Group][]s and/or [Dataset][msl.io.node.Dataset]s.
+        """A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s.
 
         !!! attention
-            Do not instantiate directly. Create a new [Group][] using [create_group][msl.io.group.Group.create_group].
+            Do not instantiate directly. Create a new [Group][msl.io.node.Group] using
+            [create_group][msl.io.node.Group.create_group].
 
         Args:
-            name: The name of this [Group][]. Uses a naming convention analogous to UNIX
-                file systems where each [Group][msl.io.group.Group] can be thought
+            name: The name of this [Group][msl.io.node.Group]. Uses a naming convention analogous to UNIX
+                file systems where each [Group][msl.io.node.Group] can be thought
                 of as a directory and where every subdirectory is separated from its
                 parent directory by the `"/"` character.
-            parent: The parent to this [Group][].
-            read_only: Whether the [Group][] is initialised in read-only mode.
+            parent: The parent to this [Group][msl.io.node.Group].
+            read_only: Whether the [Group][msl.io.node.Group] is initialised in read-only mode.
             metadata: All additional keyword arguments are used to create the
-                [Metadata][msl.io.metadata.Metadata] for this [Group][].
-        """
+                [Metadata][msl.io.metadata.Metadata] for this [Group][msl.io.node.Group].
+        """  # noqa: E501
         name = _unix_name(name, parent)
         self._name: str = name
         self._parent: Group | None = parent
@@ -614,18 +618,18 @@ class Group(FreezableMap["Dataset | Group"]):
 
     @staticmethod
     def is_group(obj: object) -> bool:
-        """Check if an object is an instance of [Group][msl.io.group.Group].
+        """Check if an object is an instance of [Group][msl.io.node.Group].
 
         Args:
             obj: The object to check.
 
         Returns:
-            Whether `obj` is an instance of [Group][msl.io.group.Group].
+            Whether `obj` is an instance of [Group][msl.io.node.Group].
         """
         return isinstance(obj, Group)
 
     def datasets(self, *, exclude: str | None = None, include: str | None = None, flags: int = 0) -> Iterator[Dataset]:
-        """Yield the [Dataset][msl.io.node.Dataset]s in this [Group][].
+        """Yield the [Dataset][msl.io.node.Dataset]s in this [Group][msl.io.node.Group].
 
         Args:
             exclude: A regular-expression pattern to use to exclude [Dataset][msl.io.node.Dataset]s.
@@ -653,19 +657,21 @@ class Group(FreezableMap["Dataset | Group"]):
                 yield obj
 
     def groups(self, *, exclude: str | None = None, include: str | None = None, flags: int = 0) -> Iterator[Group]:
-        """Yield the sub-[Group][]s of this [Group][].
+        """Yield the sub-[Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].
 
         Args:
-            exclude: A regular-expression pattern to use to exclude sub-[Group][msl.io.group.Group]s.
+            exclude: A regular-expression pattern to use to exclude sub-[Group][msl.io.node.Group]s.
                 The [re.search][] function is used to compare the `exclude` pattern with the `name`
-                of each sub-[Group][]. If there is a match, the sub-[Group][] is not yielded.
-            include: A regular-expression pattern to use to include sub-[Group][]s. The
-                [re.search][] function is used to compare the `include` pattern with the
-                `name` of each sub-[Group][]. If there is a match, the sub-[Group][] is yielded.
+                of each sub-[Group][msl.io.node.Group]. If there is a match, the sub-[Group][msl.io.node.Group]
+                is not yielded.
+            include: A regular-expression pattern to use to include sub-[Group][msl.io.node.Group]s.
+                The [re.search][] function is used to compare the `include` pattern with the `name` of each
+                sub-[Group][msl.io.node.Group]. If there is a match, the sub-[Group][msl.io.node.Group]
+                is yielded.
             flags: Regular-expression flags that are passed to [re.compile][].
 
         Yields:
-            The filtered sub-[Group][]s based on the `exclude` and `include` patterns.
+            The filtered sub-[Group][msl.io.node.Group]s based on the `exclude` and `include` patterns.
             The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
         """
         e = None if exclude is None else re.compile(exclude, flags=flags)
@@ -679,20 +685,20 @@ class Group(FreezableMap["Dataset | Group"]):
                 yield obj
 
     def descendants(self) -> Iterator[Group]:
-        """Yield all descendant (children) [Group][]s of this [Group][].
+        """Yield all descendant (children) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].
 
         Yields:
-            The descendants of this [Group][].
+            The descendants of this [Group][msl.io.node.Group].
         """
         for obj in self._mapping.values():
             if isinstance(obj, Group):
                 yield obj
 
     def ancestors(self) -> Iterator[Group]:
-        """Yield all ancestor (parent) [Group][]s of this [Group][].
+        """Yield all ancestor (parent) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].
 
         Yields:
-            The ancestors of this [Group][].
+            The ancestors of this [Group][msl.io.node.Group].
         """
         parent = self.parent
         while parent is not None:
@@ -700,13 +706,13 @@ class Group(FreezableMap["Dataset | Group"]):
             parent = parent.parent
 
     def add_group(self, name: str, group: Group) -> None:
-        """Add a [Group][].
+        """Add a [Group][msl.io.node.Group].
 
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
-            name: The name of the new [Group][] to add.
-            group: The [Group][] to add. The [Dataset][msl.io.node.Dataset]s and
+            name: The name of the new [Group][msl.io.node.Group] to add.
+            group: The [Group][msl.io.node.Group] to add. The [Dataset][msl.io.node.Dataset]s and
                 [Metadata][msl.io.metadata.Metadata] that are contained within the
                 `group` will be copied.
         """
@@ -728,39 +734,39 @@ class Group(FreezableMap["Dataset | Group"]):
                 _ = self.create_dataset(n, read_only=node.read_only, data=node.data.copy(), **node.metadata.copy())
 
     def create_group(self, name: str, *, read_only: bool | None = None, **metadata: Any) -> Group:
-        """Create a new [Group][].
+        """Create a new [Group][msl.io.node.Group].
 
-        Automatically creates the ancestor[Group][]s if they do not exist.
+        Automatically creates the ancestor[Group][msl.io.node.Group]s if they do not exist.
 
         Args:
-            name: The name of the new [Group][].
-            read_only: Whether to create the new [Group][] in read-only mode.
-                If `None`, uses the mode for this [Group][].
+            name: The name of the new [Group][msl.io.node.Group].
+            read_only: Whether to create the new [Group][msl.io.node.Group] in read-only mode.
+                If `None`, uses the mode for this [Group][msl.io.node.Group].
             metadata: All additional keyword arguments are used to create the [Metadata][msl.io.metadata.Metadata]
-                for the new [Group][].
+                for the new [Group][msl.io.node.Group].
 
         Returns:
-            The new [Group][] that was created.
+            The new [Group][msl.io.node.Group] that was created.
         """
         read_only, metadata = self._check(read_only=read_only, **metadata)
         name, parent = self._create_ancestors(name, read_only=read_only)
         return Group(name=name, parent=parent, read_only=read_only, **metadata)
 
     def require_group(self, name: str, *, read_only: bool | None = None, **metadata: Any) -> Group:
-        """Require that a [Group][] exists.
+        """Require that a [Group][msl.io.node.Group] exists.
 
-        If the [Group][] exists, it will be returned otherwise it is created then returned.
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        If the [Group][msl.io.node.Group] exists, it will be returned otherwise it is created then returned.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
-            name: The name of the [Group][] to require.
-            read_only: Whether to return the required [Group][] in read-only mode.
-                If `None`, uses the mode for this [Group][].
+            name: The name of the [Group][msl.io.node.Group] to require.
+            read_only: Whether to return the required [Group][msl.io.node.Group] in read-only mode.
+                If `None`, uses the mode for this [Group][msl.io.node.Group].
             metadata: All additional keyword arguments are used as [Metadata][msl.io.metadata.Metadata]
-                for the required [Group][].
+                for the required [Group][msl.io.node.Group].
 
         Returns:
-            The required [Group][] that was created or that already existed.
+            The required [Group][msl.io.node.Group] that was created or that already existed.
         """
         name = "/" + name.strip("/")
         group_name = name if self.parent is None else self.name + name
@@ -775,7 +781,7 @@ class Group(FreezableMap["Dataset | Group"]):
     def add_dataset(self, name: str, dataset: Dataset) -> None:
         """Add a [Dataset][msl.io.node.Dataset].
 
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
             name: The name of the new [Dataset][msl.io.node.Dataset] to add.
@@ -792,12 +798,12 @@ class Group(FreezableMap["Dataset | Group"]):
     def create_dataset(self, name: str, *, read_only: bool | None = None, **kwargs: Any) -> Dataset:
         """Create a new [Dataset][msl.io.node.Dataset].
 
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
             name: The name of the new [Dataset][msl.io.node.Dataset].
             read_only: Whether to create this [Dataset][msl.io.node.Dataset] in read-only mode.
-                If `None`, uses the mode for this [Group][].
+                If `None`, uses the mode for this [Group][msl.io.node.Group].
             kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].
 
         Returns:
@@ -811,12 +817,12 @@ class Group(FreezableMap["Dataset | Group"]):
         """Require that a [Dataset][msl.io.node.Dataset] exists.
 
         If the [Dataset][msl.io.node.Dataset] exists it will be returned, otherwise it is created then returned.
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
             name: The name of the required [Dataset][msl.io.node.Dataset].
             read_only: Whether to create the required [Dataset][msl.io.node.Dataset] in read-only mode.
-                If `None`, uses the mode for this [Group][].
+                If `None`, uses the mode for this [Group][msl.io.node.Group].
             kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].
 
         Returns:
@@ -838,7 +844,7 @@ class Group(FreezableMap["Dataset | Group"]):
     def add_dataset_logging(self, name: str, dataset_logging: DatasetLogging) -> None:
         """Add a [DatasetLogging][msl.io.node.DatasetLogging].
 
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
             name: The name of the new [DatasetLogging][msl.io.node.DatasetLogging] to add.
@@ -872,7 +878,7 @@ class Group(FreezableMap["Dataset | Group"]):
     ) -> DatasetLogging:
         """Create a [Dataset][msl.io.node.Dataset] that handles [logging][] records.
 
-        Automatically creates the ancestor [Group][]s if they do not exist.
+        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
@@ -906,7 +912,7 @@ class Group(FreezableMap["Dataset | Group"]):
         Returns:
             The [DatasetLogging][msl.io.node.DatasetLogging] that was created.
 
-        Examples:
+        **Examples:**
         >>> import logging
         >>> from msl.io import JSONWriter
         >>> logger = logging.getLogger('my_logger')
@@ -956,7 +962,7 @@ class Group(FreezableMap["Dataset | Group"]):
         """Require that a [Dataset][msl.io.node.Dataset] exists for handling [logging][] records.
 
         If the [DatasetLogging][msl.io.node.DatasetLogging] exists it will be returned
-        otherwise it is created and then returned. Automatically creates the ancestor [Group][]s
+        otherwise it is created and then returned. Automatically creates the ancestor [Group][msl.io.node.Group]s
         if they do not exist.
 
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
@@ -1046,14 +1052,14 @@ class Group(FreezableMap["Dataset | Group"]):
         )
 
     def remove(self, name: str) -> Dataset | Group | None:
-        """Remove a [Group][] or a [Dataset][msl.io.node.Dataset].
+        """Remove a [Group][msl.io.node.Group] or a [Dataset][msl.io.node.Dataset].
 
         Args:
-            name: The name of the [Group][] or [Dataset][msl.io.node.Dataset] to remove.
+            name: The name of the [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] to remove.
 
         Returns:
-            The [Group][] or [Dataset][msl.io.node.Dataset] that was removed or `None` if
-            there was no [Group][] or [Dataset][msl.io.node.Dataset] with the specified `name`.
+            The [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] that was removed or `None` if
+            there was no [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] with the specified `name`.
         """
         name = "/" + name.strip("/")
         return self.pop(name, None)

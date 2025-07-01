@@ -1,5 +1,3 @@
-"""Read a file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter]."""
-
 from __future__ import annotations
 
 import json
@@ -24,11 +22,14 @@ class JSONReader(Reader):
 
     @staticmethod
     def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
-        """Checks if the text `MSL JSONWriter` is in the first line of the file..
+        """Checks if the file was created by [JSONWriter][msl.io.writers.json_.JSONWriter].
 
         Args:
             file: The file to check.
             kwargs: All keyword arguments are passed to [get_lines][msl.io.base.Reader.get_lines].
+
+        Returns:
+            Whether the text `MSL JSONWriter` is in the first line of the file.
         """
         text: bytes | str
         if isinstance(file, (str, BufferedIOBase)):

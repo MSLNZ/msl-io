@@ -13,7 +13,7 @@ maintainers = [
     {name = "Joseph Borbely", email = "joseph.borbely@measurement.govt.nz"},
 ]
 requires-python = ">=3.9"
-readme = "README.rst"
+readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -98,10 +98,9 @@ addopts = [
     "--cov-config=pyproject.toml",
     "--verbose",
     "--doctest-modules",
-    "--doctest-glob=*.rst",
+    "--doctest-glob=*.md",
     "--import-mode=importlib",
     "--ignore=src/msl/io/_types.py",
-    "--ignore=docs/conf.py",
     "--ignore=tests/create_google_api_tokens.py",
 ]
 consider_namespace_packages = true
@@ -197,6 +196,12 @@ ignore = [
 known-first-party = ["msl.io"]
 
 [tool.ruff.lint.per-file-ignores]
+"src/msl/io/readers/*.py" = [
+    "D100", # undocumented-public-module
+]
+"src/msl/io/writers/*.py" = [
+    "D100", # undocumented-public-module
+]
 "tests/*.py" = [
     "D100", # undocumented-public-module
     "D103", # undocumented-public-function

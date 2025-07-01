@@ -1,0 +1,3 @@
+# freezable
+
+::: msl.io.freezable

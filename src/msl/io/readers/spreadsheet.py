@@ -1,4 +1,4 @@
-"""Generic class for spreadsheets."""
+"""Classes for reading cells in spreadsheets."""
 
 from __future__ import annotations
 
@@ -14,10 +14,10 @@ _cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
 
 
 class Spreadsheet(ABC):
-    """Generic class for spreadsheets."""
+    """Abstract base class for spreadsheets."""
 
     def __init__(self, file: str) -> None:
-        """Generic class for spreadsheets.
+        """Abstract base class for spreadsheets.
 
         Args:
             file: The location of the spreadsheet on a local hard drive or on a network.
@@ -39,6 +39,9 @@ class Spreadsheet(ABC):
     ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
+        !!! important
+            You must override this method.
+
         Args:
             cell: The cell(s) to read. For example, `C9` will return a single value
                 and `C9:G20` will return all values in the specified range. If not
@@ -57,6 +60,9 @@ class Spreadsheet(ABC):
     def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the spreadsheet.
 
+        !!! important
+            You must override this method.
+
         Returns:
             The names of all sheets.
         """
@@ -71,7 +77,7 @@ class Spreadsheet(ABC):
         Returns:
             The corresponding spreadsheet column letter(s).
 
-        Examples:
+        **Examples:**
         <!-- invisible-code-block: pycon
         >>> from msl.io.readers.spreadsheet import Spreadsheet
         >>> to_letters = Spreadsheet.to_letters
@@ -112,7 +118,7 @@ class Spreadsheet(ABC):
             The (row_index, column_index). If `cell` does not contain a row number
             then the row index is `None`. The row and column index are zero based.
 
-        Examples:
+        **Examples:**
         <!-- invisible-code-block: pycon
         >>> from msl.io.readers.spreadsheet import Spreadsheet
         >>> to_indices = Spreadsheet.to_indices
@@ -161,7 +167,7 @@ class Spreadsheet(ABC):
         Returns:
             The row [slice][], the column [slice][].
 
-        Examples:
+        **Examples:**
         <!-- invisible-code-block: pycon
         >>> from msl.io.readers.spreadsheet import Spreadsheet
         >>> to_slices = Spreadsheet.to_slices

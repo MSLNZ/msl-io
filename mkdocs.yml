@@ -1,0 +1,130 @@
+site_name: MSL-IO
+site_description: Read and write data files
+copyright: Copyright &copy; 2018 - 2025 Measurement Standards Laboratory of New Zealand
+repo_url: https://github.com/MSLNZ/msl-io/
+site_url: https://github.com/MSLNZ/msl-io/
+
+theme:
+  name: material
+  language: en
+  favicon: assets/images/favicon.ico
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.indexes
+    - navigation.top
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - search.highlight
+    - search.suggest
+  palette:
+    # Palette toggle for automatic mode
+    - media: '(prefers-color-scheme)'
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to system preference
+
+watch: [src]
+
+nav:
+  - Overview:
+    - index.md
+    - install.md
+    - release-notes.md
+    - license.md
+  - Items:
+    - items/datasets.md
+    - items/groups.md
+    - items/metadata.md
+    - items/attribute_access.md
+  - API:
+    - api/index.md
+    - api/base.md
+    - api/constants.md
+    - api/freezable.md
+    - api/google.md
+    - api/metadata.md
+    - api/node.md
+    - api/spreadsheets.md
+    - api/tables.md
+    - api/types.md
+    - api/utils.md
+  - Readers:
+    - readers/index.md
+    - readers/create.md
+  - Writers:
+    - writers/index.md
+    - writers/create.md
+
+markdown_extensions:
+  - admonition  # enables: !!! tip
+  - attr_list  # enables: [link](url){:target="_blank"} and {: #rename-permalink }
+  - pymdownx.details  # enables collapsable admonition
+  - pymdownx.snippets  # enables: --8<--
+  - pymdownx.superfences  # enables tabs in admonition
+  - pymdownx.tabbed:
+      alternate_style: true  # tabs look better on narrower screen sizes (like mobile)
+  - toc:
+      permalink: "¤"
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          inventories:
+            - url: https://docs.python.org/3/objects.inv
+              domains: [std, py]
+            - url: https://numpy.org/doc/stable/objects.inv
+              domains: [std, py]
+            - https://xlrd.readthedocs.io/en/latest/objects.inv
+            - https://docs.h5py.org/en/stable/objects.inv
+          options:
+            # General
+            show_source: true
+
+            # Headings
+            show_root_toc_entry: false
+
+            # Members
+            filters: ["!^_"]
+            inherited_members: false
+
+            # Docstrings
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+
+            # Signatures
+            separate_signature: true
+
+extra:
+  version:
+    provider: mike
+  social:
+  - icon: fontawesome/brands/github
+    link: https://github.com/MSLNZ/msl-loadlib/
+  - icon: fontawesome/brands/python
+    link: https://pypi.org/project/msl-loadlib/

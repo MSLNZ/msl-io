@@ -1,9 +1,3 @@
-"""Writer for the [HDF5](https://www.hdfgroup.org/) file format.
-
-!!! attention
-    Requires the [h5py](https://www.h5py.org/) package to be installed.
-"""
-
 from __future__ import annotations
 
 import os
@@ -29,31 +23,33 @@ if TYPE_CHECKING:
 
 
 class HDF5Writer(Writer):
-    """Create a [HDF5](https://www.hdfgroup.org/) writer.
+    """Writer for the [HDF5](https://www.hdfgroup.org/){:target="_blank"} file format.
 
-    You can use [HDF5Writer][] as a [context manager][with].
-    For example,
+    You can use this Writer as a [context manager][with]{:target="_blank"}, for example,
 
     ```python
-    with HDF5Writer('my_file.h5') as root:
-        root.create_dataset('dset', data=[1, 2, 3])
+    with HDF5Writer("my_file.h5") as root:
+        root.create_dataset("dset", data=[1, 2, 3])
     ```
 
-    This will automatically write `root` to the specified file when
-    the [with][] block exits.
+    This will automatically write `root` to the specified file when the [with][]{:target="_blank"}
+    block exits.
+
+    !!! attention
+        This Writer requires the [h5py](https://www.h5py.org/){:target="_blank"} package to be installed.
     """
 
     def write(  # noqa: C901, PLR0912, PLR0915
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, *, root: Group | None = None, **kwargs: Any
+        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
     ) -> None:
-        """Write to a [HDF5](https://www.hdfgroup.org/) file.
+        """Write to a [HDF5](https://www.hdfgroup.org/){:target="_blank"} file.
 
         Args:
-            file: The file to write the `root` to. If `None` then uses the value of
-                `file` that was specified when [HDF5Writer][] was instantiated.
-            root: Write `root` in [HDF5](https://www.hdfgroup.org/) format. If `None` then write the
-                [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
-                in this [HDF5Writer][].
+            file: The file to write a *root* to. If `None` then uses the value of
+                `file` that was specified when [HDF5Writer][msl.io.writers.hdf5.HDF5Writer] was instantiated.
+            root: Write `root` in [HDF5](https://www.hdfgroup.org/){:target="_blank"} format.
+                If `None` then write the [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
+                in the Writer instance. This argument is useful when converting between different file formats.
             kwargs: All additional keyword arguments are passed to [h5py.File][].
         """
         if h5py is None:

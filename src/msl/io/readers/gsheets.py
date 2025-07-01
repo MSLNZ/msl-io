@@ -65,7 +65,7 @@ class GSheetsReader(Spreadsheet):
                 authenticate with a particular Google account or if you delete
                 the token file that was created when you previously authenticated.
 
-        Examples:
+        **Examples:**
         ```python
         from msl.io import GSheetsReader
 
@@ -111,7 +111,7 @@ class GSheetsReader(Spreadsheet):
     def read(  # noqa: C901, PLR0912
         self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
     ) -> Any | list[tuple[Any, ...]]:
-        """Read values from the Google Sheets spreadsheet.
+        """Read cell values from the Google Sheets spreadsheet.
 
         Args:
             cell: The cell(s) to read. For example, `C9` will return a single value
@@ -119,14 +119,14 @@ class GSheetsReader(Spreadsheet):
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only one
                 sheet in the spreadsheet then you do not need to specify the name of the sheet.
-            as_datetime: Whether dates should be returned as [datetime.datetime][] or
-                [datetime.date][] objects. If `False`, dates are returned as a string in
+            as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
+                [date][datetime.date] objects. If `False`, dates are returned as a string in
                 the format of the spreadsheet cell.
 
         Returns:
             The value(s) of the requested cell(s).
 
-        Examples:
+        **Examples:**
         <!-- invisible-code-block: pycon
         >>> SKIP_IF_NO_GOOGLE_SHEETS_READ_TOKEN()
         >>> from msl.io import GSheetsReader
