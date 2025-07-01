@@ -1,5 +1,4 @@
-"""Base classes for all [Reader][]s and [Writer][]s."""
-
+# noqa: D100
 from __future__ import annotations
 
 import itertools
@@ -10,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
 from .node import Group
-from .utils import get_basename
+from .utils import get_basename, is_file_readable
 
 if TYPE_CHECKING:
     import sys
@@ -32,10 +31,10 @@ logger = logging.getLogger(__package__)
 
 
 class Root(Group):
-    """The root [Group][]."""
+    """The root [Group][msl.io.node.Group]."""
 
     def __init__(self, file: IO[str] | IO[bytes] | PathLike | None, **metadata: Any) -> None:
-        """The root [Group][].
+        """The root [Group][msl.io.node.Group].
 
         Args:
             file: The file object to associate with the [Root][msl.io.base.Root].
@@ -55,7 +54,7 @@ class Root(Group):
     def tree(self, *, indent: int = 2) -> str:
         """Returns a representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure).
 
-        Shows all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that are in [Root][].
+        Shows all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that are in [Root][msl.io.base.Root].
 
         Args:
             indent: The amount of indentation to add for each recursive level.
@@ -86,13 +85,13 @@ class Writer(Root, ABC):
         return self._file
 
     def set_root(self, root: Group) -> None:
-        """Set a new [Root][] for the [Writer][].
+        """Set a new [Root][msl.io.base.Root] for the [Writer][msl.io.base.Writer].
 
         !!! attention
-            This will clear the [Metadata][msl.io.metadata.Metadata] of the [Writer][]
-            and all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
-            that the [Writer][] currently contains. The `file` that was specified when
-            the [Writer][] was created does not change.
+            This will clear the [Metadata][msl.io.metadata.Metadata] of the [Writer][msl.io.base.Writer]
+            and all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that the
+            [Writer][msl.io.base.Writer] currently contains. The `file` that was specified when
+            the [Writer][msl.io.base.Writer] was created does not change.
 
         Args:
             root: The new `root`.
@@ -106,7 +105,7 @@ class Writer(Root, ABC):
     def update_context_kwargs(self, **kwargs: Any) -> None:
         """Update the keyword arguments when used as a [context manager][with].
 
-        When a [Writer][] is used as a [context manager][with] the
+        When a [Writer][msl.io.base.Writer] is used as a [context manager][with] the
         [write][msl.io.base.Writer.write] method is automatically called when
         exiting the [context manager][with]. You can specify the keyword arguments
         that will be passed to the [write][msl.io.base.Writer.write] method by
@@ -118,7 +117,7 @@ class Writer(Root, ABC):
 
     @abstractmethod
     def write(
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, *, root: Group | None = None, **kwargs: Any
+        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
     ) -> None:
         """Write to a file.
 
@@ -129,7 +128,7 @@ class Writer(Root, ABC):
             file: The file to write the `root` to. If `None` then uses the `file` value
                 that was specified when the [Writer]msl.io.base.Writer] was instantiated.
             root: Write the `root` object in the file format of this [Writer][msl.io.base.Writer].
-                This is useful when converting between different file formats.
+                This argument is useful when converting between different file formats.
             kwargs: Keyword arguments to use when writing the file.
         """
 
@@ -144,17 +143,17 @@ class Writer(Root, ABC):
         return self
 
     def __exit__(self, *ignore: object) -> None:
-        """Exit a context manager."""
+        """Exit the context manager."""
         # always write the Root to the file even if
         # an exception was raised in the context manager
         self.write(**self._context_kwargs)
 
 
 class Reader(Root, ABC):
-    """Base class for an abstract Reader."""
+    """Abstract base class for a [Reader][msl-io-readers]."""
 
     def __init__(self, file: IO[str] | IO[bytes] | str) -> None:
-        """Base class for an abstract Reader.
+        """Abstract base class for a [Reader][msl-io-readers].
 
         Args:
             file: The file to read.
@@ -214,8 +213,8 @@ class Reader(Root, ABC):
         file: IO[bytes],
         *lines: int | None,
         remove_empty_lines: bool = False,
-        encoding: str | None = "utf-8",
-        errors: Literal["strict", "ignore"] | None = "strict",
+        encoding: str | None = None,
+        errors: Literal["strict", "ignore"] | None = None,
     ) -> list[bytes]: ...
 
     @staticmethod
@@ -230,21 +229,26 @@ class Reader(Root, ABC):
 
         Args:
             file: The file to read lines from.
-            lines: The line(s) in the file to get. Examples
-                * `get_lines(file)` &#8594; returns all lines
-                * `get_lines(file, 5)` &#8594; returns the first 5 lines
-                * `get_lines(file, -5)` &#8594; returns the last 5 lines
-                * `get_lines(file, 2, 4)` &#8594; returns lines 2, 3 and 4
-                * `get_lines(file, 4, -1)` &#8594; skips the first 3 lines and returns the rest
-                * `get_lines(file, 2, -2)` &#8594; skips the first and last lines and returns the rest
-                * `get_lines(file, -4, -2)` &#8594; returns the fourth-, third- and second-last lines
-                * `get_lines(file, 1, -1, 6)` &#8594; returns every sixth line in the file
+            lines: The line(s) in the file to get.
             remove_empty_lines: Whether to remove all empty lines.
             encoding: The name of the encoding to use to decode the file.
             errors: How encoding errors are to be handled.
 
+        **Examples:**
+        ```python
+        get_lines(file)  # returns all lines
+        get_lines(file, 5)  # returns the first 5 lines
+        get_lines(file, -5)  # returns the last 5 lines
+        get_lines(file, 2, 4)  # returns lines 2, 3 and 4
+        get_lines(file, 2, -2)  # skips the first and last lines and returns the rest
+        get_lines(file, -4, -2)  # returns the fourth-, third- and second-last lines
+        get_lines(file, 1, -1, 6)  # returns every sixth line in the file
+        ```
+
         Returns:
-            The lines from the file. Trailing whitespace is stripped from each line.
+            The lines from the `file`. Trailing whitespace is stripped from each line.
+                A [list][][[bytes][]] is returned if `file` is a file-like object
+                opened in binary mode, otherwise a [list][][[str][]] is returned.
         """
         # want the "stop" line to be included
         if (len(lines) > 1) and (lines[1] is not None) and (lines[1] < 0):
@@ -296,14 +300,18 @@ class Reader(Root, ABC):
 
         Args:
             file: The file to read bytes from.
-            positions: The position(s) in the file to retrieve bytes from. Examples,
-                * `get_bytes(file)` &#8594; returns all bytes
-                * `get_bytes(file, 5)` &#8594; returns the first 5 bytes
-                * `get_bytes(file, -5)` &#8594; returns the last 5 bytes
-                * `get_bytes(file, 5, 10)` &#8594; returns bytes 5 through 10 (inclusive)
-                * `get_bytes(file, 3, -1)` &#8594; skips the first 2 bytes and returns the rest
-                * `get_bytes(file, -8, -4)` &#8594; returns the eighth- through fourth-last bytes (inclusive)
-                * `get_bytes(file, 1, -1, 2)` &#8594; returns every other byte
+            positions: The position(s) in the file to retrieve bytes from.
+
+        **Examples:**
+        ```python
+        get_bytes(file)  # returns all bytes
+        get_bytes(file, 5)  # returns the first 5 bytes
+        get_bytes(file, -5)  # returns the last 5 bytes
+        get_bytes(file, 5, 10)  # returns bytes 5 through 10 (inclusive)
+        get_bytes(file, 3, -1)  # skips the first 2 bytes and returns the rest
+        get_bytes(file, -8, -4)  # returns the eighth- through fourth-last bytes (inclusive)
+        get_bytes(file, 1, -1, 2)  # returns every other byte
+        ```
 
         Returns:
             The bytes from the file.
@@ -381,7 +389,7 @@ class Reader(Root, ABC):
             file: The file to get the extension of.
 
         Returns:
-            The extension, including the `.`.
+            The extension (including the `.`).
         """
         if isinstance(file, (bytes, str, os.PathLike)):
             return Path(os.fsdecode(file)).suffix
@@ -395,13 +403,14 @@ class Reader(Root, ABC):
 def register(cls: type[Reader]) -> type[Reader]:
     """Use as a decorator to register a [Reader][msl.io.base.Reader] subclass.
 
-    See :ref:`io-create-reader` for an example on how to use @register decorator.
+    See [Create a New Reader][msl-io-create-reader] for an example on how to
+    implement your own [Reader][msl-io-readers] class.
 
     Args:
         cls: A [Reader][msl.io.base.Reader] subclass.
 
     Returns:
-        The A [Reader][msl.io.base.Reader].
+        The (unmodified) [Reader][msl.io.base.Reader], which has been registered.
     """
 
     def append(_reader: type[Reader]) -> type[Reader]:
@@ -410,6 +419,44 @@ def register(cls: type[Reader]) -> type[Reader]:
         return cls
 
     return append(cls)
+
+
+def read(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Reader:
+    """Read a file that has a [Reader][msl-io-readers] implemented.
+
+    Args:
+        file: The file to read.
+        kwargs: All keyword arguments are passed to the abstract [can_read][msl.io.base.Reader.can_read]
+            and [read][msl.io.base.Reader.read] methods.
+
+    Returns:
+        The data from the file.
+    """
+    if isinstance(file, (bytes, str, os.PathLike)):
+        file = os.fsdecode(file)
+        readable = is_file_readable(file, strict=True)
+    else:
+        readable = hasattr(file, "read")
+
+    if readable:
+        logger.debug("finding Reader for %r", file)
+        for r in _readers:
+            logger.debug("checking %s", r.__name__)
+            try:
+                can_read = r.can_read(file, **kwargs)
+            except Exception as e:  # noqa: BLE001
+                logger.debug("%s: %s [%s]", e.__class__.__name__, e, r.__name__)
+                continue
+
+            if can_read:
+                logger.debug("reading file with %s", r.__name__)
+                root = r(file)
+                root.read(**kwargs)
+                root.read_only = True
+                return root
+
+    msg = f"No Reader exists to read {file!r}"
+    raise OSError(msg)
 
 
 _readers: list[type[Reader]] = []

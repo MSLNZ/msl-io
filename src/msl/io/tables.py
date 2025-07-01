@@ -1,4 +1,4 @@
-"""Read a data table from a file."""
+"""Read tabular data from a file."""
 
 from __future__ import annotations
 
@@ -28,17 +28,17 @@ _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
 extension_delimiter_map: dict[str, str] = {".csv": ","}
 """The delimiter to use to separate columns in a table based on the file extension.
 
-If the `delimiter` is not specified when calling the :func:`~msl.io.read_table` function then this
-extension-delimiter map is used to determine the value of the `delimiter`. If the file extension
-is not in the map then the value of the `delimiter` is :data:`None` (i.e., split columns by any
-whitespace).
+If the `delimiter` is not specified when calling the [read_table][msl.io.tables.read_table] function
+then this extension-delimiter map is used to determine the value of the `delimiter`. If the file extension
+is not in the map then the value of the `delimiter` is `None` (i.e., split columns by any whitespace).
 
-Examples:
+**Examples:**
+
 You can customize your own map by adding key-value pairs
 
 ```pycon
 >>> from msl.io import extension_delimiter_map
->>> extension_delimiter_map['.txt'] = '\\t'
+>>> extension_delimiter_map[".xyz"] = ";"
 
 ```
 
@@ -48,21 +48,19 @@ You can customize your own map by adding key-value pairs
 def read_table_text(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
     """Read a data table from a text-based file.
 
-    A *table* has the following properties:
-
-    1. The first row is a header.
-    2. All rows have the same number of columns.
-    3. All data values in a column have the same data type.
+    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
 
     Args:
         file: The file to read.
-        kwargs: All keyword arguments are passed to [loadtxt][numpy.loadtxt]. If the
-            `delimiter` is not specified and the `file` has ``csv`` as the file
-            extension then the `delimiter` is automatically set to be `,`.
+        kwargs: All keyword arguments are passed to [numpy.loadtxt][]. If the
+            `delimiter` is not specified and the `file` has `.csv` as the file
+            extension then the `delimiter` is automatically set to be `,` (see
+            [extension_delimiter_map][msl.io.tables.extension_delimiter_map] for adding
+            custom delimiter options).
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
-        [Metadata][msl.io.metadata.Metadata].
+            [Metadata][msl.io.metadata.Metadata].
     """
     if kwargs.get("unpack", False):
         msg = "Cannot use the 'unpack' option"
@@ -115,11 +113,7 @@ def read_table_excel(
 ) -> Dataset:
     """Read a data table from an Excel spreadsheet.
 
-    A *table* has the following properties:
-
-    1. The first row is a header.
-    2. All rows have the same number of columns.
-    3. All data values in a column have the same data type.
+    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
 
     Args:
         file: The file to read.
@@ -138,7 +132,7 @@ def read_table_excel(
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
-        [Metadata][msl.io.metadata.Metadata].
+            [Metadata][msl.io.metadata.Metadata].
     """
     file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
 
@@ -174,11 +168,7 @@ def read_table_gsheets(
         [GDrive][msl.io.google_api.GDrive] and in [GSheets][msl.io.google_api.GSheets]
         to be able to use this function.
 
-    A *table* has the following properties:
-
-    1. The first row is a header.
-    2. All rows have the same number of columns.
-    3. All data values in a column have the same data type.
+    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
 
     Args:
         file: The file to read. Can be the ID of a Google Sheets spreadsheet.
@@ -196,7 +186,7 @@ def read_table_gsheets(
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
-        [Metadata][msl.io.metadata.Metadata].
+            [Metadata][msl.io.metadata.Metadata].
     """
     file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
 
@@ -237,3 +227,35 @@ def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype
         dtype=dtype,
         header=np.asarray(header, dtype=str),
     )
+
+
+def read_table(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
+    """Read data in a table format from a file.
+
+    A *table* has the following properties:
+
+    1. The first row is a header.
+    2. All rows have the same number of columns.
+    3. All data values in a column have the same data type.
+
+    Args:
+        file: The file to read. If `file` is a Google Sheets spreadsheet then `file` must end
+            with `.gsheet` even if the ID of the spreadsheet is specified.
+        kwargs: If the file is an Excel spreadsheet then the keyword arguments are passed to
+            [read_table_excel][msl.io.tables.read_table_excel]. If a Google Sheets spreadsheet then
+            the keyword arguments are passed to [read_table_gsheets][msl.io.tables.read_table_gsheets].
+            Otherwise, all keyword arguments are passed to [read_table_text][msl.io.tables.read_table_text].
+
+    Returns:
+        The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
+            [Metadata][msl.io.metadata.Metadata].
+    """
+    ext = Reader.get_extension(file).lower()
+    if ext.startswith(".xls"):
+        return read_table_excel(file, **kwargs)
+
+    if ext == ".gsheet":
+        file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
+        return read_table_gsheets(file.removesuffix(".gsheet"), **kwargs)
+
+    return read_table_text(file, **kwargs)
