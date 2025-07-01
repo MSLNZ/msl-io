@@ -22,7 +22,7 @@ __pycache__/
 # Auto-generated during tests
 /my_file.h5
 /my_file.json
-/my_table.csv
+/my_table.txt
 /example.json
 /file.txt
 /table.gsheet
