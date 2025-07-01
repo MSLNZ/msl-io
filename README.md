@@ -14,7 +14,7 @@ The data files that can be read or written are not restricted to [HDF5] files, b
 
 ## Install
 
-`msl-io` is available for installation via the [Python Package Index](https://pypi.org/project/msl-io/)
+`msl-io` is available for installation via the [Python Package Index]
 
 ```console
 pip install msl-io
@@ -28,15 +28,16 @@ pip install msl-io
 
 ## Documentation
 
-The documentation for `msl-io` can be found [here](https://mslnz.github.io/msl-io/latest/).
+The documentation for `msl-io` can be found [here](https://mslnz.github.io/msl-io/dev/).
 
-[HDF5]: https://www.hdfgroup.org/
-[Root]: https://mslnz.github.io/msl-io/latest/_api/msl.io.base.html#msl.io.base.Root
-[Group]: https://mslnz.github.io/msl-io/latest/_api/msl.io.node.html#msl.io.node.Group
-[Groups]: https://mslnz.github.io/msl-io/latest/group.html
-[Datasets]: https://mslnz.github.io/msl-io/latest/dataset.html
-[Metadata]: https://mslnz.github.io/msl-io/latest/metadata.html
-[Reader]: https://mslnz.github.io/msl-io/latest/readers.html
-[Writers]: https://mslnz.github.io/msl-io/latest/writers.html
 [numpy]: https://www.numpy.org/
 [xlrd]: https://xlrd.readthedocs.io/en/stable/
+[HDF5]: https://www.hdfgroup.org/
+[Root]: https://mslnz.github.io/msl-io/dev/api/base/#msl.io.base.Root
+[Group]: https://mslnz.github.io/msl-io/dev/api/node/#msl.io.node.Group
+[Groups]: https://mslnz.github.io/msl-io/dev/items/groups/#msl-io-group
+[Datasets]: https://mslnz.github.io/msl-io/dev/items/datasets/#msl-io-dataset
+[Metadata]: https://mslnz.github.io/msl-io/dev/items/metadata/#msl-io-metadata
+[Reader]: https://mslnz.github.io/msl-io/dev/readers/#msl-io-readers
+[Writers]: https://mslnz.github.io/msl-io/dev/writers/#msl-io-writers
+[Python Package Index]: https://pypi.org/project/msl-io/
