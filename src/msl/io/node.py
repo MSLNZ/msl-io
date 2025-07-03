@@ -486,7 +486,7 @@ class Group(FreezableMap["Dataset | Group"]):
         """Maybe delete a Group, if the Group is not in read-only mode."""
         self._raise_if_read_only()
         if item and item[0] != "/":
-            item = "/" + item
+            item = f"/{item}"
 
         try:
             popped = self._mapping.pop(item)
@@ -527,7 +527,7 @@ class Group(FreezableMap["Dataset | Group"]):
     def __getitem__(self, item: str) -> Dataset | Group:
         """Get an item from the `Group`."""
         if item and item[0] != "/":
-            item = "/" + item
+            item = f"/{item}"
 
         try:
             return self._mapping[item]
@@ -545,7 +545,7 @@ class Group(FreezableMap["Dataset | Group"]):
     def __delattr__(self, item: str) -> None:
         """Delete and item from the `Group`."""
         try:
-            return self.__delitem__("/" + item)
+            return self.__delitem__(f"/{item}")
         except KeyError as e:
             raise AttributeError(str(e)) from None
 
