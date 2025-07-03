@@ -10,15 +10,14 @@ try:
 except ImportError:
     h5py = None
 
-from msl.io import HDF5Writer, JSONWriter, read
-from msl.io.node import Dataset, Group
+from msl.io import Dataset, Group, HDF5Writer, JSONWriter, read
 from msl.io.readers import HDF5Reader
-from tests.helper import read_sample, roots_equal
+from tests.helper import roots_equal
 
 
 @pytest.mark.skipif(h5py is None, reason="h5py not installed")
 def test_read_write_convert() -> None:  # noqa: PLR0915
-    root1 = read_sample("hdf5_sample.h5")
+    root1 = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
 
     # write as HDF5 then read
     writer = HDF5Writer(Path(tempfile.gettempdir()) / "msl-hdf5-writer-temp.h5")
@@ -130,7 +129,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
 
 @pytest.mark.skipif(h5py is None, reason="h5py not installed")
 def test_raises() -> None:
-    root = read_sample("hdf5_sample.h5")
+    root = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
 
     writer = HDF5Writer()
     assert writer.file is None

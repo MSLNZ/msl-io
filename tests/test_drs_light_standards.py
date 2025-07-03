@@ -1,10 +1,11 @@
-from msl.io.node import Dataset
+from pathlib import Path
+
+from msl.io import Dataset, read
 from msl.io.readers import DRSReader
-from tests.helper import read_sample
 
 
 def test_drs() -> None:
-    root = read_sample("Lamp_15082018_4.DAT")
+    root = read(Path(__file__).parent / "samples" / "Lamp_15082018_4.DAT")
     assert isinstance(root, DRSReader)
 
     assert "run1" in root

@@ -1,8 +1,8 @@
-import pathlib
 import socket
 import threading
 import time
 from io import BytesIO
+from pathlib import Path
 
 import pytest
 
@@ -13,7 +13,9 @@ except ImportError:
 
 from msl.io import JSONWriter, read
 from msl.io.readers import JSONReader
-from tests.helper import read_sample, roots_equal
+from tests.helper import roots_equal
+
+samples = Path(__file__).parent / "samples"
 
 
 def test_raises() -> None:
@@ -31,12 +33,12 @@ def test_raises() -> None:
 
     # unicode filename
     with pytest.raises(OSError, match=r"No Reader exists"):
-        _ = read_sample("uñicödé")  # cSpell: ignore uñicödé
+        _ = read(samples / "uñicödé")  # cSpell: ignore uñicödé
 
 
 @pytest.mark.skipif(h5py is None, reason="h5py is not installed")
 def test_unicode_filename() -> None:
-    root = read_sample("uñicödé.h5")
+    root = read(samples / "uñicödé.h5")
     assert root.metadata.is_unicode
     assert isinstance(root.file, str)
     assert root.file.endswith("uñicödé.h5")
@@ -79,7 +81,7 @@ def test_socket() -> None:
     # read the sample file into a BytesIO stream
     client_send_buf = BytesIO()
     with JSONWriter(client_send_buf) as json:
-        root_client = read_sample("json_sample.json")
+        root_client = read(samples / "json_sample.json")
         json.set_root(root_client)
 
     # send the bytes to the server
@@ -101,7 +103,7 @@ def test_socket() -> None:
 
 
 def test_pathlib() -> None:
-    root1 = read_sample("json_sample.json")
+    root1 = read(samples / "json_sample.json")
     assert isinstance(root1.file, str)
-    root2 = read(pathlib.Path(root1.file))
+    root2 = read(Path(root1.file))
     assert roots_equal(root1, root2)

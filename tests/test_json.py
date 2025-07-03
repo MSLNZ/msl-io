@@ -10,14 +10,15 @@ try:
 except ImportError:
     h5py = None
 
-from msl.io import HDF5Writer, JSONWriter, Reader, read
-from msl.io.node import Dataset
+from msl.io import Dataset, HDF5Writer, JSONWriter, Reader, read
 from msl.io.readers import JSONReader
-from tests.helper import read_sample, roots_equal
+from tests.helper import roots_equal
+
+samples = Path(__file__).parent / "samples"
 
 
 def test_read_write_convert() -> None:  # noqa: PLR0915
-    root1 = read_sample("json_sample.json")
+    root1 = read(samples / "json_sample.json")
 
     # write as JSON then read
     writer = JSONWriter(tempfile.gettempdir() + "/msl-json-writer-temp.json")
@@ -32,7 +33,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     hdf5_writer = HDF5Writer(Path(tempfile.gettempdir()) / "msl-hdf5-writer-temp.h5")
     # HDF5 does not support "null". So, reload the JSON file and pop the metadata
     # that contain "null" before writing the HDF5 file
-    temp = read_sample("json_sample.json")
+    temp = read(samples / "json_sample.json")
     assert roots_equal(root1, temp)
     temp.read_only = False
     assert temp.metadata.pop("null") is None
@@ -210,7 +211,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
 
 
 def test_raises() -> None:
-    root = read_sample("json_sample.json")
+    root = read(samples / "json_sample.json")
 
     writer = JSONWriter()
     assert writer.file is None
@@ -256,7 +257,7 @@ def test_raises() -> None:
 
 
 def test_pretty_printing() -> None:
-    root = read_sample("json_sample.json")
+    root = read(samples / "json_sample.json")
     root.read_only = False
 
     _ = root.create_dataset("aaa", data=np.ones((3, 3, 3)))
@@ -344,7 +345,7 @@ def test_pretty_printing() -> None:
         assert expected[i] == written[i]
 
     # make sure that we can still read the file
-    root = read_sample(str(w.file))
+    root = read(samples / str(w.file))
 
     # change the indentation to be 0
     w.save(root=root, mode="w", sort_keys=True, indent=0, separators=(", ", ": "))
@@ -377,7 +378,7 @@ def test_unicode() -> None:
         assert r.metadata.unit == "°C"
         assert r.metadata.unit == "\xb0C"
 
-    root = read_sample("uñicödé.json")  # cSpell: ignore uñicödé
+    root = read(samples / "uñicödé.json")  # cSpell: ignore uñicödé
     do_asserts(root)
 
     for b in [False, True]:

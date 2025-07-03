@@ -2,32 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 
-from msl.io import read
-
 if TYPE_CHECKING:
-    from typing import Any, Literal
+    from typing import Literal
 
-    from msl.io.base import Reader, Root
+    from msl.io.base import Root
     from msl.io.metadata import Metadata
     from msl.io.node import Dataset
-
-
-def read_sample(filename: str, **kwargs: Any) -> Reader:
-    """Read a file in the 'samples' directory.
-
-    Args:
-        filename: The name of the file in the samples/ directory
-        kwargs: Passed to `read` function.
-
-    Returns:
-        A root object
-    """
-    return read(Path(__file__).parent / "samples" / filename, **kwargs)
 
 
 def metadata_equal(m1: Metadata, m2: Metadata) -> Literal[True]:
