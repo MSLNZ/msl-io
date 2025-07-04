@@ -163,8 +163,8 @@ class Metadata(FreezableMap[Any]):  # noqa: PLW1641
             seq: Any iterable object that contains the names of the keys.
             value: The default value to use for each key.
             read_only: Whether the returned [Metadata][msl.io.metadata.Metadata] object should be initialised in
-            read-only mode. If `None`, uses the mode for the [Metadata][msl.io.metadata.Metadata] that is used
-            to call this method.
+                read-only mode. If `None`, uses the mode for the [Metadata][msl.io.metadata.Metadata] that is used
+                to call this method.
 
         Returns:
             A new [Metadata][msl.io.metadata.Metadata] object.
