@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1448,14 +1448,13 @@
   
       property
   " href="../../api/node/#msl.io.node.Dataset.name">name</a>, you can do so by explicitly creating a new <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;t1&quot;</span><span class="p">:</span> <span class="n">dset1</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;t2&quot;</span><span class="p">:</span> <span class="n">dset2</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dset3</span><span class="p">,</span> <span class="n">temperatures</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dset3</span><span class="p">,</span> <span class="n">t1</span><span class="o">=</span><span class="n">dset1</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="n">dset2</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span>
-<span class="go">&lt;Dataset &#39;/dset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
+<span class="go">&lt;Dataset &#39;/dset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (2 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([5., 7., 9.])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;/dset3&#39; {&#39;temperatures&#39;: {&#39;t1&#39;: 20.3, &#39;t2&#39;: 21.7}}&gt;</span>
+<span class="go">&lt;Metadata &#39;/dset3&#39; {&#39;t1&#39;: 20.3, &#39;t2&#39;: 21.7}&gt;</span>
 </code></pre></div>
 <h2 id="logging-records">Logging Records<a class="headerlink" href="#logging-records" title="Permanent link">¤</a></h2>
 <p>The <a class="autorefs autorefs-internal" title="DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> class is a custom <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> that is also a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#logging.Handler" target="_blank">Handler</a> which automatically appends <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records to the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. See <a class="autorefs autorefs-internal" title="create_dataset_logging" href="../../api/node/#msl.io.node.Group.create_dataset_logging">create_dataset_logging</a> for more details.</p>
@@ -1590,7 +1589,7 @@
       <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.top", "navigation.tabs", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>

@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -2213,7 +2213,9 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/json_.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
@@ -2230,9 +2232,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the file was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
 
@@ -2312,75 +2312,60 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/json_.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 44</span>
-<span class="normal"> 45</span>
-<span class="normal"> 46</span>
-<span class="normal"> 47</span>
-<span class="normal"> 48</span>
-<span class="normal"> 49</span>
-<span class="normal"> 50</span>
-<span class="normal"> 51</span>
-<span class="normal"> 52</span>
-<span class="normal"> 53</span>
-<span class="normal"> 54</span>
-<span class="normal"> 55</span>
-<span class="normal"> 56</span>
-<span class="normal"> 57</span>
-<span class="normal"> 58</span>
-<span class="normal"> 59</span>
-<span class="normal"> 60</span>
-<span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
 
 <span class="sd">    If a [Metadata][msl.io.metadata.Metadata] `key` has a `value` that is a</span>
@@ -2408,23 +2393,10 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span>
         <span class="n">dict_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">list_to_ndarray</span><span class="p">(</span><span class="n">list_</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-        <span class="c1"># convert a Metadata value to ndarray because one can easily make ndarray read only</span>
-        <span class="c1"># use dtype=object because it guarantees that the data types are preserved</span>
-        <span class="c1"># for example,</span>
-        <span class="c1">#   &gt;&gt;&gt; a = np.asarray([True, -5, 0.002345, &#39;something&#39;, 49.1871524])</span>
-        <span class="c1">#   &gt;&gt;&gt; a</span>
-        <span class="c1">#   array([&#39;True&#39;, &#39;-5&#39;, &#39;0.002345&#39;, &#39;something&#39;, &#39;49.1871524&#39;], dtype=&#39;&lt;U32&#39;)  # noqa: ERA001</span>
-        <span class="c1"># would cast every element to a string</span>
-        <span class="c1"># also a regular Python list stores items as objects</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">list_</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">create_group</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parent</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># Metadata</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">list_to_ndarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]  # noqa: PLW2901</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">elif</span> <span class="s2">&quot;dtype&quot;</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">and</span> <span class="s2">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># Dataset</span>
                 <span class="n">kws</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2440,8 +2412,6 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">kws</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">d_val</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
                     <span class="k">else</span><span class="p">:</span>  <span class="c1"># Metadata</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d_val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                            <span class="n">d_val</span> <span class="o">=</span> <span class="n">list_to_ndarray</span><span class="p">(</span><span class="n">d_val</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]  # noqa: PLW2901</span>
                         <span class="n">kws</span><span class="p">[</span><span class="n">d_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_val</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># use recursion to create a sub-Group</span>
@@ -2598,7 +2568,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
       <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.top", "navigation.tabs", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>

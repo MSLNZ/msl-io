@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1307,12 +1307,9 @@
 <span class="go">  &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 <span class="go">  &lt;Group &#39;/my_group&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
 <span class="go">    &lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
-
-<span class="go">Since the `root` item is a [Group][msl.io.node.Group] instance (which operates like a Python [dict][]) you can</span>
-<span class="go">iterate over the items that are in the file using</span>
-
-<span class="go">```pycon</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</code></pre></div>
+<p>Since the <code>root</code> item is a <a class="autorefs autorefs-internal" title="Group" href="api/node/#msl.io.node.Group">Group</a> instance (which operates like a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>) you can iterate over the items that are in the file</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{!r}</span><span class="s1"> -- </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
 <span class="go">&#39;/dataset1&#39; -- &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 <span class="go">&#39;/my_group&#39; -- &lt;Group &#39;/my_group&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
@@ -1441,7 +1438,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
 <span class="go">&lt;Dataset &#39;my_table.txt&#39; shape=(3, 3) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;my_table.txt&#39; {&#39;header&#39;: [&#39;x&#39; &#39;y&#39; &#39;z&#39;]}&gt;</span>
+<span class="go">&lt;Metadata &#39;my_table.txt&#39; {&#39;header&#39;: [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([[1., 2., 3.],</span>
 <span class="go">      [4., 5., 6.],</span>
@@ -1568,7 +1565,7 @@
       <script id="__config" type="application/json">{"base": ".", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.top", "navigation.tabs", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>

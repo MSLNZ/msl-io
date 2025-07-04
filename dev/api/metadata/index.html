@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -1467,7 +1467,7 @@
 
         <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>Do not instantiate directly. A <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> object is created automatically
+<p>Do not instantiate directly. A <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> object is created automatically
 when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/#msl.io.node.Group.create_dataset">create_dataset</a> or
 <a class="autorefs autorefs-internal" title="create_group" href="../node/#msl.io.node.Group.create_group">create_group</a> is called.</p>
 </div>
@@ -1493,7 +1493,7 @@ when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Whether <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> is initialised in read-only mode.</p>
+                <p>Whether <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> is initialised in read-only mode.</p>
               </div>
             </td>
             <td>
@@ -1509,7 +1509,7 @@ when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The name of the node that the <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> is associated with.</p>
+                <p>The name of the node that the <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> is associated with.</p>
               </div>
             </td>
             <td>
@@ -1543,34 +1543,36 @@ when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/io/metadata.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides information about data.</span>
 
 <span class="sd">    !!! attention</span>
-<span class="sd">        Do not instantiate directly. A [Metadata][] object is created automatically</span>
+<span class="sd">        Do not instantiate directly. A [Metadata][msl.io.metadata.Metadata] object is created automatically</span>
 <span class="sd">        when [create_dataset][msl.io.node.Group.create_dataset] or</span>
 <span class="sd">        [create_group][msl.io.node.Group.create_group] is called.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        read_only: Whether [Metadata][] is initialised in read-only mode.</span>
-<span class="sd">        node_name: The name of the node that the [Metadata][] is associated with.</span>
+<span class="sd">        read_only: Whether [Metadata][msl.io.metadata.Metadata] is initialised in read-only mode.</span>
+<span class="sd">        node_name: The name of the node that the [Metadata][msl.io.metadata.Metadata] is associated with.</span>
 <span class="sd">        kwargs: Key-value pairs that will be used to create the mapping.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">node_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">node_name</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -1656,7 +1658,7 @@ when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/
 
     <div class="doc doc-contents ">
 
-        <p>Create a copy of the <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a>.</p>
+        <p>Create a copy of the <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1680,7 +1682,7 @@ when <a class="autorefs autorefs-internal" title="create_dataset" href="../node/
             <td>
               <div class="doc-md-description">
                 <p>Whether the copy should be created in read-only mode.
-If <code>None</code>, creates a copy using the mode for the <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a>
+If <code>None</code>, creates a copy using the mode for the <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a>
 object that is being copied.</p>
               </div>
             </td>
@@ -1707,7 +1709,7 @@ object that is being copied.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A copy of the <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a>.</p>
+                <p>A copy of the <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a>.</p>
               </div>
             </td>
           </tr>
@@ -1717,28 +1719,28 @@ object that is being copied.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/metadata.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a copy of the [Metadata][].</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a copy of the [Metadata][msl.io.metadata.Metadata].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        read_only: Whether the copy should be created in read-only mode.</span>
-<span class="sd">            If `None`, creates a copy using the mode for the [Metadata][]</span>
+<span class="sd">            If `None`, creates a copy using the mode for the [Metadata][msl.io.metadata.Metadata]</span>
 <span class="sd">            object that is being copied.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A copy of the [Metadata][].</span>
+<span class="sd">        A copy of the [Metadata][msl.io.metadata.Metadata].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_only</span> <span class="k">if</span> <span class="n">read_only</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">read_only</span>
     <span class="k">return</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">ro</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">)</span>
@@ -1761,7 +1763,7 @@ object that is being copied.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Create a new <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> object with keys from <code>seq</code> and values set to <code>value</code>.</p>
+        <p>Create a new <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> object with keys from <code>seq</code> and values set to <code>value</code>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1816,8 +1818,9 @@ object that is being copied.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Whether the returned <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> object should be initialised in read-only mode.
-If <code>None</code>, uses the mode for the <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> that is used to call this method.</p>
+                <p>Whether the returned <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> object should be initialised in
+read-only mode. If <code>None</code>, uses the mode for the <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> that is used
+to call this method.</p>
               </div>
             </td>
             <td>
@@ -1843,7 +1846,7 @@ If <code>None</code>, uses the mode for the <a class="autorefs autorefs-internal
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A new <a class="autorefs autorefs-internal" title="metadata" href="#metadata">Metadata</a> object.</p>
+                <p>A new <a class="autorefs autorefs-internal" title="Metadata" href="#msl.io.metadata.Metadata">Metadata</a> object.</p>
               </div>
             </td>
           </tr>
@@ -1853,30 +1856,32 @@ If <code>None</code>, uses the mode for the <a class="autorefs autorefs-internal
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/metadata.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Metadata][] object with keys from `seq` and values set to `value`.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Metadata][msl.io.metadata.Metadata] object with keys from `seq` and values set to `value`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        seq: Any iterable object that contains the names of the keys.</span>
 <span class="sd">        value: The default value to use for each key.</span>
-<span class="sd">        read_only: Whether the returned [Metadata][] object should be initialised in read-only mode.</span>
-<span class="sd">            If `None`, uses the mode for the [Metadata][] that is used to call this method.</span>
+<span class="sd">        read_only: Whether the returned [Metadata][msl.io.metadata.Metadata] object should be initialised in</span>
+<span class="sd">            read-only mode. If `None`, uses the mode for the [Metadata][msl.io.metadata.Metadata] that is used</span>
+<span class="sd">            to call this method.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new [Metadata][] object.</span>
+<span class="sd">        A new [Metadata][msl.io.metadata.Metadata] object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_only</span> <span class="k">if</span> <span class="n">read_only</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">read_only</span>
     <span class="k">return</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">ro</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
@@ -2116,7 +2121,7 @@ If <code>None</code>, uses the mode for the <a class="autorefs autorefs-internal
       <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.top", "navigation.tabs", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>
