@@ -84,8 +84,9 @@ You can print a _tree_ representation of all [Group][msl.io.node.Group]s and [Da
   <Group '/my_group' (0 groups, 1 datasets, 0 metadata)>
     <Dataset '/my_group/dataset2' shape=(2, 2) dtype='<f8' (1 metadata)>
 
-Since the `root` item is a [Group][msl.io.node.Group] instance (which operates like a Python [dict][]) you can
-iterate over the items that are in the file using
+```
+
+Since the `root` item is a [Group][msl.io.node.Group] instance (which operates like a Python [dict][]) you can iterate over the items that are in the file
 
 ```pycon
 >>> for name, node in root.items():
