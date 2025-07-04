@@ -1,5 +1,7 @@
+import array
 from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
 
+import numpy as np
 import pytest
 
 from msl.io.metadata import Metadata
@@ -164,9 +166,9 @@ def test_nested_dict_as_value() -> None:
     meta = Metadata(read_only=True, node_name="", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
     assert meta["none"] is None
     assert meta.none is None
-    assert meta["nested"]["dict1"]["dict2"]["dict3"] == (1, 2, 3)
-    assert meta.nested.dict1.dict2.dict3 == (1, 2, 3)
-    assert meta.nested["dict1"].dict2["dict3"] == (1, 2, 3)
+    assert np.array_equal(meta["nested"]["dict1"]["dict2"]["dict3"], (1, 2, 3))
+    assert np.array_equal(meta.nested.dict1.dict2.dict3, (1, 2, 3))
+    assert np.array_equal(meta.nested["dict1"].dict2["dict3"], (1, 2, 3))
 
     with pytest.raises(AttributeError):
         _ = meta.none.read_only  # type: ignore[attr-defined]
@@ -313,3 +315,56 @@ def test_read_only() -> None:  # noqa: PLR0915
     # cannot create a new key-value pair (attrib access)
     with pytest.raises(ValueError, match="read-only mode"):
         meta.anything = -1
+
+
+def test_list_tuple_array_convert() -> None:
+    meta = Metadata(read_only=False, node_name="m", a=[None, "string", True, 10, 9.9], b=("a", "b", "c"))
+    meta["c"] = [-1, 0, 1]
+    meta["d"] = (10, 9, 8)
+    meta.update(e=[[1.1, 2.2], [3.3, 4.4]], f=((1.1, 2.2), (3.3, 4.4)))
+    meta.g = [1] * 100
+    meta.h = array.array("i", [1, 2, 3, 4, 5])
+
+    assert isinstance(meta.a, np.ndarray)
+    assert isinstance(meta.b, np.ndarray)
+    assert isinstance(meta.c, np.ndarray)
+    assert isinstance(meta.d, np.ndarray)
+    assert isinstance(meta.e, np.ndarray)
+    assert isinstance(meta.f, np.ndarray)
+    assert isinstance(meta.g, np.ndarray)
+    assert isinstance(meta.h, np.ndarray)
+
+    assert np.array_equal(meta.a, np.array([None, "string", True, 10, 9.9], dtype=object))
+    assert np.array_equal(meta.b, np.array(["a", "b", "c"], dtype="<U1"))
+    assert np.array_equal(meta.c, np.array([-1, 0, 1], dtype=int))
+    assert np.array_equal(meta.d, np.array([10, 9, 8], dtype=int))
+    assert np.array_equal(meta.e, np.array([[1.1, 2.2], [3.3, 4.4]], dtype=float))
+    assert np.array_equal(meta.f, np.array([[1.1, 2.2], [3.3, 4.4]], dtype=float))
+    assert np.array_equal(meta.g, np.ones(100, dtype=int))
+    assert np.array_equal(meta.h, np.array([1, 2, 3, 4, 5], dtype=int))
+
+    assert (
+        repr(meta)
+        == "<Metadata 'm' {'a': [None, 'string', True, 10, 9.9], 'b': ['a', 'b', 'c'], 'c': [-1, 0, 1], 'd': [10, 9, 8], 'e': [[1.1, 2.2], [3.3, 4.4]], 'f': [[1.1, 2.2], [3.3, 4.4]], 'g': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 'h': [1, 2, 3, 4, 5]}>"  # noqa: E501
+    )
+
+    assert meta.a.flags.writeable
+    assert meta.b.flags.writeable
+    assert meta.c.flags.writeable
+    assert meta.d.flags.writeable
+    assert meta.e.flags.writeable
+    assert meta.f.flags.writeable
+    assert meta.g.flags.writeable
+
+    meta.read_only = True
+
+    assert not meta.a.flags.writeable
+    assert not meta.b.flags.writeable  # type: ignore[unreachable]
+    assert not meta.c.flags.writeable
+    assert not meta.d.flags.writeable
+    assert not meta.e.flags.writeable
+    assert not meta.f.flags.writeable
+    assert not meta.g.flags.writeable
+
+    with pytest.raises(ValueError, match=r"read-only"):
+        meta.c[0] = 9

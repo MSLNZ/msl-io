@@ -270,7 +270,7 @@ You can read this file and interact with the data using the following
 >>> table
 <Dataset 'my_table.txt' shape=(3, 3) dtype='<f8' (1 metadata)>
 >>> table.metadata
-<Metadata 'my_table.txt' {'header': ['x' 'y' 'z']}>
+<Metadata 'my_table.txt' {'header': ['x', 'y', 'z']}>
 >>> table.data
 array([[1., 2., 3.],
       [4., 5., 6.],

@@ -2,12 +2,31 @@
 
 from __future__ import annotations
 
+from array import array
 from collections.abc import Iterable, MutableMapping
 from typing import Any
 
 import numpy as np
 
 from .freezable import FreezableMap
+
+
+def _value(value: Any) -> Any:
+    """Maybe convert the Metadata value.
+
+    Want builtin lists, tuples and arrays to be numpy arrays.
+    The flags of an ndarray can easily be set to make it read only.
+    """
+    if isinstance(value, (list, tuple)):
+        # Use dtype=object because it guarantees that the data types are preserved, e.g.,
+        #   >>> np.asarray([True, -5, 0.002345, 'something', 49.1871524])
+        #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')  # noqa: ERA001
+        # casts every element to a string. Also, a regular Python list stores items as objects.
+        return np.asarray(value, dtype=object)
+    if isinstance(value, array):
+        # all elements in an array.array must be the same data type, no need to use dtype=object
+        return np.asarray(value)
+    return value
 
 
 class Metadata(FreezableMap[Any]):
@@ -31,8 +50,16 @@ class Metadata(FreezableMap[Any]):
 
     def __repr__(self) -> str:
         """Returns the string representation."""
-        joined = ", ".join(f"{k!r}: {v!r}" if isinstance(v, str) else f"{k!r}: {v}" for k, v in self._mapping.items())
-        return f"<Metadata {self._node_name!r} {{{joined}}}>"
+        r: list[str] = []
+        for k, v in self._mapping.items():
+            if isinstance(v, str):
+                r.append(f"{k!r}: {v!r}")
+            elif isinstance(v, np.ndarray):
+                a = np.array2string(v, separator=", ").replace("\n", "")
+                r.append(f"{k!r}: {a}")
+            else:
+                r.append(f"{k!r}: {v}")
+        return f"<Metadata {self._node_name!r} {{{', '.join(r)}}}>"
 
     def __getitem__(self, key: str) -> Any:
         """Returns the value for the specified key."""
@@ -45,6 +72,10 @@ class Metadata(FreezableMap[Any]):
             if isinstance(value, MutableMapping):
                 return Metadata(read_only=self._read_only, node_name=self._node_name, **value)
             return value
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        """Maybe add a key-value pair to the map, only if the map is not in read-only mode."""
+        super().__setitem__(key, _value(value))
 
     def __delattr__(self, key: str) -> None:
         """Maybe delete a key-value pair, only if the mapping is not in read-only mode."""
@@ -77,7 +108,7 @@ class Metadata(FreezableMap[Any]):
             self.__dict__[item] = value
         else:
             self._raise_if_read_only()
-            self._mapping[item] = value
+            self._mapping[item] = _value(value)
 
     def copy(self, *, read_only: bool | None = None) -> Metadata:
         """Create a copy of the [Metadata][].

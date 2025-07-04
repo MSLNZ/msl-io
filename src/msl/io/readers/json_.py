@@ -11,8 +11,6 @@ from msl.io.base import Reader, register
 if TYPE_CHECKING:
     from typing import IO, Any
 
-    from numpy.typing import NDArray
-
     from msl.io.node import Group
 
 
@@ -69,23 +67,10 @@ class JSONReader(Reader):
                 data = data.decode(**open_kwargs)
             dict_ = json.loads(data, **kwargs)
 
-        def list_to_ndarray(list_: list[Any]) -> NDArray[Any]:
-            # convert a Metadata value to ndarray because one can easily make ndarray read only
-            # use dtype=object because it guarantees that the data types are preserved
-            # for example,
-            #   >>> a = np.asarray([True, -5, 0.002345, 'something', 49.1871524])
-            #   >>> a
-            #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')  # noqa: ERA001
-            # would cast every element to a string
-            # also a regular Python list stores items as objects
-            return np.asarray(list_, dtype=object)
-
         def create_group(parent: Group | None, name: str, node: dict[str, Any]) -> None:
             group = self if parent is None else parent.create_group(name)
             for key, value in node.items():
                 if not isinstance(value, dict):  # Metadata
-                    if isinstance(value, list):
-                        value = list_to_ndarray(value)  # pyright: ignore[reportUnknownArgumentType]  # noqa: PLW2901
                     group.metadata[key] = value
                 elif "dtype" in value and "data" in value:  # Dataset
                     kws: dict[str, Any] = {}
@@ -101,8 +86,6 @@ class JSONReader(Reader):
                             else:
                                 kws["data"] = np.asarray(value["data"], dtype=d_val)  # pyright: ignore[reportUnknownArgumentType]
                         else:  # Metadata
-                            if isinstance(d_val, list):
-                                d_val = list_to_ndarray(d_val)  # pyright: ignore[reportUnknownArgumentType]  # noqa: PLW2901
                             kws[d_key] = d_val
                     _ = group.create_dataset(key, **kws)
                 else:  # use recursion to create a sub-Group
