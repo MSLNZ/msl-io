@@ -36,16 +36,16 @@ class Metadata(FreezableMap[Any]):
         """Provides information about data.
 
         !!! attention
-            Do not instantiate directly. A [Metadata][] object is created automatically
+            Do not instantiate directly. A [Metadata][msl.io.metadata.Metadata] object is created automatically
             when [create_dataset][msl.io.node.Group.create_dataset] or
             [create_group][msl.io.node.Group.create_group] is called.
 
         Args:
-            read_only: Whether [Metadata][] is initialised in read-only mode.
-            node_name: The name of the node that the [Metadata][] is associated with.
+            read_only: Whether [Metadata][msl.io.metadata.Metadata] is initialised in read-only mode.
+            node_name: The name of the node that the [Metadata][msl.io.metadata.Metadata] is associated with.
             kwargs: Key-value pairs that will be used to create the mapping.
         """
-        super().__init__(read_only=read_only, **kwargs)
+        super().__init__(read_only=read_only, **{k: _value(v) for k, v in kwargs.items()})
         self._node_name: str = node_name
 
     def __repr__(self) -> str:
@@ -111,30 +111,31 @@ class Metadata(FreezableMap[Any]):
             self._mapping[item] = _value(value)
 
     def copy(self, *, read_only: bool | None = None) -> Metadata:
-        """Create a copy of the [Metadata][].
+        """Create a copy of the [Metadata][msl.io.metadata.Metadata].
 
         Args:
             read_only: Whether the copy should be created in read-only mode.
-                If `None`, creates a copy using the mode for the [Metadata][]
+                If `None`, creates a copy using the mode for the [Metadata][msl.io.metadata.Metadata]
                 object that is being copied.
 
         Returns:
-            A copy of the [Metadata][].
+            A copy of the [Metadata][msl.io.metadata.Metadata].
         """
         ro = self._read_only if read_only is None else read_only
         return Metadata(read_only=ro, node_name=self._node_name, **self._mapping)
 
     def fromkeys(self, seq: Iterable[str], value: Any = None, *, read_only: bool | None = None) -> Metadata:
-        """Create a new [Metadata][] object with keys from `seq` and values set to `value`.
+        """Create a new [Metadata][msl.io.metadata.Metadata] object with keys from `seq` and values set to `value`.
 
         Args:
             seq: Any iterable object that contains the names of the keys.
             value: The default value to use for each key.
-            read_only: Whether the returned [Metadata][] object should be initialised in read-only mode.
-                If `None`, uses the mode for the [Metadata][] that is used to call this method.
+            read_only: Whether the returned [Metadata][msl.io.metadata.Metadata] object should be initialised in
+            read-only mode. If `None`, uses the mode for the [Metadata][msl.io.metadata.Metadata] that is used
+            to call this method.
 
         Returns:
-            A new [Metadata][] object.
+            A new [Metadata][msl.io.metadata.Metadata] object.
         """
         ro = self._read_only if read_only is None else read_only
         return Metadata(read_only=ro, node_name=self._node_name, **dict.fromkeys(seq, value))
