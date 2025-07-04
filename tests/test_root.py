@@ -3,8 +3,8 @@ import types
 
 import pytest
 
-from msl.io.base import Root
-from msl.io.node import Dataset, DatasetLogging, Group
+from msl.io import Dataset, DatasetLogging, Group, Root
+from msl.io.metadata import Metadata
 
 
 def test_instantiation() -> None:
@@ -34,7 +34,7 @@ def test_instantiation() -> None:
     assert not root.read_only
     assert not root.metadata.read_only
     assert len(root) == 0
-    assert root.metadata == {"one": 1, "two": 2, "three": 3}
+    assert root.metadata == Metadata(read_only=False, node_name="/", one=1, two=2, three=3)
 
     root.read_only = True
 
@@ -44,7 +44,7 @@ def test_instantiation() -> None:
 
     root.read_only = False
     root.add_metadata(four=4, five=5)
-    assert root.metadata == {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+    assert root.metadata == Metadata(read_only=False, node_name="/", one=1, two=2, three=3, four=4, five=5)
 
 
 def test_create_group() -> None:
@@ -100,7 +100,7 @@ def test_create_group() -> None:
     assert d.parent is root
     assert "d" in root
     assert "parent" not in d.metadata
-    assert d.metadata == {"one": 1, "two": 2, "three": 3}
+    assert d.metadata == Metadata(read_only=False, node_name="/d", one=1, two=2, three=3)
 
     # check that we can make root read only again
     root.read_only = True
@@ -156,7 +156,7 @@ def test_create_dataset() -> None:  # noqa: PLR0915
     assert d2.size == 50
     assert d2.dtype == float
     assert len(d2.metadata) == 1
-    assert d2.metadata == {"one": 1}
+    assert d2.metadata == Metadata(read_only=False, node_name="/data2", one=1)
     assert "data2" in root
 
     # cannot set the parent because this kwarg is pop'd
@@ -183,7 +183,7 @@ def test_create_dataset() -> None:  # noqa: PLR0915
     assert not root.metadata.read_only
     assert "data5" in root
     assert "order" not in d5.metadata
-    assert d5.metadata == {"one": 1, "two": 2, "three": 3}
+    assert d5.metadata == Metadata(read_only=False, node_name="/data5", one=1, two=2, three=3)
 
     # check that we can make root read only again
     root.read_only = True

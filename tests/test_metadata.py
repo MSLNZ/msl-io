@@ -378,3 +378,21 @@ def test_list_tuple_array_convert() -> None:
 
     with pytest.raises(ValueError, match=r"read-only"):
         meta.c[0] = 9
+
+
+def test_eq() -> None:
+    m = Metadata(read_only=True, node_name="a")
+    assert m != {}
+    assert m is not None
+    assert m == Metadata(read_only=False, node_name="a")
+    assert m != Metadata(read_only=True, node_name="b")  # node names not equal
+    assert m != Metadata(read_only=True, node_name="a", one=1)  # lengths not equal
+
+    m = Metadata(read_only=True, node_name="a", w="hi", x=1, y=[1, 2, 3], z={"hello": "world"})
+    assert m == Metadata(read_only=True, node_name="a", w="hi", x=1, y=[1, 2, 3], z={"hello": "world"})
+    assert m == Metadata(read_only=True, node_name="a", z={"hello": "world"}, w="hi", y=[1, 2, 3], x=1)
+    assert m != {"w": "hi", "x": 1, "y": [1, 2, 3], "z": {"hello": "world"}}
+    assert m != Metadata(read_only=True, node_name="a", w="hello", x=1, y=[1, 2, 3], z={"hello": "world"})
+    assert m != Metadata(read_only=True, node_name="a", w="hi", x=(3, 4, 5), y=[1, 2, 3], z={"hello": "world"})
+    assert m != Metadata(read_only=True, node_name="a", w="hi", x=1, y=None, z={"hello": "world"})
+    assert m != Metadata(read_only=True, node_name="a", w="hi", x=1, y=[1, 2, 3], z={"hello": "world!"})

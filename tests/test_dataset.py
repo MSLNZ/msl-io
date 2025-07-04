@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from msl.io import Root
-from msl.io.node import Dataset
+from msl.io import Dataset, Root
+from msl.io.metadata import Metadata
 
 
 def test_instantiate() -> None:
@@ -541,7 +541,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "add(/d)"
     assert d.parent is None
-    assert d.metadata == {"fruit": "apple"}
+    assert d.metadata == Metadata(read_only=True, node_name="add(/d)", fruit="apple")
     assert np.array_equal(d, np.array([2, 3, 4]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]))
@@ -549,7 +549,8 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "subtract(/d)"
     assert d.parent is None
-    assert d.metadata == {}
+    assert len(d.metadata) == 0
+    assert d.metadata == Metadata(read_only=True, node_name="subtract(/d)")
     assert np.array_equal(d, np.array([0, 1, 2]))
 
     d = Dataset(name="d", parent=None, read_only=False, data=np.array([1, 2, 3]), one=1)
@@ -557,7 +558,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "multiply(d)"
     assert d.parent is None
-    assert d.metadata == {"one": 1}
+    assert d.metadata == Metadata(read_only=True, node_name="multiply(d)", one=1)
     assert np.array_equal(d, np.array([10, 20, 30]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10.0, 20.0, 30.0]), neg_one=-1)
@@ -565,7 +566,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "divide(/d)"
     assert d.parent is None
-    assert d.metadata == {"neg_one": -1}
+    assert d.metadata == Metadata(read_only=True, node_name="divide(/d)", neg_one=-1)
     assert np.array_equal(d, np.array([1.0, 2.0, 3.0]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10, 20, 30]))
@@ -573,7 +574,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "floor_divide(/d)"
     assert d.parent is None
-    assert d.metadata == {}
+    assert d.metadata == Metadata(read_only=True, node_name="floor_divide(/d)")
     assert np.array_equal(d, np.array([2, 4, 6]))
 
     d = Dataset(name="dset", parent=None, read_only=False, data=np.array([10, 20, 30]), hello="world")
@@ -581,7 +582,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "remainder(dset)"
     assert d.parent is None
-    assert d.metadata == {"hello": "world"}
+    assert d.metadata == Metadata(read_only=True, node_name="remainder(dset)", hello="world")
     assert np.array_equal(d, np.array([10, 5, 0]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]))
@@ -589,7 +590,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "power(/d)"
     assert d.parent is None
-    assert d.metadata == {}
+    assert d.metadata == Metadata(read_only=True, node_name="power(/d)")
     assert np.array_equal(d, np.array([1, 8, 27]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]))
@@ -597,7 +598,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "left_shift(/d)"
     assert d.parent is None
-    assert d.metadata == {}
+    assert d.metadata == Metadata(read_only=True, node_name="left_shift(/d)")
     assert np.array_equal(d, np.array([8, 16, 24]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([10, 20, 30]))
@@ -605,7 +606,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "right_shift(/d)"
     assert d.parent is None
-    assert d.metadata == {}
+    assert d.metadata == Metadata(read_only=True, node_name="right_shift(/d)")
     assert np.array_equal(d, np.array([2, 5, 7]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]), one=1)
@@ -613,7 +614,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "bitwise_and(/d)"
     assert d.parent is None
-    assert d.metadata == {"one": 1}
+    assert d.metadata == Metadata(read_only=True, node_name="bitwise_and(/d)", one=1)
     assert np.array_equal(d, np.array([0, 2, 2]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]), apple="red")
@@ -621,7 +622,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "bitwise_xor(/d)"
     assert d.parent is None
-    assert d.metadata == {"apple": "red"}
+    assert d.metadata == Metadata(read_only=True, node_name="bitwise_xor(/d)", apple="red")
     assert np.array_equal(d, np.array([3, 0, 1]))
 
     d = Dataset(name="/d", parent=None, read_only=False, data=np.array([1, 2, 3]), hi="hey")
@@ -629,7 +630,7 @@ def test_assignments() -> None:  # noqa: PLR0915
     assert isinstance(d, Dataset)
     assert d.name == "bitwise_or(/d)"
     assert d.parent is None
-    assert d.metadata == {"hi": "hey"}
+    assert d.metadata == Metadata(read_only=True, node_name="bitwise_or(/d)", hi="hey")
     assert np.array_equal(d, np.array([3, 2, 3]))
 
 
@@ -643,21 +644,21 @@ def test_numpy_function() -> None:
     assert isinstance(cos, Dataset)  # type: ignore[unreachable]
     assert cos.name == "cos(d1)"  # type: ignore[unreachable]
     assert cos.parent is None
-    assert cos.metadata == {"one": 1}
+    assert cos.metadata == Metadata(read_only=False, node_name="cos(d1)", one=1)
     assert np.array_equal(cos, np.cos(array))
 
     sqrt = np.sqrt(d1)
     assert isinstance(sqrt, Dataset)
     assert sqrt.name == "sqrt(d1)"
     assert sqrt.parent is None
-    assert sqrt.metadata == {"one": 1}
+    assert sqrt.metadata == Metadata(read_only=False, node_name="sqrt(d1)", one=1)
     assert np.array_equal(sqrt, np.sqrt(array))
 
     _abs = np.abs(d1)
     assert isinstance(_abs, Dataset)
     assert _abs.name == "absolute(d1)"
     assert _abs.parent is None
-    assert _abs.metadata == {"one": 1}
+    assert _abs.metadata == Metadata(read_only=False, node_name="absolute(d1)", one=1)
     assert np.array_equal(_abs, np.abs(array))
 
     _max = np.max(d1)
@@ -672,17 +673,19 @@ def test_name_metadata_merged() -> None:
 
     a += 1
     assert repr(a) == "<Dataset 'add(/a)' shape=(3,) dtype='<f8' (1 metadata)>"
-    assert a.metadata == {"fruit": "apple"}
+    assert a.metadata == Metadata(read_only=False, node_name="add(/a)", fruit="apple")
     assert np.array_equal(a, [2, 3, 4])
 
     ba = b - a
     assert repr(ba) == "<Dataset 'subtract(b,add(/a))' shape=(3,) dtype='<f8' (2 metadata)>"
-    assert ba.metadata == {"one": 1, "fruit": "apple"}
+    assert ba.metadata == Metadata(read_only=False, node_name="subtract(b,add(/a))", fruit="apple", one=1)
     assert np.array_equal(ba, [2, 2, 2])
 
     d = np.sqrt(c + b - a)
     assert repr(d) == "<Dataset 'sqrt(subtract(add(/c,b),add(/a)))' shape=(3,) dtype='<f8' (4 metadata)>"
-    assert d.metadata == {"fruit": "apple", "one": 1, "hello": "world", "eat": "cake"}
+    assert d.metadata == Metadata(
+        read_only=False, node_name="sqrt(subtract(add(/c,b),add(/a)))", fruit="apple", one=1, hello="world", eat="cake"
+    )
     assert np.array_equal(d, np.sqrt([7 + 4 - 2, 8 + 5 - 3, 9 + 6 - 4]))
 
 

@@ -35,7 +35,7 @@ def _value(value: Any, *, name: str, read_only: bool = False) -> Any:
     return value
 
 
-class Metadata(FreezableMap[Any]):
+class Metadata(FreezableMap[Any]):  # noqa: PLW1641
     """Provides information about data."""
 
     def __init__(self, *, read_only: bool, node_name: str, **kwargs: Any) -> None:
@@ -113,6 +113,34 @@ class Metadata(FreezableMap[Any]):
         else:
             self._raise_if_read_only()
             self._mapping[item] = _value(value=value, name=self._node_name)
+
+    def __eq__(self, other: object, /) -> bool:  # noqa: PLR0911
+        """Comparison with another Metadata instance."""
+        # Do not implement __hash__ (see https://docs.python.org/3.13/reference/datamodel.html#object.__hash__)
+        #
+        # "If a class defines mutable objects and implements an __eq__() method, it should not implement __hash__(),
+        # since the implementation of hashable collections requires that a key's hash value is immutable (if the
+        # object's hash value changes, it will be in the wrong hash bucket)."
+        if not isinstance(other, Metadata):
+            return False
+
+        if self._node_name != other._node_name:
+            return False
+
+        if len(self) != len(other):
+            return False
+
+        for k1, v1 in self.items():
+            if k1 not in other:
+                return False
+            v2 = other[k1]
+            if isinstance(v1, np.ndarray) or isinstance(v2, np.ndarray):
+                if not np.array_equal(v1, v2):
+                    return False
+            elif v1 != v2:
+                return False
+
+        return True
 
     def copy(self, *, read_only: bool | None = None) -> Metadata:
         """Create a copy of the [Metadata][msl.io.metadata.Metadata].

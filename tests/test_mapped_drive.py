@@ -10,7 +10,7 @@ except ImportError:
     h5py = None
 
 from msl.io import HDF5Writer, JSONWriter, copy, is_dir_accessible, read, read_table
-from tests.helper import metadata_equal, roots_equal
+from tests.helper import roots_equal
 
 # the Z: drive (if it exists) is a mapped drive to the "Photometry & Radiometry" folder
 folder = r"Z:\transfer"
@@ -58,7 +58,7 @@ def test_copy_and_table() -> None:
             if i == 0:
                 assert d1.name == d2.name
             assert np.array_equal(d1.data, d2.data)
-            assert metadata_equal(d1.metadata, d2.metadata)
+            assert d1.metadata == d2.metadata
             os.remove(_dest)  # noqa: PTH107
         sub_folder = os.path.dirname(destination3)  # noqa: PTH120
         os.rmdir(sub_folder)  # noqa: PTH106
