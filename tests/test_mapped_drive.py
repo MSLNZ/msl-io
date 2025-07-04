@@ -10,7 +10,6 @@ except ImportError:
     h5py = None
 
 from msl.io import HDF5Writer, JSONWriter, copy, is_dir_accessible, read, read_table
-from tests.helper import roots_equal
 
 # the Z: drive (if it exists) is a mapped drive to the "Photometry & Radiometry" folder
 folder = r"Z:\transfer"
@@ -25,7 +24,7 @@ def test_hdf5() -> None:
     w = HDF5Writer(os.path.join(folder, "msl-io-testing.h5"))  # noqa: PTH118
     w.write(root=root, mode="w")
     assert isinstance(w.file, str)
-    assert roots_equal(root, read(w.file))
+    assert root == read(w.file)
     os.remove(w.file)  # noqa: PTH107
 
 
@@ -35,7 +34,7 @@ def test_json() -> None:
     w = JSONWriter(os.path.join(folder, "msl-io-testing.json"))  # noqa: PTH118
     w.write(root=root, mode="w")
     assert isinstance(w.file, str)
-    assert roots_equal(root, read(w.file))
+    assert root == read(w.file)
     os.remove(w.file)  # noqa: PTH107
 
 

@@ -12,7 +12,6 @@ except ImportError:
 
 from msl.io import Dataset, Group, HDF5Writer, JSONWriter, read
 from msl.io.readers import HDF5Reader
-from tests.helper import roots_equal
 
 
 @pytest.mark.skipif(h5py is None, reason="h5py not installed")
@@ -25,7 +24,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     assert isinstance(writer.file, Path)
     root2 = read(writer.file)
     assert root2.file == str(writer.file)
-    assert roots_equal(root1, root2)
+    assert root1 == root2
     writer.file.unlink()
 
     # convert to JSON then back to HDF5
@@ -34,14 +33,14 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     assert isinstance(json_writer.file, Path)
     root_json = read(json_writer.file)
     assert root_json.file == str(json_writer.file)
-    assert roots_equal(root1, root_json)
+    assert root1 == root_json
     json_writer.file.unlink()
     writer2 = HDF5Writer(tempfile.gettempdir() + "/msl-hdf5-writer-temp2.h5")
     writer2.write(root=root_json, mode="w")
     assert isinstance(writer2.file, str)
     root3 = read(writer2.file)
     assert root3.file == writer2.file
-    assert roots_equal(root1, root3)
+    assert root1 == root3
     os.remove(writer2.file)  # noqa: PTH107
 
     for root in [root1, root2, root3]:
@@ -166,11 +165,11 @@ def test_raises() -> None:
 
     # by specifying the proper mode one can overwrite a file
     writer.write(file=file, root=root, mode="w")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     writer.write(file=file, root=root, mode="a")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     writer.write(file=file, root=root, mode="r+")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     file.unlink()
 
 

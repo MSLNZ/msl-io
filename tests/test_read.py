@@ -13,7 +13,6 @@ except ImportError:
 
 from msl.io import JSONWriter, read
 from msl.io.readers import JSONReader
-from tests.helper import roots_equal
 
 samples = Path(__file__).parent / "samples"
 
@@ -95,7 +94,7 @@ def test_socket() -> None:
         root_server = read(client_recv_buf)
         assert isinstance(root_server, JSONReader)
 
-    assert roots_equal(root_client, root_server)
+    assert root_client == root_server
 
     # cleanup
     client.close()
@@ -106,4 +105,4 @@ def test_pathlib() -> None:
     root1 = read(samples / "json_sample.json")
     assert isinstance(root1.file, str)
     root2 = read(Path(root1.file))
-    assert roots_equal(root1, root2)
+    assert root1 == root2

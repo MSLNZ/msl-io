@@ -2,8 +2,7 @@ import re
 
 import pytest
 
-from msl.io import JSONWriter, Root
-from msl.io.node import Group
+from msl.io import Group, JSONWriter, Root
 
 
 def test_datasets_exclude() -> None:  # noqa: PLR0915
@@ -528,3 +527,37 @@ def test_invalid_name() -> None:
     # check that the name is forced to be unique
     with pytest.raises(ValueError, match="is not unique"):
         _ = Group(name="this is ok", parent=root, read_only=True)
+
+
+def test_eq() -> None:
+    g = Group(name="a", parent=None, read_only=False, one=1)
+    assert g != "a"
+    assert g is not None
+    assert g == Group(name="a", parent=None, read_only=True, one=1)
+    assert g != Group(name="b", parent=None, read_only=True, one=1)
+    assert g != Group(name="a", parent=None, read_only=True, one=1, two=2)
+
+    _ = g.create_dataset("data", data=[1, 2, 3])
+    assert g != Group(name="a", parent=None, read_only=True, one=1)
+
+    g2 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g2.create_dataset("wrong-name", data=[1, 2, 3])
+    assert g != g2
+
+    g2 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g2.create_dataset("data", data=[1, 2, 3, 4])
+    assert g != g2
+
+    g2 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g2.create_dataset("data", data=[1, 2, 3])
+    assert g == g2
+
+    g1 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g1.create_group("b")
+    g2 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g2.create_group("b")
+    assert g1 == g2
+
+    g2 = Group(name="a", parent=None, read_only=False, one=1)
+    _ = g2.create_group("c")
+    assert g1 != g2

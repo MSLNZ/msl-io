@@ -12,7 +12,6 @@ except ImportError:
 
 from msl.io import Dataset, HDF5Writer, JSONWriter, Reader, read
 from msl.io.readers import JSONReader
-from tests.helper import roots_equal
 
 samples = Path(__file__).parent / "samples"
 
@@ -26,7 +25,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     assert isinstance(writer.file, str)
     root2 = read(writer.file)
     assert root2.file == writer.file
-    assert roots_equal(root1, root2)
+    assert root1 == root2
     os.remove(writer.file)  # noqa: PTH107
 
     # convert to HDF5 then back to JSON
@@ -34,7 +33,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     # HDF5 does not support "null". So, reload the JSON file and pop the metadata
     # that contain "null" before writing the HDF5 file
     temp = read(samples / "json_sample.json")
-    assert roots_equal(root1, temp)
+    assert root1 == temp
     temp.read_only = False
     assert temp.metadata.pop("null") is None
     assert "null" not in temp.metadata
@@ -246,13 +245,13 @@ def test_raises() -> None:
 
     # by specifying the mode one can overwrite a file
     writer.write(file=file, root=root, mode="w")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     writer.write(file=file, root=root, mode="w+")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     writer.write(file=file, root=root, mode="r+")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     writer.write(file=file, root=root, mode="a")
-    assert roots_equal(root, read(file))
+    assert root == read(file)
     file.unlink()
 
 
@@ -388,6 +387,6 @@ def test_unicode() -> None:
         assert isinstance(writer.file, str)
         root2 = read(writer.file)
         do_asserts(root2)
-        assert roots_equal(root, root2)
+        assert root == root2
 
         os.remove(writer.file)  # noqa: PTH107

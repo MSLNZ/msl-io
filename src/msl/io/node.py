@@ -477,7 +477,7 @@ class DatasetLogging(Dataset):
         self._logger = logger
 
 
-class Group(FreezableMap["Dataset | Group"]):
+class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     """A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s."""  # noqa: E501
 
     def __init__(self, *, name: str, parent: Group | None, read_only: bool, **metadata: Any) -> None:
@@ -570,6 +570,29 @@ class Group(FreezableMap["Dataset | Group"]):
             return self.__delitem__(f"/{item}")
         except KeyError as e:
             raise AttributeError(str(e)) from None
+
+    def __eq__(self, other: object) -> bool:  # noqa: PLR0911
+        """Comparison with another Group instance."""
+        # Do not implement __hash__ (see https://docs.python.org/3.13/reference/datamodel.html#object.__hash__)
+        #
+        # "If a class defines mutable objects and implements an __eq__() method, it should not implement __hash__(),
+        # since the implementation of hashable collections requires that a key's hash value is immutable (if the
+        # object's hash value changes, it will be in the wrong hash bucket)."
+        if not isinstance(other, Group):
+            return False
+        if self._name != other._name:
+            return False
+        if self._metadata != other._metadata:
+            return False
+        if len(self) != len(other):
+            return False
+        for k1, v1 in self.items():
+            if k1 not in other:
+                return False
+            if v1 != other[k1]:
+                return False
+        # self.name derives from self.parent so we don't need to check equality of self.parent.name
+        return True
 
     @property
     def name(self) -> str:
