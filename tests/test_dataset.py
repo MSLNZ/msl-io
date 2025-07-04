@@ -712,3 +712,14 @@ def test_invalid_name() -> None:
     _ = root.create_group("msl")
     with pytest.raises(ValueError, match="is not unique"):
         _ = Dataset(name="msl", parent=root, read_only=True)
+
+
+def test_eq() -> None:
+    d = Dataset(name="a", parent=None, read_only=True, data=[1, 2, 3], one=1)
+    assert d != [1, 2, 3]
+    assert d is not None
+    assert d != 8
+    assert d == Dataset(name="a", parent=None, read_only=True, data=[1, 2, 3], one=1)
+    assert d != Dataset(name="/a", parent=None, read_only=True, data=[1, 2, 3], one=1)  # names not equal
+    assert d != Dataset(name="a", parent=None, read_only=True, data=[1, 2, 3], two=2)  # metadata not equal
+    assert d != Dataset(name="a", parent=None, read_only=True, data=[-1, -2, -3], one=1)  # arrays not equal

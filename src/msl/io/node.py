@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from ._types import ShapeLike, ToIndices
 
 
-class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
+class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1641
     """A `Dataset` functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata]."""
 
     def __init__(  # noqa: PLR0913
@@ -156,6 +156,22 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):
     def __str__(self) -> str:
         """Returns the string representation of the numpy array."""
         return repr(self._data)
+
+    def __eq__(self, other: object) -> bool:
+        """Comparison with another Dataset instance."""
+        # Do not implement __hash__ (see https://docs.python.org/3.13/reference/datamodel.html#object.__hash__)
+        #
+        # "If a class defines mutable objects and implements an __eq__() method, it should not implement __hash__(),
+        # since the implementation of hashable collections requires that a key's hash value is immutable (if the
+        # object's hash value changes, it will be in the wrong hash bucket)."
+        if not isinstance(other, Dataset):
+            return False
+        if self._name != other._name:
+            return False
+        if self._metadata != other._metadata:
+            return False
+        # self.name derives from self.parent so we don't need to check equality of self.parent.name
+        return np.array_equal(self._data, other._data)
 
     @property
     def name(self) -> str:

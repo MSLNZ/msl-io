@@ -10,7 +10,6 @@ import pytest
 
 from msl.io import read_table
 from msl.io.tables import read_table_excel, read_table_gsheets
-from tests.helper import datasets_equal
 from tests.test_google_api import skipif_no_gdrive_readonly, skipif_no_sheets_readonly
 
 if TYPE_CHECKING:
@@ -342,12 +341,12 @@ def test_pathlib() -> None:
     string = str(Path(__file__).parent / "samples" / "table.csv")
     dset1 = read_table(string, dtype=object)
     dset2 = read_table(Path(string), dtype=object)
-    assert datasets_equal(dset1, dset2)
+    assert dset1 == dset2
 
     string = str(Path(__file__).parent / "samples" / "table.xls")
     dset1 = read_table(string, sheet="A1")
     dset2 = read_table(Path(string), sheet="A1")
-    assert datasets_equal(dset1, dset2)
+    assert dset1 == dset2
 
 
 @skipif_no_gdrive_readonly

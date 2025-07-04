@@ -4,21 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-import numpy as np
-
 if TYPE_CHECKING:
     from typing import Literal
 
     from msl.io.base import Root
-    from msl.io.node import Dataset
-
-
-def datasets_equal(d1: Dataset, d2: Dataset) -> Literal[True]:
-    """Assert that two Dataset objects are equal."""
-    assert d1.name == d2.name, f"{d1.name} != {d2.name}"
-    assert np.array_equal(d1.data, d2.data), f"{d1.data}\n{d2.data}"
-    assert d1.metadata == d2.metadata
-    return True
 
 
 def roots_equal(r1: Root, r2: Root) -> Literal[True]:
@@ -40,6 +29,6 @@ def roots_equal(r1: Root, r2: Root) -> Literal[True]:
     datasets2.sort(key=lambda x: x.name)
     assert len(datasets1) == len(datasets2)
     for d1, d2 in zip(datasets1, datasets2):
-        assert datasets_equal(d1, d2)
+        assert d1 == d2
 
     return True
