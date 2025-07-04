@@ -173,6 +173,12 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
         # self.name derives from self.parent so we don't need to check equality of self.parent.name
         return np.array_equal(self._data, other._data)
 
+    def __ne__(self, other: object) -> bool:
+        """Comparison with another Dataset instance."""
+        # Must implement __ne__ to override NDArrayOperatorsMixin.__ne__ since the default behaviour
+        # of delegating to __eq__ and inverting the result does not happen without overriding __ne__
+        return not self == other
+
     @property
     def name(self) -> str:
         """[str][] &mdash; The name of this [Dataset][msl.io.node.Dataset]."""
