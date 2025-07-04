@@ -11,8 +11,7 @@ try:
 except ImportError:
     h5py = None
 
-from msl.io import HDF5Writer, JSONWriter, Root, read
-from msl.io.node import Dataset
+from msl.io import Dataset, HDF5Writer, JSONWriter, Root, read
 
 # Append new Writers to test
 writers = [JSONWriter, HDF5Writer]

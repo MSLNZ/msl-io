@@ -2,7 +2,7 @@ import pathlib
 from io import BufferedReader, BytesIO, StringIO, TextIOWrapper
 from pathlib import Path
 
-from msl.io.base import Reader, Root
+from msl.io import Reader, Root
 from msl.io.readers import JSONReader
 
 

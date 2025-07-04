@@ -15,7 +15,7 @@ from tests.test_google_api import skipif_no_gdrive_readonly, skipif_no_sheets_re
 if TYPE_CHECKING:
     from typing import Any
 
-    from msl.io.node import Dataset
+    from msl.io import Dataset
 
 # the data in the Excel, CVS and TXT files that are tested contain the following
 header = np.asarray(["timestamp", "val1", "uncert1", "val2", "uncert2"], dtype=str)

@@ -1,8 +1,6 @@
 import pytest
 
-from msl.io import JSONWriter
-from msl.io.base import Root
-from msl.io.node import Group
+from msl.io import Group, JSONWriter, Root
 
 
 def test_set_root() -> None:  # noqa: PLR0915
