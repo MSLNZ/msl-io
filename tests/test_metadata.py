@@ -163,7 +163,12 @@ def test_attribute_access() -> None:
 
 
 def test_nested_dict_as_value() -> None:
-    meta = Metadata(read_only=True, node_name="", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
+    meta = Metadata(read_only=True, node_name="/M", none=None, nested={"dict1": {"dict2": {"dict3": (1, 2, 3)}}})
+    assert (
+        str(meta)
+        == "<Metadata '/M' {'none': None, 'nested': <Metadata '/M' {'dict1': <Metadata '/M' {'dict2': <Metadata '/M' {'dict3': [1, 2, 3]}>}>}>}>"  # noqa: E501
+    )
+
     assert meta["none"] is None
     assert meta.none is None
     assert np.array_equal(meta["nested"]["dict1"]["dict2"]["dict3"], (1, 2, 3))
@@ -315,6 +320,11 @@ def test_read_only() -> None:  # noqa: PLR0915
     # cannot create a new key-value pair (attrib access)
     with pytest.raises(ValueError, match="read-only mode"):
         meta.anything = -1
+
+    # ndarray is initialised in read-only mode
+    meta = Metadata(read_only=True, node_name="m", a=[1, 2, 3])
+    assert meta.read_only
+    assert not meta.a.flags.writeable
 
 
 def test_list_tuple_array_convert() -> None:

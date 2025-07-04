@@ -191,14 +191,13 @@ You can add the [Dataset][msl.io.node.Dataset]s, but the *temperature* value in 
 If you want to preserve both temperature values, or change the resultant [name][msl.io.node.Dataset.name], you can do so by explicitly creating a new [Dataset][msl.io.node.Dataset]
 
 ```pycon
->>> t = {"t1": dset1.metadata.temperature, "t2": dset2.metadata.temperature}
->>> dset3 = root.create_dataset("dset3", data=dset3, temperatures=t)
+>>> dset3 = root.create_dataset("dset3", data=dset3, t1=dset1.metadata.temperature, t2=dset2.metadata.temperature)
 >>> dset3
-<Dataset '/dset3' shape=(3,) dtype='<f8' (1 metadata)>
+<Dataset '/dset3' shape=(3,) dtype='<f8' (2 metadata)>
 >>> dset3.data
 array([5., 7., 9.])
 >>> dset3.metadata
-<Metadata '/dset3' {'temperatures': {'t1': 20.3, 't2': 21.7}}>
+<Metadata '/dset3' {'t1': 20.3, 't2': 21.7}>
 
 ```
 

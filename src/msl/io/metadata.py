@@ -11,7 +11,7 @@ import numpy as np
 from .freezable import FreezableMap
 
 
-def _value(value: Any) -> Any:
+def _value(value: Any, *, name: str, read_only: bool = False) -> Any:
     """Maybe convert the Metadata value.
 
     Want builtin lists, tuples and arrays to be numpy arrays.
@@ -22,10 +22,16 @@ def _value(value: Any) -> Any:
         #   >>> np.asarray([True, -5, 0.002345, 'something', 49.1871524])
         #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')  # noqa: ERA001
         # casts every element to a string. Also, a regular Python list stores items as objects.
-        return np.asarray(value, dtype=object)
+        a = np.asarray(value, dtype=object)
+        a.setflags(write=not read_only)
+        return a
     if isinstance(value, array):
         # all elements in an array.array must be the same data type, no need to use dtype=object
-        return np.asarray(value)
+        a = np.asarray(value)
+        a.setflags(write=not read_only)
+        return a
+    if isinstance(value, MutableMapping):
+        return Metadata(read_only=read_only, node_name=name, **value)
     return value
 
 
@@ -45,7 +51,8 @@ class Metadata(FreezableMap[Any]):
             node_name: The name of the node that the [Metadata][msl.io.metadata.Metadata] is associated with.
             kwargs: Key-value pairs that will be used to create the mapping.
         """
-        super().__init__(read_only=read_only, **{k: _value(v) for k, v in kwargs.items()})
+        meta = {k: _value(value=v, read_only=read_only, name=node_name) for k, v in kwargs.items()}
+        super().__init__(read_only=read_only, **meta)
         self._node_name: str = node_name
 
     def __repr__(self) -> str:
@@ -64,18 +71,14 @@ class Metadata(FreezableMap[Any]):
     def __getitem__(self, key: str) -> Any:
         """Returns the value for the specified key."""
         try:
-            value = self._mapping[key]
+            return self._mapping[key]
         except KeyError:
             msg = f"{key!r} is not in {self!r}"
             raise KeyError(msg) from None
-        else:
-            if isinstance(value, MutableMapping):
-                return Metadata(read_only=self._read_only, node_name=self._node_name, **value)
-            return value
 
     def __setitem__(self, key: str, value: Any) -> None:
         """Maybe add a key-value pair to the map, only if the map is not in read-only mode."""
-        super().__setitem__(key, _value(value))
+        super().__setitem__(key, _value(value=value, name=self._node_name))
 
     def __delattr__(self, key: str) -> None:
         """Maybe delete a key-value pair, only if the mapping is not in read-only mode."""
@@ -98,17 +101,18 @@ class Metadata(FreezableMap[Any]):
             val = bool(value)
             self.__dict__["_read_only"] = val
             try:
-                # make all numpy ndarray's read only also
                 for obj in self.__dict__["_mapping"].values():
                     if isinstance(obj, np.ndarray):
                         obj.setflags(write=not val)
+                    elif isinstance(obj, Metadata):
+                        obj.read_only = val
             except KeyError:
                 pass
         elif item in {"_mapping", "_node_name"}:
             self.__dict__[item] = value
         else:
             self._raise_if_read_only()
-            self._mapping[item] = _value(value)
+            self._mapping[item] = _value(value=value, name=self._node_name)
 
     def copy(self, *, read_only: bool | None = None) -> Metadata:
         """Create a copy of the [Metadata][msl.io.metadata.Metadata].
