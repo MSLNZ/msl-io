@@ -15,13 +15,13 @@ from .freezable import FreezableMap
 from .metadata import Metadata
 
 if TYPE_CHECKING:
-    from collections.abc import Buffer, Iterator
+    from collections.abc import Iterator
     from logging import Logger
     from typing import Literal, SupportsIndex
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import ShapeLike, ToIndices
+    from ._types import Buffer, ShapeLike, ToIndices
 
 
 class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1641
@@ -357,10 +357,10 @@ class DatasetLogging(Dataset):
                 msg = f"Invalid shape {shape}"
                 raise ValueError(msg)
 
-        self._dtype: np.dtype = np.dtype([(a, object) for a in attributes])
+        self._dtype: np.dtype[np.object_ | np.void] = np.dtype([(a, object) for a in attributes])
         super().__init__(name=name, parent=parent, read_only=False, dtype=self._dtype, **kwargs)
 
-        self._index: np.intp = np.count_nonzero(self._data)
+        self._index: int | np.intp = np.count_nonzero(self._data)
         if self._auto_resize and self._data.shape < kwargs["shape"]:
             self._resize(new_allocated=kwargs["shape"][0])
 

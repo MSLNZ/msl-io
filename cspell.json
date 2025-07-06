@@ -29,6 +29,7 @@
         "behavior",
         "BIPM",
         "birthtime",
+        "bufferobjects",
         "chunksize",
         "complexfloating",
         "dataclass",
