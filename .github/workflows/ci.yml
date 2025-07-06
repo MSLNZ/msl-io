@@ -1,4 +1,4 @@
-name: Tests
+name: CI
 
 on: [push, pull_request]
 
@@ -11,7 +11,6 @@ jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
@@ -25,7 +24,6 @@ jobs:
           - python-version: "3.x"
             os: windows-latest
             xml: lxml
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,3 +47,29 @@ jobs:
         run: |
           python -c "from msl.io.readers._xlrd.xlsx import ET; print(ET)"
           python -m pytest
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    env:
+      MYPYPATH: src
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+          python-version: '3.13'
+      - name: Spelling
+        uses: streetsidesoftware/cspell-action@v6
+        with:
+          incremental_files_only: false
+      - name: Linting
+        run: uv run -- ruff check --force-exclude --no-fix .
+      - name: Formatting
+        run: uv run -- ruff format --force-exclude --check .
+      - name: Typing:BasedPyright
+        run: uv run -- basedpyright .
+      - name: Typing:MyPy
+        run: uv run -- mypy .
