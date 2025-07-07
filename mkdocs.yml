@@ -52,7 +52,7 @@ nav:
     - install.md
     - release-notes.md
     - license.md
-  - Items:
+  - Node Items:
     - items/datasets.md
     - items/groups.md
     - items/metadata.md
