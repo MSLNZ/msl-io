@@ -73,6 +73,7 @@
         "staticmethod",
         "tolist",
         "ufunc",
+        "uint",
         "uncert",
         "usecols",
         "vlen",
