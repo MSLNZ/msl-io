@@ -57,6 +57,12 @@ nav:
     - items/groups.md
     - items/metadata.md
     - items/attribute_access.md
+  - Readers:
+    - readers/index.md
+    - readers/create.md
+  - Writers:
+    - writers/index.md
+    - writers/create.md
   - API:
     - api/index.md
     - api/base.md
@@ -69,12 +75,6 @@ nav:
     - api/tables.md
     - api/types.md
     - api/utils.md
-  - Readers:
-    - readers/index.md
-    - readers/create.md
-  - Writers:
-    - writers/index.md
-    - writers/create.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip
