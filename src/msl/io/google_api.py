@@ -174,15 +174,12 @@ class GDrive(GoogleAPI):
     ) -> None:
         """Interact with Google Drive.
 
-        !!! attention
+        !!! info
             You must follow the instructions in the prerequisites section for setting up the
-            [Drive API](https://developers.google.com/drive/api/quickstart/python#prerequisites)
+            [Drive API](https://developers.google.com/drive/api/quickstart/python#prerequisites){:target="_blank"}
             before you can use this class. It is also useful to be aware of the
-            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration)
+            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}
             policy.
-
-        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
-        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Args:
             account: Since a person may have multiple Google accounts, and multiple people
@@ -192,15 +189,15 @@ class GDrive(GoogleAPI):
                 characters for a filename. The value that you chose when you authenticated with
                 your `credentials` should be used for all future instances of this class to access
                 that particular Google account. You can associate a different value with a Google
-                account at any time (by passing in a different `account` value), but you will be
+                account at any time (by passing in a different `account` value), but you may be
                 asked to authenticate with your `credentials` again, or, alternatively, you can
                 rename the token files located in [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR]
                 to match the new `account` value.
-            credentials: The path to the `client secrets` OAuth credential file. This parameter only
+            credentials: The path to the *client secrets* OAuth credential file. This parameter only
                 needs to be specified the first time that you authenticate with a particular Google
                 `account` or if you delete the token file that was created when you previously authenticated.
             scopes: The list of scopes to enable for the Google API. See
-                [Drive scopes](https://developers.google.com/identity/protocols/oauth2/scopes#drive)
+                [Drive scopes](https://developers.google.com/identity/protocols/oauth2/scopes#drive){:target="_blank"}
                 for more details. If not specified, default scopes are chosen based on the value of `read_only`.
             read_only: Whether to interact with Google Drive in read-only mode.
         """
@@ -242,8 +239,8 @@ class GDrive(GoogleAPI):
         Args:
             folder: The path to a Google Drive file.
             parent_id: The ID of the parent folder that `folder` is relative to. If not
-                specified, `folder` is relative to the `My Drive` root folder. If `folder`
-                is in a `Shared drive` then you must specify the ID of the parent folder.
+                specified, `folder` is relative to the *My Drive* root folder. If `folder`
+                is in a *Shared drive* then you must specify the ID of the parent folder.
 
         Returns:
             The folder ID.
@@ -279,13 +276,12 @@ class GDrive(GoogleAPI):
 
         Args:
             file: The path to a Google Drive file.
-            mime_type: The [Drive MIME type] or [Media type] to use to filter the results.
+            mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target="_blank"}
+                or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target="_blank"} to use
+                to filter the results.
             folder_id: The ID of the folder that `file` is relative to. If not specified, `file`
-                is relative to the `My Drive` root folder. If `file` is in a `Shared drive` then
+                is relative to the *My Drive* root folder. If `file` is in a *Shared drive* then
                 you must specify the ID of the parent folder.
-
-        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
-        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Returns:
             The file ID.
@@ -323,13 +319,12 @@ class GDrive(GoogleAPI):
 
         Args:
             file: The path to a Google Drive file.
-            mime_type: The [Drive MIME type] or [Media type] to use to filter the results.
+            mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){target="_blank"}
+                or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){target="_blank"} to use
+                to filter the results.
             folder_id: The ID of the folder that `file` is relative to. If not specified, `file`
-                is relative to the `My Drive` root folder. If `file` is in a `Shared drive` then
+                is relative to the *My Drive* root folder. If `file` is in a *Shared drive* then
                 you must specify the ID of the parent folder.
-
-        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
-        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
 
         Returns:
             Whether the file exists.
@@ -347,8 +342,8 @@ class GDrive(GoogleAPI):
         Args:
             folder: The path to a Google Drive folder.
             parent_id: The ID of the parent folder that `folder` is relative to. If not
-                specified, `folder` is relative to the `My Drive` root folder. If `folder`
-                is in a `Shared drive` then you must specify the ID of the parent folder.
+                specified, `folder` is relative to the *My Drive* root folder. If `folder`
+                is in a *Shared drive* then you must specify the ID of the parent folder.
 
         Returns:
             Whether the folder exists.
@@ -368,8 +363,8 @@ class GDrive(GoogleAPI):
         Args:
             folder: The folder(s) to create, for example, `'folder1'` or `'folder1/folder2/folder3'`.
             parent_id: The ID of the parent folder that `folder` is relative to. If not
-                specified, `folder` is relative to the `My Drive` root folder. If `folder`
-                is in a `Shared drive` then you must specify the ID of the parent folder.
+                specified, `folder` is relative to the *My Drive* root folder. If `folder`
+                is in a *Shared drive* then you must specify the ID of the parent folder.
 
         Returns:
             The ID of the last (right most) folder that was created.
@@ -394,7 +389,7 @@ class GDrive(GoogleAPI):
 
         Files that are in read-only mode cannot be deleted.
 
-        !!! caution
+        !!! danger
             Permanently deletes the file or folder owned by the user without
             moving it to the trash. If the target is a folder, then all files
             and sub-folders contained within the folder (that are owned by the
@@ -432,17 +427,15 @@ class GDrive(GoogleAPI):
         Args:
             file: The file to upload.
             folder_id: The ID of the folder to upload the file to. If not specified,
-                uploads to the `My Drive` root folder.
-            mime_type: The [Drive MIME type] or [Media type] of the file (e.g., `'text/csv'`).
-                If not specified then a type will be guessed based on the file extension.
+                uploads to the *My Drive* root folder.
+            mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target="_blank"}
+                or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target="_blank"} of the
+                file (e.g., `'text/csv'`). If not specified then a type will be guessed based on the file extension.
             resumable: Whether the upload can be resumed.
             chunk_size: The file will be uploaded in chunks of this many bytes. Only used
                 if `resumable` is `True`. Specify a value of -1 if the file is to be uploaded
                 in a single chunk. Note that Google App Engine has a 5MB limit per request size,
-                so you should not set `chunk_size` to be &gt; 5MB or to -1 if the file size is &gt; 5MB.
-
-        [Media type]: https://www.iana.org/assignments/media-types/media-types.xhtml
-        [Drive MIME type]: https://developers.google.com/drive/api/guides/mime-types
+                so you should not set `chunk_size` to be &gt; 5MB or to the value `-1` if the file size is &gt; 5MB.
 
         Returns:
             The ID of the file that was uploaded.
@@ -485,14 +478,8 @@ class GDrive(GoogleAPI):
                 If zero (default) then attempt the request only once.
             chunk_size: The file will be downloaded in chunks of this many bytes.
             callback: The callback function to call after each chunk of the file is downloaded.
-                The `callback` accepts one positional argument, for example
-
-                ```python
-                def handler(file):
-                    print(file.progress(), file.total_size, file.resumable_progress)
-
-                drive.download('0cWab3C2ejYSdM190b2psXy1C50P', callback=handler)
-                ```
+                The `callback` accepts one positional argument that is of type
+                [MediaDownloadProgress][msl.io.types.MediaDownloadProgress].
         """
         response = self._files.get(
             fileId=file_id,
@@ -551,17 +538,17 @@ class GDrive(GoogleAPI):
     def move(self, source_id: str, destination_id: str) -> None:
         """Move a file or a folder.
 
-        When moving a file or folder between `My Drive` and a `Shared drive`
+        When moving a file or folder between *My Drive* and a *Shared drive*
         the access permissions will change.
 
         Moving a file or folder does not change its ID, only the ID of
-        its `parent` changes (i.e., `source_id` will remain the same
+        its *parent* changes (i.e., `source_id` will remain the same
         after the move).
 
         Args:
             source_id: The ID of a file or folder to move.
             destination_id: The ID of the destination folder. To move the file or folder to the
-                `My Drive` root folder then specify `'root'` as the `destination_id`.
+                *My Drive* root folder then specify `'root'` as the `destination_id`.
         """
         params = {"fileId": source_id, "supportsAllDrives": True}
         try:
@@ -600,7 +587,7 @@ class GDrive(GoogleAPI):
             file_id: The ID of a file to copy. Folders cannot be copied.
             folder_id: The ID of the destination folder. If not specified then creates
                 a copy in the same folder that the original file is located in. To copy
-                the file to the `My Drive` root folder then specify `'root'` as the `folder_id`.
+                the file to the *My Drive* root folder then specify `'root'` as the `folder_id`.
             name: The filename of the destination file.
 
         Returns:
@@ -633,7 +620,7 @@ class GDrive(GoogleAPI):
         ).execute()
 
     def read_only(self, file_id: str, read_only: bool, reason: str | None = None) -> None:  # noqa: FBT001
-        """Set a file to be in read-only mode.
+        """Set a file to be in read-only or read-write mode.
 
         Args:
             file_id: The ID of a file.
@@ -702,7 +689,7 @@ class GDateTimeOption(Enum):
 
     SERIAL_NUMBER = "SERIAL_NUMBER"
     """Instructs date, time, datetime, and duration fields to be output as
-    doubles in "serial number" format, as popularized by Lotus 1-2-3. The
+    doubles in "serial number" format, as popularised by Lotus 1-2-3. The
     whole number portion of the value (left of the decimal) counts the days
     since December 30th 1899. The fractional portion (right of the decimal)
     counts the time as a fraction of the day. For example, January 1st 1900
@@ -754,9 +741,9 @@ class GCell(NamedTuple):
     """The information about a Google Sheets cell.
 
     Attributes:
-        value ([Any][typing.Any]): The value of the cell.
-        type ([GCellType][]): The data type of `value`.
-        formatted ([str][]): The formatted value (i.e., how the `value` is displayed in the cell).
+        value (Any): The value of the cell.
+        type (GCellType): The data type of `value`.
+        formatted (str): The formatted value (i.e., how the `value` is displayed in the cell).
     """
 
     value: Any
@@ -780,11 +767,11 @@ class GSheets(GoogleAPI):
     ) -> None:
         """Interact with Google Sheets.
 
-        !!! attention
+        !!! info
             You must follow the instructions in the prerequisites section for setting up the
-            [Sheets API](https://developers.google.com/sheets/api/quickstart/python#prerequisites)
+            [Sheets API](https://developers.google.com/sheets/api/quickstart/python#prerequisites){:target="_blank"}
             before you can use this class. It is also useful to be aware of the
-            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration)
+            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}
             policy.
 
         Args:
@@ -797,15 +784,15 @@ class GSheets(GoogleAPI):
                 should be used for all future instances of this class to access that
                 particular Google account. You can associate a different value with
                 a Google account at any time (by passing in a different `account`
-                value), but you will be asked to authenticate with your `credentials`
+                value), but you may be asked to authenticate with your `credentials`
                 again, or, alternatively, you can rename the token files located in
-                [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR]` to match the new `account` value.
-            credentials: The path to the `client secrets` OAuth credential file. This
+                [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR] to match the new `account` value.
+            credentials: The path to the *client secrets* OAuth credential file. This
                 parameter only needs to be specified the first time that you
                 authenticate with a particular Google account or if you delete
                 the token file that was created when you previously authenticated.
             scopes: The list of scopes to enable for the Google API. See
-                [Sheets scopes](https://developers.google.com/identity/protocols/oauth2/scopes#sheets)
+                [Sheets scopes](https://developers.google.com/identity/protocols/oauth2/scopes#sheets){:target="_blank"}
                 for more details. If not specified, default scopes are chosen based on the value of `read_only`.
             read_only: Whether to interact with Google Sheets in read-only mode.
         """
@@ -1023,7 +1010,7 @@ class GSheets(GoogleAPI):
     def create(self, name: str, sheet_names: Iterable[str] | None = None) -> str:
         """Create a new spreadsheet.
 
-        The spreadsheet will be created in the `My Drive` root folder.
+        The spreadsheet will be created in the *My Drive* root folder.
         To move it to a different folder use [GDrive.create_folder][msl.io.google_api.GDrive.create_folder]
         and/or [GDrive.move][msl.io.google_api.GDrive.move].
 
@@ -1082,7 +1069,6 @@ class GSheets(GoogleAPI):
                 [GValueOption.FORMATTED][msl.io.google_api.GValueOption.FORMATTED].
 
         Returns:
-        -------
             The values from the sheet.
         """
         if isinstance(value_option, GValueOption):
@@ -1111,6 +1097,7 @@ class GSheets(GoogleAPI):
             spreadsheet_id: The ID of a Google Sheets file.
             ranges: The ranges to retrieve from the spreadsheet. If not specified then return all cells
                 from all sheets. For example,
+
                 * `'Sheet1'` &#8594; Return all cells from the sheet named `Sheet1`
                 * `'Sheet1!A1:H5'` &#8594; Return cells `A1:H5` from the sheet named `Sheet1`
                 * `['Sheet1!A1:H5', 'Data', 'Devices!B4:B9']` &#8594; Return cells `A1:H5`
@@ -1164,10 +1151,10 @@ class GSheets(GoogleAPI):
 
     @staticmethod
     def to_datetime(value: float) -> datetime:
-        """Convert a "serial number" date into a [datetime.datetime][].
+        """Convert a *serial number* date into a [datetime][datetime.datetime].
 
         Args:
-            value: A date in the "serial number" format.
+            value: A date in the *serial number* format.
 
         Returns:
             The date converted.
@@ -1246,11 +1233,11 @@ class GMail(GoogleAPI):
     ) -> None:
         """Interact with Gmail.
 
-        !!! attention
+        !!! info
             You must follow the instructions in the prerequisites section for setting up the
-            [Gmail API](https://developers.google.com/gmail/api/quickstart/python#prerequisites)
+            [Gmail API](https://developers.google.com/gmail/api/quickstart/python#prerequisites){:target="_blank"}
             before you can use this class. It is also useful to be aware of the
-            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration)
+            [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}
             policy.
 
         Args:
@@ -1262,16 +1249,16 @@ class GMail(GoogleAPI):
                 you authenticated with your `credentials` should be used for all future
                 instances of this class to access that particular Google account. You can
                 associate a different value with a Google account at any time (by passing
-                in a different `account` value), but you will be asked to authenticate with
+                in a different `account` value), but you may be asked to authenticate with
                 your `credentials` again, or, alternatively, you can rename the token files
                 located in [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR] to match the new
                 `account` value.
-            credentials: The path to the `client secrets` OAuth credential file. This
+            credentials: The path to the *client secrets* OAuth credential file. This
                 parameter only needs to be specified the first time that you
                 authenticate with a particular Google account or if you delete
                 the token file that was created when you previously authenticated.
             scopes: The list of scopes to enable for the Google API. See
-                [Gmail scopes](https://developers.google.com/identity/protocols/oauth2/scopes#gmail)
+                [Gmail scopes](https://developers.google.com/identity/protocols/oauth2/scopes#gmail){:target="_blank"}
                 for more details. If not specified then default scopes are chosen.
         """
         if not scopes:
@@ -1284,10 +1271,10 @@ class GMail(GoogleAPI):
         self._users: Any = self._service.users()
 
     def profile(self) -> Profile:
-        """Gets the authenticated user's Gmail profile.
+        """Gets the authenticated user's GMail profile.
 
         Returns:
-            The current users GMAIL profile.
+            The current users GMail profile.
         """
         profile = self._users.getProfile(userId="me").execute()
         return Profile(
@@ -1306,7 +1293,7 @@ class GMail(GoogleAPI):
     ) -> None:
         """Send an email.
 
-        !!! note "See also [send_email][msl.io.utils.send_email]".
+        !!! note "See also [send_email][msl.io.utils.send_email]."
 
         Args:
             recipients: The email address(es) of the recipient(s). The value `'me'` can be used
