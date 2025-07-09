@@ -90,6 +90,10 @@ class FileLikeWrite(Protocol[T_contra]):
         """File name."""
         ...
 
+    def close(self) -> None:
+        """Close the stream."""
+        ...
+
     def write(self, b: T_contra, /) -> int:
         """Write to the stream."""
         ...

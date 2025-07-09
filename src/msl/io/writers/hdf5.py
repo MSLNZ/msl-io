@@ -35,7 +35,7 @@ class HDF5Writer(Writer):
     This will automatically write `root` to the specified file when the [with][]{:target="_blank"}
     block exits.
 
-    !!! attention
+    !!! info
         This Writer requires the [h5py](https://www.h5py.org/){:target="_blank"} package to be installed.
     """
 
@@ -51,8 +51,9 @@ class HDF5Writer(Writer):
                 `seek`, `tell`, `truncate` and `flush` methods.
             root: Write `root` in [HDF5](https://www.hdfgroup.org/){:target="_blank"} format.
                 If `None` then write the [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
-                in the Writer instance. This argument is useful when converting between different file formats.
-            kwargs: All additional keyword arguments are passed to [h5py.File][].
+                in the [HDF5Writer][msl.io.writers.hdf5.HDF5Writer] instance. This argument is useful when
+                converting between different file formats.
+            kwargs: All additional keyword arguments are passed to [h5py.File][]{:target="_blank"}.
         """
         if h5py is None:
             msg = "You must install h5py to write HDF5 files, run\n  pip install h5py"

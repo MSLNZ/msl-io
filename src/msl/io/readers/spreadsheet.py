@@ -39,8 +39,7 @@ class Spreadsheet(ABC):
     ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
-        !!! important
-            You must override this method.
+        !!! warning "You must override this method."
 
         Args:
             cell: The cell(s) to read. For example, `C9` will return a single value
@@ -60,8 +59,7 @@ class Spreadsheet(ABC):
     def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the spreadsheet.
 
-        !!! important
-            You must override this method.
+        !!! warning "You must override this method."
 
         Returns:
             The names of all sheets.
@@ -116,7 +114,7 @@ class Spreadsheet(ABC):
 
         Returns:
             The (row_index, column_index). If `cell` does not contain a row number
-            then the row index is `None`. The row and column index are zero based.
+                then the row index is `None`. The row and column index are zero based.
 
         **Examples:**
         <!-- invisible-code-block: pycon

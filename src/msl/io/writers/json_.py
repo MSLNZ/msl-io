@@ -58,7 +58,8 @@ class JSONWriter(Writer):
                 `file` that was specified when [JSONWriter][msl.io.writers.json_.JSONWriter] was instantiated.
             root: Write `root` in [JSON](https://www.json.org/){:target="_blank"} format.
                 If `None` then write the [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
-                in the Writer instance. This argument is useful when converting between different file formats.
+                in the [JSONWriter][msl.io.writers.json_.JSONWriter] instance. This argument is useful when
+                converting between different file formats.
             kwargs: Accepts `mode`, `encoding` and `errors` keyword arguments which are passed
                 to [open][]{:target="_blank"}. The default `encoding` value is `utf-8` and the default
                 `errors` value is `strict`. All additional keyword arguments are passed to

@@ -57,10 +57,10 @@ class GSheetsReader(Spreadsheet):
                 should be used for all future instances of this class to access that
                 particular Google account. You can associate a different value with
                 a Google account at any time (by passing in a different `account`
-                value), but you will be asked to authenticate with your `credentials`
+                value), but you may be asked to authenticate with your `credentials`
                 again, or, alternatively, you can rename the token files located in
-                [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR]` to match the new `account` value.
-            credentials: The path to the `client secrets` OAuth credential file. This
+                [MSL_IO_DIR][msl.io.constants.MSL_IO_DIR] to match the new `account` value.
+            credentials: The path to the *client secrets* OAuth credential file. This
                 parameter only needs to be specified the first time that you
                 authenticate with a particular Google account or if you delete
                 the token file that was created when you previously authenticated.

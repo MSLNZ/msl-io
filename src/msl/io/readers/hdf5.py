@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class HDF5Reader(Reader):
     """Reader for the [HDF5](https://www.hdfgroup.org/){:target="_blank"} file format.
 
-    !!! attention
+    !!! info
         This Reader loads the entire [HDF5]{:target="_blank"} file in memory. If you need to use any
         of the more advanced features of an [HDF5]{:target="_blank"} file, it is best to directly load
         the file using [h5py](https://www.h5py.org/){:target="_blank"}.

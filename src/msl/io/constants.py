@@ -12,9 +12,10 @@ from pathlib import Path
 # as C:\\Users\\<username>. Therefore defining USER_DIR in the following way keeps
 # things more consistent across more platforms.
 USER_DIR = Path("~" + os.getenv("SUDO_USER", "")).expanduser()
+"""[Path][pathlib.Path] &mdash; The user's home directory."""
 
 MSL_IO_DIR = Path(os.getenv("MSL_IO_DIR", USER_DIR / ".msl" / "io"))
-"""[pathlib.Path][] &mdash; The default directory where all files that are used by `msl-io` are located.
+"""[Path][pathlib.Path] &mdash; The default directory where all files that are used by `msl-io` are located.
 
 Can be overwritten by specifying an `MSL_IO_DIR` environment variable.
 """

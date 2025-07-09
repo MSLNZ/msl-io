@@ -51,9 +51,9 @@ class ExcelReader(Spreadsheet):
 
         Args:
             file: The path to an Excel spreadsheet file.
-            kwargs: All keyword arguments are passed to [xlrd.open_workbook][]. Can use
-                an `encoding` keyword argument as an alias for `encoding_override`. The
-                default `on_demand` value is `True`.
+            kwargs: All keyword arguments are passed to [xlrd.open_workbook][]{:target="_blank"}.
+                You can use an `encoding` keyword argument as an alias for `encoding_override`.
+                The default `on_demand` value is `True`.
 
         **Examples:**
         ```python
@@ -85,7 +85,7 @@ class ExcelReader(Spreadsheet):
 
     @property
     def workbook(self) -> Book:
-        """[xlrd.book.Book][] &mdash; The workbook instance."""
+        """[Book][xlrd.book.Book] &mdash; The workbook instance."""
         return self._workbook
 
     def close(self) -> None:
@@ -109,7 +109,7 @@ class ExcelReader(Spreadsheet):
                 ISO 8601 string.
 
         Returns:
-        The value(s) of the requested cell(s).
+            The value(s) of the requested cell(s).
 
         **Examples:**
         <!-- invisible-code-block: pycon

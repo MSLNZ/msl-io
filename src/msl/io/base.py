@@ -56,7 +56,7 @@ class Root(Group):
         return f"<{self.__class__.__name__} {b!r} ({g} groups, {d} datasets, {m} metadata)>"
 
     def tree(self, *, indent: int = 2) -> str:
-        """Returns a representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure).
+        """Returns a representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure){:target="_blank"}.
 
         Shows all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that are in [Root][msl.io.base.Root].
 
@@ -64,16 +64,16 @@ class Root(Group):
             indent: The amount of indentation to add for each recursive level.
 
         Returns:
-            The [tree structure](https://en.wikipedia.org/wiki/Tree_structure).
+            The [tree structure](https://en.wikipedia.org/wiki/Tree_structure){:target="_blank"}.
         """
         return repr(self) + "\n" + "\n".join(" " * (indent * k.count("/")) + repr(v) for k, v in sorted(self.items()))
 
 
 class Writer(Root, ABC):
-    """Base class for an abstract Writer."""
+    """Abstract base class for a [Writer][msl-io-writers]."""
 
     def __init__(self, file: PathLike | WriteLike | None = None, **metadata: Any) -> None:
-        """Base class for an abstract Writer.
+        """Abstract base class for a [Writer][msl-io-writers].
 
         Args:
             file: The file to write the data to. Can also be specified in the [write][msl.io.base.Writer.write] method.
@@ -91,7 +91,7 @@ class Writer(Root, ABC):
     def set_root(self, root: Group) -> None:
         """Set a new [Root][msl.io.base.Root] for the [Writer][msl.io.base.Writer].
 
-        !!! attention
+        !!! info
             This will clear the [Metadata][msl.io.metadata.Metadata] of the [Writer][msl.io.base.Writer]
             and all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that the
             [Writer][msl.io.base.Writer] currently contains. The `file` that was specified when
@@ -107,15 +107,15 @@ class Writer(Root, ABC):
             self.add_group("", root)
 
     def update_context_kwargs(self, **kwargs: Any) -> None:
-        """Update the keyword arguments when used as a [context manager][with].
+        """Update the keyword arguments when used as a [context manager][with]{:target="_blank"}.
 
-        When a [Writer][msl.io.base.Writer] is used as a [context manager][with] the
-        [write][msl.io.base.Writer.write] method is automatically called when
-        exiting the [context manager][with]. You can specify the keyword arguments
-        that will be passed to the [write][msl.io.base.Writer.write] method by
-        calling [update_context_kwargs][msl.io.base.Writer.update_context_kwargs]
-        with the appropriate key-value pairs before the [context manager][with]
-        exits. You can call this method multiple times.
+        When a [Writer][msl.io.base.Writer] is used as a [context manager][with]{:target="_blank"}
+        the [write][msl.io.base.Writer.write] method is automatically called when exiting the
+        [context manager][with]{:target="_blank"}. You can specify the keyword arguments
+        that will be passed to the [write][msl.io.base.Writer.write] method by calling
+        [update_context_kwargs][msl.io.base.Writer.update_context_kwargs] with the appropriate
+        keyword arguments before the [context manager][with]{:target="_blank"} exits. You may
+        call this method multiple times.
         """
         self._context_kwargs.update(**kwargs)
 
@@ -123,12 +123,11 @@ class Writer(Root, ABC):
     def write(self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any) -> None:
         """Write to a file.
 
-        !!! important
-            You must override this method.
+        !!! warning "You must override this method."
 
         Args:
             file: The file to write the `root` to. If `None` then uses the `file` value
-                that was specified when the [Writer]msl.io.base.Writer] was instantiated.
+                that was specified when the [Writer][msl.io.base.Writer] was instantiated.
             root: Write the `root` object in the file format of this [Writer][msl.io.base.Writer].
                 This argument is useful when converting between different file formats.
             kwargs: Keyword arguments to use when writing the file.
@@ -172,12 +171,11 @@ class Reader(Root, ABC):
     def can_read(file: ReadLike | str, **kwargs: Any) -> bool:
         """Whether this [Reader][msl.io.base.Reader] can read the file specified by `file`.
 
-        !!! important
-            You must override this method.
+        !!! warning "You must override this method."
 
         Args:
             file: The file to check whether the [Reader][msl.io.base.Reader] can read it.
-            kwargs: Key-value pairs that the [Reader][msl.io.base.Reader] class may need
+            kwargs: Keyword arguments that the [Reader][msl.io.base.Reader] class may need
                 when checking if it can read the `file`.
 
         Returns:
@@ -195,11 +193,10 @@ class Reader(Root, ABC):
 
         The file to read can be accessed by the [file][msl.io.base.Reader.file] property.
 
-        !!! important
-            You must override this method.
+        !!! warning "You must override this method."
 
         Args:
-            kwargs: Key-value pairs that the [Reader][msl.io.base.Reader] class may need
+            kwargs: Keyword arguments that the [Reader][msl.io.base.Reader] class may need
                 when reading the file.
         """
 

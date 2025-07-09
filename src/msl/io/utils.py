@@ -208,7 +208,7 @@ def search(  # noqa: C901, PLR0913
             * `r"bin"` &#8594; exclude all files that contain the word `bin` in the file path
             * `r"bin|lib"` &#8594; exclude all files that contain the word `bin` or `lib` in the file path
 
-        flags: The flags to use to compile regular-expression pattern (if it is a [str][] type).
+        flags: The flags to use to compile the regular-expression pattern (if it is a [str][] type).
         ignore_os_error: Whether to ignore an [OSError][], if one occurs, while iterating through a directory.
             This type of error can occur if a directory does not have the appropriate read permission.
         ignore_hidden_folders: Whether to ignore a hidden directory from the search. A hidden directory
@@ -293,10 +293,10 @@ def send_email(
             an email. There are two ways to send an email &mdash; Gmail API or SMTP server.
 
             An example INI file to use the Gmail API is the following (see
-            [GMmail][msl.io.google_api.GMail] for more details). Although all
+            [GMail][msl.io.google_api.GMail] for more details). Although all
             key-value pairs are optional, a `[gmail]` section must exist to use
             the Gmail API. If a key is omitted, the value passed to
-            [GMmail][msl.io.google_api.GMail] is `None`
+            [GMail][msl.io.google_api.GMail] is `None`
 
             ```ini
             [gmail]
@@ -542,9 +542,9 @@ def run_as_admin(  # noqa: C901, PLR0912, PLR0913, PLR0915
             escaping and quoting of arguments (e.g., to permit spaces in file names).
         executable: The executable to pass the `args` to.
         cwd: The working directory to use for the elevated process.
-        capture_stderr: Whether to send the stderr stream to stdout.
+        capture_stderr: Whether to send the _stderr_ stream to _stdout_.
         blocking: Whether to wait for the process to finish before returning to the calling program.
-        show: Whether to show the elevated console (Windows only). If `True`, the stdout stream of
+        show: Whether to show the elevated console (Windows only). If `True`, the _stdout_ stream of
             the process is not captured.
         kwargs: If the current process already has admin privileges or if the operating system is
             not Windows then all additional keyword arguments are passed to [subprocess.check_output][].
@@ -552,10 +552,10 @@ def run_as_admin(  # noqa: C901, PLR0912, PLR0913, PLR0915
 
     Returns:
         The returned object depends on whether the process is executed in blocking or non-blocking mode
-        and whether Python is already running with admin privileges.
-        If blocking, [bytes][] are returned (the stdout stream of the process). If non-blocking, the
-        returned object will either be the [subprocess.Popen][] instance that is running the
-        process (POSIX) or an [int][] which is the process ID (Windows).
+            and whether Python is already running with admin privileges. If blocking, [bytes][] are returned
+            (the _stdout_ stream of the process). If non-blocking, the returned object will either be the
+            [subprocess.Popen][] instance that is running the process (POSIX) or an [int][] which is the
+            process ID (Windows).
     """
     if not args and not executable:
         msg = "Must specify the args and/or an executable"

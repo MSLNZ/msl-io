@@ -163,7 +163,7 @@ def read_table_gsheets(
 ) -> Dataset:
     """Read a data table from a Google Sheets spreadsheet.
 
-    !!! attention
+    !!! note
         You must have already performed the instructions specified in
         [GDrive][msl.io.google_api.GDrive] and in [GSheets][msl.io.google_api.GSheets]
         to be able to use this function.
@@ -234,9 +234,9 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
 
     A *table* has the following properties:
 
-    1. The first row is a header.
-    2. All rows have the same number of columns.
-    3. All data values in a column have the same data type.
+    1. The first row is a header
+    2. All rows have the same number of columns
+    3. All data values in a column have the same data type
 
     Args:
         file: The file to read. If `file` is a Google Sheets spreadsheet then `file` must end

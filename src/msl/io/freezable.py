@@ -19,7 +19,7 @@ class FreezableMap(MutableMapping[str, VT]):
 
         Args:
             read_only: Whether the mapping is initially in read-only mode (frozen).
-            kwargs: Key-value pairs that are used to create the underlying map object.
+            kwargs: All other keyword arguments are used to create the underlying map object.
         """
         self._read_only: bool = bool(read_only)
         self._mapping: dict[str, VT] = dict(**kwargs)
@@ -61,15 +61,15 @@ class FreezableMap(MutableMapping[str, VT]):
         self._mapping.clear()
 
     def keys(self) -> KeysView[str]:
-        """Return a view of the map's keys."""
+        """[KeysView][collections.abc.KeysView][[str][]] &mdash; Returns a view of the map's keys."""
         return KeysView(self)
 
     def values(self) -> ValuesView[VT]:
-        """Return a view of the map's values."""
+        """[ValuesView][collections.abc.ValuesView][VT] &mdash; Returns a view of the map's values."""
         return ValuesView(self)
 
     def items(self) -> ItemsView[str, VT]:
-        """Return a view of the map's items, i.e., (key, value) pairs."""
+        """[ItemsView][collections.abc.ItemsView][[str][], VT] &mdash; Return a view of the map's items."""
         return ItemsView(self)
 
     def _raise_if_read_only(self) -> None:

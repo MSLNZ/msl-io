@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1641
-    """A `Dataset` functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata]."""
+    """A *Dataset* functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata]."""
 
     def __init__(  # noqa: PLR0913
         self,
@@ -42,9 +42,9 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
         data: ArrayLike | None = None,
         **metadata: Any,
     ) -> None:
-        """A `Dataset` functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata].
+        """A *Dataset* functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata].
 
-        !!! attention
+        !!! warning
             Do not instantiate directly. Create a new [Dataset][msl.io.node.Dataset] using the
             [create_dataset][msl.io.node.Group.create_dataset] method.
 
@@ -63,7 +63,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
             data: If not `None`, it must be either a [numpy.ndarray][] or
                 an array-like object which will be passed to [numpy.asarray][],
                 as well as `dtype` and `order`, to be used as the underlying data.
-            metadata: All other key-value pairs will be used as
+            metadata: All other keyword arguments are used as
                 [Metadata][msl.io.metadata.Metadata] for this [Dataset][msl.io.node.Dataset].
         """
         name = _unix_name(name, parent)
@@ -223,39 +223,39 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
 
     @property
     def data(self) -> NDArray[Any]:
-        """[numpy.ndarray][] &mdash; The data of the [Dataset][msl.io.node.Dataset].
+        """[ndarray][numpy.ndarray] &mdash; The data of the [Dataset][msl.io.node.Dataset].
 
-        !!! note
+        <!-- invisible-code-block: pycon
+        >>> from msl.io import JSONWriter
+        >>> root = JSONWriter()
+        >>> dataset = root.create_dataset("my_data", data=[[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+
+        -->
+
+        !!! tip
             You do not have to call this attribute to access the underlying [numpy.ndarray][].
             You can directly call any [numpy.ndarray][] attribute from the [Dataset][msl.io.node.Dataset] instance.
             For example,
 
-            <!-- invisible-code-block: pycon
-            >>> from msl.io import JSONWriter
-            >>> root = JSONWriter()
-            >>> dataset = root.create_dataset("my_data", data=[[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
-
-            -->
-
-           ```pycon
-           >>> dataset
-           <Dataset '/my_data' shape=(4, 3) dtype='<f8' (0 metadata)>
-           >>> dataset.data
-           array([[ 0.,  1.,  2.],
+            ```pycon
+            >>> dataset
+            <Dataset '/my_data' shape=(4, 3) dtype='<f8' (0 metadata)>
+            >>> dataset.data
+            array([[ 0.,  1.,  2.],
                    [ 3.,  4.,  5.],
                    [ 6.,  7.,  8.],
                    [ 9., 10., 11.]])
-           >>> dataset.size
-           12
-           >>> dataset.tolist()
-           [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
-           >>> dataset.mean(axis=0)
-           array([4.5, 5.5, 6.5])
-           >>> dataset[::2]
-           array([[0., 1., 2.],
+            >>> dataset.size
+            12
+            >>> dataset.tolist()
+            [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
+            >>> dataset.mean(axis=0)
+            array([4.5, 5.5, 6.5])
+            >>> dataset[::2]
+            array([[0., 1., 2.],
                    [6., 7., 8.]])
 
-           ```
+            ```
         """
         return self._data
 
@@ -263,7 +263,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
     def read_only(self) -> bool:
         """[bool][] &mdash; Whether the [Dataset][msl.io.node.Dataset] is in read-only mode.
 
-        This is equivalent to setting the `WRITEABLE` property in [numpy.ndarray.setflags][].
+        This is equivalent to setting the `WRITEABLE` property in [numpy.ndarray.setflags][]{:target="_blank"}.
         """
         return not self._data.flags.writeable
 
@@ -275,7 +275,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
 
 
 class DatasetLogging(Dataset):
-    """A [Dataset][msl.io.node.Dataset] that handles [logging][] records."""
+    """A [Dataset][msl.io.node.Dataset] that handles [logging][]{:target="_blank"} records."""
 
     def __init__(  # noqa: PLR0913
         self,
@@ -288,9 +288,9 @@ class DatasetLogging(Dataset):
         date_fmt: str | None = None,
         **kwargs: Any,
     ) -> None:
-        """A [Dataset][msl.io.node.Dataset] that handles [logging][] records.
+        """A [Dataset][msl.io.node.Dataset] that handles [logging][]{:target="_blank"} records.
 
-        !!! attention
+        !!! warning
             Do not instantiate directly. Create a new [DatasetLogging][msl.io.node.DatasetLogging] using
             [create_dataset_logging][msl.io.node.Group.create_dataset_logging].
 
@@ -301,7 +301,7 @@ class DatasetLogging(Dataset):
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
             level: The [logging level][levels] to use.
             logger: The [Logger][logging.Logger] that this `DatasetLogging` instance
-                will be added to. If `None`, it is added to the `root` [Logger][logging.Logger].
+                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] (only if
                 _asctime_ is included as one of the `attributes`).
@@ -311,7 +311,7 @@ class DatasetLogging(Dataset):
                 [Dataset][msl.io.node.Dataset] is equal to the number of [logging records][log-record]
                 that were added to it. However, this behaviour can decrease performance if many
                 [logging records][log-record] are added often because a copy of the data in the
-                [Dataset][msl.io.node.Dataset] is created for each :ref:`logging record <log-record>`
+                [Dataset][msl.io.node.Dataset] is created for each [logging record][log-record]
                 that is added. You can improve performance by specifying an initial size of the
                 [Dataset][msl.io.node.Dataset] by including a `shape` or a `size` keyword argument.
                 This will also automatically allocate more memory that is proportional to the size of the
@@ -436,9 +436,9 @@ class DatasetLogging(Dataset):
         """Remove empty rows from the [Dataset][msl.io.node.Dataset].
 
         If the [DatasetLogging][msl.io.node.DatasetLogging] object was initialized with a `shape` or a `size`
-        keyword argument then the size of the [Dataset][msl.io.node.Dataset] is always &ge; to the number of
-        [logging records][log-record] that were added to it. Calling this method will remove the rows in the
-        [Dataset][msl.io.node.Dataset] that were not from a [logging record][log-record].
+        keyword argument then the size of the [Dataset][msl.io.node.Dataset] is always greater than or equal to
+        the number of [logging records][log-record] that were added to it. Calling this method will remove the
+        rows in the [Dataset][msl.io.node.Dataset] that were not from a [logging record][log-record].
         """
         assert self._dtype.names is not None  # noqa: S101
 
@@ -483,7 +483,7 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def __init__(self, *, name: str, parent: Group | None, read_only: bool, **metadata: Any) -> None:
         """A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s.
 
-        !!! attention
+        !!! warning
             Do not instantiate directly. Create a new [Group][msl.io.node.Group] using
             [create_group][msl.io.node.Group.create_group].
 
@@ -491,7 +491,7 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
             name: The name of this [Group][msl.io.node.Group]. Uses a naming convention analogous to UNIX
                 file systems where each [Group][msl.io.node.Group] can be thought
                 of as a directory and where every subdirectory is separated from its
-                parent directory by the `"/"` character.
+                parent directory by the `/` character.
             parent: The parent to this [Group][msl.io.node.Group].
             read_only: Whether the [Group][msl.io.node.Group] is initialised in read-only mode.
             metadata: All additional keyword arguments are used to create the
@@ -679,17 +679,17 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         Args:
             exclude: A regular-expression pattern to use to exclude [Dataset][msl.io.node.Dataset]s.
                 The [re.search][] function is used to compare the `exclude` pattern
-                with the `name` of each [Dataset][msl.io.node.Dataset]. If
+                with the [name][msl.io.node.Dataset.name] of each [Dataset][msl.io.node.Dataset]. If
                 there is a match, the [Dataset][msl.io.node.Dataset] is not yielded.
             include: A regular-expression pattern to use to include [Dataset][msl.io.node.Dataset]s.
                 The [re.search][] function is used to compare the `include` pattern
-                with the `name` of each [Dataset][msl.io.node.Dataset]. If
+                with the [name][msl.io.node.Dataset.name] of each [Dataset][msl.io.node.Dataset]. If
                 there is a match, the [Dataset][msl.io.node.Dataset] is yielded.
             flags: Regular-expression flags that are passed to [re.compile][].
 
         Yields:
             The filtered [Dataset][msl.io.node.Dataset]s based on the `exclude` and `include` patterns.
-            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
+                The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
         """
         e = None if exclude is None else re.compile(exclude, flags=flags)
         i = None if include is None else re.compile(include, flags=flags)
@@ -706,18 +706,18 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
 
         Args:
             exclude: A regular-expression pattern to use to exclude sub-[Group][msl.io.node.Group]s.
-                The [re.search][] function is used to compare the `exclude` pattern with the `name`
-                of each sub-[Group][msl.io.node.Group]. If there is a match, the sub-[Group][msl.io.node.Group]
-                is not yielded.
+                The [re.search][] function is used to compare the `exclude` pattern with the
+                [name][msl.io.node.Group.name] of each sub-[Group][msl.io.node.Group]. If there is a match,
+                the sub-[Group][msl.io.node.Group] is not yielded.
             include: A regular-expression pattern to use to include sub-[Group][msl.io.node.Group]s.
-                The [re.search][] function is used to compare the `include` pattern with the `name` of each
-                sub-[Group][msl.io.node.Group]. If there is a match, the sub-[Group][msl.io.node.Group]
-                is yielded.
+                The [re.search][] function is used to compare the `include` pattern with the
+                [name][msl.io.node.Group.name] of each sub-[Group][msl.io.node.Group]. If there is a match,
+                the sub-[Group][msl.io.node.Group] is yielded.
             flags: Regular-expression flags that are passed to [re.compile][].
 
         Yields:
             The filtered sub-[Group][msl.io.node.Group]s based on the `exclude` and `include` patterns.
-            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
+                The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.
         """
         e = None if exclude is None else re.compile(exclude, flags=flags)
         i = None if include is None else re.compile(include, flags=flags)
@@ -932,7 +932,7 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
                 If `None`, uses _asctime_, _levelname_, _name_, and _message_.
             logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.node.DatasetLogging] object
-                will be added to. If `None`, it is added to the `root` [Logger][logging.Logger].
+                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] in.
                 If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.
@@ -941,10 +941,10 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
                 to the [Dataset][msl.io.node.Dataset]. This guarantees that the size of the
                 [Dataset][msl.io.node.Dataset] is equal to the number of
                 [logging records][log-record] that were added to it. However, this behaviour
-                can decrease the performance if many [logging records][log-record] are
+                can decrease performance if many [logging records][log-record] are
                 added often because a copy of the data in the [Dataset][msl.io.node.Dataset] is
                 created for each [logging record][log-record] that is added. You can improve
-                the performance by specifying an initial size of the [Dataset][msl.io.node.Dataset]
+                performance by specifying an initial size of the [Dataset][msl.io.node.Dataset]
                 by including a `shape` or a `size` keyword argument. This will also automatically
                 create additional empty rows in the [Dataset][msl.io.node.Dataset], that is
                 proportional to the size of the [Dataset][msl.io.node.Dataset], if the size of the
@@ -958,27 +958,36 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
             The [DatasetLogging][msl.io.node.DatasetLogging] that was created.
 
         **Examples:**
+        ```pycon
         >>> import logging
         >>> from msl.io import JSONWriter
-        >>> logger = logging.getLogger('my_logger')
+        >>> logger = logging.getLogger("my_logger")
         >>> root = JSONWriter()
-        >>> log_dset = root.create_dataset_logging('log')
-        >>> logger.info('hi')
-        >>> logger.error('cannot do that!')
+        >>> log_dset = root.create_dataset_logging("log")
+        >>> logger.info("hi")
+        >>> logger.error("cannot do that!")
         >>> log_dset.data
         array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
               dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
 
-        Get all ``ERROR`` :ref:`logging records <log-record>`
+        ```
 
-        >>> errors = log_dset[log_dset['levelname'] == 'ERROR']
+        Get all `ERROR` [logging records][log-record]
+
+        ```pycon
+        >>> errors = log_dset[log_dset["levelname"] == "ERROR"]
         >>> print(errors)
         [(..., 'ERROR', 'my_logger', 'cannot do that!')]
 
-        Stop the :class:`~msl.io.node.DatasetLogging` object
-        from receiving :ref:`logging records <log-record>`
+        ```
 
+        Stop the [DatasetLogging][msl.io.node.DatasetLogging] instance
+        from receiving [logging records][log-record]
+
+        ```pycon
         >>> log_dset.remove_handler()
+
+        ```
         """
         read_only, metadata = self._check(read_only=False, **kwargs)
         name, parent = self._create_ancestors(name, read_only=read_only)
@@ -1010,13 +1019,14 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         otherwise it is created and then returned. Automatically creates the ancestor [Group][msl.io.node.Group]s
         if they do not exist.
 
+        Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
             level: The [logging level][levels] to use.
             attributes: The [attribute names][logrecord-attributes] to include in the
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
                 If `None`, uses _asctime_, _levelname_, _name_, and _message_.
             logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.node.DatasetLogging] object
-                will be added to. If `None`, it is added to the `root` [Logger][logging.Logger].
+                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] in.
                 If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.
@@ -1025,10 +1035,10 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
                 to the [Dataset][msl.io.node.Dataset]. This guarantees that the size of the
                 [Dataset][msl.io.node.Dataset] is equal to the number of
                 [logging records][log-record] that were added to it. However, this behaviour
-                can decrease the performance if many [logging records][log-record] are
+                can decrease performance if many [logging records][log-record] are
                 added often because a copy of the data in the [Dataset][msl.io.node.Dataset] is
                 created for each [logging record][log-record] that is added. You can improve
-                the performance by specifying an initial size of the [Dataset][msl.io.node.Dataset]
+                performance by specifying an initial size of the [Dataset][msl.io.node.Dataset]
                 by including a `shape` or a `size` keyword argument. This will also automatically
                 create additional empty rows in the [Dataset][msl.io.node.Dataset], that is
                 proportional to the size of the [Dataset][msl.io.node.Dataset], if the size of the
@@ -1104,7 +1114,7 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
 
         Returns:
             The [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] that was removed or `None` if
-            there was no [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] with the specified `name`.
+                there was no [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] with the specified `name`.
         """
         name = "/" + name.strip("/")
         return self.pop(name, None)

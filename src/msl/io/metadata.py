@@ -41,7 +41,7 @@ class Metadata(FreezableMap[Any]):  # noqa: PLW1641
     def __init__(self, *, read_only: bool, node_name: str, **kwargs: Any) -> None:
         """Provides information about data.
 
-        !!! attention
+        !!! warning
             Do not instantiate directly. A [Metadata][msl.io.metadata.Metadata] object is created automatically
             when [create_dataset][msl.io.node.Group.create_dataset] or
             [create_group][msl.io.node.Group.create_group] is called.
@@ -49,7 +49,7 @@ class Metadata(FreezableMap[Any]):  # noqa: PLW1641
         Args:
             read_only: Whether [Metadata][msl.io.metadata.Metadata] is initialised in read-only mode.
             node_name: The name of the node that the [Metadata][msl.io.metadata.Metadata] is associated with.
-            kwargs: Key-value pairs that will be used to create the mapping.
+            kwargs: All other keyword arguments are used to create the mapping.
         """
         meta = {k: _value(value=v, read_only=read_only, name=node_name) for k, v in kwargs.items()}
         super().__init__(read_only=read_only, **meta)
