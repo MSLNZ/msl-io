@@ -1,6 +1,6 @@
 # Groups {: #msl-io-group}
 
-A [Group][msl.io.node.Group] is analogous to a directory of the file system used by an operating system. A [Group][msl.io.node.Group] can contain any number of sub-[Group][msl.io.node.Group]s (i.e., sub-directories) and it can contain any number of [Dataset][msl-io-dataset]s. It uses a naming convention analogous to UNIX file systems where every sub-directory is separated from its parent directory by the `/` character.
+A [Group][msl.io.node.Group] is analogous to a *directory* in the file system used by an operating system. A [Group][msl.io.node.Group] can contain zero or more sub-[Group][msl.io.node.Group]s (sub-directories) and it can contain zero or more [Dataset][msl-io-dataset]s. It uses a naming convention analogous to UNIX file systems where every sub-directory is separated from its parent directory by the `/` character.
 
 From a Python perspective, a [Group][msl.io.node.Group] operates like a [dict][]. The *keys* are the names of [Group][msl.io.node.Group] members, and the *values* are the members themselves ([Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] objects).
 
@@ -24,13 +24,19 @@ From a Python perspective, a [Group][msl.io.node.Group] operates like a [dict][]
 
 ```
 
-A [Group][msl.io.node.Group] can either be in read-only mode or in editable (writeable) mode
+A [Group][msl.io.node.Group] can either be in read-only mode
 
 ```pycon
 >>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
 Traceback (most recent call last):
    ...
 ValueError: Cannot modify <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>. It is accessed in read-only mode.
+
+```
+
+or in read-write mode
+
+```pycon
 >>> b.read_only = False
 >>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
 <Dataset '/a/b/dset_b' shape=(4,) dtype='<f8' (0 metadata)>

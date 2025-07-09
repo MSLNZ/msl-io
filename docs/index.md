@@ -67,7 +67,7 @@ Finally, we write the file
 
 ### Read a file {: #msl-io-read }
 
-The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] has been [register][msl.io.base.register]ed to read the file a [Reader][msl.io.base.Root] instance is returned. We will now read the file that we created above.
+The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] has been [register][msl.io.base.register]ed to read the file, a [Reader][msl.io.base.Root] instance is returned. We will now read the file that we created above
 
 ```pycon
 >>> from msl.io import read
@@ -129,8 +129,6 @@ You can access the [Metadata][msl.io.metadata.Metadata] of any item through the 
 You can access values of the [Metadata][msl.io.metadata.Metadata] as attributes
 
 ```pycon
->>> print(root.metadata.one)
-1
 >>> dataset2.metadata.three
 3
 
@@ -139,8 +137,6 @@ You can access values of the [Metadata][msl.io.metadata.Metadata] as attributes
 or as keys
 
 ```pycon
->>> print(root.metadata["two"])
-2
 >>> dataset2.metadata["three"]
 3
 
@@ -159,14 +155,14 @@ is '/my_group/dataset2' in read-only mode? True
 
 ```
 
-If you want to edit the [Metadata][msl.io.metadata.Metadata] of `root`, or modify any [Group][msl.io.node.Group]s or [Dataset][msl.io.node.Dataset]s in `root`, then you must first set the item to be editable. Setting the read-only mode of `root` propagates that mode to all items within `root`. For example,
+If you want to edit the [Metadata][msl.io.metadata.Metadata] of `root`, or modify any [Group][msl.io.node.Group]s or [Dataset][msl.io.node.Dataset]s in `root`, then you must first set the item to be writeable. Setting the read-only mode of `root` propagates that mode to all items within `root`. For example,
 
 ```pycon
 >>> root.read_only = False
 
 ```
 
-will make `root` and all sub-[Group][msl.io.node.Group]s and all sub-[Dataset][msl.io.node.Dataset]s within `root` to be editable
+will make `root` and all sub-[Group][msl.io.node.Group]s and all sub-[Dataset][msl.io.node.Dataset]s within `root` to be writeable
 
 ```pycon
 >>> for name, node in root.items():
@@ -177,14 +173,14 @@ is '/my_group/dataset2' in read-only mode? False
 
 ```
 
-You can make only a specific item (and its descendants) editable as well. You can make `my_group` and `dataset2` to be in read-only mode by the following (recall that `root` behaves like a Python [dict][])
+You can make only a specific item (and its descendants) writeable as well. You can make `my_group` and `dataset2` to be in read-only mode by the following (recall that `root` behaves like a Python [dict][])
 
 ```pycon
 >>> root["my_group"].read_only = True
 
 ```
 
-and this will keep `root` and `dataset1` in editable mode, but change `my_group` and `dataset2` to be in read-only mode
+and this will keep `root` and `dataset1` in read-write mode, but change `my_group` and `dataset2` to be in read-only mode
 
 ```pycon
 >>> root.read_only
@@ -223,11 +219,11 @@ You can convert between file formats using any of the [Writers][msl-io-writers].
 
 ### Read data from a table
 
-The [read_table][msl.io.read_table] function will read a table from a file. A *table* has the following properties:
+The [read_table][msl.io.read_table] function will read a tabular data from a file. A *table* has the following properties:
 
-1. the first row is a header
-2. all rows have the same number of columns
-3. all values in a column have the same data type.
+1. The first row is a header
+2. All rows have the same number of columns
+3. All values in a column have the same data type
 
 The returned item is a [Dataset][msl.io.node.Dataset] with the header provided as [metadata][msl.io.node.Dataset.metadata].
 

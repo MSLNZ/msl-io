@@ -1,11 +1,10 @@
 # Datasets {: #msl-io-dataset }
 
-A [Dataset][msl.io.node.Dataset] is analogous to a file of the file system used by an operating system and it is contained within a [Group][msl-io-group].
+A [Dataset][msl.io.node.Dataset] is analogous to a *file* in the file system used by an operating system and it is contained within a [Group][msl-io-group] (analogous to a *directory*).
 
-A [Dataset][msl.io.node.Dataset] operates as a [numpy.ndarray][]{:target="_blank"} with [Metadata][msl-io-metadata] and it can be accessed in read-only mode or in editable (writeable) mode.
+A [Dataset][msl.io.node.Dataset] operates as a [numpy.ndarray][]{:target="_blank"} with [Metadata][msl-io-metadata] and it can be accessed in read-only mode or in read-write mode.
 
-Since a [Dataset][msl.io.node.Dataset] is a [numpy.ndarray][]{:target="_blank"} the attributes of an [ndarray][numpy.ndarray]{:target="_blank"} are also valid for a [Dataset][msl.io.node.Dataset]. For example, suppose
-`my_dataset` is a [Dataset][msl.io.node.Dataset]
+Since a [Dataset][msl.io.node.Dataset] is a [numpy.ndarray][]{:target="_blank"}, the attributes of an [ndarray][numpy.ndarray]{:target="_blank"} are also valid for a [Dataset][msl.io.node.Dataset]. For example, suppose `my_dataset` is a [Dataset][msl.io.node.Dataset]
 
 <!-- invisible-code-block: pycon
 >>> from msl.io import JSONWriter
@@ -68,7 +67,7 @@ or as attributes
 
 ```
 
-Depending on the [dtype][numpy.dtype]{:target="_blank"} that was used to create the [ndarray][numpy.ndarray]{:target="_blank"} for the [Dataset][msl.io.node.Dataset], the *field names* can also be accessed as field attributes. For example, you can access the fields in *my_dataset* as keys
+Depending on the [dtype][numpy.dtype]{:target="_blank"} that was used to create the [ndarray][numpy.ndarray]{:target="_blank"} for the [Dataset][msl.io.node.Dataset], the *field names* can also be accessed as class attributes. For example, you can access the fields in *my_dataset* as keys
 
 ```pycon
 >>> my_dataset["x"]
@@ -85,7 +84,7 @@ array([0.23, 1.86, 3.44, 5.91, 8.73])
 ```
 
 !!! note
-    the returned object is an [ndarray][numpy.ndarray]{:target="_blank"} and therefore does not contain [Metadata][msl.io.metadata.Metadata].
+    The returned object is an [ndarray][numpy.ndarray]{:target="_blank"} and therefore does not contain [Metadata][msl.io.metadata.Metadata].
 
 See [Accessing Keys as Class Attributes][attribute-key-limitations] for more information.
 
@@ -118,7 +117,7 @@ or index it
 
 ```
 
-Since an [ndarray][numpy.ndarray]{:target="_blank"} is returned, you are responsible for keeping track of the [Metadata][msl-io-metadata] in slicing and indexing operations. For example,
+Since an [ndarray][numpy.ndarray]{:target="_blank"} is returned, you are responsible for keeping track of the [Metadata][msl-io-metadata] in slicing and indexing operations. For example, you can create a new [Dataset][msl.io.node.Dataset] from the subset by calling the [create_dataset][msl.io.node.Group.create_dataset] method
 
 ```pycon
 >>> my_subset = root.create_dataset("my_subset", data=my_dataset[::2], **my_dataset.metadata)
@@ -134,7 +133,9 @@ array([(0.23, 1.27), (3.44, 2.91), (8.73, 0.74)],
 
 ## Arithmetic Operations
 
-Arithmetic operations are valid with a [Dataset][msl.io.node.Dataset]. The returned object is a [Dataset][msl.io.node.Dataset] with all [Metadata][msl.io.metadata.Metadata] copied and the [name][msl.io.node.Dataset.name] attribute updated to represent the operation that was performed
+Arithmetic operations are valid with a [Dataset][msl.io.node.Dataset]. The returned object is a [Dataset][msl.io.node.Dataset] with all [Metadata][msl.io.metadata.Metadata] copied and the [name][msl.io.node.Dataset.name] attribute updated to represent the operation that was performed.
+
+For example, consider a `temperatures` [Dataset][msl.io.node.Dataset]
 
 ```pycon
 >>> temperatures
@@ -146,6 +147,8 @@ array([19.8, 21.1, 20.5])
 
 ```
 
+and you wanted to add `1` to each temperature value, you can do the following
+
 ```pycon
 >>> plus_1 = temperatures + 1
 >>> plus_1
@@ -156,6 +159,9 @@ array([20.8, 22.1, 21.5])
 'C'
 
 ```
+
+!!! note
+    The [name][msl.io.node.Dataset.name] attribute of the `plus_1` [Dataset][msl.io.node.Dataset] became `add(/temperatures)`.
 
 If the arithmetic operation involves multiple [Dataset][msl.io.node.Dataset]s then the [Metadata][msl.io.metadata.Metadata] from the [Dataset][msl.io.node.Dataset]s are merged into the resultant [Dataset][msl.io.node.Dataset]. Thus, if the [Metadata][msl.io.metadata.Metadata] for the individual [Dataset][msl.io.node.Dataset]s have the same *keys* then only the key-value pair in the *right-most* [Dataset][msl.io.node.Dataset] in the operation will exist after the merger.
 
@@ -205,5 +211,5 @@ array([5., 7., 9.])
 
 The [DatasetLogging][msl.io.node.DatasetLogging] class is a custom [Dataset][msl.io.node.Dataset] that is also a [Handler][logging.Handler]{:target="_blank"} which automatically appends [logging][]{:target="_blank"} records to the [Dataset][msl.io.node.Dataset]. See [create_dataset_logging][msl.io.node.Group.create_dataset_logging] for more details.
 
-!!! attention
-    When a file is [read][msl.io.read], it will load an object that was once a [DatasetLogging][msl.io.node.DatasetLogging] as a [Dataset][msl.io.node.Dataset] (i.e., it will not be associated with new [logging][]{:target="_blank"} records that are emitted). If you want to convert the [Dataset][msl.io.node.Dataset] to be a [DatasetLogging][msl.io.node.DatasetLogging] item again, so that [logging][]{:target="_blank"} records are once again appended to it when emitted, then you must call the [require_dataset_logging][msl.io.node.Group.require_dataset_logging] method with the *name* argument equal to the value of *name* of the [Dataset][msl.io.node.Dataset].
+!!! note
+    When a file is [read][msl.io.read], it will load an object that was once a [DatasetLogging][msl.io.node.DatasetLogging] as a [Dataset][msl.io.node.Dataset] (i.e., it will not be associated with new [logging][]{:target="_blank"} records that are emitted). If you want to convert the [Dataset][msl.io.node.Dataset] to be a [DatasetLogging][msl.io.node.DatasetLogging] item again, so that [logging][]{:target="_blank"} records are once again appended to it when emitted, then you must call the [require_dataset_logging][msl.io.node.Group.require_dataset_logging] method with the *name* argument equal to the value of the [name][msl.io.node.Dataset.name] attribute of the [Dataset][msl.io.node.Dataset].

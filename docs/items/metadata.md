@@ -53,6 +53,12 @@ However, you can allow `root` to be modified by setting the [read_only][msl.io.n
 
 ```pycon
 >>> root.metadata.read_only = False
+
+```
+
+and then you can modify the values
+
+```pycon
 >>> root.metadata.voltage = 7.64
 >>> root.add_metadata(current=10.3, current_unit="mA")
 >>> root.metadata
