@@ -37,14 +37,14 @@ then we can add [Metadata][msl.io.metadata.Metadata] to the `h5` [Root][msl.io.b
 create a [Dataset][msl.io.node.Dataset],
 
 ```pycon
->>> dataset1 = h5.create_dataset('dataset1', data=[1, 2, 3, 4])
+>>> dataset1 = h5.create_dataset("dataset1", data=[1, 2, 3, 4])
 
 ```
 
 create a [Group][msl.io.node.Group],
 
 ```pycon
->>> my_group = h5.create_group('my_group')
+>>> my_group = h5.create_group("my_group")
 
 ```
 
@@ -90,7 +90,7 @@ Since the `root` item is a [Group][msl.io.node.Group] instance (which operates l
 
 ```pycon
 >>> for name, node in root.items():
-...     print('{!r} -- {!r}'.format(name, node))
+...     print(f"{name!r} -- {node!r}")
 '/dataset1' -- <Dataset '/dataset1' shape=(4,) dtype='<f8' (0 metadata)>
 '/my_group' -- <Group '/my_group' (0 groups, 1 datasets, 0 metadata)>
 '/my_group/dataset2' -- <Dataset '/my_group/dataset2' shape=(2, 2) dtype='<f8' (1 metadata)>

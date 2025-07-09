@@ -2110,7 +2110,7 @@ class Sheet(BaseObject):
                 cchStmCache, lem, rgbHashParam, cchName), file=self.logfile)
 
     def __repr__(self):
-        return "Sheet {:>2}:<{}>".format(self.number, self.name)
+        return f"Sheet {self.number:>2}:<{self.name}>"
 
 
 class MSODrawing(BaseObject):

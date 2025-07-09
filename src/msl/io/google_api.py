@@ -1152,7 +1152,7 @@ class GSheets(GoogleAPI):
                             typ = GCellType.BOOLEAN
                         elif "errorValue" in effective_value:
                             msg = effective_value["errorValue"]["message"]
-                            value = "{} ({})".format(col["formattedValue"], msg)
+                            value = f"{col['formattedValue']} ({msg})"
                             typ = GCellType.ERROR
                         else:
                             value = formatted

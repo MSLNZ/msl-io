@@ -132,7 +132,7 @@ class JSONWriter(Writer):
         if "cls" not in kwargs:
             kwargs["cls"] = _NumpyEncoder
 
-        # header => '#File created with: MSL {} version 1.0\n'.format(self.__class__.__name__)
+        # header => f"#File created with: MSL {self.__class__.__name__} version 1.0\n"
         #
         # Don't use the above definition of 'header' since JSONWriter could be sub-classed
         # and therefore the value of self.__class__.__name__ would change. The
