@@ -38,10 +38,10 @@ from .constants import MSL_IO_DIR
 if TYPE_CHECKING:
     import sys
     from collections.abc import Iterable, MutableSequence
-    from io import BufferedWriter, BytesIO
+    from io import BufferedWriter
     from typing import Any, Callable, Literal
 
-    from .types import MediaDownloadProgress, PathLike
+    from .types import FileLikeWrite, MediaDownloadProgress, PathLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11
@@ -468,7 +468,7 @@ class GDrive(GoogleAPI):
         self,
         file_id: str,
         *,
-        save_to: PathLike | BufferedWriter | BytesIO | None = None,
+        save_to: PathLike | FileLikeWrite[bytes] | None = None,
         num_retries: int = 0,
         chunk_size: int = DEFAULT_CHUNK_SIZE,
         callback: Callable[[MediaDownloadProgress], None] | None = None,
@@ -501,7 +501,7 @@ class GDrive(GoogleAPI):
         ).execute()
         filename: str = response["name"]
 
-        file: BufferedWriter | BytesIO
+        file: BufferedWriter | FileLikeWrite[bytes]
         if save_to is None:
             file = Path(filename).open("wb")  # noqa: SIM115
         elif isinstance(save_to, (str, bytes, os.PathLike)):
