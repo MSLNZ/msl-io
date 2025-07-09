@@ -12,7 +12,9 @@ except ImportError:
 from msl.io.base import Reader, register
 
 if TYPE_CHECKING:
-    from typing import IO, Any
+    from typing import Any
+
+    from msl.io.types import ReadLike
 
 
 @register
@@ -28,7 +30,7 @@ class HDF5Reader(Reader):
     """
 
     @staticmethod
-    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:  # noqa: ARG004
+    def can_read(file: ReadLike | str, **kwargs: Any) -> bool:  # noqa: ARG004
         r"""Checks if the file has the [HDF5 signature]{:target="_blank"}.
 
         [HDF5 signature]: https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t11.html#subsec_fmt11_boot_super

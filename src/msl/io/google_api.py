@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from io import BufferedWriter, BytesIO
     from typing import Any, Callable, Literal
 
-    from ._types import MediaDownloadProgress, PathLike
+    from .types import MediaDownloadProgress, PathLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11

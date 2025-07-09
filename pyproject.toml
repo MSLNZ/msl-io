@@ -100,7 +100,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
-    "--ignore=src/msl/io/_types.py",
+    "--ignore=src/msl/io/types.py",
     "--ignore=tests/create_google_api_tokens.py",
 ]
 consider_namespace_packages = true

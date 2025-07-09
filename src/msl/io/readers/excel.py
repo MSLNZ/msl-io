@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     import sys
     from typing import Any
 
-    from .._types import PathLike  # noqa: TID252
+    from ..types import PathLike  # noqa: TID252
     from ._xlrd import Book
     from ._xlrd.sheet import Sheet
 

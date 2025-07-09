@@ -17,16 +17,16 @@ from .google_api import GMail
 if TYPE_CHECKING:
     from collections.abc import Generator, Sequence
     from subprocess import Popen
-    from typing import IO, Any, AnyStr, Literal
+    from typing import Any, AnyStr, Literal
 
-    from ._types import FileLike, PathLike, SupportsRead
+    from .types import FileLikeRead, PathLike, ReadLike, SupportsRead, WriteLike
 
 
 logger = logging.getLogger(__package__)
 
 
 def checksum(
-    file: PathLike | FileLike[bytes], *, algorithm: str = "sha256", chunk_size: int = 65536, shake_length: int = 256
+    file: PathLike | FileLikeRead[bytes], *, algorithm: str = "sha256", chunk_size: int = 65536, shake_length: int = 256
 ) -> str:
     """Get the checksum of a file.
 
@@ -47,7 +47,7 @@ def checksum(
     """
     import hashlib  # noqa: PLC0415
 
-    def _read(fp: FileLike[bytes]) -> None:
+    def _read(fp: FileLikeRead[bytes]) -> None:
         # read in chucks to avoid loading the entire file at once
         while True:
             data = fp.read(chunk_size)
@@ -437,7 +437,7 @@ def _prepare_email(  # noqa: C901, PLR0912
     )
 
 
-def get_basename(obj: PathLike | IO[str] | IO[bytes]) -> str:
+def get_basename(obj: PathLike | ReadLike | WriteLike) -> str:
     """Get the basename (the final path component) of a file.
 
     Args:

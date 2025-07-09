@@ -15,11 +15,11 @@ from .readers import ExcelReader, GSheetsReader
 from .utils import get_basename
 
 if TYPE_CHECKING:
-    from typing import IO, Any
+    from typing import Any
 
     from numpy.typing import DTypeLike
 
-    from ._types import PathLike
+    from .types import PathLike, ReadLike
 
 _spreadsheet_top_left_regex = re.compile(r"^([A-Z]+)(\d+)$")
 _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
@@ -45,7 +45,7 @@ You can customize your own map by adding key-value pairs
 """
 
 
-def read_table_text(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
+def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     """Read a data table from a text-based file.
 
     The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
@@ -103,7 +103,7 @@ def read_table_text(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Data
 
 
 def read_table_excel(
-    file: IO[bytes] | IO[str] | PathLike,
+    file: PathLike | ReadLike,
     *,
     cells: str | None = None,
     sheet: str | None = None,
@@ -153,7 +153,7 @@ def read_table_excel(
 
 
 def read_table_gsheets(
-    file: IO[bytes] | IO[str] | PathLike,
+    file: PathLike | ReadLike,
     cells: str | None = None,
     sheet: str | None = None,
     *,
@@ -229,7 +229,7 @@ def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype
     )
 
 
-def read_table(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Dataset:
+def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     """Read data in a table format from a file.
 
     A *table* has the following properties:

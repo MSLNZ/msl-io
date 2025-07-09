@@ -9,9 +9,10 @@ import numpy as np
 from msl.io.base import Reader, register
 
 if TYPE_CHECKING:
-    from typing import IO, Any
+    from typing import Any
 
     from msl.io.node import Group
+    from msl.io.types import ReadLike
 
 
 @register
@@ -19,7 +20,7 @@ class JSONReader(Reader):
     """Read a file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter]."""
 
     @staticmethod
-    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
+    def can_read(file: ReadLike | str, **kwargs: Any) -> bool:
         """Checks if the file was created by [JSONWriter][msl.io.writers.json_.JSONWriter].
 
         Args:

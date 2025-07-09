@@ -21,7 +21,9 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
     from msl.io import Reader, register
 
     if TYPE_CHECKING:
-        from typing import IO, Any
+        from typing import Any
+
+        from msl.io.types import ReadLike
 
 
     # Register your Reader so that msl-io knows that your Reader exists
@@ -30,7 +32,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
         """Name your class to be whatever you want, i.e., change MyReader."""
 
         @staticmethod
-        def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
+        def can_read(file: ReadLike | str, **kwargs: Any) -> bool:
             """This method answers the following question:
 
             Given a file-like object (e.g., a file stream or a buffered reader)

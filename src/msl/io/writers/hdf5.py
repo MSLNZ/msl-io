@@ -17,9 +17,9 @@ from msl.io.utils import is_file_readable
 
 if TYPE_CHECKING:
     from io import BufferedIOBase
-    from typing import IO, Any
+    from typing import Any
 
-    from msl.io._types import PathLike
+    from msl.io.types import PathLike, WriteLike
 
 
 class HDF5Writer(Writer):
@@ -40,13 +40,15 @@ class HDF5Writer(Writer):
     """
 
     def write(  # noqa: C901, PLR0912, PLR0915
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
+        self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any
     ) -> None:
         """Write to a [HDF5](https://www.hdfgroup.org/){:target="_blank"} file.
 
         Args:
             file: The file to write a *root* to. If `None` then uses the value of
                 `file` that was specified when [HDF5Writer][msl.io.writers.hdf5.HDF5Writer] was instantiated.
+                If a file-like object, it must be open for writing in binary I/O and it must have `read`, `write`,
+                `seek`, `tell`, `truncate` and `flush` methods.
             root: Write `root` in [HDF5](https://www.hdfgroup.org/){:target="_blank"} format.
                 If `None` then write the [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s
                 in the Writer instance. This argument is useful when converting between different file formats.

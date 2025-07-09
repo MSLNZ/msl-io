@@ -14,10 +14,10 @@ from msl.io.utils import is_file_readable
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    from typing import IO, Any, Callable
+    from typing import Any, Callable
 
-    from msl.io._types import PathLike
     from msl.io.node import Dataset
+    from msl.io.types import PathLike, WriteLike
 
 
 class JSONWriter(Writer):
@@ -36,7 +36,7 @@ class JSONWriter(Writer):
     """
 
     def write(  # noqa: C901, PLR0912, PLR0915
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
+        self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any
     ) -> None:
         """Write to a [JSON](https://www.json.org/){:target="_blank"} file.
 
@@ -149,7 +149,7 @@ class JSONWriter(Writer):
             _ = file.write(header.encode(encoding))  # pyright: ignore[reportArgumentType]
             _ = file.write(json.dumps(dict_, **kwargs).encode(encoding))  # pyright: ignore[reportArgumentType]
         else:
-            _ = file.write(header)  # type: ignore[call-overload]  # pyright: ignore[reportArgumentType, reportCallIssue, reportUnknownVariableType]
+            _ = file.write(header)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
             json.dump(dict_, file, **kwargs)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
 

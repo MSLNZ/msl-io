@@ -18,17 +18,17 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
     from msl.io import Writer
 
     if TYPE_CHECKING:
-        from typing import IO, Any
+        from typing import Any
 
         from msl.io import Group
-        from msl.io._types import PathLike
+        from msl.io.types import PathLike, WriteLike
 
 
     class MyWriter(Writer):
         """Name your class to be whatever you want, i.e., change MyWriter."""
 
         def write(
-            self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
+            self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any
         ) -> None:
             """Implement your write method with the above signature.
 

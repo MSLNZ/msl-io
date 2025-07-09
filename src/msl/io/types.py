@@ -7,7 +7,7 @@ import array
 import mmap
 import os
 import sys
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from typing import Any, Protocol, SupportsIndex, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 from numpy import generic
@@ -41,21 +41,70 @@ ToIndex = Union[SupportsIndex, slice, EllipsisType, None]  # pyright: ignore[rep
 ToIndices = Union[ToIndex, tuple[ToIndex, ...]]  # pyright: ignore[reportDeprecated]
 """Anything that can be used as the `key` for [numpy.ndarray.__setitem__][]{:target="_blank"}."""
 
-_T_co = TypeVar("_T_co", str, bytes, covariant=True)
+T_co = TypeVar("T_co", str, bytes, covariant=True)
+T_contra = TypeVar("T_contra", str, bytes, contravariant=True)
 
 
-class FileLike(Protocol[_T_co]):
-    """A [file-like object][]{:target="_blank"} that has `read`, `tell` and `seek` methods."""
+class FileLikeRead(Protocol[T_co]):
+    """A [file-like object][]{:target="_blank"} for reading."""
 
-    def read(self, size: int | None = -1, /) -> _T_co: ...
-    def tell(self) -> int: ...
-    def seek(self, offset: int, whence: int = 0, /) -> int: ...
+    def __iter__(self) -> Iterator[T_co]:
+        """Iterate lines from the stream."""
+        ...
+
+    def __next__(self) -> T_co:
+        """Returns the next iterator item from the stream."""
+        ...
+
+    @property
+    def name(self) -> Any:
+        """File name."""
+        ...
+
+    def read(self, size: int | None = -1, /) -> T_co:
+        """Read from the stream."""
+        ...
+
+    def readline(self) -> T_co:
+        """Read a line from the stream."""
+        ...
+
+    def seek(self, offset: int, whence: int = 0, /) -> int:
+        """Change the stream position to the given byte offset."""
+        ...
+
+    def tell(self) -> int:
+        """Returns the current stream position."""
+        ...
 
 
-class SupportsRead(Protocol[_T_co]):
+ReadLike = Union[FileLikeRead[str], FileLikeRead[bytes]]  # pyright: ignore[reportDeprecated]
+"""A [file-like object][]{:target="_blank"} for reading [str][]{:target="_blank"} or [bytes][]{:target="_blank"}."""
+
+
+class FileLikeWrite(Protocol[T_contra]):
+    """A [file-like object][]{:target="_blank"} for writing."""
+
+    @property
+    def name(self) -> Any:
+        """File name."""
+        ...
+
+    def write(self, b: T_contra, /) -> int:
+        """Write to the stream."""
+        ...
+
+
+WriteLike = Union[FileLikeWrite[str], FileLikeWrite[bytes]]  # pyright: ignore[reportDeprecated]
+"""A [file-like object][]{:target="_blank"} for writing [str][]{:target="_blank"} or [bytes][]{:target="_blank"}."""
+
+
+class SupportsRead(Protocol[T_co]):
     """A [file-like object][]{:target="_blank"} that has a `read` method."""
 
-    def read(self, size: int | None = -1, /) -> _T_co: ...
+    def read(self, size: int | None = -1, /) -> T_co:
+        """Read from the stream."""
+        ...
 
 
 class MediaDownloadProgress(Protocol):

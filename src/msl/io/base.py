@@ -13,9 +13,9 @@ from .utils import get_basename, is_file_readable
 
 if TYPE_CHECKING:
     import sys
-    from typing import IO, Any, Literal
+    from typing import Any, Literal
 
-    from ._types import PathLike
+    from .types import FileLikeRead, PathLike, ReadLike, WriteLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11
@@ -33,7 +33,11 @@ logger = logging.getLogger(__package__)
 class Root(Group):
     """The root [Group][msl.io.node.Group]."""
 
-    def __init__(self, file: IO[str] | IO[bytes] | PathLike | None, **metadata: Any) -> None:
+    def __init__(
+        self,
+        file: PathLike | ReadLike | WriteLike | None,
+        **metadata: Any,
+    ) -> None:
         """The root [Group][msl.io.node.Group].
 
         Args:
@@ -41,7 +45,7 @@ class Root(Group):
             metadata: All keyword arguments are used as [Metadata][msl.io.metadata.Metadata].
         """
         super().__init__(name="/", parent=None, read_only=False, **metadata)
-        self._root_file: IO[str] | IO[bytes] | PathLike | None = file
+        self._root_file: PathLike | ReadLike | WriteLike | None = file
 
     def __repr__(self) -> str:
         """Returns the string representation of the Root."""
@@ -68,7 +72,7 @@ class Root(Group):
 class Writer(Root, ABC):
     """Base class for an abstract Writer."""
 
-    def __init__(self, file: IO[str] | IO[bytes] | PathLike | None = None, **metadata: Any) -> None:
+    def __init__(self, file: PathLike | WriteLike | None = None, **metadata: Any) -> None:
         """Base class for an abstract Writer.
 
         Args:
@@ -76,12 +80,12 @@ class Writer(Root, ABC):
             metadata: All keyword arguments are used as [Metadata][msl.io.metadata.Metadata].
         """
         super().__init__(file, **metadata)
-        self._file: IO[str] | IO[bytes] | PathLike | None = file
+        self._file: PathLike | WriteLike | None = file
         self._context_kwargs: dict[str, Any] = {}
 
     @property
-    def file(self) -> IO[str] | IO[bytes] | PathLike | None:
-        """IO[str] | IO[bytes] | PathLike | None &mdash; The file object associated with the [Writer][msl.io.base.Writer]."""  # noqa: E501
+    def file(self) -> PathLike | WriteLike | None:
+        """[PathLike][msl.io.types.PathLike] | [WriteLike][msl.io.types.WriteLike] | None &mdash; The file object associated with the [Writer][msl.io.base.Writer]."""  # noqa: E501
         return self._file
 
     def set_root(self, root: Group) -> None:
@@ -116,9 +120,7 @@ class Writer(Root, ABC):
         self._context_kwargs.update(**kwargs)
 
     @abstractmethod
-    def write(
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, root: Group | None = None, **kwargs: Any
-    ) -> None:
+    def write(self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any) -> None:
         """Write to a file.
 
         !!! important
@@ -133,7 +135,11 @@ class Writer(Root, ABC):
         """
 
     def save(
-        self, file: IO[str] | IO[bytes] | PathLike | None = None, *, root: Group | None = None, **kwargs: Any
+        self,
+        file: PathLike | WriteLike | None = None,
+        *,
+        root: Group | None = None,
+        **kwargs: Any,
     ) -> None:
         """Alias for [write][msl.io.base.Writer.write]."""
         self.write(file=file, root=root, **kwargs)
@@ -152,18 +158,18 @@ class Writer(Root, ABC):
 class Reader(Root, ABC):
     """Abstract base class for a [Reader][msl-io-readers]."""
 
-    def __init__(self, file: IO[str] | IO[bytes] | str) -> None:
+    def __init__(self, file: ReadLike | str) -> None:
         """Abstract base class for a [Reader][msl-io-readers].
 
         Args:
             file: The file to read.
         """
         super().__init__(file)
-        self._file: IO[str] | IO[bytes] | str = file
+        self._file: ReadLike | str = file
 
     @staticmethod
     @abstractmethod
-    def can_read(file: IO[str] | IO[bytes] | str, **kwargs: Any) -> bool:
+    def can_read(file: ReadLike | str, **kwargs: Any) -> bool:
         """Whether this [Reader][msl.io.base.Reader] can read the file specified by `file`.
 
         !!! important
@@ -179,8 +185,8 @@ class Reader(Root, ABC):
         """
 
     @property
-    def file(self) -> IO[str] | IO[bytes] | str:
-        """IO[str] | IO[bytes] | str &mdash; The file object associated with the [Reader][msl.io.base.Reader]."""
+    def file(self) -> ReadLike | str:
+        """[ReadLike][msl.io.types.ReadLike] | [str][] &mdash; The file object associated with the [Reader][msl.io.base.Reader]."""  # noqa: E501
         return self._file
 
     @abstractmethod
@@ -200,7 +206,7 @@ class Reader(Root, ABC):
     @overload
     @staticmethod
     def get_lines(
-        file: IO[str] | PathLike,
+        file: FileLikeRead[str] | PathLike,
         *lines: int | None,
         remove_empty_lines: bool = False,
         encoding: str | None = "utf-8",
@@ -210,7 +216,7 @@ class Reader(Root, ABC):
     @overload
     @staticmethod
     def get_lines(
-        file: IO[bytes],
+        file: FileLikeRead[bytes],
         *lines: int | None,
         remove_empty_lines: bool = False,
         encoding: str | None = None,
@@ -219,7 +225,7 @@ class Reader(Root, ABC):
 
     @staticmethod
     def get_lines(  # noqa: PLR0912
-        file: IO[bytes] | IO[str] | PathLike,
+        file: PathLike | ReadLike,
         *lines: int | None,
         remove_empty_lines: bool = False,
         encoding: str | None = "utf-8",
@@ -295,7 +301,7 @@ class Reader(Root, ABC):
         return result
 
     @staticmethod
-    def get_bytes(file: IO[bytes] | PathLike, *positions: int | None) -> bytes:  # noqa: C901, PLR0912, PLR0915
+    def get_bytes(file: FileLikeRead[bytes] | PathLike, *positions: int | None) -> bytes:  # noqa: C901, PLR0912, PLR0915
         """Return bytes from a file.
 
         Args:
@@ -382,7 +388,7 @@ class Reader(Root, ABC):
         return data
 
     @staticmethod
-    def get_extension(file: IO[bytes] | IO[str] | PathLike) -> str:
+    def get_extension(file: PathLike | ReadLike | WriteLike) -> str:
         """Return the extension of the file.
 
         Args:
@@ -421,7 +427,7 @@ def register(cls: type[Reader]) -> type[Reader]:
     return append(cls)
 
 
-def read(file: IO[bytes] | IO[str] | PathLike, **kwargs: Any) -> Reader:
+def read(file: PathLike | ReadLike, **kwargs: Any) -> Reader:
     """Read a file that has a [Reader][msl-io-readers] implemented.
 
     Args:

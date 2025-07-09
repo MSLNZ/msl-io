@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import Buffer, ShapeLike, ToIndices
+    from .types import Buffer, ShapeLike, ToIndices
 
 
 class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1641

@@ -1,3 +1,3 @@
 # types
 
-::: msl.io._types
+::: msl.io.types
