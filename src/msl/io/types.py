@@ -45,20 +45,16 @@ T_co = TypeVar("T_co", str, bytes, covariant=True)
 T_contra = TypeVar("T_contra", str, bytes, contravariant=True)
 
 
-class FileLikeRead(Protocol[T_co]):
+class FileLikeRead(Iterator[T_co], Protocol[T_co]):
     """A [file-like object][]{:target="_blank"} for reading."""
-
-    def __iter__(self) -> Iterator[T_co]:
-        """Iterate lines from the stream."""
-        ...
-
-    def __next__(self) -> T_co:
-        """Returns the next iterator item from the stream."""
-        ...
 
     @property
     def name(self) -> Any:
         """File name."""
+        ...
+
+    def close(self) -> None:
+        """Close the stream."""
         ...
 
     def read(self, size: int | None = -1, /) -> T_co:
