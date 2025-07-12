@@ -1191,6 +1191,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#msl.io.tables.read_table_ods" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_table_ods
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.io.tables.read_table_text" class="md-nav__link">
     <span class="md-ellipsis">
       read_table_text
@@ -1318,6 +1327,15 @@
   <a href="#msl.io.tables.read_table_gsheets" class="md-nav__link">
     <span class="md-ellipsis">
       read_table_gsheets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#msl.io.tables.read_table_ods" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_table_ods
     </span>
   </a>
   
@@ -1522,36 +1540,39 @@ Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-inter
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data in a table format from a file.</span>
 
 <span class="sd">    A *table* has the following properties:</span>
@@ -1579,6 +1600,9 @@ Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-inter
     <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.gsheet&quot;</span><span class="p">:</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">))</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">read_table_gsheets</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;.gsheet&quot;</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.ods&quot;</span><span class="p">,</span> <span class="s2">&quot;.fods&quot;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">read_table_ods</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">read_table_text</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2151,6 +2175,259 @@ in the spreadsheet then you do not need to specify the name of the sheet.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">)</span>
 
+    <span class="k">return</span> <span class="n">_spreadsheet_to_dataset</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="msl.io.tables.read_table_ods" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">read_table_ods</span>
+
+
+<a href="#msl.io.tables.read_table_ods" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_table_ods</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">cells</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sheet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">as_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Read a data table from an OpenDocument Spreadsheet.</p>
+<p>The generic way to read any table is with the <a class="autorefs autorefs-internal" title="read_table" href="#msl.io.tables.read_table">read_table</a> function.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>file</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="PathLike
+
+
+  
+      module-attribute
+   (msl.io.types.PathLike)" href="../types/#msl.io.types.PathLike">PathLike</a> | <a class="autorefs autorefs-internal" title="ReadLike
+
+
+  
+      module-attribute
+   (msl.io.types.ReadLike)" href="../types/#msl.io.types.ReadLike">ReadLike</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The file to read.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>cells</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The cells to read. For example, <code>C9</code> will start at cell C9 and
+include all values until the end of the spreadsheet, <code>A:C</code> includes
+all rows in columns A, B and C, and, <code>C9:G20</code> includes values from
+only the specified cells. If not specified then returns all values
+from the specified <code>sheet</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>sheet</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the sheet to read the data from. If there is only one sheet
+in the OpenDocument then you do not need to specify the name of the sheet.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>as_datetime</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>dtype</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The data type(s) to use for the table.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>kwargs</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>All keyword arguments are passed to <a class="autorefs autorefs-internal" title="ODSReader" href="../spreadsheets/#msl.io.readers.ods.ODSReader">ODSReader</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>{}</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Dataset (msl.io.node.Dataset)" href="../node/#msl.io.node.Dataset">Dataset</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The table as a <a class="autorefs autorefs-internal" title="Dataset" href="../node/#msl.io.node.Dataset">Dataset</a>. The header is included in the
+<a class="autorefs autorefs-internal" title="Metadata" href="../metadata/#msl.io.metadata.Metadata">Metadata</a>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/io/tables.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a data table from an OpenDocument Spreadsheet.</span>
+
+<span class="sd">    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: The file to read.</span>
+<span class="sd">        cells: The cells to read. For example, `C9` will start at cell C9 and</span>
+<span class="sd">            include all values until the end of the spreadsheet, `A:C` includes</span>
+<span class="sd">            all rows in columns A, B and C, and, `C9:G20` includes values from</span>
+<span class="sd">            only the specified cells. If not specified then returns all values</span>
+<span class="sd">            from the specified `sheet`.</span>
+<span class="sd">        sheet: The name of the sheet to read the data from. If there is only one sheet</span>
+<span class="sd">            in the OpenDocument then you do not need to specify the name of the sheet.</span>
+<span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
+<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a [str][].</span>
+<span class="sd">        dtype: The data type(s) to use for the table.</span>
+<span class="sd">        kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The table as a [Dataset][msl.io.node.Dataset]. The header is included in the</span>
+<span class="sd">            [Metadata][msl.io.metadata.Metadata].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">))</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">ODSReader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">ods</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_spreadsheet_to_dataset</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
