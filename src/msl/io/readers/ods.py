@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 try:
-    import defusedxml.ElementTree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingModuleSource]  # noqa: N817
+    import lxml.etree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingImports]  # noqa: N812
 except ImportError:
     try:
-        import lxml.etree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingImports]  # noqa: N812
+        import defusedxml.ElementTree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingModuleSource]  # noqa: N817
     except ImportError:
         from xml.etree import ElementTree as ET
 
@@ -47,6 +47,12 @@ class ODSReader(Spreadsheet):
         because the information in an OpenDocument Spreadsheet is unstructured and therefore
         one cannot generalize how to parse an OpenDocument Spreadsheet to create a
         [Root][msl.io.base.Root].
+
+        !!! tip
+            If [lxml](https://pypi.org/project/lxml/){:target="_blank"} or
+            [defusedxml](https://pypi.org/project/defusedxml/){:target="_blank"} is installed,
+            that package is used to parse the contents of the file instead of the
+            [xml][]{:target="_blank"} module.
 
         Args:
             file: The path to an OpenDocument Spreadsheet file.
