@@ -1303,13 +1303,14 @@
 <p><strong><em>Added:</em></strong></p>
 <ul>
 <li><a class="autorefs autorefs-internal" title="ODSReader" href="../api/spreadsheets/#msl.io.readers.ods.ODSReader">ODSReader</a> for reading OpenDocument Spreadsheet files</li>
+<li><a class="autorefs autorefs-internal" title="GSheetsReader" href="../api/spreadsheets/#msl.io.readers.gsheets.GSheetsReader">GSheetsReader</a> and <a class="autorefs autorefs-internal" title="ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a> can now be used as a context manager</li>
 <li><a href="https://peps.python.org/pep-0484/">PEP-484</a> type annotations</li>
-<li><a class="autorefs autorefs-internal" title="GSheetsReader" href="../api/spreadsheets/#msl.io.readers.gsheets.GSheetsReader">GSheetsReader</a> and <a class="autorefs autorefs-internal" title="ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a> can now be used as a context manager (includes the <a class="autorefs autorefs-internal" title="close" href="../api/spreadsheets/#msl.io.readers.gsheets.GSheetsReader.close">GSheetsReader.close</a> method)</li>
 <li>a <code>TEXT</code> member to the <a class="autorefs autorefs-internal" title="GCellType" href="../api/google/#msl.io.google_api.GCellType">GCellType</a> enum</li>
 <li>support for Python 3.12 and 3.13</li>
 </ul>
 <p><strong><em>Changed:</em></strong></p>
 <ul>
+<li>move the static <code>get_bytes</code>, <code>get_lines</code> and <code>get_extension</code> methods from the <code>Reader</code> class to the <a class="autorefs autorefs-internal" href="../api/utils/#utils">utils</a> module</li>
 <li>convert to an implicit namespace package (<a href="https://peps.python.org/pep-0420/">PEP-420</a>)</li>
 <li><a class="autorefs autorefs-internal" title="git_head" href="../api/utils/#msl.io.utils.git_head">utils.git_head</a> now returns a <a class="autorefs autorefs-internal" title="GitHead
 

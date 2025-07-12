@@ -1542,7 +1542,8 @@ passed to <a class="autorefs autorefs-internal" title="read_table_text" href="#m
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">272</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span>
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span>
@@ -1575,8 +1576,7 @@ passed to <a class="autorefs autorefs-internal" title="read_table_text" href="#m
 <span class="normal">302</span>
 <span class="normal">303</span>
 <span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="normal">305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data in a table format from a file.</span>
 
 <span class="sd">    A *table* has the following properties:</span>
@@ -1599,16 +1599,16 @@ passed to <a class="autorefs autorefs-internal" title="read_table_text" href="#m
 <span class="sd">        The table as a [Dataset][msl.io.node.Dataset]. The header is included in the</span>
 <span class="sd">            [Metadata][msl.io.metadata.Metadata].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.xls&quot;</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.xls&quot;</span><span class="p">,</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">}:</span>
         <span class="k">return</span> <span class="n">read_table_excel</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.ods&quot;</span><span class="p">,</span> <span class="s2">&quot;.fods&quot;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">read_table_ods</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.gsheet&quot;</span><span class="p">:</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">))</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">read_table_gsheets</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;.gsheet&quot;</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.ods&quot;</span><span class="p">,</span> <span class="s2">&quot;.fods&quot;</span><span class="p">}:</span>
-        <span class="k">return</span> <span class="n">read_table_ods</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">read_table_text</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -1797,7 +1797,8 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
+<span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
@@ -1844,8 +1845,7 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 <span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2085,7 +2085,8 @@ the display format of the spreadsheet cell.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
+<span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
@@ -2135,8 +2136,7 @@ the display format of the spreadsheet cell.</p>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2373,7 +2373,8 @@ the display format of the spreadsheet cell.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">210</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">209</span>
+<span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
@@ -2407,8 +2408,7 @@ the display format of the spreadsheet cell.</p>
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2559,7 +2559,8 @@ custom delimiter options).</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 47</span>
+<span class="normal"> 48</span>
 <span class="normal"> 49</span>
 <span class="normal"> 50</span>
 <span class="normal"> 51</span>
@@ -2612,8 +2613,7 @@ custom delimiter options).</p>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_text</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_text</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a data table from a text-based file.</span>
 
 <span class="sd">    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.</span>
@@ -2635,7 +2635,7 @@ custom delimiter options).</p>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;delimiter&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;delimiter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extension_delimiter_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;skiprows&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -2643,7 +2643,7 @@ custom delimiter options).</p>
     <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;skiprows&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Reader.get_lines is 1-based, np.loadtxt is 0-based</span>
 
     <span class="n">header</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">first_line</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">get_lines</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;skiprows&quot;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;skiprows&quot;</span><span class="p">])</span>
+    <span class="n">first_line</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;skiprows&quot;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;skiprows&quot;</span><span class="p">])</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">first_line</span><span class="p">:</span>
         <span class="n">header</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
     <span class="k">else</span><span class="p">:</span>

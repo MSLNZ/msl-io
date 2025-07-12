@@ -4040,6 +4040,13 @@ OpenDocument Spreadsheets. It is not registered as a <a class="autorefs autorefs
 because the information in an OpenDocument Spreadsheet is unstructured and therefore
 one cannot generalize how to parse an OpenDocument Spreadsheet to create a
 <a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If <a href="https://pypi.org/project/lxml/" target="_blank">lxml</a> or
+<a href="https://pypi.org/project/defusedxml/" target="_blank">defusedxml</a> is installed,
+that package is used to parse the contents of the file instead of the
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.html#xml" target="_blank">xml</a> module.</p>
+</div>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -4156,9 +4163,7 @@ one cannot generalize how to parse an OpenDocument Spreadsheet to create a
 <span class="normal">90</span>
 <span class="normal">91</span>
 <span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).</span>
 
 <span class="sd">    This class simply provides a convenience for reading information from</span>
@@ -4166,6 +4171,12 @@ one cannot generalize how to parse an OpenDocument Spreadsheet to create a
 <span class="sd">    because the information in an OpenDocument Spreadsheet is unstructured and therefore</span>
 <span class="sd">    one cannot generalize how to parse an OpenDocument Spreadsheet to create a</span>
 <span class="sd">    [Root][msl.io.base.Root].</span>
+
+<span class="sd">    !!! tip</span>
+<span class="sd">        If [lxml](https://pypi.org/project/lxml/){:target=&quot;_blank&quot;} or</span>
+<span class="sd">        [defusedxml](https://pypi.org/project/defusedxml/){:target=&quot;_blank&quot;} is installed,</span>
+<span class="sd">        that package is used to parse the contents of the file instead of the</span>
+<span class="sd">        [xml][]{:target=&quot;_blank&quot;} module.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The path to an OpenDocument Spreadsheet file.</span>
@@ -4187,23 +4198,15 @@ one cannot generalize how to parse an OpenDocument Spreadsheet to create a
         <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:oasis:names:tc:opendocument:xmlns:text:1.0&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="n">ext</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">get_extension</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.ods&quot;</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">as</span> <span class="n">z</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">z</span><span class="o">.</span><span class="n">NameToInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mimetype&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-                <span class="ow">or</span> <span class="n">z</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;mimetype&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">&quot;application/vnd.oasis.opendocument.spreadsheet&quot;</span>
-            <span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unsupported OpenDocument Spreadsheet file&quot;</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XML</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;content.xml&quot;</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]</span>
             <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">e</span><span class="o">.</span><span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The ODS file might be password protected (which is not supported)&quot;</span>
                 <span class="k">raise</span>
-
     <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.fods&quot;</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># noqa: PTH123</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XML</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]</span>
@@ -4355,7 +4358,9 @@ string in the display format of the spreadsheet cell.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
@@ -4442,9 +4447,7 @@ string in the display format of the spreadsheet cell.</p>
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the OpenDocument Spreadsheet.</span>
@@ -4581,15 +4584,15 @@ string in the display format of the spreadsheet cell.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the OpenDocument Spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
