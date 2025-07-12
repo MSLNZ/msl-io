@@ -2649,7 +2649,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
     <div class="doc doc-contents first">
 
-        <p>Read an Excel spreadsheet (.xls and .xlsx).</p>
+        <p>Read an Excel spreadsheet (<em>.xls</em> and <em>.xlsx</em> files).</p>
 
 
 
@@ -2685,7 +2685,7 @@ then the row index is <code>None</code>. The row and column index are zero based
               Bases: <code><a class="autorefs autorefs-internal" title="Spreadsheet (msl.io.readers.spreadsheet.Spreadsheet)" href="#msl.io.readers.spreadsheet.Spreadsheet">Spreadsheet</a></code></p>
 
 
-        <p>Read an Excel spreadsheet (.xls and .xlsx files).</p>
+        <p>Read an Excel spreadsheet (<em>.xls</em> and <em>.xlsx</em> files).</p>
 
         <p>This class simply provides a convenience for reading information from
 Excel spreadsheets. It is not registered as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a>
@@ -2793,7 +2793,7 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an Excel spreadsheet (.xls and .xlsx files).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an Excel spreadsheet (*.xls* and *.xlsx* files).</span>
 
 <span class="sd">    This class simply provides a convenience for reading information from</span>
 <span class="sd">    Excel spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]</span>
@@ -2967,7 +2967,7 @@ of the sheet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code> then dates are returned as an
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as an
 ISO 8601 string.</p>
               </div>
             </td>
@@ -3120,7 +3120,7 @@ ISO 8601 string.</p>
 <span class="sd">            one sheet in the spreadsheet then you do not need to specify the name</span>
 <span class="sd">            of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
-<span class="sd">            [date][datetime.date] objects. If `False` then dates are returned as an</span>
+<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as an</span>
 <span class="sd">            ISO 8601 string.</span>
 
 <span class="sd">    Returns:</span>
@@ -3683,7 +3683,7 @@ sheet in the spreadsheet then you do not need to specify the name of the sheet.<
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
 <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a string in
-the format of the spreadsheet cell.</p>
+the display format of the spreadsheet cell.</p>
               </div>
             </td>
             <td>
@@ -3835,7 +3835,7 @@ the format of the spreadsheet cell.</p>
 <span class="sd">            sheet in the spreadsheet then you do not need to specify the name of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
 <span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a string in</span>
-<span class="sd">            the format of the spreadsheet cell.</span>
+<span class="sd">            the display format of the spreadsheet cell.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>
@@ -3997,7 +3997,7 @@ the format of the spreadsheet cell.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2).</p>
+        <p>Read an OpenDocument Spreadsheet (<em>.ods</em> and <em>.fods</em> files, Version 1.2).</p>
 
 
 
@@ -4033,7 +4033,7 @@ the format of the spreadsheet cell.</p>
               Bases: <code><a class="autorefs autorefs-internal" title="Spreadsheet (msl.io.readers.spreadsheet.Spreadsheet)" href="#msl.io.readers.spreadsheet.Spreadsheet">Spreadsheet</a></code></p>
 
 
-        <p>Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2).</p>
+        <p>Read an OpenDocument Spreadsheet (<em>.ods</em> and <em>.fods</em> files, Version 1.2).</p>
 
         <p>This class simply provides a convenience for reading information from
 OpenDocument Spreadsheets. It is not registered as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a>
@@ -4159,7 +4159,7 @@ one cannot generalize how to parse an OpenDocument Spreadsheet to create a
 <span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).</span>
 
 <span class="sd">    This class simply provides a convenience for reading information from</span>
 <span class="sd">    OpenDocument Spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]</span>
@@ -4300,8 +4300,8 @@ of the sheet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a>
-or <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code> then dates are returned as a
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> in the display format of the cell.</p>
+or <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a
+string in the display format of the spreadsheet cell.</p>
               </div>
             </td>
             <td>
@@ -4457,8 +4457,8 @@ or <a class="autorefs autorefs-external" href="https://docs.python.org/3/library
 <span class="sd">            one sheet in the spreadsheet then you do not need to specify the name</span>
 <span class="sd">            of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime]</span>
-<span class="sd">            or [date][datetime.date] objects. If `False` then dates are returned as a</span>
-<span class="sd">            [str][] in the display format of the cell.</span>
+<span class="sd">            or [date][datetime.date] objects. If `False`, dates are returned as a</span>
+<span class="sd">            string in the display format of the spreadsheet cell.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>

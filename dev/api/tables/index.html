@@ -1503,7 +1503,9 @@ with <code>.gsheet</code> even if the ID of the spreadsheet is specified.</p>
                 <p>If the file is an Excel spreadsheet then the keyword arguments are passed to
 <a class="autorefs autorefs-internal" title="read_table_excel" href="#msl.io.tables.read_table_excel">read_table_excel</a>. If a Google Sheets spreadsheet then
 the keyword arguments are passed to <a class="autorefs autorefs-internal" title="read_table_gsheets" href="#msl.io.tables.read_table_gsheets">read_table_gsheets</a>.
-Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-internal" title="read_table_text" href="#msl.io.tables.read_table_text">read_table_text</a>.</p>
+If an OpenDocument Spreadsheet then the keyword arguments are passed to
+<a class="autorefs autorefs-internal" title="read_table_ods" href="#msl.io.tables.read_table_ods">read_table_ods</a>. Otherwise, all keyword arguments are
+passed to <a class="autorefs autorefs-internal" title="read_table_text" href="#msl.io.tables.read_table_text">read_table_text</a>.</p>
               </div>
             </td>
             <td>
@@ -1540,10 +1542,7 @@ Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-inter
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">272</span>
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span>
@@ -1572,7 +1571,12 @@ Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-inter
 <span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
-<span class="normal">301</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data in a table format from a file.</span>
 
 <span class="sd">    A *table* has the following properties:</span>
@@ -1587,7 +1591,9 @@ Otherwise, all keyword arguments are passed to <a class="autorefs autorefs-inter
 <span class="sd">        kwargs: If the file is an Excel spreadsheet then the keyword arguments are passed to</span>
 <span class="sd">            [read_table_excel][msl.io.tables.read_table_excel]. If a Google Sheets spreadsheet then</span>
 <span class="sd">            the keyword arguments are passed to [read_table_gsheets][msl.io.tables.read_table_gsheets].</span>
-<span class="sd">            Otherwise, all keyword arguments are passed to [read_table_text][msl.io.tables.read_table_text].</span>
+<span class="sd">            If an OpenDocument Spreadsheet then the keyword arguments are passed to</span>
+<span class="sd">            [read_table_ods][msl.io.tables.read_table_ods]. Otherwise, all keyword arguments are</span>
+<span class="sd">            passed to [read_table_text][msl.io.tables.read_table_text].</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The table as a [Dataset][msl.io.node.Dataset]. The header is included in the</span>
@@ -1720,7 +1726,8 @@ in the workbook then you do not need to specify the name of the sheet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>.</p>
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as an
+ISO 8601 string.</p>
               </div>
             </td>
             <td>
@@ -1837,7 +1844,8 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 <span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
-<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>
+<span class="normal">152</span>
+<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1860,7 +1868,8 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 <span class="sd">        sheet: The name of the sheet to read the data from. If there is only one sheet</span>
 <span class="sd">            in the workbook then you do not need to specify the name of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
-<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a [str][].</span>
+<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as an</span>
+<span class="sd">            ISO 8601 string.</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].</span>
 <span class="sd">            Can use an `encoding` keyword argument as an alias for `encoding_override`.</span>
@@ -2006,7 +2015,8 @@ in the spreadsheet then you do not need to specify the name of the sheet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>.</p>
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a string in
+the display format of the spreadsheet cell.</p>
               </div>
             </td>
             <td>
@@ -2075,8 +2085,7 @@ in the spreadsheet then you do not need to specify the name of the sheet.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
@@ -2125,7 +2134,9 @@ in the spreadsheet then you do not need to specify the name of the sheet.</p>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
-<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2153,7 +2164,8 @@ in the spreadsheet then you do not need to specify the name of the sheet.</p>
 <span class="sd">        sheet: The name of the sheet to read the data from. If there is only one sheet</span>
 <span class="sd">            in the spreadsheet then you do not need to specify the name of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
-<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a [str][].</span>
+<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a string in</span>
+<span class="sd">            the display format of the spreadsheet cell.</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].</span>
 
@@ -2291,7 +2303,8 @@ in the OpenDocument then you do not need to specify the name of the sheet.</p>
             <td>
               <div class="doc-md-description">
                 <p>Whether dates should be returned as <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> or
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>.</p>
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> objects. If <code>False</code>, dates are returned as a string in
+the display format of the spreadsheet cell.</p>
               </div>
             </td>
             <td>
@@ -2360,9 +2373,7 @@ in the OpenDocument then you do not need to specify the name of the sheet.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
@@ -2394,7 +2405,10 @@ in the OpenDocument then you do not need to specify the name of the sheet.</p>
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span>
-<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2417,7 +2431,8 @@ in the OpenDocument then you do not need to specify the name of the sheet.</p>
 <span class="sd">        sheet: The name of the sheet to read the data from. If there is only one sheet</span>
 <span class="sd">            in the OpenDocument then you do not need to specify the name of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
-<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a [str][].</span>
+<span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a string in</span>
+<span class="sd">            the display format of the spreadsheet cell.</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
 <span class="sd">        kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].</span>
 
