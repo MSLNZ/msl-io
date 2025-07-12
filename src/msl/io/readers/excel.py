@@ -105,7 +105,7 @@ class ExcelReader(Spreadsheet):
                 one sheet in the spreadsheet then you do not need to specify the name
                 of the sheet.
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
-                [date][datetime.date] objects. If `False` then dates are returned as an
+                [date][datetime.date] objects. If `False`, dates are returned as an
                 ISO 8601 string.
 
         Returns:

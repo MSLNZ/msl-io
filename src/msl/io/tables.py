@@ -125,7 +125,8 @@ def read_table_excel(
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the workbook then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
-            [date][datetime.date] objects. If `False`, dates are returned as a [str][].
+            [date][datetime.date] objects. If `False`, dates are returned as an
+            ISO 8601 string.
         dtype: The data type(s) to use for the table.
         kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].
             Can use an `encoding` keyword argument as an alias for `encoding_override`.
@@ -180,7 +181,8 @@ def read_table_gsheets(
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the spreadsheet then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
-            [date][datetime.date] objects. If `False`, dates are returned as a [str][].
+            [date][datetime.date] objects. If `False`, dates are returned as a string in
+            the display format of the spreadsheet cell.
         dtype: The data type(s) to use for the table.
         kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].
 
@@ -228,7 +230,8 @@ def read_table_ods(
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the OpenDocument then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
-            [date][datetime.date] objects. If `False`, dates are returned as a [str][].
+            [date][datetime.date] objects. If `False`, dates are returned as a string in
+            the display format of the spreadsheet cell.
         dtype: The data type(s) to use for the table.
         kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].
 

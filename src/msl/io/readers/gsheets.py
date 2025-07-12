@@ -121,7 +121,7 @@ class GSheetsReader(Spreadsheet):
                 sheet in the spreadsheet then you do not need to specify the name of the sheet.
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as a string in
-                the format of the spreadsheet cell.
+                the display format of the spreadsheet cell.
 
         Returns:
             The value(s) of the requested cell(s).
