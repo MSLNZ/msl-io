@@ -46,6 +46,7 @@ jobs:
       - name: Run tests
         run: |
           python -c "from msl.io.readers._xlrd.xlsx import ET; print(ET)"
+          python -c "from msl.io.readers.ods import ET; print(ET)"
           python -m pytest
 
   lint:

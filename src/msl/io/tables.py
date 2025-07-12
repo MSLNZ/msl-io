@@ -11,7 +11,7 @@ import numpy as np
 
 from .base import Reader
 from .node import Dataset
-from .readers import ExcelReader, GSheetsReader
+from .readers import ExcelReader, GSheetsReader, ODSReader
 from .utils import get_basename
 
 if TYPE_CHECKING:
@@ -205,6 +205,43 @@ def read_table_gsheets(
     return _spreadsheet_to_dataset(table, file, dtype)
 
 
+def read_table_ods(
+    file: PathLike | ReadLike,
+    *,
+    cells: str | None = None,
+    sheet: str | None = None,
+    as_datetime: bool = True,
+    dtype: DTypeLike = None,
+    **kwargs: Any,
+) -> Dataset:
+    """Read a data table from an OpenDocument Spreadsheet.
+
+    The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
+
+    Args:
+        file: The file to read.
+        cells: The cells to read. For example, `C9` will start at cell C9 and
+            include all values until the end of the spreadsheet, `A:C` includes
+            all rows in columns A, B and C, and, `C9:G20` includes values from
+            only the specified cells. If not specified then returns all values
+            from the specified `sheet`.
+        sheet: The name of the sheet to read the data from. If there is only one sheet
+            in the OpenDocument then you do not need to specify the name of the sheet.
+        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
+            [date][datetime.date] objects. If `False`, dates are returned as a [str][].
+        dtype: The data type(s) to use for the table.
+        kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].
+
+    Returns:
+        The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
+            [Metadata][msl.io.metadata.Metadata].
+    """
+    file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
+    with ODSReader(file, **kwargs) as ods:
+        table = ods.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
+    return _spreadsheet_to_dataset(table, file, dtype)
+
+
 def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype: DTypeLike) -> Dataset:
     header: Any
     data: Any
@@ -257,5 +294,8 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     if ext == ".gsheet":
         file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
         return read_table_gsheets(file.removesuffix(".gsheet"), **kwargs)
+
+    if ext in {".ods", ".fods"}:
+        return read_table_ods(file, **kwargs)
 
     return read_table_text(file, **kwargs)

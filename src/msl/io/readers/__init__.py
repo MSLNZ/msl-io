@@ -7,6 +7,7 @@ from .excel import ExcelReader
 from .gsheets import GSheetsReader
 from .hdf5 import HDF5Reader
 from .json_ import JSONReader
+from .ods import ODSReader
 
 __all__: list[str] = [
     "DRSReader",
@@ -14,4 +15,5 @@ __all__: list[str] = [
     "GSheetsReader",
     "HDF5Reader",
     "JSONReader",
+    "ODSReader",
 ]

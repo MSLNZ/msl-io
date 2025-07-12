@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from msl.io import read_table
-from msl.io.tables import read_table_excel, read_table_gsheets
+from msl.io.tables import read_table_excel, read_table_gsheets, read_table_ods
 from tests.test_google_api import skipif_no_gdrive_readonly, skipif_no_sheets_readonly
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from msl.io import Dataset
 
-# the data in the Excel, CVS and TXT files that are tested contain the following
+# the data in the ODS, Excel, CVS and TXT files that are tested contain the following
 header = np.asarray(["timestamp", "val1", "uncert1", "val2", "uncert2"], dtype=str)
 data = np.asarray(
     [
@@ -34,6 +34,21 @@ data = np.asarray(
     ],
     dtype="U19,f8,f8,f8,f8",
 )
+
+# Dates are saved with a different format in ODS
+ods_data = data.copy()
+ods_data["f0"] = [
+    "09/11/2019 14:06:55",
+    "09/11/2019 14:06:59",
+    "09/11/2019 14:07:03",
+    "09/11/2019 14:07:07",
+    "09/11/2019 14:07:11",
+    "09/11/2019 14:07:15",
+    "09/11/2019 14:07:19",
+    "09/11/2019 14:07:23",
+    "09/11/2019 14:07:27",
+    "09/11/2019 14:07:31",
+]
 
 # the data in the GSheet spreadsheet
 gsheet_header = np.asarray(["Timestamp", "Value", "Valid", "ID"])
@@ -96,12 +111,16 @@ def test_excel_range_out_of_bounds() -> None:
         (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
         (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
         (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154051"}),
+        (".ods", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False}),
+        (".ods", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL21"}),
+        (".ods", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154051"}),
     ],
 )
 def test_fetch_all_data(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, header)
-    assert np.array_equal(dset.data, data)
+    expect = ods_data if ext == ".ods" else data
+    assert np.array_equal(dset.data, expect)
     assert dset.shape == (10,)
 
 
@@ -115,6 +134,9 @@ def test_fetch_all_data(ext: str, kwargs: dict[str, Any]) -> None:  # type: igno
         (".xlsx", {"sheet": "A1", "cells": "B1:E11"}),
         (".xlsx", {"sheet": "BH11", "cells": "BI11:BL21"}),
         (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AFB154051"}),
+        (".ods", {"sheet": "A1", "cells": "B1:E11"}),
+        (".ods", {"sheet": "BH11", "cells": "BI11:BL21"}),
+        (".ods", {"sheet": "AEX154041", "cells": "AEY154041:AFB154051"}),
     ],
 )
 def test_ignore_timestamp_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
@@ -135,6 +157,9 @@ def test_ignore_timestamp_column(ext: str, kwargs: dict[str, Any]) -> None:  # t
         (".xlsx", {"sheet": "A1", "cells": "B1:B11"}),
         (".xlsx", {"sheet": "BH11", "cells": "BI11:BI21"}),
         (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"}),
+        (".ods", {"sheet": "A1", "cells": "B1:B11"}),
+        (".ods", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".ods", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"}),
     ],
 )
 def test_single_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
@@ -154,12 +179,16 @@ def test_single_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignor
         (".xlsx", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
         (".xlsx", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
         (".xlsx", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154042"}),
+        (".ods", {"dtype": data.dtype, "sheet": "A1", "as_datetime": False, "cells": "A1:E2"}),
+        (".ods", {"dtype": data.dtype, "sheet": "BH11", "as_datetime": False, "cells": "BH11:BL12"}),
+        (".ods", {"dtype": data.dtype, "sheet": "AEX154041", "as_datetime": False, "cells": "AEX154041:AFB154042"}),
     ],
 )
 def test_single_row(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, header)
-    assert np.array_equal(dset.data, data[0])
+    expect = ods_data if ext == ".ods" else data
+    assert np.array_equal(dset.data, expect[0])
 
 
 @pytest.mark.parametrize(
@@ -170,6 +199,9 @@ def test_single_row(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[m
         (".xlsx", {"sheet": "A1", "cells": "A1:E1"}),
         (".xlsx", {"sheet": "BH11", "cells": "BH11:BL11"}),
         (".xlsx", {"sheet": "AEX154041", "cells": "AEX154041:AFB154041"}),
+        (".ods", {"sheet": "A1", "cells": "A1:E1"}),
+        (".ods", {"sheet": "BH11", "cells": "BH11:BL11"}),
+        (".ods", {"sheet": "AEX154041", "cells": "AEX154041:AFB154041"}),
     ],
 )
 def test_header_only(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
@@ -195,6 +227,9 @@ dt = {"names": header, "formats": [object, float, float, float, float]}
         (".xlsx", {"dtype": dt, "sheet": "A1"}),
         (".xlsx", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
         (".xlsx", {"dtype": dt, "sheet": "AEX154041", "cells": "AEX154041:AFB154051"}),
+        (".ods", {"dtype": dt, "sheet": "A1"}),
+        (".ods", {"dtype": dt, "sheet": "BH11", "cells": "BH11:BL21"}),
+        (".ods", {"dtype": dt, "sheet": "AEX154041", "cells": "AEX154041:AFB154051"}),
     ],
 )
 def test_datetime_objects(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
@@ -335,6 +370,36 @@ def test_excel_file_pointer(ext: str, kwargs: dict[str, Any]) -> None:  # type: 
     # checks the file path extension to decide how to read the table
     # and a StringIO and a BytesIO object do not have an extension to check
     # so read_table_excel will not be called, also xlrd cannot load a file stream
+
+
+def test_ods_file_pointer() -> None:
+    with get_url(".ods").open(mode="rt") as ft:
+        dataset = read_table(ft, sheet="A1", as_datetime=False, dtype=data.dtype)
+        assert np.array_equal(dataset.metadata.header, header)
+        assert np.array_equal(dataset.data, ods_data)
+        assert dataset.shape == (10,)
+
+    with get_url(".ods").open(mode="rb") as fb:
+        dataset = read_table(fb, sheet="A1", as_datetime=False, dtype=data.dtype)
+        assert np.array_equal(dataset.metadata.header, header)
+        assert np.array_equal(dataset.data, ods_data)
+        assert dataset.shape == (10,)
+
+    with get_url(".ods").open(mode="rt") as ft:
+        dataset = read_table_ods(ft, sheet="A1", as_datetime=False, dtype=data.dtype)
+        assert np.array_equal(dataset.metadata.header, header)
+        assert np.array_equal(dataset.data, ods_data)
+        assert dataset.shape == (10,)
+
+    with get_url(".ods").open(mode="rb") as fb:
+        dataset = read_table_ods(fb, sheet="A1", as_datetime=False, dtype=data.dtype)
+        assert np.array_equal(dataset.metadata.header, header)
+        assert np.array_equal(dataset.data, ods_data)
+        assert dataset.shape == (10,)
+
+    # there is no point to test StringIO nor BytesIO because `read_table`
+    # checks the file path extension to decide how to read the table
+    # and a StringIO and a BytesIO object do not have an extension to check
 
 
 def test_pathlib() -> None:

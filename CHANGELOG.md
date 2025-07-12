@@ -6,10 +6,11 @@
 
 ***Added:***
 
-- support for Python 3.12 and 3.13
+- [ODSReader][msl.io.readers.ods.ODSReader] for reading OpenDocument Spreadsheet files
 - [PEP-484](https://peps.python.org/pep-0484/) type annotations
 - [GSheetsReader][msl.io.readers.gsheets.GSheetsReader] and [ExcelReader][msl.io.readers.excel.ExcelReader] can now be used as a context manager (includes the [GSheetsReader.close][msl.io.readers.gsheets.GSheetsReader.close] method)
 - a `TEXT` member to the [GCellType][msl.io.google_api.GCellType] enum
+- support for Python 3.12 and 3.13
 
 ***Changed:***
 

@@ -12,7 +12,7 @@ from .base import (
 )
 from .google_api import GCellType, GDateTimeOption, GDrive, GMail, GSheets, GValueOption
 from .node import Dataset, DatasetLogging, Group
-from .readers import ExcelReader, GSheetsReader
+from .readers import ExcelReader, GSheetsReader, ODSReader
 from .tables import extension_delimiter_map, read_table
 from .utils import (
     checksum,
@@ -42,6 +42,7 @@ __all__: list[str] = [
     "Group",
     "HDF5Writer",
     "JSONWriter",
+    "ODSReader",
     "Reader",
     "Root",
     "Writer",

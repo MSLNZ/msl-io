@@ -9,6 +9,7 @@ The following classes are for reading cell values (not drawings or charts) in sp
 
 * [ExcelReader][msl.io.readers.excel.ExcelReader] &mdash; Microsoft Excel
 * [GSheetsReader][msl.io.readers.gsheets.GSheetsReader] &mdash; Google Sheets
+* [ODSReader][msl.io.readers.ods.ODSReader] &mdash; OpenDocument Spreadsheet
 
 These classes are for interacting with a Google account
 
