@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import logging
 import os
 import re
@@ -10,7 +11,7 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
 from .google_api import GMail
 
@@ -454,6 +455,208 @@ def get_basename(obj: PathLike | ReadLike | WriteLike) -> str:
         return Path(obj.name).name
     except AttributeError:
         return obj.__class__.__name__
+
+
+@overload
+def get_lines(
+    file: FileLikeRead[str] | PathLike,
+    *lines: int | None,
+    remove_empty_lines: bool = False,
+    encoding: str | None = "utf-8",
+    errors: Literal["strict", "ignore"] | None = "strict",
+) -> list[str]: ...
+
+
+@overload
+def get_lines(
+    file: FileLikeRead[bytes],
+    *lines: int | None,
+    remove_empty_lines: bool = False,
+    encoding: str | None = None,
+    errors: Literal["strict", "ignore"] | None = None,
+) -> list[bytes]: ...
+
+
+def get_lines(  # noqa: PLR0912
+    file: PathLike | ReadLike,
+    *lines: int | None,
+    remove_empty_lines: bool = False,
+    encoding: str | None = "utf-8",
+    errors: Literal["strict", "ignore"] | None = "strict",
+) -> list[bytes] | list[str]:
+    """Return lines from a file.
+
+    Args:
+        file: The file to read lines from.
+        lines: The line(s) in the file to get.
+        remove_empty_lines: Whether to remove all empty lines.
+        encoding: The name of the encoding to use to decode the file.
+        errors: How encoding errors are to be handled.
+
+    **Examples:**
+    ```python
+    get_lines(file)  # returns all lines
+    get_lines(file, 5)  # returns the first 5 lines
+    get_lines(file, -5)  # returns the last 5 lines
+    get_lines(file, 2, 4)  # returns lines 2, 3 and 4
+    get_lines(file, 2, -2)  # skips the first and last lines and returns the rest
+    get_lines(file, -4, -2)  # returns the fourth-, third- and second-last lines
+    get_lines(file, 1, -1, 6)  # returns every sixth line in the file
+    ```
+
+    Returns:
+        The lines from the `file`. Trailing whitespace is stripped from each line.
+            A [list][][[bytes][]] is returned if `file` is a file-like object
+            opened in binary mode, otherwise a [list][][[str][]] is returned.
+    """
+    # want the "stop" line to be included
+    if (len(lines) > 1) and (lines[1] is not None) and (lines[1] < 0):
+        lines = (lines[0], None, *lines[2:]) if lines[1] == -1 else (lines[0], lines[1] + 1, *lines[2:])
+
+    # want the "start" line to be included
+    if (len(lines) > 1) and (lines[0] is not None) and (lines[0] > 0):
+        lines = (lines[0] - 1, *lines[1:])
+
+    result: list[bytes] | list[str]
+    # itertools.islice does not support negative indices, but want to allow
+    # getting the last "N" lines from a file.
+    if any(val < 0 for val in lines if val):
+        if isinstance(file, (bytes, str, os.PathLike)):
+            with Path(os.fsdecode(file)).open(encoding=encoding, errors=errors) as f:
+                result = [line.rstrip() for line in f]
+        else:
+            position = file.tell()
+            result = [line.rstrip() for line in file]  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
+            _ = file.seek(position)
+
+        assert lines  # noqa: S101
+        if len(lines) == 1:
+            result = result[lines[0] :]
+        elif len(lines) == 2:  # noqa: PLR2004
+            result = result[lines[0] : lines[1]]
+        else:
+            result = result[lines[0] : lines[1] : lines[2]]
+
+    else:
+        if not lines:
+            lines = (None,)
+
+        if isinstance(file, (bytes, str, os.PathLike)):
+            with Path(os.fsdecode(file)).open(encoding=encoding, errors=errors) as f:
+                result = [line.rstrip() for line in itertools.islice(f, *lines)]
+        else:
+            position = file.tell()
+            result = [line.rstrip() for line in itertools.islice(file, *lines)]  # type: ignore[attr-defined]  # pyright: ignore[reportAssignmentType]
+            _ = file.seek(position)
+
+    if remove_empty_lines:
+        return [line for line in result if line]  # type: ignore[return-value]  # pyright: ignore[reportReturnType]
+    return result
+
+
+def get_bytes(file: FileLikeRead[bytes] | PathLike, *positions: int | None) -> bytes:  # noqa: C901, PLR0912, PLR0915
+    """Return bytes from a file.
+
+    Args:
+        file: The file to read bytes from.
+        positions: The position(s) in the file to retrieve bytes from.
+
+    **Examples:**
+    ```python
+    get_bytes(file)  # returns all bytes
+    get_bytes(file, 5)  # returns the first 5 bytes
+    get_bytes(file, -5)  # returns the last 5 bytes
+    get_bytes(file, 5, 10)  # returns bytes 5 through 10 (inclusive)
+    get_bytes(file, 3, -1)  # skips the first 2 bytes and returns the rest
+    get_bytes(file, -8, -4)  # returns the eighth- through fourth-last bytes (inclusive)
+    get_bytes(file, 1, -1, 2)  # returns every other byte
+    ```
+
+    Returns:
+        The bytes from the file.
+    """
+    size: int
+    path: Path | None
+    if isinstance(file, (bytes, str, os.PathLike)):
+        path = Path(os.fsdecode(file))
+        try:
+            size = path.stat().st_size
+        except OSError:
+            # A file on a mapped network drive can raise the following:
+            #   [WinError 87] The parameter is incorrect
+            # for Python 3.5, 3.6 and 3.7. Also, calling os.path.getsize
+            # on a file on a mapped network drive could return 0
+            # (without raising OSError) on Python 3.8 and 3.9, which is
+            # why we set size=0 on an OSError
+            size = 0
+
+        if size == 0:
+            with path.open("rb") as f:
+                _ = f.seek(0, os.SEEK_END)
+                size = f.tell()
+    else:
+        path = None
+        position = file.tell()
+        _ = file.seek(0, os.SEEK_END)
+        size = file.tell()
+        _ = file.seek(position)
+
+    if not positions:
+        start, stop, step = 0, size, 1
+    elif len(positions) == 1:
+        start, step = 0, 1
+        stop = size if positions[0] is None else positions[0]
+        if stop < 0:
+            start, stop = size + stop + 1, size
+    elif len(positions) == 2:  # noqa: PLR2004
+        start, step = positions[0] or 0, 1
+        stop = size if positions[1] is None or positions[1] == -1 else positions[1]
+    else:
+        start, stop, step = positions[0] or 0, positions[1] or size, positions[2] or 1
+
+    if start < 0:
+        start = max(size + start, 0)
+    elif start > 0:
+        start -= 1
+    start = min(size, start)
+
+    if stop < 0:
+        stop += size + 1
+    stop = min(size, stop)
+
+    n_bytes = max(0, stop - start)
+    if isinstance(file, (bytes, str, os.PathLike)):
+        assert path is not None  # noqa: S101
+        with path.open("rb") as f:
+            _ = f.seek(start)
+            data = f.read(n_bytes)
+    else:
+        position = file.tell()
+        _ = file.seek(start)
+        data = file.read(n_bytes)
+        _ = file.seek(position)
+
+    if step != 1:
+        return data[::step]
+    return data
+
+
+def get_extension(file: PathLike | ReadLike | WriteLike) -> str:
+    """Return the extension of the file.
+
+    Args:
+        file: The file to get the extension of.
+
+    Returns:
+        The extension (including the `.`).
+    """
+    if isinstance(file, (bytes, str, os.PathLike)):
+        return Path(os.fsdecode(file)).suffix
+
+    try:
+        return get_extension(file.name)
+    except AttributeError:
+        return ""
 
 
 @dataclass(frozen=True)

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from msl.io.base import Reader, register
+from msl.io.utils import get_bytes, get_lines
 
 if TYPE_CHECKING:
     from typing import Any
@@ -25,16 +26,16 @@ class JSONReader(Reader):
 
         Args:
             file: The file to check.
-            kwargs: All keyword arguments are passed to [get_lines][msl.io.base.Reader.get_lines].
+            kwargs: All keyword arguments are passed to [get_lines][msl.io.utils.get_lines].
 
         Returns:
             Whether the text `MSL JSONWriter` is in the first line of the file.
         """
         text: bytes | str
         if isinstance(file, (str, BufferedIOBase)):
-            text = Reader.get_bytes(file, 21, 34)
+            text = get_bytes(file, 21, 34)
         else:
-            text = Reader.get_lines(file, 1, **kwargs)[0][20:34]
+            text = get_lines(file, 1, **kwargs)[0][20:34]
 
         if isinstance(text, str):
             text = text.encode()

@@ -10,6 +10,7 @@ except ImportError:
     h5py = None
 
 from msl.io.base import Reader, register
+from msl.io.utils import get_bytes
 
 if TYPE_CHECKING:
     from typing import Any
@@ -43,7 +44,7 @@ class HDF5Reader(Reader):
             Whether the first 8 bytes are `\x89HDF\r\n\x1a\n`.
         """
         if isinstance(file, (str, BufferedIOBase)):
-            return Reader.get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
+            return get_bytes(file, 8) == b"\x89HDF\r\n\x1a\n"
         return False
 
     def read(self, **kwargs: Any) -> None:

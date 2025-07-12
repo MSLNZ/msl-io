@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from msl.io.base import Reader, register
+from msl.io.utils import get_extension, get_lines
 
 if TYPE_CHECKING:
     from typing import Any
@@ -31,10 +32,10 @@ class DRSReader(Reader):
         Returns:
             Whether `file` was acquired in the DRS laboratory.
         """
-        if Reader.get_extension(file).lower() != ".dat":
+        if get_extension(file).lower() != ".dat":
             return False
 
-        line = Reader.get_lines(file, 1)[0]
+        line = get_lines(file, 1)[0]
         if isinstance(line, bytes):
             line = line.decode()
 
@@ -49,10 +50,10 @@ class DRSReader(Reader):
         self._default_alias: dict[str, str] = {"l(nm)": "wavelength"}
 
         assert isinstance(self.file, str)  # noqa: S101
-        self._lines_dat: list[str] = self.get_lines(self.file, remove_empty_lines=True)
+        self._lines_dat: list[str] = get_lines(self.file, remove_empty_lines=True)
         self._num_lines_dat: int = len(self._lines_dat)
 
-        self._lines_log: list[str] = self.get_lines(self.file[:-3] + "LOG", remove_empty_lines=True)
+        self._lines_log: list[str] = get_lines(self.file[:-3] + "LOG", remove_empty_lines=True)
         self._num_lines_log: int = len(self._lines_log)
 
         num_runs = 0

@@ -9,10 +9,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from .base import Reader
 from .node import Dataset
 from .readers import ExcelReader, GSheetsReader, ODSReader
-from .utils import get_basename
+from .utils import get_basename, get_extension, get_lines
 
 if TYPE_CHECKING:
     from typing import Any
@@ -67,7 +66,7 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         raise ValueError(msg)
 
     if "delimiter" not in kwargs:
-        ext = Reader.get_extension(file).lower()
+        ext = get_extension(file).lower()
         kwargs["delimiter"] = extension_delimiter_map.get(ext)
 
     if "skiprows" not in kwargs:
@@ -75,7 +74,7 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     kwargs["skiprows"] += 1  # Reader.get_lines is 1-based, np.loadtxt is 0-based
 
     header: list[bytes] | list[str]
-    first_line = Reader.get_lines(file, kwargs["skiprows"], kwargs["skiprows"])
+    first_line = get_lines(file, kwargs["skiprows"], kwargs["skiprows"])
     if not first_line:
         header, data = [], np.array([])
     else:
@@ -292,15 +291,15 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
             [Metadata][msl.io.metadata.Metadata].
     """
-    ext = Reader.get_extension(file).lower()
-    if ext.startswith(".xls"):
+    ext = get_extension(file).lower()
+    if ext in {".xls", ".xlsx"}:
         return read_table_excel(file, **kwargs)
+
+    if ext in {".ods", ".fods"}:
+        return read_table_ods(file, **kwargs)
 
     if ext == ".gsheet":
         file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
         return read_table_gsheets(file.removesuffix(".gsheet"), **kwargs)
-
-    if ext in {".ods", ".fods"}:
-        return read_table_ods(file, **kwargs)
 
     return read_table_text(file, **kwargs)

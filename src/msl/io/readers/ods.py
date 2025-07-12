@@ -16,7 +16,7 @@ except ImportError:
     except ImportError:
         from xml.etree import ElementTree as ET
 
-from ..base import Reader  # noqa: TID252
+from ..utils import get_extension  # noqa: TID252
 from .spreadsheet import Spreadsheet
 
 if TYPE_CHECKING:
@@ -68,7 +68,7 @@ class ODSReader(Spreadsheet):
             "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
         }
 
-        ext = Reader.get_extension(f).lower()
+        ext = get_extension(f).lower()
         content: Element[str]
         if ext == ".ods":
             with ZipFile(f) as z:
