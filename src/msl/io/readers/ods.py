@@ -1,4 +1,4 @@
-"""Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2)."""
+"""Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2)."""
 
 from __future__ import annotations
 
@@ -37,10 +37,10 @@ if TYPE_CHECKING:
 
 
 class ODSReader(Spreadsheet):
-    """Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2)."""
+    """Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2)."""
 
     def __init__(self, file: PathLike, **kwargs: Any) -> None:  # noqa: ARG002
-        """Read an OpenDocument Spreadsheet (.ods and .fods files, Version 1.2).
+        """Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).
 
         This class simply provides a convenience for reading information from
         OpenDocument Spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]

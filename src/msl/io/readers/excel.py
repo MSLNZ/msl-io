@@ -1,4 +1,4 @@
-"""Read an Excel spreadsheet (.xls and .xlsx)."""
+"""Read an Excel spreadsheet (*.xls* and *.xlsx* files)."""
 
 from __future__ import annotations
 
@@ -38,10 +38,10 @@ if TYPE_CHECKING:
 
 
 class ExcelReader(Spreadsheet):
-    """Read an Excel spreadsheet (.xls and .xlsx files)."""
+    """Read an Excel spreadsheet (*.xls* and *.xlsx* files)."""
 
     def __init__(self, file: PathLike, **kwargs: Any) -> None:
-        """Read an Excel spreadsheet (.xls and .xlsx files).
+        """Read an Excel spreadsheet (*.xls* and *.xlsx* files).
 
         This class simply provides a convenience for reading information from
         Excel spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]
