@@ -284,7 +284,9 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         kwargs: If the file is an Excel spreadsheet then the keyword arguments are passed to
             [read_table_excel][msl.io.tables.read_table_excel]. If a Google Sheets spreadsheet then
             the keyword arguments are passed to [read_table_gsheets][msl.io.tables.read_table_gsheets].
-            Otherwise, all keyword arguments are passed to [read_table_text][msl.io.tables.read_table_text].
+            If an OpenDocument Spreadsheet then the keyword arguments are passed to
+            [read_table_ods][msl.io.tables.read_table_ods]. Otherwise, all keyword arguments are
+            passed to [read_table_text][msl.io.tables.read_table_text].
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
