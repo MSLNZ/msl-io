@@ -16,7 +16,7 @@ def test_raises() -> None:
         _ = ODSReader(samples / "table.xls")
 
     # the sheet does not exist
-    with pytest.raises(ValueError, match=r"There is no sheet named"):
+    with pytest.raises(ValueError, match=r"A sheet named 'whatever' is not in"):
         _ = ODSReader(samples / "ods_datatypes.ods").read(sheet="whatever")
 
     # more than one sheet
@@ -223,3 +223,28 @@ def test_repeats_merged() -> None:
         _ = ods.read(sheet="Merged")
     with pytest.raises(ValueError, match=r"row-spanned cells"):
         _ = ods.read("A2:D4", sheet="Merged")
+
+
+@pytest.mark.parametrize(
+    ("filename", "sheet", "expected"),
+    [
+        ("ods_datatypes.ods", "Sheet1", (3, 4)),
+        ("ods_datatypes.fods", "Sheet1", (3, 4)),
+        ("table.ods", "A1", (11, 5)),
+        ("table.ods", "BH11", (21, 64)),
+        ("table.ods", "AEX154041", (154051, 834)),
+        ("lab_environment.ods", "Lab Environment", (5, 2)),
+        ("repeats.ods", "Ones", (5, 5)),
+        ("repeats.ods", "Hidden", (10, 8)),
+        ("repeats.ods", "Merged", (4, 4)),
+    ],
+)
+def test_shape(filename: str, sheet: str, expected: tuple[int, int]) -> None:
+    with ODSReader(samples / filename) as ods:
+        assert ods.shape(sheet) == expected
+
+
+def test_shape_raises() -> None:
+    ods = ODSReader(samples / "ods_datatypes.ods")
+    with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
+        _ = ods.shape("Nope")

@@ -67,7 +67,6 @@ class ODSReader(Spreadsheet):
         f = os.fsdecode(file)
         super().__init__(f)
 
-        self._names: tuple[str, ...] | None = None
         self._ns: dict[str, str] = {
             "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
             "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
@@ -90,7 +89,10 @@ class ODSReader(Spreadsheet):
             msg = f"Unsupported OpenDocument Spreadsheet file extension {ext!r}"
             raise ValueError(msg)
 
-        self._tables: list[Element[str]] = content.findall(".//table:table", namespaces=self._ns)  # pyright: ignore[reportUnknownMemberType]
+        self._tables: dict[str, Element[str]] = {
+            self._attribute(t, "table", "name"): t  # pyright: ignore[reportUnknownArgumentType]
+            for t in content.findall(".//table:table", namespaces=self._ns)  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+        }
 
     def __enter__(self: Self) -> Self:  # noqa: PYI019
         """Enter a context manager."""
@@ -140,8 +142,8 @@ class ODSReader(Spreadsheet):
 
         ```
         """
-        names = self.sheet_names()
         if not sheet:
+            names = self.sheet_names()
             if len(names) == 1:
                 name = names[0]
             elif not names:
@@ -157,10 +159,9 @@ class ODSReader(Spreadsheet):
         else:
             name = sheet
 
-        try:
-            table = self._tables[names.index(name)]
-        except ValueError:
-            msg = f"There is no sheet named {name!r} in {self._file!r}"
+        table = self._tables.get(name)
+        if table is None:
+            msg = f"A sheet named {sheet!r} is not in {self._file!r}"
             raise ValueError(msg) from None
 
         maxsize = sys.maxsize - 1
@@ -191,22 +192,41 @@ class ODSReader(Spreadsheet):
 
         return data
 
+    def shape(self, sheet: str) -> tuple[int, int]:
+        """Get the number of rows and columns in a sheet.
+
+        Args:
+            sheet: The name of a sheet to get the shape of.
+
+        Returns:
+            The *(number of rows, number of columns)* in `sheet`.
+        """
+        table = self._tables.get(sheet)
+        if table is None:
+            msg = f"A sheet named {sheet!r} is not in {self._file!r}"
+            raise ValueError(msg) from None
+
+        num_cols = 0
+        for col in table.findall(".//table:table-column", namespaces=self._ns):
+            num_cols += int(self._attribute(col, "table", "number-columns-repeated", "1"))
+
+        num_rows = sum(1 for _ in self._rows(table, 0, sys.maxsize - 1))
+        return (num_rows, num_cols)
+
     def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the OpenDocument Spreadsheet.
 
         Returns:
             The names of all sheets.
         """
-        if self._names is None:
-            self._names = tuple(self._attribute(t, "table", "name") for t in self._tables)
-        return self._names
+        return tuple(self._tables.keys())
 
     def _attribute(self, element: Element[str], ns: str, name: str, default: str = "") -> str:
         """Returns the value of an attribute."""
         return element.get(f"{{{self._ns[ns]}}}{name}", default=default)
 
     def _rows(self, table: Element[str], start: int, stop: int) -> Generator[Element[str]]:
-        """Yield all rows between `start` and `stop` in the `table`."""
+        """Yield all rows between the `start` and `stop` indices in the `table`."""
         start += 1
         stop += 1
         position = 0
@@ -229,7 +249,7 @@ class ODSReader(Spreadsheet):
                 yield row
 
     def _cell(self, row: Element[str], start: int, stop: int, as_datetime: bool) -> Any:  # noqa: FBT001
-        """Yield the value of each cell between `start` and `stop` in the `row`."""
+        """Yield the value of each cell between the `start` and `stop` indices in the `row`."""
         start += 1
         stop += 1
         position = 0
