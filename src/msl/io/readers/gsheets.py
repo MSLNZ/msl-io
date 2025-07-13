@@ -168,7 +168,7 @@ class GSheetsReader(Spreadsheet):
         cells = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
         if sheet not in cells:
-            msg = f"There is no sheet named {sheet!r} in {self._file!r}"
+            msg = f"A sheet named {sheet!r} is not in {self._file!r}"
             raise ValueError(msg)
 
         values: list[tuple[Any, ...]] = []

@@ -694,10 +694,10 @@ def test_gsheets_copy_rename_add_delete() -> None:
     sw.delete_sheets(["g", next(iter(d_sheet.keys()))], id1)
     assert sw.sheet_names(id1) == ("b", "c", "e", "f")
 
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+    with pytest.raises(ValueError, match="A sheet named 'invalid' does not exist"):
         _ = sw.copy("invalid", id1, id2)
 
-    with pytest.raises(ValueError, match="no sheet named 'invalid'"):
+    with pytest.raises(ValueError, match="A sheet named 'invalid' does not exist"):
         sw.delete_sheets("invalid", id1)
 
     # cleanup

@@ -39,7 +39,7 @@ def test_raises() -> None:
         _ = GSheetsReader(table_gsheet_id, account="testing").read()
 
     table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
-    with pytest.raises(ValueError, match=r"There is no sheet named"):
+    with pytest.raises(ValueError, match=r"A sheet named 'A1' is not in"):
         _ = GSheetsReader(table_gsheet_id, account="testing").read(sheet="A1")
 
     table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"

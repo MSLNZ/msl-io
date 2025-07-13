@@ -152,7 +152,7 @@ class ExcelReader(Spreadsheet):
         try:
             _sheet = self._workbook.sheet_by_name(sheet_name)
         except XLRDError:
-            msg = f"There is no sheet named {sheet_name!r} in {self._file!r}"
+            msg = f"A sheet named {sheet_name!r} is not in {self._file!r}"
             raise ValueError(msg) from None
 
         if not cell:

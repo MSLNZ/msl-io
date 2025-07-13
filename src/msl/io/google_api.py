@@ -935,7 +935,7 @@ class GSheets(GoogleAPI):
             if sheet["properties"]["title"] == name:
                 return int(sheet["properties"]["sheetId"])
 
-        msg = f"There is no sheet named {name!r}"
+        msg = f"A sheet named {name!r} does not exist"
         raise ValueError(msg)
 
     def rename_sheet(self, name_or_id: str | int, new_name: str, spreadsheet_id: str) -> None:

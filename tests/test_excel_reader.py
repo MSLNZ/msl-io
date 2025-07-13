@@ -19,8 +19,8 @@ def test_raises() -> None:
         _ = ExcelReader(file).read()
 
     # the sheet does not exist in the Excel workbook
-    with pytest.raises(ValueError, match=r"There is no sheet named"):
-        _ = ExcelReader(file).read(sheet="XXXYYYZZZ")  # cSpell:ignore XXXYYYZZZ
+    with pytest.raises(ValueError, match=r"A sheet named 'XYZ' is not in"):
+        _ = ExcelReader(file).read(sheet="XYZ")
 
 
 def test_on_demand_default() -> None:
