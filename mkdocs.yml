@@ -125,6 +125,6 @@ extra:
     provider: mike
   social:
   - icon: fontawesome/brands/github
-    link: https://github.com/MSLNZ/msl-loadlib/
+    link: https://github.com/MSLNZ/msl-io/
   - icon: fontawesome/brands/python
-    link: https://pypi.org/project/msl-loadlib/
+    link: https://pypi.org/project/msl-io/
