@@ -88,17 +88,57 @@ def test_raises() -> None:
     for c in INVALID_CELL_RANGES:
         with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = read_table(get_url(".xls"), cells=c, sheet="A1")
+        with pytest.raises(ValueError, match=r"Invalid cell"):
+            _ = read_table(get_url(".ods"), cells=c, sheet="A1")
 
 
-def test_excel_range_out_of_bounds() -> None:
+@pytest.mark.parametrize("extension", [".xls", ".xlsx"])
+def test_excel_range_out_of_bounds(extension: str) -> None:
     for c in ["A100", "J1:M10"]:
-        dset = read_table(get_url(".xls"), cells=c, sheet="A1")
+        dset = read_table(get_url(extension), cells=c, sheet="A1")
         assert dset.metadata.header.size == 0
         assert dset.size == 0
 
-    dset = read_table(get_url(".xls"), cells="A1:Z100", sheet="A1", as_datetime=False, dtype=data.dtype)
+    dset = read_table(get_url(extension), cells="A1:Z100", sheet="A1", as_datetime=False, dtype=data.dtype)
     assert np.array_equal(dset.metadata.header, header)
     assert np.array_equal(dset.data, data)
+
+
+def test_ods_range_out_of_bounds() -> None:
+    for c in ["A100", "J1:M10"]:
+        dset = read_table(get_url(".ods"), cells=c, sheet="A1")
+        assert dset.metadata.header.size == 0
+        assert dset.size == 0
+
+    dset = read_table(get_url(".ods"), cells="A1:Z100", sheet="A1", as_datetime=False, dtype=data.dtype)
+    assert np.array_equal(dset.metadata.header, header)
+    assert np.array_equal(dset.data, ods_data)
+
+
+@pytest.mark.parametrize(("extension"), [".xls", ".xlsx", ".ods"])
+def test_single_cell_specified(extension: str) -> None:
+    expected = np.asarray([[e["f1"], e["f2"], e["f3"], e["f4"]] for e in data])
+    dset = read_table(get_url(extension), cells="B1", sheet="A1")
+    assert np.array_equal(dset.metadata.header, header[1:])
+    assert np.array_equal(dset.data, expected)
+
+    expected = np.asarray([[e["f2"], e["f3"], e["f4"]] for e in data])
+    dset = read_table(get_url(extension), cells="BJ11", sheet="BH11")
+    assert np.array_equal(dset.metadata.header, header[2:])
+    assert np.array_equal(dset.data, expected)
+
+    if extension != ".xls":
+        dset = read_table(get_url(extension), cells="AFB154041", sheet="AEX154041")
+        assert np.array_equal(dset.metadata.header, ["uncert2"])
+        assert np.array_equal(dset.data, data["f4"])
+
+
+@pytest.mark.parametrize(("extension"), [".xls", ".xlsx", ".ods"])
+def test_only_columns_specified(extension: str) -> None:
+    expected = np.asarray([[e["f1"], e["f2"], e["f3"]] for e in data])
+    dset = read_table(get_url(extension), cells="B:D", sheet="A1")
+    assert np.array_equal(dset.metadata.header, header[1:4])
+    assert np.array_equal(dset.data, expected)
 
 
 @pytest.mark.parametrize(
@@ -597,6 +637,10 @@ def test_gsheets_cell_range() -> None:
     dset = read_table(file, account="testing", sheet="StartA1", cells="A1:D2")
     assert np.array_equal(dset.metadata.header, gsheet_header)
     assert np.array_equal(dset, gsheet_data[0])
+
+    dset = read_table(file, account="testing", sheet="StartA1", cells="B:D", dtype=object)
+    assert np.array_equal(dset.metadata.header, gsheet_header[1:4])
+    assert np.array_equal(dset, gsheet_data[:, 1:4])
 
 
 @skipif_no_sheets_readonly

@@ -116,11 +116,11 @@ def read_table_excel(
 
     Args:
         file: The file to read.
-        cells: The cells to read. For example, `C9` will start at cell C9 and
-            include all values until the end of the spreadsheet, `A:C` includes
-            all rows in columns A, B and C, and, `C9:G20` includes values from
-            only the specified cells. If not specified then returns all values
-            from the specified `sheet`.
+        cells: The cells to read. For example, `C9` (i.e, specifying only the top-left cell
+            of the table) will start at cell C9 and include all columns to the right and
+            all rows below C9, `A:C` includes all rows in columns A, B and C, and, `C9:G20`
+            includes only the specified cells. If not specified, assumes that the table
+            starts at cell `A1` and returns all cells from the specified `sheet`.
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the workbook then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
@@ -145,8 +145,7 @@ def read_table_excel(
             name = sheet or excel.workbook.sheet_names()[0]
             s = excel.workbook.sheet_by_name(name)
             letters = excel.to_letters(s.ncols - 1)
-            row = match.group(2)
-            cells += f":{letters}{row}"
+            cells += f":{letters}{s.nrows}"
         table = excel.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
@@ -172,11 +171,11 @@ def read_table_gsheets(
 
     Args:
         file: The file to read. Can be the ID of a Google Sheets spreadsheet.
-        cells: The cells to read. For example, `C9` will start at cell C9 and
-            include all values until the end of the spreadsheet, `A:C` includes
-            all rows in columns A, B and C, and, `C9:G20` includes
-            values from only the specified cells. If not specified then returns
-            all values from the specified `sheet`.
+        cells: The cells to read. For example, `C9` (i.e, specifying only the top-left cell
+            of the table) will start at cell C9 and include all columns to the right and
+            all rows below C9, `A:C` includes all rows in columns A, B and C, and, `C9:G20`
+            includes only the specified cells. If not specified, assumes that the table
+            starts at cell `A1` and returns all cells from the specified `sheet`.
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the spreadsheet then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
@@ -221,11 +220,11 @@ def read_table_ods(
 
     Args:
         file: The file to read.
-        cells: The cells to read. For example, `C9` will start at cell C9 and
-            include all values until the end of the spreadsheet, `A:C` includes
-            all rows in columns A, B and C, and, `C9:G20` includes values from
-            only the specified cells. If not specified then returns all values
-            from the specified `sheet`.
+        cells: The cells to read. For example, `C9` (i.e, specifying only the top-left cell
+            of the table) will start at cell C9 and include all columns to the right and
+            all rows below C9, `A:C` includes all rows in columns A, B and C, and, `C9:G20`
+            includes only the specified cells. If not specified, assumes that the table
+            starts at cell `A1` and returns all cells from the specified `sheet`.
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the OpenDocument then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
@@ -240,6 +239,15 @@ def read_table_ods(
     """
     file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
     with ODSReader(file, **kwargs) as ods:
+        if cells is not None and not _spreadsheet_range_regex.match(cells):
+            match = _spreadsheet_top_left_regex.match(cells)
+            if not match:
+                msg = f"Invalid cell {cells!r}"
+                raise ValueError(msg)
+            name = sheet or ods.sheet_names()[0]
+            num_rows, num_columns = ods.shape(name)
+            letters = ods.to_letters(num_columns - 1)
+            cells += f":{letters}{num_rows}"
         table = ods.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
     return _spreadsheet_to_dataset(table, file, dtype)
 

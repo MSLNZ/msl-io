@@ -19,6 +19,10 @@
 - [utils.git_head][msl.io.utils.git_head] now returns a [GitHead][msl.io.utils.GitHead] dataclass with the `datetime` key replaced with a `timestamp` attribute
 - the names of the keyword arguments to [utils.search][msl.io.utils.search]
 
+***Fixed:***
+
+- specifying only the top-left cell to [read_table][msl.io.tables.read_table] returned the wrong cells from the spreadsheet
+
 ***Removed:***
 
 - support for Python &le; 3.8
