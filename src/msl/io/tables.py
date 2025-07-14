@@ -27,25 +27,16 @@ _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
 extension_delimiter_map: dict[str, str] = {".csv": ","}
 """The delimiter to use to separate columns in a table based on the file extension.
 
-If the `delimiter` is not specified when calling the [read_table][msl.io.tables.read_table] function
-then this extension-delimiter map is used to determine the value of the `delimiter`. If the file extension
-is not in the map then the value of the `delimiter` is `None` (i.e., split columns by any whitespace).
+If the `delimiter` keyword is not specified when calling the [read_table][msl.io.tables.read_table] function
+then this extension-delimiter map is used to determine the value of the delimiter to use to separate the columns
+in a text-based file format. If the file extension is not in the map, then columns are split by any whitespace.
 
-**Examples:**
-
-You can customize your own map by adding key-value pairs
-
-```pycon
->>> from msl.io import extension_delimiter_map
->>> extension_delimiter_map[".xyz"] = ";"
-
-```
-
+See [read_table_text][msl.io.tables.read_table_text] for an example.
 """
 
 
 def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
-    """Read a data table from a text-based file.
+    r"""Read a data table from a text-based file.
 
     The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
 
@@ -54,12 +45,62 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         kwargs: All keyword arguments are passed to [numpy.loadtxt][]. If the
             `delimiter` is not specified and the `file` has `.csv` as the file
             extension then the `delimiter` is automatically set to be `,` (see
-            [extension_delimiter_map][msl.io.tables.extension_delimiter_map] for adding
-            custom delimiter options).
+            example below for adding custom delimiter values).
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
             [Metadata][msl.io.metadata.Metadata].
+
+    **Examples:**
+
+    <!--
+    >>> from io import StringIO
+    >>> file = StringIO("value;uncertainty\n6.317;0.045\n4.362;0.009\n5.328;0.013\n")
+    >>> file.name = "data.xyz"
+
+    -->
+
+    Suppose you wanted to read a table from a file that uses a `;` character to separate columns
+
+    ```pycon
+    >>> file.name
+    'data.xyz'
+    >>> print(file.read())
+    value;uncertainty
+    6.317;0.045
+    4.362;0.009
+    5.328;0.013
+
+    ```
+
+    <!--
+    >>> _ = file.seek(0)
+
+    -->
+
+    You would first add the extension and delimiter to the
+    [extension_delimiter_map][msl.io.tables.extension_delimiter_map]
+
+    ```pycon
+    >>> from msl.io import extension_delimiter_map
+    >>> extension_delimiter_map[".xyz"] = ";"
+
+    ```
+
+    and then you can read a table from files with the *.xyz* extension with the appropriate delimiter
+
+    ```pycon
+    >>> from msl.io import read_table
+    >>> table = read_table(file)
+    >>> table.metadata
+    <Metadata 'data.xyz' {'header': ['value', 'uncertainty']}>
+    >>> table.data
+    array([[6.317, 0.045],
+           [4.362, 0.009],
+           [5.328, 0.013]])
+
+    ```
+
     """
     if kwargs.get("unpack", False):
         msg = "Cannot use the 'unpack' option"
