@@ -93,12 +93,12 @@ class ExcelReader(Spreadsheet):
         self._workbook.release_resources()
 
     def read(
-        self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Excel spreadsheet.
 
         Args:
-            cell: The cell(s) to read. For example, `C9` will return a single value
+            cells: The cell(s) to read. For example, `C9` will return a single value
                 and `C9:G20` will return all values in the specified range. If not
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only
@@ -155,12 +155,12 @@ class ExcelReader(Spreadsheet):
             msg = f"A sheet named {sheet_name!r} is not in {self._file!r}"
             raise ValueError(msg) from None
 
-        if not cell:
+        if not cells:
             return [
                 tuple(self._value(_sheet, r, c, as_datetime) for c in range(_sheet.ncols)) for r in range(_sheet.nrows)
             ]
 
-        split = cell.split(":")
+        split = cells.split(":")
         r1, c1 = self.to_indices(split[0])
         if r1 is None:
             r1 = 0

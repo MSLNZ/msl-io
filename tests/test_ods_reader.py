@@ -51,21 +51,21 @@ def test_datatypes(ext: str) -> None:
         (3.14159265358979, "some text", None, 0.34),
         ("3 ½", 9.99e99, "03:38:00 AM", None),
     ]
-    assert ods.read(cell="A1") == 1.23  # $1.23
-    assert ods.read(cell="B1") is True
-    assert ods.read(cell="C1") == datetime(2019, 9, 13, 13, 20, 22)  # noqa: DTZ001
-    assert ods.read(cell="C1", as_datetime=False) == "09/13/2019 01:20 PM"
-    assert ods.read(cell="D1") == date(2019, 9, 13)
-    assert ods.read(cell="D1", as_datetime=False) == "09/13/19"
-    assert ods.read(cell="A2") == 3.14159265358979
-    assert ods.read(cell="B2") == "some text"
-    assert ods.read(cell="C2") is None
-    assert ods.read(cell="D2") == 0.34  # 34%
-    assert ods.read(cell="A3") == "3 ½"
-    assert ods.read(cell="B3") == 9.99e99
-    assert ods.read(cell="C3") == "03:38:00 AM"  # office:value-type="time" is treated as a string
-    assert ods.read(cell="D3") is None
-    assert ods.read(cell="A1:A2") == [(1.23,), (3.14159265358979,)]
+    assert ods.read("A1") == 1.23  # $1.23
+    assert ods.read("B1") is True
+    assert ods.read("C1") == datetime(2019, 9, 13, 13, 20, 22)  # noqa: DTZ001
+    assert ods.read("C1", as_datetime=False) == "09/13/2019 01:20 PM"
+    assert ods.read("D1") == date(2019, 9, 13)
+    assert ods.read("D1", as_datetime=False) == "09/13/19"
+    assert ods.read("A2") == 3.14159265358979
+    assert ods.read("B2") == "some text"
+    assert ods.read("C2") is None
+    assert ods.read("D2") == 0.34  # 34%
+    assert ods.read("A3") == "3 ½"
+    assert ods.read("B3") == 9.99e99
+    assert ods.read("C3") == "03:38:00 AM"  # office:value-type="time" is treated as a string
+    assert ods.read("D3") is None
+    assert ods.read("A1:A2") == [(1.23,), (3.14159265358979,)]
 
 
 def test_table() -> None:  # noqa: PLR0915
@@ -89,77 +89,77 @@ def test_table() -> None:  # noqa: PLR0915
     assert ods.sheet_names() == ("A1", "BH11", "AEX154041")
 
     # single cell
-    assert ods.read(cell="A1", sheet="A1") == "timestamp"
-    assert ods.read(cell="B2", sheet="A1") == -0.505382
-    assert ods.read(cell="C7", sheet="A1") == 0.000079
-    assert ods.read(cell="A100", sheet="A1") is None  # A100 is empty (also out of bounds)
-    assert ods.read(cell="BI12", sheet="BH11") == -0.505382
-    assert ods.read(cell="A1", sheet="BH11") is None  # A1 is empty
-    assert ods.read(cell="ZZ1000", sheet="BH11") is None  # ZZ1000 is empty (also out of bounds)
-    assert ods.read(cell="AFB154045", sheet="AEX154041") == 0.00012
-    assert ods.read(cell="AA25", sheet="AEX154041") is None  # AA25 is empty
-    assert ods.read(cell="BAA200000", sheet="AEX154041") is None  # BAA200000 is empty (also out of bounds)
+    assert ods.read("A1", sheet="A1") == "timestamp"
+    assert ods.read("B2", sheet="A1") == -0.505382
+    assert ods.read("C7", sheet="A1") == 0.000079
+    assert ods.read("A100", sheet="A1") is None  # A100 is empty (also out of bounds)
+    assert ods.read("BI12", sheet="BH11") == -0.505382
+    assert ods.read("A1", sheet="BH11") is None  # A1 is empty
+    assert ods.read("ZZ1000", sheet="BH11") is None  # ZZ1000 is empty (also out of bounds)
+    assert ods.read("AFB154045", sheet="AEX154041") == 0.00012
+    assert ods.read("AA25", sheet="AEX154041") is None  # AA25 is empty
+    assert ods.read("BAA200000", sheet="AEX154041") is None  # BAA200000 is empty (also out of bounds)
 
     # single row
-    assert ods.read(cell="A1:E1", sheet="A1") == [values[0]]
-    assert ods.read(cell="BH11:BL11", sheet="BH11") == [values[0]]
-    assert ods.read(cell="A2:E2", sheet="A1") == [values[1]]
-    assert ods.read(cell="BH12:BL12", sheet="BH11") == [values[1]]
-    assert ods.read(cell="A3:E3", sheet="A1") == [values[2]]
-    assert ods.read(cell="BH13:BL13", sheet="BH11") == [values[2]]
-    assert ods.read(cell="A4:E4", sheet="A1") == [values[3]]
-    assert ods.read(cell="BH14:BL14", sheet="BH11") == [values[3]]
-    assert ods.read(cell="A5:E5", sheet="A1") == [values[4]]
-    assert ods.read(cell="BH15:BL15", sheet="BH11") == [values[4]]
-    assert ods.read(cell="A6:E6", sheet="A1") == [values[5]]
-    assert ods.read(cell="BH16:BL16", sheet="BH11") == [values[5]]
-    assert ods.read(cell="A7:E7", sheet="A1") == [values[6]]
-    assert ods.read(cell="BH17:BL17", sheet="BH11") == [values[6]]
-    assert ods.read(cell="A8:E8", sheet="A1") == [values[7]]
-    assert ods.read(cell="BH18:BL18", sheet="BH11") == [values[7]]
-    assert ods.read(cell="A9:E9", sheet="A1") == [values[8]]
-    assert ods.read(cell="BH19:BL19", sheet="BH11") == [values[8]]
-    assert ods.read(cell="A10:E10", sheet="A1") == [values[9]]
-    assert ods.read(cell="BH20:BL20", sheet="BH11") == [values[9]]
-    assert ods.read(cell="A11:E11", sheet="A1") == [values[10]]
-    assert ods.read(cell="BH21:BL21", sheet="BH11") == [values[10]]
-    assert ods.read(cell="A6:B6", sheet="A1") == [values[5][:2]]
-    assert ods.read(cell="A12:C12", sheet="A1") == []  # row 12 is empty (also out of bounds)
-    assert ods.read(cell="A1000:Z1000", sheet="A1") == []  # row 1000 is empty (also out of bounds)
-    assert ods.read(cell="BH22:BL22", sheet="BH11") == []  # row 22 is empty (also out of bounds)
-    assert ods.read(cell="A1000:ZZ1000", sheet="BH11") == []  # row 1000 is empty (also out of bounds)
-    assert ods.read(cell="A1:A1", sheet="A1") == [("timestamp",)]
-    assert ods.read(cell="D9:D9", sheet="A1") == [(0.500805,)]
+    assert ods.read("A1:E1", sheet="A1") == [values[0]]
+    assert ods.read("BH11:BL11", sheet="BH11") == [values[0]]
+    assert ods.read("A2:E2", sheet="A1") == [values[1]]
+    assert ods.read("BH12:BL12", sheet="BH11") == [values[1]]
+    assert ods.read("A3:E3", sheet="A1") == [values[2]]
+    assert ods.read("BH13:BL13", sheet="BH11") == [values[2]]
+    assert ods.read("A4:E4", sheet="A1") == [values[3]]
+    assert ods.read("BH14:BL14", sheet="BH11") == [values[3]]
+    assert ods.read("A5:E5", sheet="A1") == [values[4]]
+    assert ods.read("BH15:BL15", sheet="BH11") == [values[4]]
+    assert ods.read("A6:E6", sheet="A1") == [values[5]]
+    assert ods.read("BH16:BL16", sheet="BH11") == [values[5]]
+    assert ods.read("A7:E7", sheet="A1") == [values[6]]
+    assert ods.read("BH17:BL17", sheet="BH11") == [values[6]]
+    assert ods.read("A8:E8", sheet="A1") == [values[7]]
+    assert ods.read("BH18:BL18", sheet="BH11") == [values[7]]
+    assert ods.read("A9:E9", sheet="A1") == [values[8]]
+    assert ods.read("BH19:BL19", sheet="BH11") == [values[8]]
+    assert ods.read("A10:E10", sheet="A1") == [values[9]]
+    assert ods.read("BH20:BL20", sheet="BH11") == [values[9]]
+    assert ods.read("A11:E11", sheet="A1") == [values[10]]
+    assert ods.read("BH21:BL21", sheet="BH11") == [values[10]]
+    assert ods.read("A6:B6", sheet="A1") == [values[5][:2]]
+    assert ods.read("A12:C12", sheet="A1") == []  # row 12 is empty (also out of bounds)
+    assert ods.read("A1000:Z1000", sheet="A1") == []  # row 1000 is empty (also out of bounds)
+    assert ods.read("BH22:BL22", sheet="BH11") == []  # row 22 is empty (also out of bounds)
+    assert ods.read("A1000:ZZ1000", sheet="BH11") == []  # row 1000 is empty (also out of bounds)
+    assert ods.read("A1:A1", sheet="A1") == [("timestamp",)]
+    assert ods.read("D9:D9", sheet="A1") == [(0.500805,)]
 
     # single column
-    assert ods.read(cell="A:A", sheet="A1") == [(item[0],) for item in values]
-    assert ods.read(cell="B:B", sheet="A1") == [(item[1],) for item in values]
-    assert ods.read(cell="C:C", sheet="A1") == [(item[2],) for item in values]
-    assert ods.read(cell="D:D", sheet="A1") == [(item[3],) for item in values]
-    assert ods.read(cell="E:E", sheet="A1") == [(item[4],) for item in values]
-    assert ods.read(cell="F:F", sheet="A1") == []  # column F is empty (also out of bounds)
-    assert ods.read(cell="ABC:ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
-    assert ods.read(cell="BH:BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
-    assert ods.read(cell="A:A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
-    assert ods.read(cell="BG:BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
+    assert ods.read("A:A", sheet="A1") == [(item[0],) for item in values]
+    assert ods.read("B:B", sheet="A1") == [(item[1],) for item in values]
+    assert ods.read("C:C", sheet="A1") == [(item[2],) for item in values]
+    assert ods.read("D:D", sheet="A1") == [(item[3],) for item in values]
+    assert ods.read("E:E", sheet="A1") == [(item[4],) for item in values]
+    assert ods.read("F:F", sheet="A1") == []  # column F is empty (also out of bounds)
+    assert ods.read("ABC:ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
+    assert ods.read("BH:BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
+    assert ods.read("A:A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
+    assert ods.read("BG:BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
 
     # 2D slices
-    assert ods.read(cell="A:E", sheet="A1") == values
-    assert ods.read(cell="A1:E11", sheet="A1") == values
-    assert ods.read(cell="A1:AAA10000", sheet="A1") == values  # slicing out of range is okay
-    assert ods.read(cell="A1:C6", sheet="A1") == [row[:3] for row in values[:6]]
-    assert ods.read(cell="A10:E11", sheet="A1") == values[-2:]
-    assert ods.read(cell="A10:E1000", sheet="A1") == values[-2:]  # slicing out of range is okay
-    assert ods.read(cell="A:E", sheet="BH11") == [tuple(None for _ in range(5)) for _ in range(21)]
+    assert ods.read("A:E", sheet="A1") == values
+    assert ods.read("A1:E11", sheet="A1") == values
+    assert ods.read("A1:AAA10000", sheet="A1") == values  # slicing out of range is okay
+    assert ods.read("A1:C6", sheet="A1") == [row[:3] for row in values[:6]]
+    assert ods.read("A10:E11", sheet="A1") == values[-2:]
+    assert ods.read("A10:E1000", sheet="A1") == values[-2:]  # slicing out of range is okay
+    assert ods.read("A:E", sheet="BH11") == [tuple(None for _ in range(5)) for _ in range(21)]
     new = [tuple(None for _ in range(6))]
     for row in values:
         new.append((None, *row))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: PERF401
-    assert ods.read(cell="BG10:BM22", sheet="BH11") == new
-    assert ods.read(cell="BK20:BL21", sheet="BH11") == [row[-2:] for row in values[-2:]]
-    assert ods.read(cell="AEX154041:AFB154051", sheet="AEX154041") == values
-    assert ods.read(cell="AEX154041:ZZZ1000000", sheet="AEX154041") == values  # slicing out of range is okay
-    assert ods.read(cell="AEY154042:AFA154044", sheet="AEX154041") == [row[1:4] for row in values[1:4]]
-    assert ods.read(cell="J1:M10", sheet="A1") == []
+    assert ods.read("BG10:BM22", sheet="BH11") == new
+    assert ods.read("BK20:BL21", sheet="BH11") == [row[-2:] for row in values[-2:]]
+    assert ods.read("AEX154041:AFB154051", sheet="AEX154041") == values
+    assert ods.read("AEX154041:ZZZ1000000", sheet="AEX154041") == values  # slicing out of range is okay
+    assert ods.read("AEY154042:AFA154044", sheet="AEX154041") == [row[1:4] for row in values[1:4]]
+    assert ods.read("J1:M10", sheet="A1") == []
 
 
 def test_repeats_ones() -> None:

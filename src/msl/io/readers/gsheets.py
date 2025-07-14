@@ -109,12 +109,12 @@ class GSheetsReader(Spreadsheet):
         self._gsheets.close()
 
     def read(  # noqa: C901, PLR0912
-        self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Google Sheets spreadsheet.
 
         Args:
-            cell: The cell(s) to read. For example, `C9` will return a single value
+            cells: The cell(s) to read. For example, `C9` will return a single value
                 and `C9:G20` will return all values in the specified range. If not
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only one
@@ -163,16 +163,16 @@ class GSheetsReader(Spreadsheet):
                 sheet = names[0]
                 self._cached_sheet_name = sheet
 
-        ranges = f"{sheet}!{cell}" if cell else sheet
+        ranges = f"{sheet}!{cells}" if cells else sheet
 
-        cells = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
+        cells_dict = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
-        if sheet not in cells:
+        if sheet not in cells_dict:
             msg = f"A sheet named {sheet!r} is not in {self._file!r}"
             raise ValueError(msg)
 
         values: list[tuple[Any, ...]] = []
-        for row in cells[sheet]:
+        for row in cells_dict[sheet]:
             row_values: list[Any] = []
             for item in row:
                 if item.type == GCellType.DATE:
@@ -184,10 +184,10 @@ class GSheetsReader(Spreadsheet):
                 row_values.append(value)
             values.append(tuple(row_values))
 
-        if not cell:
+        if not cells:
             return values
 
-        if ":" not in cell:
+        if ":" not in cells:
             if values:
                 return values[0][0]
             return None

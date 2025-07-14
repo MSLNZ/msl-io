@@ -187,7 +187,7 @@ def read_table_excel(
             s = excel.workbook.sheet_by_name(name)
             letters = excel.to_letters(s.ncols - 1)
             cells += f":{letters}{s.nrows}"
-        table = excel.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
+        table = excel.read(cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
@@ -241,7 +241,7 @@ def read_table_gsheets(
             data = sheets.read(sheet=sheet, as_datetime=as_datetime)
             table = [row[c:] for row in data[r:]]
         else:
-            table = sheets.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
+            table = sheets.read(cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
@@ -289,7 +289,7 @@ def read_table_ods(
             num_rows, num_columns = ods.shape(name)
             letters = ods.to_letters(num_columns - 1)
             cells += f":{letters}{num_rows}"
-        table = ods.read(cell=cells, sheet=sheet, as_datetime=as_datetime)
+        table = ods.read(cells, sheet=sheet, as_datetime=as_datetime)
     return _spreadsheet_to_dataset(table, file, dtype)
 
 

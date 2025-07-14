@@ -32,7 +32,7 @@ class Spreadsheet(ABC):
     @abstractmethod
     def read(
         self,
-        cell: str | None = None,
+        cells: str | None = None,
         sheet: str | None = None,
         *,
         as_datetime: bool = True,
@@ -42,7 +42,7 @@ class Spreadsheet(ABC):
         !!! warning "You must override this method."
 
         Args:
-            cell: The cell(s) to read. For example, `C9` will return a single value
+            cells: The cell(s) to read. For example, `C9` will return a single value
                 and `C9:G20` will return all values in the specified range. If not
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only one

@@ -103,12 +103,12 @@ class ODSReader(Spreadsheet):
         return
 
     def read(  # noqa: C901, PLR0912
-        self, cell: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the OpenDocument Spreadsheet.
 
         Args:
-            cell: The cell(s) to read. For example, `C9` will return a single value
+            cells: The cell(s) to read. For example, `C9` will return a single value
                 and `C9:G20` will return all values in the specified range. If not
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only
@@ -166,8 +166,8 @@ class ODSReader(Spreadsheet):
 
         maxsize = sys.maxsize - 1
         r1, c1, r2, c2, contains_colon = 0, 0, maxsize, maxsize, False
-        if cell:
-            split = cell.split(":")
+        if cells:
+            split = cells.split(":")
             r, c1 = self.to_indices(split[0])
             r1 = 0 if r is None else r
             if len(split) > 1:

@@ -56,17 +56,17 @@ def test_cell() -> None:
     sheets = GSheetsReader(ssid, account="testing")
     assert sheets.file == ssid
     assert sheets.read() == values
-    assert sheets.read(cell="A1") == "temperature"
-    assert sheets.read(cell="A100") is None  # A100 is empty
-    assert sheets.read(cell="B5") == 48.32
-    assert sheets.read(cell="A3:B3") == [(20.23, 46.06)]
-    assert sheets.read(cell="A6:B6") == []  # row 6 is empty
-    assert sheets.read(cell="B:B") == [("humidity",), (49.82,), (46.06,), (47.06,), (48.32,)]
-    assert sheets.read(cell="C:C") == []  # column C is empty
-    assert sheets.read(cell="A:B") == values
-    assert sheets.read(cell="A1:B5") == values
-    assert sheets.read(cell="A1:Z100") == values  # slicing out of range is okay
-    assert sheets.read(cell="J1:M10") == []
+    assert sheets.read("A1") == "temperature"
+    assert sheets.read("A100") is None  # A100 is empty
+    assert sheets.read("B5") == 48.32
+    assert sheets.read("A3:B3") == [(20.23, 46.06)]
+    assert sheets.read("A6:B6") == []  # row 6 is empty
+    assert sheets.read("B:B") == [("humidity",), (49.82,), (46.06,), (47.06,), (48.32,)]
+    assert sheets.read("C:C") == []  # column C is empty
+    assert sheets.read("A:B") == values
+    assert sheets.read("A1:B5") == values
+    assert sheets.read("A1:Z100") == values  # slicing out of range is okay
+    assert sheets.read("J1:M10") == []
 
 
 @skipif_no_sheets_readonly
@@ -105,7 +105,7 @@ def test_as_datetime() -> None:
     # table.gsheet
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
     sheets = GSheetsReader(ssid, account="testing")
-    assert sheets.read(cell="A:A", sheet="StartA1", as_datetime=True) == [
+    assert sheets.read("A:A", sheet="StartA1", as_datetime=True) == [
         ("Timestamp",),
         (datetime(2019, 9, 11, 14, 6, 55),),  # noqa: DTZ001
         (datetime(2019, 9, 11, 14, 6, 59),),  # noqa: DTZ001
@@ -118,7 +118,7 @@ def test_as_datetime() -> None:
         (datetime(2019, 9, 11, 14, 7, 27),),  # noqa: DTZ001
         (datetime(2019, 9, 11, 14, 7, 31),),  # noqa: DTZ001
     ]
-    assert sheets.read(cell="A:B", sheet="StartA1", as_datetime=False) == [
+    assert sheets.read("A:B", sheet="StartA1", as_datetime=False) == [
         ("Timestamp", "Value"),
         ("2019-09-11 14:06:55", 20.1),
         ("2019-09-11 14:06:59", 25.4),
