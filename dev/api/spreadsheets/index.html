@@ -1211,15 +1211,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.workbook" class="md-nav__link">
-    <span class="md-ellipsis">
-      workbook
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#msl.io.readers.excel.ExcelReader.close" class="md-nav__link">
     <span class="md-ellipsis">
       close
@@ -1232,6 +1223,15 @@
   <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
     <span class="md-ellipsis">
       read
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.io.readers.excel.ExcelReader.shape" class="md-nav__link">
+    <span class="md-ellipsis">
+      shape
     </span>
   </a>
   
@@ -1526,15 +1526,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.workbook" class="md-nav__link">
-    <span class="md-ellipsis">
-      workbook
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#msl.io.readers.excel.ExcelReader.close" class="md-nav__link">
     <span class="md-ellipsis">
       close
@@ -1547,6 +1538,15 @@
   <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
     <span class="md-ellipsis">
       read
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.io.readers.excel.ExcelReader.shape" class="md-nav__link">
+    <span class="md-ellipsis">
+      shape
     </span>
   </a>
   
@@ -2885,30 +2885,6 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 
 
 
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="msl.io.readers.excel.ExcelReader.workbook" class="doc doc-heading">
-            <span class="doc doc-object-name doc-attribute-name">workbook</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#msl.io.readers.excel.ExcelReader.workbook" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">workbook</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p><a class="autorefs autorefs-external" href="https://xlrd.readthedocs.io/en/latest/api.html#xlrd.book.Book">Book</a> &mdash; The workbook instance.</p>
-
-    </div>
-
-</div>
-
 
 
 <div class="doc doc-object doc-function">
@@ -2929,9 +2905,9 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the workbook.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_workbook</span><span class="o">.</span><span class="n">release_resources</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -3092,7 +3068,12 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
 <span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
@@ -3179,12 +3160,7 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <span class="normal">179</span>
 <span class="normal">180</span>
 <span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the Excel spreadsheet.</span>
@@ -3286,6 +3262,115 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <div class="doc doc-object doc-function">
 
 
+<h3 id="msl.io.readers.excel.ExcelReader.shape" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">shape</span>
+
+
+<a href="#msl.io.readers.excel.ExcelReader.shape" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">shape</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the number of rows and columns in a sheet.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>sheet</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of a sheet to get the shape of.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <em>(number of rows, number of columns)</em> in <code>sheet</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sheet: The name of a sheet to get the shape of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The *(number of rows, number of columns)* in `sheet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workbook</span><span class="o">.</span><span class="n">sheet_by_name</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">XLRDError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ncols</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="msl.io.readers.excel.ExcelReader.sheet_names" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">sheet_names</span>
 
@@ -3324,13 +3409,13 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the Excel spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
