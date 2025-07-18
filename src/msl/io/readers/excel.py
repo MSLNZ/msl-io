@@ -92,8 +92,8 @@ class ExcelReader(Spreadsheet):
         """Close the workbook."""
         self._workbook.release_resources()
 
-    def read(
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+    def read(  # noqa: C901
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Excel spreadsheet.
 
@@ -107,6 +107,9 @@ class ExcelReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as an
                 ISO 8601 string.
+            merged: Applies to cells that are merged with other cells. If cells are merged, then
+                only the top-left cell has the value and all other cells in the merger are empty.
+                Enabling this argument is currently not supported and the value must be `False`.
 
         Returns:
             The value(s) of the requested cell(s).
@@ -132,6 +135,10 @@ class ExcelReader(Spreadsheet):
 
         ```
         """
+        if merged:
+            msg = "The `merged` argument must be False to read an Excel spreadsheet"
+            raise ValueError(msg)
+
         if not sheet:
             names = self.sheet_names()
             if len(names) == 1:

@@ -73,6 +73,8 @@ class ODSReader(Spreadsheet):
             "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
         }
 
+        self._spans: dict[int, tuple[int, Any]] = {}  # column-index: (spans-remaining, cell-value)
+
         ext = get_extension(f).lower()
         content: Element[str]
         if ext == ".ods":
@@ -103,7 +105,7 @@ class ODSReader(Spreadsheet):
         return
 
     def read(  # noqa: C901, PLR0912
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the OpenDocument Spreadsheet.
 
@@ -117,6 +119,11 @@ class ODSReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime]
                 or [date][datetime.date] objects. If `False`, dates are returned as a
                 string in the display format of the spreadsheet cell.
+            merged: Applies to cells that are merged with other cells. If `False`, the
+                value of each unmerged cell is returned, otherwise the same value is
+                returned for all merged cells. In an OpenDocument Spreadsheet, the value
+                of a hidden cell that is merged with a visible cell can still be retained
+                (depends on how the merger was performed).
 
         Returns:
             The value(s) of the requested cell(s).
@@ -178,9 +185,10 @@ class ODSReader(Spreadsheet):
             else:
                 r2, c2 = r1, c1
 
+        self._spans.clear()
         data: list[tuple[Any, ...]] = []
         for row in self._rows(table, r1, r2):
-            values = tuple(self._cell(row, c1, c2, as_datetime))
+            values = tuple(self._cell(row, c1, c2, as_datetime, merged))
             if values:
                 data.append(values)
 
@@ -248,21 +256,26 @@ class ODSReader(Spreadsheet):
                 start += 1
                 yield row
 
-    def _cell(self, row: Element[str], start: int, stop: int, as_datetime: bool) -> Any:  # noqa: FBT001
+    def _cell(self, row: Element[str], start: int, stop: int, as_datetime: bool, merged: bool) -> Any:  # noqa: C901, FBT001, PLR0912
         """Yield the value of each cell between the `start` and `stop` indices in the `row`."""
         start += 1
         stop += 1
         position = 0
-        for cell in row:
-            row_spans = int(self._attribute(cell, "table", "number-rows-spanned", "0"))
-            if row_spans > 1:
-                msg = "Reading row-spanned cells is not currently supported"
-                raise ValueError(msg)
-
-            col_spans = int(self._attribute(cell, "table", "number-columns-spanned", "0"))
-            if col_spans > 1:
-                msg = "Reading column-spanned cells is not currently supported"
-                raise ValueError(msg)
+        for index, cell in enumerate(row):
+            if merged:
+                nrs = int(self._attribute(cell, "table", "number-rows-spanned", "0"))
+                ncs = int(self._attribute(cell, "table", "number-columns-spanned", "0"))
+                if nrs > 1 and ncs > 1:
+                    value = self._value(cell, as_datetime=as_datetime)
+                    for j in range(ncs):
+                        self._spans[index + j] = (nrs, value)
+                elif nrs > 1:
+                    self._spans[index] = (nrs, self._value(cell, as_datetime=as_datetime))
+                elif ncs > 1:
+                    value = self._value(cell, as_datetime=as_datetime)
+                    self._spans[index] = (1, value)
+                    # The following will be consumed by the "covered-table-cell" element in the next `row` iteration
+                    self._spans[index + 1] = (ncs - 1, value)
 
             repeats = int(self._attribute(cell, "table", "number-columns-repeated", "0"))
             position += repeats or 1
@@ -270,7 +283,11 @@ class ODSReader(Spreadsheet):
                 continue
 
             if repeats:
-                value = self._value(cell, as_datetime=as_datetime)
+                if merged and index in self._spans:
+                    _, value = self._spans[index]
+                    del self._spans[index]
+                else:
+                    value = self._value(cell, as_datetime=as_datetime)
                 for i in range(start, position + 1):
                     if i > stop:
                         return
@@ -278,6 +295,15 @@ class ODSReader(Spreadsheet):
                     yield value
             elif position > stop:
                 return
+            elif merged and index in self._spans:
+                remaining, span_value = self._spans[index]
+                if remaining > 0:
+                    if remaining == 1:
+                        del self._spans[index]
+                    else:
+                        self._spans[index] = (remaining - 1, span_value)
+                    start += 1
+                    yield span_value
             else:
                 start += 1
                 yield self._value(cell, as_datetime=as_datetime)

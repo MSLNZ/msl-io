@@ -31,7 +31,7 @@ def test_raises() -> None:
         ("ods_datatypes.fods", ("Sheet1",)),
         ("table.ods", ("A1", "BH11", "AEX154041")),
         ("lab_environment.ods", ("Lab Environment",)),
-        ("repeats.ods", ("Ones", "Hidden", "Merged")),
+        ("repeats.ods", ("Ones", "Hidden", "Merged", "Multi-Merged")),
     ],
 )
 def test_sheet_names(filename: str, expected: tuple[str, ...]) -> None:
@@ -166,7 +166,7 @@ def test_repeats_ones() -> None:
     file = samples / "repeats.ods"
     ods = ODSReader(file)
     assert ods.file == str(file)
-    assert ods.sheet_names() == ("Ones", "Hidden", "Merged")
+    assert ods.sheet_names() == ("Ones", "Hidden", "Merged", "Multi-Merged")
     assert ods.read(sheet="Ones") == [
         (1.0, 1.0, 1.0, 1.0, 1.0),
         (1.0, 1.0, 1.0, 1.0, 1.0),
@@ -186,7 +186,7 @@ def test_repeats_hidden() -> None:
     file = samples / "repeats.ods"
     ods = ODSReader(file)
     assert ods.file == str(file)
-    assert ods.sheet_names() == ("Ones", "Hidden", "Merged")
+    assert ods.sheet_names() == ("Ones", "Hidden", "Merged", "Multi-Merged")
     assert ods.read(sheet="Hidden") == [
         (None, None, None, None, None, None, None, None),
         (None, None, None, None, None, None, None, None),
@@ -217,12 +217,92 @@ def test_repeats_merged() -> None:
     file = samples / "repeats.ods"
     ods = ODSReader(file)
     assert ods.file == str(file)
-    assert ods.sheet_names() == ("Ones", "Hidden", "Merged")
+    assert ods.sheet_names() == ("Ones", "Hidden", "Merged", "Multi-Merged")
 
-    with pytest.raises(ValueError, match=r"column-spanned cells"):
-        _ = ods.read(sheet="Merged")
-    with pytest.raises(ValueError, match=r"row-spanned cells"):
-        _ = ods.read("A2:D4", sheet="Merged")
+    assert ods.read(sheet="Merged") == [
+        ("A", "B", None, "C"),
+        (1, 2, 3, 4),
+        (5, 6, 7, 8),
+        (None, 9, 10, 11),
+    ]
+
+    assert ods.read(sheet="Merged", merged=True) == [
+        ("A", "B", "B", "C"),
+        (1, 2, 3, 4),
+        (5, 6, 7, 8),
+        (5, 9, 10, 11),
+    ]
+
+    assert ods.read("C1:D2", sheet="Merged", merged=False) == [(None, "C"), (3, 4)]
+    assert ods.read("C1:D2", sheet="Merged", merged=True) == [("B", "C"), (3, 4)]
+
+    for merged in [True, False]:
+        assert ods.read("AA:AZ", sheet="Merged", merged=merged) == []
+        assert ods.read("D1:D2", sheet="Merged", merged=merged) == [("C",), (4,)]
+        assert ods.read("B2:D4", sheet="Merged", merged=merged) == [(2, 3, 4), (6, 7, 8), (9, 10, 11)]
+
+
+def test_repeats_multi_merged() -> None:
+    file = samples / "repeats.ods"
+    ods = ODSReader(file)
+    assert ods.file == str(file)
+    assert ods.sheet_names() == ("Ones", "Hidden", "Merged", "Multi-Merged")
+
+    assert ods.read(sheet="Multi-Merged") == [
+        ("A", "B", "C1 (1x4)", None, None, None, "G"),
+        (1, 2, 3, 4, 5, 6, 7),
+        (8, 9, 10, 11, 12, 13, 14),
+        ("A4 (4x1)", 15, 16, 17, 18, 19, 20),
+        (None, 21, 22, 23, 24, 25, 26),
+        (None, 27, 28, 29, 30, 31, 32),
+        (None, 33, 34, 35, 36, 37, 38),
+        (39, 40, 41, 42, 43, 44, 45),
+        ("#VALUE!", "#DIV/0!", "#NUM!", "#NAME?", None, None, None),
+    ]
+
+    assert ods.read(sheet="Multi-Merged", merged=True) == [
+        ("A", "B", "C1 (1x4)", "C1 (1x4)", "C1 (1x4)", "C1 (1x4)", "G"),
+        (1, 2, 3, 4, 5, 6, 7),
+        (8, 9, 10, 11, 12, 13, 14),
+        ("A4 (4x1)", 15, 16, 17, 18, 19, 20),
+        ("A4 (4x1)", 21, 22, 23, 23, 25, 26),  # 24 becomes 23
+        ("A4 (4x1)", 27, 28, 23, 23, 31, 32),  # 29 and 30 become 23
+        ("A4 (4x1)", 33, 34, 35, 36, 36, 36),  # 37 and 38 become 36
+        (39, 40, 41, 42, 36, 36, 36),  # 43, 44 and 45 become 36
+        ("#VALUE!", "#DIV/0!", "#NUM!", "#NAME?", 36, 36, 36),  # None become 36
+    ]
+
+    for merged in [True, False]:
+        assert ods.read("B1:C4", sheet="Multi-Merged", merged=merged) == [("B", "C1 (1x4)"), (2, 3), (9, 10), (15, 16)]
+
+    assert ods.read("F:G", sheet="Multi-Merged", merged=True) == [
+        ("C1 (1x4)", "G"),
+        (6, 7),
+        (13, 14),
+        (19, 20),
+        (25, 26),
+        (31, 32),
+        (36, 36),  # 37 and 38 become 36
+        (36, 36),  # 43, 44 and 45 become 36
+        (36, 36),  # None become 36
+    ]
+
+    assert ods.read("F:G", sheet="Multi-Merged", merged=False) == [
+        (None, "G"),
+        (6, 7),
+        (13, 14),
+        (19, 20),
+        (25, 26),
+        (31, 32),
+        (37, 38),
+        (44, 45),
+        (None, None),
+    ]
+
+    assert ods.read("D5:E6", sheet="Multi-Merged", merged=False) == [(23, 24), (29, 30)]
+    assert ods.read("D5:E6", sheet="Multi-Merged", merged=True) == [(23, 23), (23, 23)]
+    assert ods.read("E5:F7", sheet="Multi-Merged", merged=False) == [(24, 25), (30, 31), (36, 37)]
+    assert ods.read("E5:F7", sheet="Multi-Merged", merged=True) == [(23, 25), (23, 31), (36, 36)]
 
 
 @pytest.mark.parametrize(
@@ -237,6 +317,7 @@ def test_repeats_merged() -> None:
         ("repeats.ods", "Ones", (5, 5)),
         ("repeats.ods", "Hidden", (10, 8)),
         ("repeats.ods", "Merged", (4, 4)),
+        ("repeats.ods", "Multi-Merged", (9, 7)),
     ],
 )
 def test_shape(filename: str, sheet: str, expected: tuple[int, int]) -> None:

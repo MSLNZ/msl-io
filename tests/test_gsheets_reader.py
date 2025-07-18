@@ -38,13 +38,14 @@ def test_raises() -> None:
     with pytest.raises(ValueError, match=r"You must specify the name of the sheet to read"):
         _ = GSheetsReader(table_gsheet_id, account="testing").read()
 
-    table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
     with pytest.raises(ValueError, match=r"A sheet named 'A1' is not in"):
         _ = GSheetsReader(table_gsheet_id, account="testing").read(sheet="A1")
 
-    table_gsheet_id = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ"
     with pytest.raises(HttpError):  # pyright: ignore[reportUnknownArgumentType]
         _ = GSheetsReader(table_gsheet_id, account="testing").read(sheet="SheetA1")
+
+    with pytest.raises(ValueError, match=r"The `merged` argument must be False"):
+        _ = GSheetsReader(table_gsheet_id, account="testing").read(merged=True)
 
 
 @skipif_no_sheets_readonly

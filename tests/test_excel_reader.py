@@ -22,6 +22,10 @@ def test_raises() -> None:
     with pytest.raises(ValueError, match=r"A sheet named 'XYZ' is not in"):
         _ = ExcelReader(file).read(sheet="XYZ")
 
+    # merged must be False
+    with pytest.raises(ValueError, match=r"The `merged` argument must be False"):
+        _ = ExcelReader(file).read(merged=True)
+
 
 def test_on_demand_default() -> None:
     file = Path(__file__).parent / "samples" / "table.xlsx"

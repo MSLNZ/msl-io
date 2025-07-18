@@ -109,7 +109,7 @@ class GSheetsReader(Spreadsheet):
         self._gsheets.close()
 
     def read(  # noqa: C901, PLR0912
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Google Sheets spreadsheet.
 
@@ -122,6 +122,9 @@ class GSheetsReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as a string in
                 the display format of the spreadsheet cell.
+            merged: Applies to cells that are merged with other cells. If cells are merged, then
+                only the top-left cell has the value and all other cells in the merger are empty.
+                Enabling this argument is currently not supported and the value must be `False`.
 
         Returns:
             The value(s) of the requested cell(s).
@@ -148,6 +151,10 @@ class GSheetsReader(Spreadsheet):
 
         ```
         """
+        if merged:
+            msg = "The `merged` argument must be False to read a Google spreadsheet"
+            raise ValueError(msg)
+
         if not sheet:
             if self._cached_sheet_name:
                 sheet = self._cached_sheet_name

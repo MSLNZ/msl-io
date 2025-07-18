@@ -6,6 +6,7 @@
 
 ***Added:***
 
+- the `merged` keyword argument to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read]
 - [ODSReader][msl.io.readers.ods.ODSReader] for reading OpenDocument Spreadsheet files
 - [GSheetsReader][msl.io.readers.gsheets.GSheetsReader] and [ExcelReader][msl.io.readers.excel.ExcelReader] can now be used as a context manager
 - [PEP-484](https://peps.python.org/pep-0484/) type annotations

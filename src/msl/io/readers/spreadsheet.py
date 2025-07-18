@@ -31,11 +31,7 @@ class Spreadsheet(ABC):
 
     @abstractmethod
     def read(
-        self,
-        cells: str | None = None,
-        sheet: str | None = None,
-        *,
-        as_datetime: bool = True,
+        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
     ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
@@ -50,6 +46,11 @@ class Spreadsheet(ABC):
             as_datetime: Whether dates should be returned as [datetime.datetime][] or
                 [datetime.date][] objects. If `False`, dates are returned as a string in
                 the format of the spreadsheet cell.
+            merged: Applies to cells that are merged with other cells. The details depend
+                on the type of spreadsheet document that is being read. Some documents allow
+                the hidden cells that are part of a merger to retain its unmerged value. Other
+                documents associate the merged value only with the top-left cell and all
+                other cells in the merger are empty.
 
         Returns:
             The value(s) of the requested cell(s).
