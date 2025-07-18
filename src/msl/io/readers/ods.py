@@ -315,6 +315,12 @@ class ODSReader(Spreadsheet):
         if typ in {"", "string", "time"}:
             return p.text
 
+        if typ == "float":
+            val = float(self._attribute(cell, "office", "value"))
+            if val.is_integer():
+                return int(val)
+            return val
+
         if typ == "boolean":
             return p.text == "TRUE"
 
@@ -328,6 +334,5 @@ class ODSReader(Spreadsheet):
                 return dt.date()
             return dt
 
-        # typ is one of: float percentage currency
-        # consider float.is_integer()
+        # typ is one of: percentage currency
         return float(self._attribute(cell, "office", "value"))
