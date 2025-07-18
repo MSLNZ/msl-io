@@ -18,12 +18,12 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
         xml: [builtin]
         include:
-          - python-version: "3.x"
+          - python-version: "3.13"
             os: windows-latest
             xml: defusedxml
-          - python-version: "3.x"
-            os: windows-latest
-            xml: lxml
+          - python-version: "3.9"
+            os: ubuntu-latest
+            xml: defusedxml
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,9 +40,6 @@ jobs:
       - name: Install defusedxml
         if: ${{ matrix.xml == 'defusedxml' }}
         run: python -m pip install --upgrade defusedxml
-      - name: Install lxml
-        if: ${{ matrix.xml == 'lxml' }}
-        run: python -m pip install --upgrade lxml
       - name: Run tests
         run: |
           python -c "from msl.io.readers._xlrd.xlsx import ET; print(ET)"

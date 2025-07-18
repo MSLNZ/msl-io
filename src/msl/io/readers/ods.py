@@ -9,12 +9,9 @@ from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 try:
-    import lxml.etree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingImports]  # noqa: N812
+    import defusedxml.ElementTree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingModuleSource]  # noqa: N817
 except ImportError:
-    try:
-        import defusedxml.ElementTree as ET  # type: ignore[import-untyped]  # pyright: ignore[reportMissingModuleSource]  # noqa: N817
-    except ImportError:
-        from xml.etree import ElementTree as ET
+    from xml.etree import ElementTree as ET
 
 from ..utils import get_extension  # noqa: TID252
 from .spreadsheet import Spreadsheet
@@ -49,8 +46,7 @@ class ODSReader(Spreadsheet):
         [Root][msl.io.base.Root].
 
         !!! tip
-            If [lxml](https://pypi.org/project/lxml/){:target="_blank"} or
-            [defusedxml](https://pypi.org/project/defusedxml/){:target="_blank"} is installed,
+            If [defusedxml](https://pypi.org/project/defusedxml/){:target="_blank"} is installed,
             that package is used to parse the contents of the file instead of the
             [xml][]{:target="_blank"} module.
 
@@ -80,20 +76,19 @@ class ODSReader(Spreadsheet):
         if ext == ".ods":
             with ZipFile(f) as z:
                 try:
-                    content = ET.XML(z.read("content.xml"))  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+                    content = ET.XML(z.read("content.xml"))  # pyright: ignore[reportUnknownMemberType]
                 except SyntaxError as e:
                     e.msg += "\nThe ODS file might be password protected (which is not supported)"
                     raise
         elif ext == ".fods":
             with open(f, mode="rb") as fp:  # noqa: PTH123
-                content = ET.XML(fp.read())  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+                content = ET.XML(fp.read())  # pyright: ignore[reportUnknownMemberType]
         else:
             msg = f"Unsupported OpenDocument Spreadsheet file extension {ext!r}"
             raise ValueError(msg)
 
         self._tables: dict[str, Element[str]] = {
-            self._attribute(t, "table", "name"): t  # pyright: ignore[reportUnknownArgumentType]
-            for t in content.findall(".//table:table", namespaces=self._ns)  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+            self._attribute(t, "table", "name"): t for t in content.findall(".//table:table", namespaces=self._ns)
         }
 
     def __enter__(self: Self) -> Self:  # noqa: PYI019
@@ -334,4 +329,5 @@ class ODSReader(Spreadsheet):
             return dt
 
         # typ is one of: float percentage currency
+        # consider float.is_integer()
         return float(self._attribute(cell, "office", "value"))

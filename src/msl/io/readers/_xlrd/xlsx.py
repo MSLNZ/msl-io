@@ -8,12 +8,9 @@ import sys
 from os.path import join, normpath
 
 try:
-    import lxml.etree as ET
+    import defusedxml.ElementTree as ET
 except ImportError:
-    try:
-        import defusedxml.ElementTree as ET
-    except ImportError:
-        import xml.etree.ElementTree as ET
+    import xml.etree.ElementTree as ET
 
 from .biffh import (
     XL_CELL_BLANK, XL_CELL_BOOLEAN, XL_CELL_ERROR, XL_CELL_TEXT, XLRDError,
