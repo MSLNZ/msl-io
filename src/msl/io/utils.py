@@ -91,7 +91,6 @@ def copy(
         include_metadata: Whether to also copy information such as the file permissions,
             the latest access time and latest modification time with the file.
         follow_symlinks: Whether to follow symbolic links.
-            !!! note "Added in version 0.2"
 
     Returns:
         The path to where the file was copied.

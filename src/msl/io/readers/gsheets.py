@@ -102,10 +102,7 @@ class GSheetsReader(Spreadsheet):
         self.close()
 
     def close(self) -> None:
-        """Close the connection to the GSheet API service.
-
-        !!! note "Added in version 0.2"
-        """
+        """Close the connection to the GSheet API service."""
         self._gsheets.close()
 
     def read(  # noqa: C901, PLR0912
