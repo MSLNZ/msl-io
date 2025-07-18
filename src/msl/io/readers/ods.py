@@ -76,13 +76,13 @@ class ODSReader(Spreadsheet):
         if ext == ".ods":
             with ZipFile(f) as z:
                 try:
-                    content = ET.XML(z.read("content.xml"))  # pyright: ignore[reportUnknownMemberType]
+                    content = ET.XML(z.read("content.xml"))
                 except SyntaxError as e:
                     e.msg += "\nThe ODS file might be password protected (which is not supported)"
                     raise
         elif ext == ".fods":
             with open(f, mode="rb") as fp:  # noqa: PTH123
-                content = ET.XML(fp.read())  # pyright: ignore[reportUnknownMemberType]
+                content = ET.XML(fp.read())
         else:
             msg = f"Unsupported OpenDocument Spreadsheet file extension {ext!r}"
             raise ValueError(msg)
