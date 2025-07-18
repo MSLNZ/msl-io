@@ -6,6 +6,7 @@
 
 ***Added:***
 
+- the [shape][msl.io.readers.excel.ExcelReader.shape] method to [ExcelReader][msl.io.readers.excel.ExcelReader]
 - the `merged` keyword argument to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read]
 - [ODSReader][msl.io.readers.ods.ODSReader] for reading OpenDocument Spreadsheet files
 - [GSheetsReader][msl.io.readers.gsheets.GSheetsReader] and [ExcelReader][msl.io.readers.excel.ExcelReader] can now be used as a context manager
@@ -26,6 +27,7 @@
 
 ***Removed:***
 
+- the `workbook` property to [ExcelReader][msl.io.readers.excel.ExcelReader]
 - support for Python &le; 3.8
 
 ## 0.1.0 (2023-06-16)

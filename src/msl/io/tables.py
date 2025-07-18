@@ -183,10 +183,10 @@ def read_table_excel(
             if not match:
                 msg = f"Invalid cell {cells!r}"
                 raise ValueError(msg)
-            name = sheet or excel.workbook.sheet_names()[0]
-            s = excel.workbook.sheet_by_name(name)
-            letters = excel.to_letters(s.ncols - 1)
-            cells += f":{letters}{s.nrows}"
+            name = sheet or excel.sheet_names()[0]
+            num_rows, num_cols = excel.shape(name)
+            letters = excel.to_letters(num_cols - 1)
+            cells += f":{letters}{num_rows}"
         table = excel.read(cells, sheet=sheet, as_datetime=as_datetime)
 
     return _spreadsheet_to_dataset(table, file, dtype)

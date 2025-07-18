@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from msl.io import ExcelReader
-from msl.io.readers._xlrd import Book
 
 
 def test_raises() -> None:
@@ -30,14 +29,14 @@ def test_raises() -> None:
 def test_on_demand_default() -> None:
     file = Path(__file__).parent / "samples" / "table.xlsx"
     excel = ExcelReader(file)
-    assert excel.workbook.on_demand is True
+    assert excel._workbook.on_demand is True  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
 
 @pytest.mark.parametrize("on_demand", [True, False])
 def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
     file = Path(__file__).parent / "samples" / "table.xlsx"
     excel = ExcelReader(file, on_demand=on_demand)
-    assert excel.workbook.on_demand is on_demand
+    assert excel._workbook.on_demand is on_demand  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     values = [
         ("timestamp", "val1", "uncert1", "val2", "uncert2"),
         (datetime(2019, 9, 11, 14, 6, 55), -0.505382, 0.000077, 0.501073, 0.000079),  # noqa: DTZ001
@@ -54,16 +53,6 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
 
     assert excel.file == str(file)
     assert excel.sheet_names() == ("A1", "BH11", "AEX154041")
-    assert isinstance(excel.workbook, Book)
-    sheet = excel.workbook.sheet_by_name("A1")
-    assert sheet.nrows == 11
-    assert sheet.ncols == 5
-    sheet = excel.workbook.sheet_by_name("BH11")
-    assert sheet.nrows == 21
-    assert sheet.ncols == 64
-    sheet = excel.workbook.sheet_by_name("AEX154041")
-    assert sheet.nrows == 154051
-    assert sheet.ncols == 834
 
     # single cell
     assert excel.read("A1", sheet="A1") == "timestamp"
@@ -148,9 +137,7 @@ def test_datatypes(on_demand: bool) -> None:  # noqa: FBT001
     # the following workbook only contains 1 sheet, so we don't have to specify the sheet
     file = str(Path(__file__).parent / "samples" / "excel_datatypes.xlsx")
     excel = ExcelReader(file, on_demand=on_demand)
-    assert excel.workbook.on_demand is on_demand
     assert excel.file == file
-    assert excel.workbook.nsheets == 1
     assert excel.sheet_names() == ("Sheet1",)
     assert excel.read("A1") == 1.23  # '$1.23'
     assert excel.read("B1") is True
@@ -167,3 +154,27 @@ def test_datatypes(on_demand: bool) -> None:  # noqa: FBT001
     # calling close() multiple times is okay
     for _ in range(10):
         excel.close()
+
+
+@pytest.mark.parametrize(
+    ("filename", "sheet", "expected"),
+    [
+        ("excel_datatypes.xlsx", "Sheet1", (2, 4)),
+        ("table.xls", "A1", (11, 5)),
+        ("table.xls", "BH11", (21, 64)),
+        ("table.xlsx", "A1", (11, 5)),
+        ("table.xlsx", "BH11", (21, 64)),
+        ("table.xlsx", "AEX154041", (154051, 834)),
+        ("lab_environment.xlsx", "Lab Environment", (5, 2)),
+    ],
+)
+def test_shape(filename: str, sheet: str, expected: tuple[int, int]) -> None:
+    with ExcelReader(f"tests/samples/{filename}") as excel:
+        assert excel.shape(sheet) == expected
+
+
+@pytest.mark.parametrize("extension", ["xls", "xlsx"])
+def test_shape_raises(extension: str) -> None:
+    excel = ExcelReader(f"tests/samples/table.{extension}")
+    with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
+        _ = excel.shape("Nope")

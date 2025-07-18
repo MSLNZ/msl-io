@@ -83,11 +83,6 @@ class ExcelReader(Spreadsheet):
         """Exit the context manager."""
         self.close()
 
-    @property
-    def workbook(self) -> Book:
-        """[Book][xlrd.book.Book] &mdash; The workbook instance."""
-        return self._workbook
-
     def close(self) -> None:
         """Close the workbook."""
         self._workbook.release_resources()
@@ -185,6 +180,23 @@ class ExcelReader(Spreadsheet):
         r2 = _sheet.nrows if r2 is None else min(r2 + 1, _sheet.nrows)
         c2 = min(c2 + 1, _sheet.ncols)
         return [tuple(self._value(_sheet, r, c, as_datetime) for c in range(c1, c2)) for r in range(r1, r2)]
+
+    def shape(self, sheet: str) -> tuple[int, int]:
+        """Get the number of rows and columns in a sheet.
+
+        Args:
+            sheet: The name of a sheet to get the shape of.
+
+        Returns:
+            The *(number of rows, number of columns)* in `sheet`.
+        """
+        try:
+            s = self._workbook.sheet_by_name(sheet)
+        except XLRDError:
+            msg = f"A sheet named {sheet!r} is not in {self._file!r}"
+            raise ValueError(msg) from None
+        else:
+            return (s.nrows, s.ncols)
 
     def sheet_names(self) -> tuple[str, ...]:
         """Get the names of all sheets in the Excel spreadsheet.
