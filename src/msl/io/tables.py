@@ -246,12 +246,13 @@ def read_table_gsheets(
     return _spreadsheet_to_dataset(table, file, dtype)
 
 
-def read_table_ods(
+def read_table_ods(  # noqa: PLR0913
     file: PathLike | ReadLike,
     *,
     cells: str | None = None,
     sheet: str | None = None,
     as_datetime: bool = True,
+    merged: bool = False,
     dtype: DTypeLike = None,
     **kwargs: Any,
 ) -> Dataset:
@@ -271,6 +272,11 @@ def read_table_ods(
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
             [date][datetime.date] objects. If `False`, dates are returned as a string in
             the display format of the spreadsheet cell.
+        merged: Applies to cells that are merged with other cells. If `False`, the
+            value of each unmerged cell is returned, otherwise the same value is
+            returned for all merged cells. In an OpenDocument Spreadsheet, the value
+            of a hidden cell that is merged with a visible cell can still be retained
+            (depends on how the merger was performed).
         dtype: The data type(s) to use for the table.
         kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].
 
@@ -289,7 +295,7 @@ def read_table_ods(
             num_rows, num_columns = ods.shape(name)
             letters = ods.to_letters(num_columns - 1)
             cells += f":{letters}{num_rows}"
-        table = ods.read(cells, sheet=sheet, as_datetime=as_datetime)
+        table = ods.read(cells, sheet=sheet, as_datetime=as_datetime, merged=merged)
     return _spreadsheet_to_dataset(table, file, dtype)
 
 
