@@ -1128,15 +1128,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#msl.io.base.register" class="md-nav__link">
-    <span class="md-ellipsis">
-      register
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1521,15 +1512,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#msl.io.base.register" class="md-nav__link">
-    <span class="md-ellipsis">
-      register
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1801,12 +1783,7 @@ when checking if it can read the <code>file</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
@@ -1815,7 +1792,12 @@ when checking if it can read the <code>file</code>.</p>
 <span class="normal">178</span>
 <span class="normal">179</span>
 <span class="normal">180</span>
-<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether this [Reader][msl.io.base.Reader] can read the file specified by `file`.</span>
@@ -1899,18 +1881,18 @@ when reading the file.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
-<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the file.</span>
 
@@ -2789,7 +2771,23 @@ and <a class="autorefs autorefs-internal" title="read
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
@@ -2808,23 +2806,7 @@ and <a class="autorefs autorefs-internal" title="read
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Reader</span><span class="p">:</span>
+<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Reader</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a file that has a [Reader][msl-io-readers] implemented.</span>
 
 <span class="sd">    Args:</span>
@@ -2860,123 +2842,6 @@ and <a class="autorefs autorefs-internal" title="read
 
     <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No Reader exists to read </span><span class="si">{</span><span class="n">file</span><span class="si">!r}</span><span class="s2">&quot;</span>
     <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="msl.io.base.register" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">register</span>
-
-
-<a href="#msl.io.base.register" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Use as a decorator to register a <a class="autorefs autorefs-internal" title="Reader" href="#msl.io.base.Reader">Reader</a> subclass.</p>
-<p>See <a class="autorefs autorefs-internal" href="../../readers/create/#msl-io-create-reader">Create a New Reader</a> for an example on how to
-implement your own <a class="autorefs autorefs-internal" title="Readers" href="../../readers/#msl-io-readers">Reader</a> class.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>cls</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a>[<a class="autorefs autorefs-internal" title="Reader (msl.io.base.Reader)" href="#msl.io.base.Reader">Reader</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-internal" title="Reader" href="#msl.io.base.Reader">Reader</a> subclass.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a>[<a class="autorefs autorefs-internal" title="Reader (msl.io.base.Reader)" href="#msl.io.base.Reader">Reader</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The (unmodified) <a class="autorefs autorefs-internal" title="Reader" href="#msl.io.base.Reader">Reader</a>, which has been registered.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="quote">
-              <summary>Source code in <code>src/msl/io/base.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Reader</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Reader</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator to register a [Reader][msl.io.base.Reader] subclass.</span>
-
-<span class="sd">    See [Create a New Reader][msl-io-create-reader] for an example on how to</span>
-<span class="sd">    implement your own [Reader][msl-io-readers] class.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        cls: A [Reader][msl.io.base.Reader] subclass.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The (unmodified) [Reader][msl.io.base.Reader], which has been registered.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">_reader</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Reader</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Reader</span><span class="p">]:</span>
-        <span class="n">_readers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;msl-io registered </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span>
-
-    <span class="k">return</span> <span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

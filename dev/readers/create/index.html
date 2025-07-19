@@ -1239,8 +1239,8 @@
 <span class="c1"># It&#39;s a good idea to provide type annotations in your code</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="c1"># Import the necessary msl-io objects</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reader</span><span class="p">,</span> <span class="n">register</span>
+<span class="c1"># Import the necessary msl-io object to subclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reader</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
@@ -1248,8 +1248,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">msl.io.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReadLike</span>
 
 
-<span class="c1"># Register your Reader so that msl-io knows that your Reader exists</span>
-<span class="nd">@register</span>
+<span class="c1"># Sub-classing Reader will tell msl-io that your MyReader exists</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Name your class to be whatever you want, i.e., change MyReader.&quot;&quot;&quot;</span>
 

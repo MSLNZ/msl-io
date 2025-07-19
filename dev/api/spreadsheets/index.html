@@ -1220,18 +1220,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
+  <a href="#msl.io.readers.excel.ExcelReader.dimensions" class="md-nav__link">
     <span class="md-ellipsis">
-      read
+      dimensions
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.shape" class="md-nav__link">
+  <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
     <span class="md-ellipsis">
-      shape
+      read
     </span>
   </a>
   
@@ -1304,18 +1304,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.ods.ODSReader.read" class="md-nav__link">
+  <a href="#msl.io.readers.ods.ODSReader.close" class="md-nav__link">
     <span class="md-ellipsis">
-      read
+      close
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.ods.ODSReader.shape" class="md-nav__link">
+  <a href="#msl.io.readers.ods.ODSReader.dimensions" class="md-nav__link">
     <span class="md-ellipsis">
-      shape
+      dimensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.io.readers.ods.ODSReader.read" class="md-nav__link">
+    <span class="md-ellipsis">
+      read
     </span>
   </a>
   
@@ -1535,18 +1544,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
+  <a href="#msl.io.readers.excel.ExcelReader.dimensions" class="md-nav__link">
     <span class="md-ellipsis">
-      read
+      dimensions
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.excel.ExcelReader.shape" class="md-nav__link">
+  <a href="#msl.io.readers.excel.ExcelReader.read" class="md-nav__link">
     <span class="md-ellipsis">
-      shape
+      read
     </span>
   </a>
   
@@ -1619,18 +1628,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.ods.ODSReader.read" class="md-nav__link">
+  <a href="#msl.io.readers.ods.ODSReader.close" class="md-nav__link">
     <span class="md-ellipsis">
-      read
+      close
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.io.readers.ods.ODSReader.shape" class="md-nav__link">
+  <a href="#msl.io.readers.ods.ODSReader.dimensions" class="md-nav__link">
     <span class="md-ellipsis">
-      shape
+      dimensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.io.readers.ods.ODSReader.read" class="md-nav__link">
+    <span class="md-ellipsis">
+      read
     </span>
   </a>
   
@@ -2733,11 +2751,11 @@ then the row index is <code>None</code>. The row and column index are zero based
 
         <p>Read an Excel spreadsheet (<em>.xls</em> and <em>.xlsx</em> files).</p>
 
-        <p>This class simply provides a convenience for reading information from
-Excel spreadsheets. It is not registered as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a>
-because the information in an Excel spreadsheet is unstructured and therefore
-one cannot generalize how to parse an Excel spreadsheet to create a
-<a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
+        <p>This class simply provides a convenience for reading cell values (not
+drawings or charts) from Excel spreadsheets. It is not registered as
+a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a> because the information in a spreadsheet
+is unstructured and therefore one cannot generalize how to parse a
+spreadsheet to create a <a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2841,11 +2859,11 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 <span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an Excel spreadsheet (*.xls* and *.xlsx* files).</span>
 
-<span class="sd">    This class simply provides a convenience for reading information from</span>
-<span class="sd">    Excel spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]</span>
-<span class="sd">    because the information in an Excel spreadsheet is unstructured and therefore</span>
-<span class="sd">    one cannot generalize how to parse an Excel spreadsheet to create a</span>
-<span class="sd">    [Root][msl.io.base.Root].</span>
+<span class="sd">    This class simply provides a convenience for reading cell values (not</span>
+<span class="sd">    drawings or charts) from Excel spreadsheets. It is not registered as</span>
+<span class="sd">    a [Reader][msl.io.base.Reader] because the information in a spreadsheet</span>
+<span class="sd">    is unstructured and therefore one cannot generalize how to parse a</span>
+<span class="sd">    spreadsheet to create a [Root][msl.io.base.Root].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The path to an Excel spreadsheet file.</span>
@@ -2910,6 +2928,115 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the workbook.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_workbook</span><span class="o">.</span><span class="n">release_resources</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.io.readers.excel.ExcelReader.dimensions" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">dimensions</span>
+
+
+<a href="#msl.io.readers.excel.ExcelReader.dimensions" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">dimensions</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the number of rows and columns in a sheet.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>sheet</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of a sheet to get the dimensions of.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <em>(number of rows, number of columns)</em> in <code>sheet</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sheet: The name of a sheet to get the dimensions of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The *(number of rows, number of columns)* in `sheet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workbook</span><span class="o">.</span><span class="n">sheet_by_name</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">XLRDError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ncols</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3262,115 +3389,6 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <div class="doc doc-object doc-function">
 
 
-<h3 id="msl.io.readers.excel.ExcelReader.shape" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">shape</span>
-
-
-<a href="#msl.io.readers.excel.ExcelReader.shape" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">shape</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Get the number of rows and columns in a sheet.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>sheet</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The name of a sheet to get the shape of.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The <em>(number of rows, number of columns)</em> in <code>sheet</code>.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="quote">
-              <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        sheet: The name of a sheet to get the shape of.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The *(number of rows, number of columns)* in `sheet`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workbook</span><span class="o">.</span><span class="n">sheet_by_name</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">XLRDError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ncols</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
 <h3 id="msl.io.readers.excel.ExcelReader.sheet_names" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">sheet_names</span>
 
@@ -3490,11 +3508,11 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
         <p>Read a Google Sheets spreadsheet.</p>
 
-        <p>This class simply provides a convenience for reading information
-from Google spreadsheets. It is not registered as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a>
-because the information in a spreadsheet is unstructured and therefore
-one cannot generalize how to parse a spreadsheet to create a
-<a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
+        <p>This class simply provides a convenience for reading cell values (not
+drawings or charts) from Google spreadsheets. It is not registered as
+a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a> because the information in a spreadsheet
+is unstructured and therefore one cannot generalize how to parse a
+spreadsheet to create a <a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3674,11 +3692,11 @@ the token file that was created when you previously authenticated.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a Google Sheets spreadsheet.</span>
 
-<span class="sd">    This class simply provides a convenience for reading information</span>
-<span class="sd">    from Google spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]</span>
-<span class="sd">    because the information in a spreadsheet is unstructured and therefore</span>
-<span class="sd">    one cannot generalize how to parse a spreadsheet to create a</span>
-<span class="sd">    [Root][msl.io.base.Root].</span>
+<span class="sd">    This class simply provides a convenience for reading cell values (not</span>
+<span class="sd">    drawings or charts) from Google spreadsheets. It is not registered as</span>
+<span class="sd">    a [Reader][msl.io.base.Reader] because the information in a spreadsheet</span>
+<span class="sd">    is unstructured and therefore one cannot generalize how to parse a</span>
+<span class="sd">    spreadsheet to create a [Root][msl.io.base.Root].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The ID or path of a Google Sheets spreadsheet.</span>
@@ -4233,11 +4251,11 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
         <p>Read an OpenDocument Spreadsheet (<em>.ods</em> and <em>.fods</em> files, Version 1.2).</p>
 
-        <p>This class simply provides a convenience for reading information from
-OpenDocument Spreadsheets. It is not registered as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a>
-because the information in an OpenDocument Spreadsheet is unstructured and therefore
-one cannot generalize how to parse an OpenDocument Spreadsheet to create a
-<a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
+        <p>This class simply provides a convenience for reading cell values (not
+drawings or charts) from OpenDocument Spreadsheets. It is not registered
+as a <a class="autorefs autorefs-internal" title="Reader" href="../base/#msl.io.base.Reader">Reader</a> because the information in a spreadsheet
+is unstructured and therefore one cannot generalize how to parse a
+spreadsheet to create a <a class="autorefs autorefs-internal" title="Root" href="../base/#msl.io.base.Root">Root</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If <a href="https://pypi.org/project/defusedxml/" target="_blank">defusedxml</a> is installed,
@@ -4309,13 +4327,7 @@ that package is used to parse the contents of the file instead of the
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
 <span class="normal">48</span>
@@ -4365,11 +4377,11 @@ that package is used to parse the contents of the file instead of the
 <span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).</span>
 
-<span class="sd">    This class simply provides a convenience for reading information from</span>
-<span class="sd">    OpenDocument Spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]</span>
-<span class="sd">    because the information in an OpenDocument Spreadsheet is unstructured and therefore</span>
-<span class="sd">    one cannot generalize how to parse an OpenDocument Spreadsheet to create a</span>
-<span class="sd">    [Root][msl.io.base.Root].</span>
+<span class="sd">    This class simply provides a convenience for reading cell values (not</span>
+<span class="sd">    drawings or charts) from OpenDocument Spreadsheets. It is not registered</span>
+<span class="sd">    as a [Reader][msl.io.base.Reader] because the information in a spreadsheet</span>
+<span class="sd">    is unstructured and therefore one cannot generalize how to parse a</span>
+<span class="sd">    spreadsheet to create a [Root][msl.io.base.Root].</span>
 
 <span class="sd">    !!! tip</span>
 <span class="sd">        If [defusedxml](https://pypi.org/project/defusedxml/){:target=&quot;_blank&quot;} is installed,</span>
@@ -4388,12 +4400,6 @@ that package is used to parse the contents of the file instead of the
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">_ns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;office&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:oasis:names:tc:opendocument:xmlns:office:1.0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:oasis:names:tc:opendocument:xmlns:table:1.0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:oasis:names:tc:opendocument:xmlns:text:1.0&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># column-index: (spans-remaining, cell-value)</span>
 
@@ -4430,6 +4436,154 @@ that package is used to parse the contents of the file instead of the
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.io.readers.ods.ODSReader.close" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">close</span>
+
+
+<a href="#msl.io.readers.ods.ODSReader.close" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">close</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Free memory resources that are used to read the OpenDocument Spreadsheet.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Free memory resources that are used to read the OpenDocument Spreadsheet.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.io.readers.ods.ODSReader.dimensions" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">dimensions</span>
+
+
+<a href="#msl.io.readers.ods.ODSReader.dimensions" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">dimensions</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the number of rows and columns in a sheet.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>sheet</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of a sheet to get the dimensions of.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <em>(number of rows, number of columns)</em> in <code>sheet</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sheet: The name of a sheet to get the dimensions of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The *(number of rows, number of columns)* in `sheet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="n">num_cols</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//table:table-column&quot;</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns</span><span class="p">):</span>
+        <span class="n">num_cols</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attribute</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;table&quot;</span><span class="p">,</span> <span class="s2">&quot;number-columns-repeated&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">))</span>
+
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rows</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -4585,12 +4739,7 @@ of a hidden cell that is merged with a visible cell can still be retained
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
@@ -4679,7 +4828,12 @@ of a hidden cell that is merged with a visible cell can still be retained
 <span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
-<span class="normal">196</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the OpenDocument Spreadsheet.</span>
@@ -4744,7 +4898,7 @@ of a hidden cell that is merged with a visible cell can still be retained
     <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">maxsize</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">contains_colon</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="kc">False</span>
@@ -4774,123 +4928,6 @@ of a hidden cell that is merged with a visible cell can still be retained
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">data</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="msl.io.readers.ods.ODSReader.shape" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">shape</span>
-
-
-<a href="#msl.io.readers.ods.ODSReader.shape" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">shape</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Get the number of rows and columns in a sheet.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>sheet</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The name of a sheet to get the shape of.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The <em>(number of rows, number of columns)</em> in <code>sheet</code>.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="quote">
-              <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        sheet: The name of a sheet to get the shape of.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The *(number of rows, number of columns)* in `sheet`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
-
-    <span class="n">num_cols</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//table:table-column&quot;</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns</span><span class="p">):</span>
-        <span class="n">num_cols</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attribute</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;table&quot;</span><span class="p">,</span> <span class="s2">&quot;number-columns-repeated&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">))</span>
-
-    <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rows</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4938,13 +4975,13 @@ of a hidden cell that is merged with a visible cell can still be retained
 
             <details class="quote">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the OpenDocument Spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
