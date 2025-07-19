@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from msl.io.base import Reader, register
+from msl.io.base import Reader
 from msl.io.utils import get_extension, get_lines
 
 if TYPE_CHECKING:
@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     from msl.io.types import ReadLike
 
 
-@register
 class DRSReader(Reader):
     """Reader for the Detector Responsivity System in MSL Light Standards."""
 

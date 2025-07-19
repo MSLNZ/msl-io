@@ -16,6 +16,7 @@
 
 ***Changed:***
 
+- implement the [\_\_init_subclass\_\_][object.__init_subclass__] method to register [Reader][msl.io.base.Reader] subclasses instead of using the `@register` decorator ([PEP-487](https://peps.python.org/pep-0487/))
 - move the static `get_bytes`, `get_lines` and `get_extension` methods from the `Reader` class to the [utils][] module
 - convert to an implicit namespace package ([PEP-420](https://peps.python.org/pep-0420/))
 - [utils.git_head][msl.io.utils.git_head] now returns a [GitHead][msl.io.utils.GitHead] dataclass with the `datetime` key replaced with a `timestamp` attribute

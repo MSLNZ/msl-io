@@ -164,6 +164,11 @@ class Reader(Root, ABC):
         super().__init__(file)
         self._file: ReadLike | str = file
 
+    def __init_subclass__(cls) -> None:
+        """This method is called whenever the Reader is sub-classed."""
+        logger.debug("msl-io registered %r", cls)
+        _readers.append(cls)
+
     @staticmethod
     @abstractmethod
     def can_read(file: ReadLike | str, **kwargs: Any) -> bool:
@@ -197,27 +202,6 @@ class Reader(Root, ABC):
             kwargs: Keyword arguments that the [Reader][msl.io.base.Reader] class may need
                 when reading the file.
         """
-
-
-def register(cls: type[Reader]) -> type[Reader]:
-    """Use as a decorator to register a [Reader][msl.io.base.Reader] subclass.
-
-    See [Create a New Reader][msl-io-create-reader] for an example on how to
-    implement your own [Reader][msl-io-readers] class.
-
-    Args:
-        cls: A [Reader][msl.io.base.Reader] subclass.
-
-    Returns:
-        The (unmodified) [Reader][msl.io.base.Reader], which has been registered.
-    """
-
-    def append(_reader: type[Reader]) -> type[Reader]:
-        _readers.append(cls)
-        logger.debug("msl-io registered %r", cls)
-        return cls
-
-    return append(cls)
 
 
 def read(file: PathLike | ReadLike, **kwargs: Any) -> Reader:

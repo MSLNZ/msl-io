@@ -8,7 +8,6 @@ from .base import (
     Root,
     Writer,
     read,
-    register,
 )
 from .google_api import GCellType, GDateTimeOption, GDrive, GMail, GSheets, GValueOption
 from .node import Dataset, DatasetLogging, Group
@@ -67,7 +66,6 @@ __all__: list[str] = [
     "is_file_readable",
     "read",
     "read_table",
-    "register",
     "remove_write_permissions",
     "run_as_admin",
     "search",

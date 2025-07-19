@@ -67,7 +67,7 @@ Finally, we write the file
 
 ### Read a file {: #msl-io-read }
 
-The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] has been [register][msl.io.base.register]ed to read the file, a [Reader][msl.io.base.Root] instance is returned. We will now read the file that we created above
+The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above
 
 ```pycon
 >>> from msl.io import read

@@ -2,7 +2,7 @@
 
 The following functions are available to read a generic file
 
-* [read][msl.io.base.read] &mdash; Read any file with a [register][msl.io.base.register]ed [Reader][msl-io-readers]
+* [read][msl.io.base.read] &mdash; Read a file that has a [Reader][msl-io-readers] subclass implemented
 * [read_table][msl.io.read_table] &mdash; Read tabular data
 
 The following classes are for reading cell values (not drawings or charts) in spreadsheets

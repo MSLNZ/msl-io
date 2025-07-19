@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from msl.io.base import Reader, register
+from msl.io.base import Reader
 from msl.io.utils import get_bytes, get_lines
 
 if TYPE_CHECKING:
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from msl.io.types import ReadLike
 
 
-@register
 class JSONReader(Reader):
     """Read a file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter]."""
 

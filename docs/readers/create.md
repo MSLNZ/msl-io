@@ -17,8 +17,8 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
     # It's a good idea to provide type annotations in your code
     from typing import TYPE_CHECKING
 
-    # Import the necessary msl-io objects
-    from msl.io import Reader, register
+    # Import the necessary msl-io object to subclass
+    from msl.io import Reader
 
     if TYPE_CHECKING:
         from typing import Any
@@ -26,8 +26,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
         from msl.io.types import ReadLike
 
 
-    # Register your Reader so that msl-io knows that your Reader exists
-    @register
+    # Sub-classing Reader will tell msl-io that your MyReader exists
     class MyReader(Reader):
         """Name your class to be whatever you want, i.e., change MyReader."""
 

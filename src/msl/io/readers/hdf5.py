@@ -9,7 +9,7 @@ try:
 except ImportError:
     h5py = None
 
-from msl.io.base import Reader, register
+from msl.io.base import Reader
 from msl.io.utils import get_bytes
 
 if TYPE_CHECKING:
@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     from msl.io.types import ReadLike
 
 
-@register
 class HDF5Reader(Reader):
     """Reader for the [HDF5](https://www.hdfgroup.org/){:target="_blank"} file format.
 
