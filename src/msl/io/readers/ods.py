@@ -18,7 +18,7 @@ from .spreadsheet import Spreadsheet
 
 if TYPE_CHECKING:
     from collections.abc import Generator
-    from typing import Any
+    from typing import Any, ClassVar
     from xml.etree.ElementTree import Element
 
     from msl.io.types import PathLike
@@ -35,6 +35,12 @@ if TYPE_CHECKING:
 
 class ODSReader(Spreadsheet):
     """Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2)."""
+
+    _ns: ClassVar[dict[str, str]] = {
+        "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+        "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+        "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+    }
 
     def __init__(self, file: PathLike, **kwargs: Any) -> None:  # noqa: ARG002
         """Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).
@@ -62,12 +68,6 @@ class ODSReader(Spreadsheet):
         """
         f = os.fsdecode(file)
         super().__init__(f)
-
-        self._ns: dict[str, str] = {
-            "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
-            "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
-            "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
-        }
 
         self._spans: dict[int, tuple[int, Any]] = {}  # column-index: (spans-remaining, cell-value)
 
