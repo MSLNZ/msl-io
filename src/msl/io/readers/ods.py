@@ -97,7 +97,12 @@ class ODSReader(Spreadsheet):
 
     def __exit__(self, *ignore: object) -> None:
         """Exit the context manager."""
-        return
+        self.close()
+
+    def close(self) -> None:
+        """Free memory resources that are used to read the OpenDocument Spreadsheet."""
+        self._tables.clear()
+        self._spans.clear()
 
     def read(  # noqa: C901, PLR0912
         self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
@@ -164,7 +169,7 @@ class ODSReader(Spreadsheet):
         table = self._tables.get(name)
         if table is None:
             msg = f"A sheet named {sheet!r} is not in {self._file!r}"
-            raise ValueError(msg) from None
+            raise ValueError(msg)
 
         maxsize = sys.maxsize - 1
         r1, c1, r2, c2, contains_colon = 0, 0, maxsize, maxsize, False
