@@ -43,11 +43,11 @@ class ExcelReader(Spreadsheet):
     def __init__(self, file: PathLike, **kwargs: Any) -> None:
         """Read an Excel spreadsheet (*.xls* and *.xlsx* files).
 
-        This class simply provides a convenience for reading information from
-        Excel spreadsheets. It is not registered as a [Reader][msl.io.base.Reader]
-        because the information in an Excel spreadsheet is unstructured and therefore
-        one cannot generalize how to parse an Excel spreadsheet to create a
-        [Root][msl.io.base.Root].
+        This class simply provides a convenience for reading cell values (not
+        drawings or charts) from Excel spreadsheets. It is not registered as
+        a [Reader][msl.io.base.Reader] because the information in a spreadsheet
+        is unstructured and therefore one cannot generalize how to parse a
+        spreadsheet to create a [Root][msl.io.base.Root].
 
         Args:
             file: The path to an Excel spreadsheet file.
