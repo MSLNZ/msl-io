@@ -320,12 +320,12 @@ def test_repeats_multi_merged() -> None:
         ("repeats.ods", "Multi-Merged", (9, 7)),
     ],
 )
-def test_shape(filename: str, sheet: str, expected: tuple[int, int]) -> None:
+def test_dimensions(filename: str, sheet: str, expected: tuple[int, int]) -> None:
     with ODSReader(samples / filename) as ods:
-        assert ods.shape(sheet) == expected
+        assert ods.dimensions(sheet) == expected
 
 
-def test_shape_raises() -> None:
+def test_dimensions_raises() -> None:
     ods = ODSReader(samples / "ods_datatypes.ods")
     with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
-        _ = ods.shape("Nope")
+        _ = ods.dimensions("Nope")

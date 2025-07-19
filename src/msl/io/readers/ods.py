@@ -195,11 +195,11 @@ class ODSReader(Spreadsheet):
 
         return data
 
-    def shape(self, sheet: str) -> tuple[int, int]:
+    def dimensions(self, sheet: str) -> tuple[int, int]:
         """Get the number of rows and columns in a sheet.
 
         Args:
-            sheet: The name of a sheet to get the shape of.
+            sheet: The name of a sheet to get the dimensions of.
 
         Returns:
             The *(number of rows, number of columns)* in `sheet`.

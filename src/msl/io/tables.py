@@ -184,7 +184,7 @@ def read_table_excel(
                 msg = f"Invalid cell {cells!r}"
                 raise ValueError(msg)
             name = sheet or excel.sheet_names()[0]
-            num_rows, num_cols = excel.shape(name)
+            num_rows, num_cols = excel.dimensions(name)
             letters = excel.to_letters(num_cols - 1)
             cells += f":{letters}{num_rows}"
         table = excel.read(cells, sheet=sheet, as_datetime=as_datetime)
@@ -292,7 +292,7 @@ def read_table_ods(  # noqa: PLR0913
                 msg = f"Invalid cell {cells!r}"
                 raise ValueError(msg)
             name = sheet or ods.sheet_names()[0]
-            num_rows, num_columns = ods.shape(name)
+            num_rows, num_columns = ods.dimensions(name)
             letters = ods.to_letters(num_columns - 1)
             cells += f":{letters}{num_rows}"
         table = ods.read(cells, sheet=sheet, as_datetime=as_datetime, merged=merged)

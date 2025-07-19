@@ -168,13 +168,13 @@ def test_datatypes(on_demand: bool) -> None:  # noqa: FBT001
         ("lab_environment.xlsx", "Lab Environment", (5, 2)),
     ],
 )
-def test_shape(filename: str, sheet: str, expected: tuple[int, int]) -> None:
+def test_dimensions(filename: str, sheet: str, expected: tuple[int, int]) -> None:
     with ExcelReader(f"tests/samples/{filename}") as excel:
-        assert excel.shape(sheet) == expected
+        assert excel.dimensions(sheet) == expected
 
 
 @pytest.mark.parametrize("extension", ["xls", "xlsx"])
-def test_shape_raises(extension: str) -> None:
+def test_dimensions_raises(extension: str) -> None:
     excel = ExcelReader(f"tests/samples/table.{extension}")
     with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
-        _ = excel.shape("Nope")
+        _ = excel.dimensions("Nope")

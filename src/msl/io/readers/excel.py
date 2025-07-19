@@ -181,11 +181,11 @@ class ExcelReader(Spreadsheet):
         c2 = min(c2 + 1, _sheet.ncols)
         return [tuple(self._value(_sheet, r, c, as_datetime) for c in range(c1, c2)) for r in range(r1, r2)]
 
-    def shape(self, sheet: str) -> tuple[int, int]:
+    def dimensions(self, sheet: str) -> tuple[int, int]:
         """Get the number of rows and columns in a sheet.
 
         Args:
-            sheet: The name of a sheet to get the shape of.
+            sheet: The name of a sheet to get the dimensions of.
 
         Returns:
             The *(number of rows, number of columns)* in `sheet`.
