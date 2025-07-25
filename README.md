@@ -3,6 +3,7 @@
 [![CI Status](https://github.com/MSLNZ/msl-io/actions/workflows/ci.yml/badge.svg)](https://github.com/MSLNZ/msl-io/actions/workflows/ci.yml)
 [![Docs Status](https://github.com/MSLNZ/msl-io/actions/workflows/docs.yml/badge.svg)](https://github.com/MSLNZ/msl-io/actions/workflows/docs.yml)
 [![PyPI - Version](https://img.shields.io/pypi/v/msl-io?logo=pypi&logoColor=gold&label=PyPI&color=blue)](https://pypi.org/project/msl-io/)
+[![PyPI - Python Versions](https://img.shields.io/pypi/pyversions/msl-io.svg?logo=python&label=Python&logoColor=gold)](https://pypi.org/project/msl-io/)
 
 `msl-io` follows the data model used by [HDF5] to read and write data files &mdash; where there are [Groups] and [Datasets] and each item has [Metadata]
 
