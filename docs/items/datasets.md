@@ -14,7 +14,7 @@ Since a [Dataset][msl.io.node.Dataset] is a numpy [ndarray][numpy.ndarray]{:targ
 >>> my_dataset.add_metadata(temperature=20.13, humidity=45.31)
 >>> dset1 = root.create_dataset('dset1', data=[1, 2, 3], temperature=20.3)
 >>> dset2 = root.create_dataset('dset2', data=[4, 5, 6], temperature=21.7)
->>> temperatures = root.create_dataset('temperatures', data=[19.8, 21.1, 20.5], unit="C")
+>>> temperatures = root.create_dataset('temperatures', data=[19.8, 21.1, 20.5], unit="°C")
 
 -->
 
@@ -143,7 +143,7 @@ For example, consider a `temperatures` [Dataset][msl.io.node.Dataset]
 >>> temperatures.data
 array([19.8, 21.1, 20.5])
 >>> temperatures.metadata.unit
-'C'
+'°C'
 
 ```
 
@@ -156,7 +156,7 @@ and you wanted to add `1` to each temperature value, you can do the following
 >>> plus_1.data
 array([20.8, 22.1, 21.5])
 >>> plus_1.metadata.unit
-'C'
+'°C'
 
 ```
 
