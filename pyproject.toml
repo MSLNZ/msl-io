@@ -104,7 +104,7 @@ addopts = [
     "--ignore=tests/create_google_api_tokens.py",
 ]
 consider_namespace_packages = true
-doctest_optionflags = "NORMALIZE_WHITESPACE ALLOW_UNICODE ELLIPSIS"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 
 [tool.coverage.run]
 data_file = ".cache/coverage/.coverage"
