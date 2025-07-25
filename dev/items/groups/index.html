@@ -1236,10 +1236,10 @@
 
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tree</span><span class="p">())</span>
 <span class="go">&lt;JSONWriter &#39;example.json&#39; (3 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">   &lt;Group &#39;/a&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">      &lt;Group &#39;/a/b&#39; (1 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">         &lt;Group &#39;/a/b/c&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">         &lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="go">  &lt;Group &#39;/a&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">    &lt;Group &#39;/a/b&#39; (1 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">      &lt;Group &#39;/a/b/c&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">        &lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <p>A <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> can either be in read-only mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dset_b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>

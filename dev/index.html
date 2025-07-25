@@ -1199,7 +1199,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#msl-io-write" class="md-nav__link">
+  <a href="#write-a-file" class="md-nav__link">
     <span class="md-ellipsis">
       Write a file
     </span>
@@ -1208,7 +1208,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#msl-io-read" class="md-nav__link">
+  <a href="#read-a-file" class="md-nav__link">
     <span class="md-ellipsis">
       Read a file
     </span>
@@ -1273,7 +1273,7 @@
 <p><img alt="hdf5_data_model.png" src="assets/images/hdf5_data_model.png" /></p>
 <p>The tree structure is similar to the file-system structure used by operating systems. <a class="autorefs autorefs-internal" href="items/groups/#msl-io-group">Groups</a> are analogous to directories (where <a class="autorefs autorefs-internal" title="Root" href="api/base/#msl.io.base.Root">Root</a> is the root <a class="autorefs autorefs-internal" title="Group" href="api/node/#msl.io.node.Group">Group</a>) and <a class="autorefs autorefs-internal" href="items/datasets/#msl-io-dataset">Datasets</a> are analogous to files.</p>
 <p>The data files that can be read or written are not restricted to <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> files, but any file format that has a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> implemented can be read and data files can be created using any of the <a class="autorefs autorefs-internal" href="writers/#msl-io-writers">Writers</a>.</p>
-<h3 id="msl-io-write">Write a file<a class="headerlink" href="#msl-io-write" title="Permanent link">¤</a></h3>
+<h3 id="write-a-file">Write a file<a class="headerlink" href="#write-a-file" title="Permanent link">¤</a></h3>
 <!-- invisible-code-block: pycon
 >>> from pathlib import Path
 >>> Path("my_file.h5").unlink(missing_ok=True)
@@ -1311,7 +1311,7 @@
       abstractmethod
   " href="api/base/#msl.io.base.Writer.write">write</a> or <a class="autorefs autorefs-internal" title="save" href="api/base/#msl.io.base.Writer.save">save</a> method.</p>
 </div>
-<h3 id="msl-io-read">Read a file<a class="headerlink" href="#msl-io-read" title="Permanent link">¤</a></h3>
+<h3 id="read-a-file">Read a file<a class="headerlink" href="#read-a-file" title="Permanent link">¤</a></h3>
 <p>The <a class="autorefs autorefs-internal" title="read" href="api/base/#msl.io.base.read">read</a> function is available to read a file. Provided that a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.h5&quot;</span><span class="p">)</span>
@@ -1447,8 +1447,8 @@
 <span class="go">&lt;Metadata &#39;my_table.txt&#39; {&#39;header&#39;: [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([[1., 2., 3.],</span>
-<span class="go">      [4., 5., 6.],</span>
-<span class="go">      [7., 8., 9.]])</span>
+<span class="go">       [4., 5., 6.],</span>
+<span class="go">       [7., 8., 9.]])</span>
 </code></pre></div>
 <p>and since a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a> behaves like a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, you can call <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> attributes directly with the <code>table</code> instance</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">shape</span>
