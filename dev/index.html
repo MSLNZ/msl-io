@@ -1226,11 +1226,26 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#read-data-from-a-table" class="md-nav__link">
+  <a href="#read-a-table" class="md-nav__link">
     <span class="md-ellipsis">
-      Read data from a table
+      Read a table
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Read a table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extension-delimiter-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extension-delimiter map
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1384,20 +1399,15 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">json</span> <span class="o">=</span> <span class="n">JSONWriter</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">json</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">h5</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="read-data-from-a-table">Read data from a table<a class="headerlink" href="#read-data-from-a-table" title="Permanent link">¤</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function will read a tabular data from a file. A <em>table</em> has the following properties:</p>
+<h3 id="read-a-table">Read a table<a class="headerlink" href="#read-a-table" title="Permanent link">¤</a></h3>
+<p>The <a class="autorefs autorefs-internal" title="read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function will read tabular data from a file. A <em>table</em> has the following properties:</p>
 <ol>
 <li>The first row is a header</li>
 <li>All rows have the same number of columns</li>
 <li>All values in a column have the same data type</li>
 </ol>
-<p>The returned item is a <a class="autorefs autorefs-internal" title="Dataset" href="api/node/#msl.io.node.Dataset">Dataset</a> with the header provided as <a class="autorefs autorefs-internal" title="metadata
-
-
-  
-      property
-  " href="api/node/#msl.io.node.Dataset.metadata">metadata</a>.</p>
-<p>Suppose a file called <em>my_table.txt</em> contains the following information</p>
+<p>The returned item is a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a> with the header provided in the <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a>.</p>
+<p>For example, suppose a file named <em>my_table.txt</em> contains the following information</p>
 <table>
    <tr>
       <th>x</th>
@@ -1428,7 +1438,7 @@
 
 -->
 
-<p>You can read this file and interact with the data using the following</p>
+<p>You can read this table using the <a class="autorefs autorefs-internal" title="read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_table</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
@@ -1439,10 +1449,82 @@
 <span class="go">array([[1., 2., 3.],</span>
 <span class="go">      [4., 5., 6.],</span>
 <span class="go">      [7., 8., 9.]])</span>
+</code></pre></div>
+<p>and since a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a> behaves like a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, you can call <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> attributes directly with the <code>table</code> instance</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 3)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 <span class="go">9.0</span>
 </code></pre></div>
+<p>You can define the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> of each column. For example, to return integer values instead of floating-point numbers you can include the <code>dtype=int</code> keyword argument</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;int64&#39;)</span>
+</code></pre></div>
+<p>and the <code>dtype</code> value is passed to the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> constructor.</p>
+<p>However, if you specify the <code>dtype</code> value as a string which starts with the text <code>header</code>, then the values in the <em>header</em> are used as field names for the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays" target="_blank">structured array</a> that is created where each data type is by default a <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.double" target="_blank">double</a> <em>(note: the header is still included as metadata)</em></p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype([(&#39;x&#39;, &#39;&lt;f8&#39;), (&#39;y&#39;, &#39;&lt;f8&#39;), (&#39;z&#39;, &#39;&lt;f8&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">x</span>
+<span class="go">array([1., 4., 7.])</span>
+</code></pre></div>
+<p>You can also specify the data type to use for all columns by specifying <code>header:</code> followed by the data type</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header:f4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype([(&#39;x&#39;, &#39;&lt;f4&#39;), (&#39;y&#39;, &#39;&lt;f4&#39;), (&#39;z&#39;, &#39;&lt;f4&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">y</span>
+<span class="go">array([2., 5., 8.], dtype=float32)</span>
+</code></pre></div>
+<p>or you can specify the data type of each column by separating each data type with a comma</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header:f4,f8,H&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype([(&#39;x&#39;, &#39;&lt;f4&#39;), (&#39;y&#39;, &#39;&lt;f8&#39;), (&#39;z&#39;, &#39;&lt;u2&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">z</span>
+<span class="go">array([3, 6, 9], dtype=uint16)</span>
+</code></pre></div>
+<p>See <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.dtypes.html#arrays-dtypes-constructing" target="_blank">Specifying and constructing data types</a> for the character and string representations of the different data types that numpy supports.</p>
 <p>You can read a table from a text-based file or from a spreadsheet.</p>
+<h4 id="extension-delimiter-map">Extension-delimiter map<a class="headerlink" href="#extension-delimiter-map" title="Permanent link">¤</a></h4>
+<p>Suppose you wanted to read a table from files that use a <code>;</code> character to separate columns</p>
+<!--
+>>> from io import StringIO
+>>> file = StringIO("value;uncertainty\n6.317;0.045\n4.362;0.009\n5.328;0.013\n")
+>>> file.name = "data.xyz"
+
+-->
+
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;data.xyz&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="go">value;uncertainty</span>
+<span class="go">6.317;0.045</span>
+<span class="go">4.362;0.009</span>
+<span class="go">5.328;0.013</span>
+</code></pre></div>
+<!--
+>>> _ = file.seek(0)
+
+-->
+
+<p>You can add the extension and delimiter to the <a class="autorefs autorefs-internal" title="extension_delimiter_map
+
+
+  
+      module-attribute
+  " href="api/tables/#msl.io.tables.extension_delimiter_map">extension_delimiter_map</a></p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">extension_delimiter_map</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extension_delimiter_map</span><span class="p">[</span><span class="s2">&quot;.xyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
+</code></pre></div>
+<p>and then you can read a table from files with the <em>.xyz</em> extension without needing to explicitly specify the delimiter to use every time you read a table</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">&lt;Metadata &#39;data.xyz&#39; {&#39;header&#39;: [&#39;value&#39;, &#39;uncertainty&#39;]}&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">data</span>
+<span class="go">array([[6.317, 0.045],</span>
+<span class="go">       [4.362, 0.009],</span>
+<span class="go">       [5.328, 0.013]])</span>
+</code></pre></div>
 <!-- invisible-code-block: pycon
 >>> import os
 >>> os.remove('my_file.h5')
