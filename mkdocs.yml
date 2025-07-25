@@ -44,7 +44,7 @@ theme:
         icon: material/weather-night
         name: Switch to system preference
 
-watch: [src]
+watch: [src, CHANGELOG.md]
 
 nav:
   - Overview:
