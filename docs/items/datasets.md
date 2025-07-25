@@ -22,8 +22,8 @@ Since a [Dataset][msl.io.node.Dataset] is a numpy [ndarray][numpy.ndarray]{:targ
 >>> my_dataset
 <Dataset '/my_dataset' shape=(5,) dtype='|V16' (2 metadata)>
 >>> print(my_dataset)
-array([(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)],
-      dtype=[('x', '<f8'), ('y', '<f8')])
+array([(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83),
+       (8.73, 0.74)], dtype=[('x', '<f8'), ('y', '<f8')])
 
 ```
 
@@ -105,7 +105,7 @@ Consider `my_dataset` from above. You can slice it
 ```pycon
 >>> my_dataset[::2]
 array([(0.23, 1.27), (3.44, 2.91), (8.73, 0.74)],
-         dtype=[('x', '<f8'), ('y', '<f8')])
+      dtype=[('x', '<f8'), ('y', '<f8')])
 
 ```
 
@@ -125,7 +125,7 @@ Since a numpy [ndarray][numpy.ndarray]{:target="_blank"} is returned, you are re
 <Dataset '/my_subset' shape=(3,) dtype='|V16' (2 metadata)>
 >>> my_subset.data
 array([(0.23, 1.27), (3.44, 2.91), (8.73, 0.74)],
-         dtype=[('x', '<f8'), ('y', '<f8')])
+      dtype=[('x', '<f8'), ('y', '<f8')])
 >>> my_subset.metadata
 <Metadata '/my_subset' {'temperature': 20.13, 'humidity': 45.31}>
 
@@ -222,8 +222,9 @@ The following illustrates how to automatically append [logging][]{:target="_blan
 >>> logger.info("hi")
 >>> logger.error("cannot do that!")
 >>> log_dset.data
-array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
-        dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
+array([(..., 'INFO', 'my_logger', 'hi'),
+       (..., 'ERROR', 'my_logger', 'cannot do that!')],
+      dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
 
 ```
 

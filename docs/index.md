@@ -270,8 +270,8 @@ You can read this table using the [read_table][msl.io.read_table] function
 <Metadata 'my_table.txt' {'header': ['x', 'y', 'z']}>
 >>> table.data
 array([[1., 2., 3.],
-      [4., 5., 6.],
-      [7., 8., 9.]])
+       [4., 5., 6.],
+       [7., 8., 9.]])
 
 ```
 

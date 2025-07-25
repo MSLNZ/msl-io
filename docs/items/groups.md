@@ -17,10 +17,10 @@ From a Python perspective, a [Group][msl.io.node.Group] operates like a [dict][]
 ```pycon
 >>> print(root.tree())
 <JSONWriter 'example.json' (3 groups, 1 datasets, 0 metadata)>
-   <Group '/a' (2 groups, 1 datasets, 0 metadata)>
-      <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>
-         <Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
-         <Dataset '/a/b/c/dset' shape=(100,) dtype='<f8' (0 metadata)>
+  <Group '/a' (2 groups, 1 datasets, 0 metadata)>
+    <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>
+      <Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
+        <Dataset '/a/b/c/dset' shape=(100,) dtype='<f8' (0 metadata)>
 
 ```
 
