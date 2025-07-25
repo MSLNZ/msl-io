@@ -43,7 +43,7 @@ If the `delimiter` keyword is not specified when calling the [read_table][msl.io
 then this extension-delimiter map is used to determine the value of the delimiter to use to separate the columns
 in a text-based file format. If the file extension is not in the map, then columns are split by any whitespace.
 
-See the [Overview][extension-delimiter-map] for an example.
+!!! example "See the [Overview][extension-delimiter-map] for an example."
 """
 
 
@@ -304,7 +304,7 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     2. All rows have the same number of columns
     3. All data values in a column have the same data type
 
-    See the [Overview][read-a-table] for examples.
+    !!! example "See the [Overview][read-a-table] for examples."
 
     Args:
         file: The file to read. If `file` is a Google Sheets spreadsheet then `file` must end
