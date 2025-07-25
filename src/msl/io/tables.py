@@ -24,6 +24,18 @@ _spreadsheet_top_left_regex = re.compile(r"^([A-Z]+)(\d+)$")
 _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
 
 
+def _header_dtype(dtype: str, header: list[str]) -> np.dtype:
+    """Return a np.dtype using the header for the field names."""
+    _, *remaining = dtype.split(":")
+    data_types = "".join(remaining).rstrip()
+    if not data_types:
+        return np.dtype({"names": header, "formats": [np.double] * len(header)})
+
+    splitted = [h.strip() for h in data_types.split(",")]
+    formats = [splitted[0]] * len(header) if len(splitted) == 1 else splitted
+    return np.dtype({"names": header, "formats": formats})
+
+
 extension_delimiter_map: dict[str, str] = {".csv": ","}
 """The delimiter to use to separate columns in a table based on the file extension.
 
@@ -31,12 +43,12 @@ If the `delimiter` keyword is not specified when calling the [read_table][msl.io
 then this extension-delimiter map is used to determine the value of the delimiter to use to separate the columns
 in a text-based file format. If the file extension is not in the map, then columns are split by any whitespace.
 
-See [read_table_text][msl.io.tables.read_table_text] for an example.
+See the [Overview][extension-delimiter-map] for an example.
 """
 
 
 def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
-    r"""Read a data table from a text-based file.
+    """Read a data table from a text-based file.
 
     The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
 
@@ -45,62 +57,12 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         kwargs: All keyword arguments are passed to [numpy.loadtxt][]. If the
             `delimiter` is not specified and the `file` has `.csv` as the file
             extension then the `delimiter` is automatically set to be `,` (see
-            example below for adding custom delimiter values).
+            [extension_delimiter_map][msl.io.tables.extension_delimiter_map]
+            for more details).
 
     Returns:
         The table as a [Dataset][msl.io.node.Dataset]. The header is included in the
             [Metadata][msl.io.metadata.Metadata].
-
-    **Examples:**
-
-    <!--
-    >>> from io import StringIO
-    >>> file = StringIO("value;uncertainty\n6.317;0.045\n4.362;0.009\n5.328;0.013\n")
-    >>> file.name = "data.xyz"
-
-    -->
-
-    Suppose you wanted to read a table from a file that uses a `;` character to separate columns
-
-    ```pycon
-    >>> file.name
-    'data.xyz'
-    >>> print(file.read())
-    value;uncertainty
-    6.317;0.045
-    4.362;0.009
-    5.328;0.013
-
-    ```
-
-    <!--
-    >>> _ = file.seek(0)
-
-    -->
-
-    You would first add the extension and delimiter to the
-    [extension_delimiter_map][msl.io.tables.extension_delimiter_map]
-
-    ```pycon
-    >>> from msl.io import extension_delimiter_map
-    >>> extension_delimiter_map[".xyz"] = ";"
-
-    ```
-
-    and then you can read a table from files with the *.xyz* extension with the appropriate delimiter
-
-    ```pycon
-    >>> from msl.io import read_table
-    >>> table = read_table(file)
-    >>> table.metadata
-    <Metadata 'data.xyz' {'header': ['value', 'uncertainty']}>
-    >>> table.data
-    array([[6.317, 0.045],
-           [4.362, 0.009],
-           [5.328, 0.013]])
-
-    ```
-
     """
     if kwargs.get("unpack", False):
         msg = "Cannot use the 'unpack' option"
@@ -114,12 +76,25 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
         kwargs["skiprows"] = 0
     kwargs["skiprows"] += 1  # Reader.get_lines is 1-based, np.loadtxt is 0-based
 
-    header: list[bytes] | list[str]
-    first_line = get_lines(file, kwargs["skiprows"], kwargs["skiprows"])
+    first_line = [
+        h.decode() if isinstance(h, bytes) else h for h in get_lines(file, kwargs["skiprows"], kwargs["skiprows"])
+    ]
+
     if not first_line:
         header, data = [], np.array([])
     else:
-        header = first_line[0].split(kwargs["delimiter"])  # pyright: ignore[reportArgumentType]
+        header = first_line[0].split(kwargs["delimiter"])
+
+        use_cols = kwargs.get("usecols")
+        if use_cols:
+            if isinstance(use_cols, int):
+                use_cols = [use_cols]
+            header = [header[i] for i in use_cols]
+
+        dtype = kwargs.get("dtype")
+        if isinstance(dtype, str) and dtype.startswith("header"):
+            kwargs["dtype"] = _header_dtype(dtype, header)
+
         # Calling np.loadtxt (on Python 3.5, 3.6 and 3.7) on a file
         # on a mapped drive could raise an OSError. This occurred
         # when a local folder was shared and then mapped on the same
@@ -130,12 +105,6 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
                 data = np.loadtxt(f, **kwargs)
         else:
             data = np.loadtxt(file, **kwargs)
-
-        use_cols = kwargs.get("usecols")
-        if use_cols:
-            if isinstance(use_cols, int):
-                use_cols = [use_cols]
-            header = [header[i] for i in use_cols]  # pyright: ignore[reportAssignmentType]
 
     return Dataset(
         name=get_basename(file), parent=None, read_only=True, data=data, header=np.asarray(header, dtype=str)
@@ -313,6 +282,9 @@ def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype
         if len(data) == 1:  # a single row
             data = data[0]
 
+    if isinstance(dtype, str) and dtype.startswith("header"):
+        dtype = _header_dtype(dtype, header)
+
     return Dataset(
         name=get_basename(file),
         parent=None,
@@ -331,6 +303,8 @@ def read_table(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
     1. The first row is a header
     2. All rows have the same number of columns
     3. All data values in a column have the same data type
+
+    See the [Overview][read-a-table] for examples.
 
     Args:
         file: The file to read. If `file` is a Google Sheets spreadsheet then `file` must end

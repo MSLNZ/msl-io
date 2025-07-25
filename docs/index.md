@@ -217,17 +217,17 @@ You can convert between file formats using any of the [Writers][msl-io-writers].
 
 ```
 
-### Read data from a table
+### Read a table
 
-The [read_table][msl.io.read_table] function will read a tabular data from a file. A *table* has the following properties:
+The [read_table][msl.io.read_table] function will read tabular data from a file. A *table* has the following properties:
 
 1. The first row is a header
 2. All rows have the same number of columns
 3. All values in a column have the same data type
 
-The returned item is a [Dataset][msl.io.node.Dataset] with the header provided as [metadata][msl.io.node.Dataset.metadata].
+The returned item is a [Dataset][msl-io-dataset] with the header provided in the [Metadata][msl-io-metadata].
 
-Suppose a file called *my_table.txt* contains the following information
+For example, suppose a file named *my_table.txt* contains the following information
 
 <table>
    <tr>
@@ -259,7 +259,7 @@ Suppose a file called *my_table.txt* contains the following information
 
 -->
 
-You can read this file and interact with the data using the following
+You can read this table using the [read_table][msl.io.read_table] function
 
 ```pycon
 >>> from msl.io import read_table
@@ -272,12 +272,114 @@ You can read this file and interact with the data using the following
 array([[1., 2., 3.],
       [4., 5., 6.],
       [7., 8., 9.]])
+
+```
+
+and since a [Dataset][msl-io-dataset] behaves like a numpy [ndarray][numpy.ndarray]{:target="_blank"}, you can call [ndarray][numpy.ndarray]{:target="_blank"} attributes directly with the `table` instance
+
+```pycon
+>>> table.shape
+(3, 3)
 >>> print(table.max())
 9.0
 
 ```
 
+You can define the [dtype][numpy.dtype]{:target="_blank"} of each column. For example, to return integer values instead of floating-point numbers you can include the `dtype=int` keyword argument
+
+```pycon
+>>> table = read_table("my_table.txt", dtype=int)
+>>> table.dtype
+dtype('int64')
+
+```
+
+and the `dtype` value is passed to the [dtype][numpy.dtype]{:target="_blank"} constructor.
+
+However, if you specify the `dtype` value as a string which starts with the text `header`, then the values in the *header* are used as field names for the [structured array][structured_arrays]{:target="_blank"} that is created where each data type is by default a [double][numpy.double]{:target="_blank"} *(note: the header is still included as metadata)*
+
+```pycon
+>>> table = read_table("my_table.txt", dtype="header")
+>>> table.dtype
+dtype([('x', '<f8'), ('y', '<f8'), ('z', '<f8')])
+>>> table.x
+array([1., 4., 7.])
+
+```
+
+You can also specify the data type to use for all columns by specifying `header:` followed by the data type
+
+```pycon
+>>> table = read_table("my_table.txt", dtype="header:f4")
+>>> table.dtype
+dtype([('x', '<f4'), ('y', '<f4'), ('z', '<f4')])
+>>> table.y
+array([2., 5., 8.], dtype=float32)
+
+```
+
+or you can specify the data type of each column by separating each data type with a comma
+
+```pycon
+>>> table = read_table("my_table.txt", dtype="header:f4,f8,H")
+>>> table.dtype
+dtype([('x', '<f4'), ('y', '<f8'), ('z', '<u2')])
+>>> table.z
+array([3, 6, 9], dtype=uint16)
+
+```
+
+See [Specifying and constructing data types][arrays.dtypes.constructing]{:target="_blank"} for the character and string representations of the different data types that numpy supports.
+
 You can read a table from a text-based file or from a spreadsheet.
+
+#### Extension-delimiter map
+
+Suppose you wanted to read a table from files that use a `;` character to separate columns
+
+<!--
+>>> from io import StringIO
+>>> file = StringIO("value;uncertainty\n6.317;0.045\n4.362;0.009\n5.328;0.013\n")
+>>> file.name = "data.xyz"
+
+-->
+
+```pycon
+>>> file.name
+'data.xyz'
+>>> print(file.read())
+value;uncertainty
+6.317;0.045
+4.362;0.009
+5.328;0.013
+
+```
+
+<!--
+>>> _ = file.seek(0)
+
+-->
+
+You can add the extension and delimiter to the [extension_delimiter_map][msl.io.tables.extension_delimiter_map]
+
+```pycon
+>>> from msl.io import extension_delimiter_map
+>>> extension_delimiter_map[".xyz"] = ";"
+
+```
+
+and then you can read a table from files with the *.xyz* extension without needing to explicitly specify the delimiter to use every time you read a table
+
+```pycon
+>>> table = read_table(file)
+>>> table.metadata
+<Metadata 'data.xyz' {'header': ['value', 'uncertainty']}>
+>>> table.data
+array([[6.317, 0.045],
+       [4.362, 0.009],
+       [5.328, 0.013]])
+
+```
 
 <!-- invisible-code-block: pycon
 >>> import os

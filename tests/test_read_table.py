@@ -9,7 +9,12 @@ import numpy as np
 import pytest
 
 from msl.io import read_table
-from msl.io.tables import read_table_excel, read_table_gsheets, read_table_ods
+from msl.io.tables import (
+    _header_dtype,  # pyright: ignore[reportPrivateUsage]
+    read_table_excel,
+    read_table_gsheets,
+    read_table_ods,
+)
 from tests.test_google_api import skipif_no_gdrive_readonly, skipif_no_sheets_readonly
 
 if TYPE_CHECKING:
@@ -355,10 +360,8 @@ def test_text_file_like(ext: str, kwargs: dict[str, Any]) -> None:  # type: igno
         assert dset.name == "table" + ext
         assert_dataset(dset)
 
-    kwargs["delimiter"] = kwargs["delimiter"].encode()
-
     with BytesIO() as byte_buf:
-        delim = kwargs["delimiter"]
+        delim = kwargs["delimiter"].encode()
         _ = byte_buf.write(delim.join(h.encode() for h in dset_temp.metadata.header) + b"\n")
         for row in dset_temp:
             _ = byte_buf.write(delim.join(str(val).encode() for val in row) + b"\n")
@@ -452,6 +455,115 @@ def test_pathlib() -> None:
     dset1 = read_table(string, sheet="A1")
     dset2 = read_table(Path(string), sheet="A1")
     assert dset1 == dset2
+
+
+@pytest.mark.parametrize("dtype", ["header", "header:", "header  :  "])
+def test_header_dtype_no_format(dtype: str) -> None:
+    header = ["a", "b", "c"]
+    assert np.dtype([("a", "float64"), ("b", "float64"), ("c", "float64")]) == _header_dtype(dtype, header)
+
+
+def test_header_dtype_with_spaces() -> None:
+    dtype = "header: f4"
+    header = ["a", "b", "c"]
+    assert np.dtype([("a", "f4"), ("b", "f4"), ("c", "f4")]) == _header_dtype(dtype, header)
+
+    dtype = "header:       f4  ,     U16 ,i4    "
+    header = ["a", "b", "c"]
+    assert np.dtype([("a", "f4"), ("b", "U16"), ("c", "i4")]) == _header_dtype(dtype, header)
+
+
+@pytest.mark.parametrize("dtype", [":f4,i4,", ":f8,,f8", ":apple"])
+def test_header_dtype_type_error(dtype: str) -> None:
+    with pytest.raises(TypeError, match=r"not understood"):
+        _ = _header_dtype(dtype, ["a", "b", "c"])
+
+
+@pytest.mark.parametrize("dtype", [":f8,f8", ":,"])
+def test_header_dtype_value_error(dtype: str) -> None:
+    with pytest.raises(ValueError, match=r"same length"):
+        _ = _header_dtype(dtype, ["a", "b", "c"])
+
+
+@pytest.mark.parametrize(("ext", "kwargs"), [(".txt", {"delimiter": "\t"}), (".csv", {})])
+def test_header_dtype_text(ext: str, kwargs: dict[str, str]) -> None:
+    def check(table: Dataset) -> None:
+        assert table.shape == (10,)
+        assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+        assert [str(v) for v, _ in table.dtype.fields.values()] == ["<U19", "float64", "float64", "float64", "float64"]
+        assert np.array_equal(table.timestamp, data["f0"])
+        assert np.array_equal(table["val1"], data["f1"])
+        assert np.array_equal(table.uncert1, data["f2"])
+        assert np.array_equal(table["val2"], data["f3"])
+        assert np.array_equal(table.uncert2, data["f4"])
+
+    dt = "header:U19,f8,f8,f8,f8"
+
+    check(read_table(get_url(ext), dtype=dt, **kwargs))
+
+    with get_url(ext).open(mode="rt") as ft:
+        check(read_table(ft, dtype=dt, **kwargs))
+
+    with get_url(ext).open(mode="rb") as fb:
+        check(read_table(fb, dtype=dt, **kwargs))
+
+
+@pytest.mark.parametrize(("ext", "kwargs"), [(".txt", {"delimiter": "\t"}), (".csv", {})])
+def test_header_dtype_text_usecols(ext: str, kwargs: dict[str, str]) -> None:
+    table = read_table(get_url(ext), dtype="header", usecols=(1, 3), **kwargs)
+    assert table.shape == (10,)
+    assert table.dtype.names == ("val1", "val2")
+    assert np.array_equal(table.metadata.header, ("val1", "val2"))
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["float64", "float64"]
+    assert np.array_equal(table["val1"], data["f1"])
+    assert np.array_equal(table.val2, data["f3"])
+
+
+@pytest.mark.parametrize("ext", [".xls", ".xlsx"])
+def test_header_dtype_excel_spreadsheet(ext: str) -> None:
+    table = read_table(get_url(ext), dtype="header:U19,f8,f8,f8,f8", sheet="A1", as_datetime=False)
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["<U19", "float64", "float64", "float64", "float64"]
+    assert np.array_equal(table.timestamp, data["f0"])
+    assert np.array_equal(table["val1"], data["f1"])
+    assert np.array_equal(table.uncert1, data["f2"])
+    assert np.array_equal(table["val2"], data["f3"])
+    assert np.array_equal(table.uncert2, data["f4"])
+
+    timestamp = np.asarray([to_datetime(item.encode()) for item in data["f0"]], dtype=object)
+    table = read_table(get_url(ext), dtype="header:O,f8,f8,f8,f8", sheet="A1")
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["object", "float64", "float64", "float64", "float64"]
+    assert np.array_equal(table.timestamp, timestamp)
+    assert np.array_equal(table["val1"], data["f1"])
+    assert np.array_equal(table.uncert1, data["f2"])
+    assert np.array_equal(table["val2"], data["f3"])
+    assert np.array_equal(table.uncert2, data["f4"])
+
+
+def test_header_dtype_open_document_spreadsheet() -> None:
+    table = read_table(get_url(".ods"), dtype="header:U19,f8,f8,f8,f8", sheet="A1", as_datetime=False)
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["<U19", "float64", "float64", "float64", "float64"]
+    assert np.array_equal(table.timestamp, ods_data["f0"])
+    assert np.array_equal(table["val1"], ods_data["f1"])
+    assert np.array_equal(table.uncert1, ods_data["f2"])
+    assert np.array_equal(table["val2"], ods_data["f3"])
+    assert np.array_equal(table.uncert2, ods_data["f4"])
+
+    timestamp = np.asarray([datetime.strptime(item, "%m/%d/%Y %H:%M:%S") for item in ods_data["f0"]], dtype=object)  # noqa: DTZ007
+    table = read_table(get_url(".ods"), dtype="header:O", sheet="A1")
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["object", "object", "object", "object", "object"]
+    assert np.array_equal(table.timestamp, timestamp)
+    assert np.array_equal(table["val1"], ods_data["f1"])
+    assert np.array_equal(table.uncert1, ods_data["f2"])
+    assert np.array_equal(table["val2"], ods_data["f3"])
+    assert np.array_equal(table.uncert2, ods_data["f4"])
 
 
 @skipif_no_gdrive_readonly
