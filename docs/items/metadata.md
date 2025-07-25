@@ -49,7 +49,7 @@ ValueError: Cannot modify <Metadata '/' {'voltage': 1.2, 'voltage_unit': 'V'}>. 
 
 ```
 
-However, you can allow `root` to be modified by setting the [read_only][msl.io.node.Group.read_only] property to be `False`
+However, you can allow `metadata` to be modified by setting the [read_only][msl.io.node.Group.read_only] property to be `False`
 
 ```pycon
 >>> root.metadata.read_only = False
