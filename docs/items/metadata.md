@@ -68,7 +68,7 @@ and then you can modify the values
 
 ## Lists, tuples and arrays
 
-When the metadata *value* is a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} or [array.array][]{:target="_blank"}, it will automatically be converted to [numpy.ndarray][]{:target="_blank"}. The [dtype][numpy.dtype]{:target="_blank"} for a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} will be [object][]{:target="_blank"}
+When the metadata *value* is a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} or [array.array][]{:target="_blank"}, it will automatically be converted to a numpy [ndarray][numpy.ndarray]{:target="_blank"}. The [dtype][numpy.dtype]{:target="_blank"} for a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} will be [object][]{:target="_blank"}
 
 ```pycon
 >>> root.metadata.temperatures = [20.1, 20.4, 19.8, 19.9]
@@ -92,7 +92,7 @@ array([1, 2, 3, 4], dtype=uint32)
 
 ```
 
-Setting the *value* to a [ndarray][numpy.ndarray]{:target="_blank"} remains unchanged
+Setting the *value* to a numpy [ndarray][numpy.ndarray]{:target="_blank"} remains unchanged
 
 ```pycon
 >>> root.metadata.eye = np.eye(2)

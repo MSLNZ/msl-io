@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1641
-    """A *Dataset* functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata]."""
+    """A *Dataset* functions as a numpy [ndarray][numpy.ndarray] with [Metadata][msl.io.metadata.Metadata]."""
 
     def __init__(  # noqa: PLR0913
         self,
@@ -42,7 +42,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
         data: ArrayLike | None = None,
         **metadata: Any,
     ) -> None:
-        """A *Dataset* functions as a [numpy.ndarray][] with [Metadata][msl.io.metadata.Metadata].
+        """A *Dataset* functions as a numpy [ndarray][numpy.ndarray] with [Metadata][msl.io.metadata.Metadata].
 
         !!! warning
             Do not instantiate directly. Create a new [Dataset][msl.io.node.Dataset] using the
@@ -59,7 +59,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
             offset: See [numpy.ndarray][]. Only used if `data` is `None`.
             strides: See [numpy.ndarray][]. Only used if `data` is `None`.
             order: See [numpy.ndarray][]. Only used if `data` is `None` or if
-                `data` is not a [numpy.ndarray][] instance.
+                `data` is not a numpy [ndarray][numpy.ndarray] instance.
             data: If not `None`, it must be either a [numpy.ndarray][] or
                 an array-like object which will be passed to [numpy.asarray][],
                 as well as `dtype` and `order`, to be used as the underlying data.
@@ -233,8 +233,10 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
         -->
 
         !!! tip
-            You do not have to call this attribute to access the underlying [numpy.ndarray][].
-            You can directly call any [numpy.ndarray][] attribute from the [Dataset][msl.io.node.Dataset] instance.
+            You do not have to call this attribute to access the underlying numpy [ndarray][numpy.ndarray].
+            You can directly call any [ndarray][numpy.ndarray] attribute from the [Dataset][msl.io.node.Dataset]
+            instance.
+
             For example,
 
             ```pycon
@@ -410,7 +412,7 @@ class DatasetLogging(Dataset):
 
     @property
     def attributes(self) -> tuple[str, ...]:
-        """[tuple][][[str][]] &mdash; The [attribute names][logrecord-attributes] that are logged."""
+        """[tuple][][[str][], ...] &mdash; The [attribute names][logrecord-attributes] that are logged."""
         return self._attributes
 
     @property

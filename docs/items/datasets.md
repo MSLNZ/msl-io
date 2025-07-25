@@ -2,9 +2,9 @@
 
 A [Dataset][msl.io.node.Dataset] is analogous to a *file* in the file system used by an operating system and it is contained within a [Group][msl-io-group] (analogous to a *directory*).
 
-A [Dataset][msl.io.node.Dataset] operates as a [numpy.ndarray][]{:target="_blank"} with [Metadata][msl-io-metadata] and it can be accessed in read-only mode or in read-write mode.
+A [Dataset][msl.io.node.Dataset] operates as a numpy [ndarray][numpy.ndarray]{:target="_blank"} with [Metadata][msl-io-metadata] and it can be accessed in read-only mode or in read-write mode.
 
-Since a [Dataset][msl.io.node.Dataset] is a [numpy.ndarray][]{:target="_blank"}, the attributes of an [ndarray][numpy.ndarray]{:target="_blank"} are also valid for a [Dataset][msl.io.node.Dataset]. For example, suppose `my_dataset` is a [Dataset][msl.io.node.Dataset]
+Since a [Dataset][msl.io.node.Dataset] is a numpy [ndarray][numpy.ndarray]{:target="_blank"}, the attributes of [ndarray][numpy.ndarray]{:target="_blank"} are also valid for a [Dataset][msl.io.node.Dataset]. For example, suppose `my_dataset` is a [Dataset][msl.io.node.Dataset]
 
 <!-- invisible-code-block: pycon
 >>> from msl.io import JSONWriter
@@ -84,7 +84,7 @@ array([0.23, 1.86, 3.44, 5.91, 8.73])
 ```
 
 !!! note
-    The returned object is an [ndarray][numpy.ndarray]{:target="_blank"} and therefore does not contain [Metadata][msl.io.metadata.Metadata].
+    The returned object is a numpy [ndarray][numpy.ndarray]{:target="_blank"} and therefore does not contain [Metadata][msl.io.metadata.Metadata].
 
 See [Accessing Keys as Class Attributes][attribute-key-limitations] for more information.
 
@@ -98,7 +98,7 @@ You can also chain multiple attribute calls together. For example, to get the ma
 
 ## Slicing and Indexing
 
-Slicing and indexing a [Dataset][msl.io.node.Dataset] is a valid operation, but returns an [ndarray][numpy.ndarray]{:target="_blank"} which does not contain [Metadata][msl-io-metadata].
+Slicing and indexing a [Dataset][msl.io.node.Dataset] is a valid operation, but returns a numpy [ndarray][numpy.ndarray]{:target="_blank"} which does not contain [Metadata][msl-io-metadata].
 
 Consider `my_dataset` from above. You can slice it
 
@@ -117,7 +117,7 @@ or index it
 
 ```
 
-Since an [ndarray][numpy.ndarray]{:target="_blank"} is returned, you are responsible for keeping track of the [Metadata][msl-io-metadata] in slicing and indexing operations. For example, you can create a new [Dataset][msl.io.node.Dataset] from the subset by calling the [create_dataset][msl.io.node.Group.create_dataset] method
+Since a numpy [ndarray][numpy.ndarray]{:target="_blank"} is returned, you are responsible for keeping track of the [Metadata][msl-io-metadata] in slicing and indexing operations. For example, you can create a new [Dataset][msl.io.node.Dataset] from the subset by calling the [create_dataset][msl.io.node.Group.create_dataset] method
 
 ```pycon
 >>> my_subset = root.create_dataset("my_subset", data=my_dataset[::2], **my_dataset.metadata)

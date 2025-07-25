@@ -1,4 +1,4 @@
-"""Custom types."""
+"""Custom type annotations."""
 # pyright: reportGeneralTypeIssues=false
 
 from __future__ import annotations
@@ -36,10 +36,10 @@ ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]  # pyright: ignore[rep
 """Anything that can be coerced to a shape tuple for an [ndarray][numpy.ndarray]{:target="_blank"}."""
 
 ToIndex = Union[SupportsIndex, slice, EllipsisType, None]  # pyright: ignore[reportDeprecated]
-"""Anything that can be used as the `key` for [numpy.ndarray.__setitem__][]{:target="_blank"}."""
+r"""Anything that can be used as the `key` for [numpy.ndarray.\_\_setitem\_\_][]{:target="_blank"}."""
 
 ToIndices = Union[ToIndex, tuple[ToIndex, ...]]  # pyright: ignore[reportDeprecated]
-"""Anything that can be used as the `key` for [numpy.ndarray.__setitem__][]{:target="_blank"}."""
+r"""Anything that can be used as the `key` for [numpy.ndarray.\_\_setitem\_\_][]{:target="_blank"}."""
 
 T_co = TypeVar("T_co", str, bytes, covariant=True)
 T_contra = TypeVar("T_contra", str, bytes, contravariant=True)

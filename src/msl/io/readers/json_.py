@@ -44,7 +44,7 @@ class JSONReader(Reader):
         """Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].
 
         If a [Metadata][msl.io.metadata.Metadata] `key` has a `value` that is a
-        [list][] then the list is converted to an [numpy.ndarray][] with [numpy.dtype][] as [object][].
+        [list][] then the list is converted to a numpy [ndarray][numpy.ndarray] with [dtype][numpy.dtype] as [object][].
 
         Args:
             kwargs:  Accepts `encoding` and `errors` keyword arguments which are passed to

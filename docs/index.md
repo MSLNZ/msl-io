@@ -8,7 +8,7 @@ The tree structure is similar to the file-system structure used by operating sys
 
 The data files that can be read or written are not restricted to [HDF5]{:target="_blank"} files, but any file format that has a [Reader][msl-io-readers] implemented can be read and data files can be created using any of the [Writers][msl-io-writers].
 
-### Write a file  {: #msl-io-write }
+### Write a file
 
 <!-- invisible-code-block: pycon
 >>> from pathlib import Path
@@ -65,7 +65,7 @@ Finally, we write the file
 !!! note
     The file is not created until you call the [write][msl.io.base.Writer.write] or [save][msl.io.base.Writer.save] method.
 
-### Read a file {: #msl-io-read }
+### Read a file
 
 The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above
 
