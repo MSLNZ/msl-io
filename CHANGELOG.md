@@ -6,6 +6,7 @@
 
 ***Added:***
 
+- [read_table][msl.io.tables.read_table] supports `dtype="header"`
 - the [dimensions][msl.io.readers.excel.ExcelReader.dimensions] method to [ExcelReader][msl.io.readers.excel.ExcelReader]
 - the `merged` keyword argument to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read]
 - [ODSReader][msl.io.readers.ods.ODSReader] for reading OpenDocument Spreadsheet files
