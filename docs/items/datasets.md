@@ -207,9 +207,42 @@ array([5., 7., 9.])
 
 ```
 
-## Logging Records
+## Logging Records {: #msl-io-dataset-logging }
 
 The [DatasetLogging][msl.io.node.DatasetLogging] class is a custom [Dataset][msl.io.node.Dataset] that is also a [Handler][logging.Handler]{:target="_blank"} which automatically appends [logging][]{:target="_blank"} records to the [Dataset][msl.io.node.Dataset]. See [create_dataset_logging][msl.io.node.Group.create_dataset_logging] for more details.
+
+The following illustrates how to automatically append [logging][]{:target="_blank"} records to a [Dataset][msl.io.node.Dataset]
+
+```pycon
+>>> import logging
+>>> from msl.io import JSONWriter
+>>> logger = logging.getLogger("my_logger")
+>>> root = JSONWriter()
+>>> log_dset = root.create_dataset_logging("log")
+>>> logger.info("hi")
+>>> logger.error("cannot do that!")
+>>> log_dset.data
+array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
+        dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
+
+```
+
+Get all `ERROR` [logging records][log-record]
+
+```pycon
+>>> errors = log_dset[log_dset["levelname"] == "ERROR"]
+>>> print(errors)
+[(..., 'ERROR', 'my_logger', 'cannot do that!')]
+
+```
+
+Stop the [DatasetLogging][msl.io.node.DatasetLogging] instance
+from receiving [logging records][log-record]
+
+```pycon
+>>> log_dset.remove_handler()
+
+```
 
 !!! note
     When a file is [read][msl.io.read], it will load an object that was once a [DatasetLogging][msl.io.node.DatasetLogging] as a [Dataset][msl.io.node.Dataset] (i.e., it will not be associated with new [logging][]{:target="_blank"} records that are emitted). If you want to convert the [Dataset][msl.io.node.Dataset] to be a [DatasetLogging][msl.io.node.DatasetLogging] item again, so that [logging][]{:target="_blank"} records are once again appended to it when emitted, then you must call the [require_dataset_logging][msl.io.node.Group.require_dataset_logging] method with the *name* argument equal to the value of the [name][msl.io.node.Dataset.name] attribute of the [Dataset][msl.io.node.Dataset].

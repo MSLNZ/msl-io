@@ -927,6 +927,8 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
 
         Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
+        !!! example "See [here][msl-io-dataset-logging] for an example."
+
         Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
             level: The [logging level][levels] to use.
@@ -958,38 +960,6 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
 
         Returns:
             The [DatasetLogging][msl.io.node.DatasetLogging] that was created.
-
-        **Examples:**
-        ```pycon
-        >>> import logging
-        >>> from msl.io import JSONWriter
-        >>> logger = logging.getLogger("my_logger")
-        >>> root = JSONWriter()
-        >>> log_dset = root.create_dataset_logging("log")
-        >>> logger.info("hi")
-        >>> logger.error("cannot do that!")
-        >>> log_dset.data
-        array([(..., 'INFO', 'my_logger', 'hi'), (..., 'ERROR', 'my_logger', 'cannot do that!')],
-              dtype=[('asctime', 'O'), ('levelname', 'O'), ('name', 'O'), ('message', 'O')])
-
-        ```
-
-        Get all `ERROR` [logging records][log-record]
-
-        ```pycon
-        >>> errors = log_dset[log_dset["levelname"] == "ERROR"]
-        >>> print(errors)
-        [(..., 'ERROR', 'my_logger', 'cannot do that!')]
-
-        ```
-
-        Stop the [DatasetLogging][msl.io.node.DatasetLogging] instance
-        from receiving [logging records][log-record]
-
-        ```pycon
-        >>> log_dset.remove_handler()
-
-        ```
         """
         read_only, metadata = self._check(read_only=False, **kwargs)
         name, parent = self._create_ancestors(name, read_only=read_only)
