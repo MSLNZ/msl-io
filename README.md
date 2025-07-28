@@ -29,16 +29,16 @@ pip install msl-io
 
 ## Documentation
 
-The documentation for `msl-io` can be found [here](https://mslnz.github.io/msl-io/dev/).
+The documentation for `msl-io` can be found [here](https://mslnz.github.io/msl-io/latest/).
 
 [numpy]: https://www.numpy.org/
 [xlrd]: https://xlrd.readthedocs.io/en/stable/
 [HDF5]: https://www.hdfgroup.org/
-[Root]: https://mslnz.github.io/msl-io/dev/api/base/#msl.io.base.Root
-[Group]: https://mslnz.github.io/msl-io/dev/api/node/#msl.io.node.Group
-[Groups]: https://mslnz.github.io/msl-io/dev/items/groups/#msl-io-group
-[Datasets]: https://mslnz.github.io/msl-io/dev/items/datasets/#msl-io-dataset
-[Metadata]: https://mslnz.github.io/msl-io/dev/items/metadata/#msl-io-metadata
-[Reader]: https://mslnz.github.io/msl-io/dev/readers/#msl-io-readers
-[Writers]: https://mslnz.github.io/msl-io/dev/writers/#msl-io-writers
+[Root]: https://mslnz.github.io/msl-io/latest/api/base/#msl.io.base.Root
+[Group]: https://mslnz.github.io/msl-io/latest/api/node/#msl.io.node.Group
+[Groups]: https://mslnz.github.io/msl-io/latest/items/groups/#msl-io-group
+[Datasets]: https://mslnz.github.io/msl-io/latest/items/datasets/#msl-io-dataset
+[Metadata]: https://mslnz.github.io/msl-io/latest/items/metadata/#msl-io-metadata
+[Reader]: https://mslnz.github.io/msl-io/latest/readers/#msl-io-readers
+[Writers]: https://mslnz.github.io/msl-io/latest/writers/#msl-io-writers
 [Python Package Index]: https://pypi.org/project/msl-io/
