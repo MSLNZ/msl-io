@@ -54,7 +54,7 @@ class Root(Group):
         return f"<{self.__class__.__name__} {b!r} ({g} groups, {d} datasets, {m} metadata)>"
 
     def tree(self, *, indent: int = 2) -> str:
-        """Returns a representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure){:target="_blank"}.
+        """Returns a string representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure){:target="_blank"}.
 
         Shows all [Group][msl.io.node.Group]s and [Dataset][msl.io.node.Dataset]s that are in [Root][msl.io.base.Root].
 
@@ -206,6 +206,8 @@ class Reader(Root, ABC):
 
 def read(file: PathLike | ReadLike, **kwargs: Any) -> Reader:
     """Read a file that has a [Reader][msl-io-readers] implemented.
+
+    !!! example "See the [Overview][read-a-file] for an example."
 
     Args:
         file: The file to read.

@@ -43,9 +43,6 @@ class JSONReader(Reader):
     def read(self, **kwargs: Any) -> None:  # noqa: C901
         """Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].
 
-        If a [Metadata][msl.io.metadata.Metadata] `key` has a `value` that is a
-        [list][] then the list is converted to a numpy [ndarray][numpy.ndarray] with [dtype][numpy.dtype] as [object][].
-
         Args:
             kwargs:  Accepts `encoding` and `errors` keyword arguments which are passed to
                 [open][]. The default `encoding` value is `utf-8` and the default

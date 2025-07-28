@@ -54,7 +54,7 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
 
     Args:
         file: The file to read.
-        kwargs: All keyword arguments are passed to [numpy.loadtxt][]. If the
+        kwargs: All keyword arguments are passed to numpy [loadtxt][numpy.loadtxt]. If the
             `delimiter` is not specified and the `file` has `.csv` as the file
             extension then the `delimiter` is automatically set to be `,` (see
             [extension_delimiter_map][msl.io.tables.extension_delimiter_map]

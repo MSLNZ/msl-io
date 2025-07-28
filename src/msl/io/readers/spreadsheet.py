@@ -20,13 +20,13 @@ class Spreadsheet(ABC):
         """Abstract base class for spreadsheets.
 
         Args:
-            file: The location of the spreadsheet on a local hard drive or on a network.
+            file: The location of the spreadsheet on a local hard drive or on a network drive.
         """
         self._file: str = file
 
     @property
     def file(self) -> str:
-        """[str][] &mdash; The location of the spreadsheet on a local hard drive or on a network."""
+        """[str][] &mdash; The location of the spreadsheet on a local hard drive or on a network drive."""
         return self._file
 
     @abstractmethod
@@ -43,8 +43,8 @@ class Spreadsheet(ABC):
                 specified then returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only one
                 sheet in the spreadsheet then you do not need to specify the name of the sheet.
-            as_datetime: Whether dates should be returned as [datetime.datetime][] or
-                [datetime.date][] objects. If `False`, dates are returned as a string in
+            as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
+                [date][datetime.date] objects. If `False`, dates are returned as a string in
                 the format of the spreadsheet cell.
             merged: Applies to cells that are merged with other cells. The details depend
                 on the type of spreadsheet document that is being read. Some documents allow
@@ -114,7 +114,7 @@ class Spreadsheet(ABC):
                 (a column and a row).
 
         Returns:
-            The (row_index, column_index). If `cell` does not contain a row number
+            The *(row_index, column_index)*. If `cell` does not contain a row number
                 then the row index is `None`. The row and column index are zero based.
 
         **Examples:**

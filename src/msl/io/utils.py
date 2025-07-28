@@ -438,11 +438,11 @@ def _prepare_email(  # noqa: C901, PLR0912
 
 
 def get_basename(obj: PathLike | ReadLike | WriteLike) -> str:
-    """Get the basename (the final path component) of a file.
+    r"""Get the basename (the final path component) of a file.
 
     Args:
         obj: The object to get the basename of. If `obj` is an in-memory file-like
-            object then the class [__name__][definition.__name__] of `obj` is returned.
+            object then the class [\_\_name\_\_][definition.__name__] of `obj` is returned.
 
     Returns:
         The basename of `obj`.

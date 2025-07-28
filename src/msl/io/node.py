@@ -52,16 +52,16 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
             name: A name to associate with this [Dataset][msl.io.node.Dataset].
             parent: The parent [Group][msl.io.node.Group] to the [Dataset][msl.io.node.Dataset].
             read_only: Whether the [Dataset][msl.io.node.Dataset] is initialised in read-only mode.
-            shape: See [numpy.ndarray][]. Only used if `data` is `None`.
-            dtype: See [numpy.ndarray][]. Only used if `data` is `None` or if
-                `data` is not a [numpy.ndarray][] instance.
-            buffer: See [numpy.ndarray][]. Only used if `data` is `None`.
-            offset: See [numpy.ndarray][]. Only used if `data` is `None`.
-            strides: See [numpy.ndarray][]. Only used if `data` is `None`.
-            order: See [numpy.ndarray][]. Only used if `data` is `None` or if
+            shape: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None`.
+            dtype: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None` or if
                 `data` is not a numpy [ndarray][numpy.ndarray] instance.
-            data: If not `None`, it must be either a [numpy.ndarray][] or
-                an array-like object which will be passed to [numpy.asarray][],
+            buffer: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None`.
+            offset: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None`.
+            strides: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None`.
+            order: See numpy [ndarray][numpy.ndarray]. Only used if `data` is `None` or if
+                `data` is not a numpy [ndarray][numpy.ndarray] instance.
+            data: If not `None`, it must be either a numpy [ndarray][numpy.ndarray] or
+                an array-like object which will be passed to [asarray][numpy.asarray],
                 as well as `dtype` and `order`, to be used as the underlying data.
             metadata: All other keyword arguments are used as
                 [Metadata][msl.io.metadata.Metadata] for this [Dataset][msl.io.node.Dataset].
@@ -303,7 +303,7 @@ class DatasetLogging(Dataset):
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
             level: The [logging level][levels] to use.
             logger: The [Logger][logging.Logger] that this `DatasetLogging` instance
-                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
+                will be associated with. If `None`, it is associated with the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] (only if
                 _asctime_ is included as one of the `attributes`).
@@ -451,7 +451,7 @@ class DatasetLogging(Dataset):
         """Remove a logging filter.
 
         Args:
-            log_filter: The logging [Filter][logging.Filter] to remove from the [Handler][logging.Handler]
+            log_filter: The logging [Filter][logging.Filter] to remove from the [Handler][logging.Handler].
         """
         self._handler.removeFilter(log_filter)
 
@@ -755,10 +755,9 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def add_group(self, name: str, group: Group) -> None:
         """Add a [Group][msl.io.node.Group].
 
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
-
         Args:
-            name: The name of the new [Group][msl.io.node.Group] to add.
+            name: The name of the new [Group][msl.io.node.Group] to add. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist.
             group: The [Group][msl.io.node.Group] to add. The [Dataset][msl.io.node.Dataset]s and
                 [Metadata][msl.io.metadata.Metadata] that are contained within the
                 `group` will be copied.
@@ -783,10 +782,9 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def create_group(self, name: str, *, read_only: bool | None = None, **metadata: Any) -> Group:
         """Create a new [Group][msl.io.node.Group].
 
-        Automatically creates the ancestor[Group][msl.io.node.Group]s if they do not exist.
-
         Args:
-            name: The name of the new [Group][msl.io.node.Group].
+            name: The name of the new [Group][msl.io.node.Group]. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist.
             read_only: Whether to create the new [Group][msl.io.node.Group] in read-only mode.
                 If `None`, uses the mode for this [Group][msl.io.node.Group].
             metadata: All additional keyword arguments are used to create the [Metadata][msl.io.metadata.Metadata]
@@ -802,11 +800,11 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def require_group(self, name: str, *, read_only: bool | None = None, **metadata: Any) -> Group:
         """Require that a [Group][msl.io.node.Group] exists.
 
-        If the [Group][msl.io.node.Group] exists, it will be returned otherwise it is created then returned.
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
+        If the [Group][msl.io.node.Group] exists it will be returned otherwise it is created then returned.
 
         Args:
-            name: The name of the [Group][msl.io.node.Group] to require.
+            name: The name of the [Group][msl.io.node.Group] to require. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist.
             read_only: Whether to return the required [Group][msl.io.node.Group] in read-only mode.
                 If `None`, uses the mode for this [Group][msl.io.node.Group].
             metadata: All additional keyword arguments are used as [Metadata][msl.io.metadata.Metadata]
@@ -828,10 +826,9 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def add_dataset(self, name: str, dataset: Dataset) -> None:
         """Add a [Dataset][msl.io.node.Dataset].
 
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
-
         Args:
-            name: The name of the new [Dataset][msl.io.node.Dataset] to add.
+            name: The name of the new [Dataset][msl.io.node.Dataset] to add. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist.
             dataset: The [Dataset][msl.io.node.Dataset] to add. The data and the
                 [Metadata][msl.io.metadata.Metadata] in the [Dataset][msl.io.node.Dataset] are copied.
         """
@@ -845,11 +842,11 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def create_dataset(self, name: str, *, read_only: bool | None = None, **kwargs: Any) -> Dataset:
         """Create a new [Dataset][msl.io.node.Dataset].
 
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
-
         Args:
-            name: The name of the new [Dataset][msl.io.node.Dataset].
-            read_only: Whether to create this [Dataset][msl.io.node.Dataset] in read-only mode.
+            name: The name of the new [Dataset][msl.io.node.Dataset]. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist. See [here][automatic-group-creation]
+                for an example.
+            read_only: Whether to create the new [Dataset][msl.io.node.Dataset] in read-only mode.
                 If `None`, uses the mode for this [Group][msl.io.node.Group].
             kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].
 
@@ -864,10 +861,10 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         """Require that a [Dataset][msl.io.node.Dataset] exists.
 
         If the [Dataset][msl.io.node.Dataset] exists it will be returned, otherwise it is created then returned.
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
 
         Args:
-            name: The name of the required [Dataset][msl.io.node.Dataset].
+            name: The name of the required [Dataset][msl.io.node.Dataset]. Automatically creates the ancestor
+                [Group][msl.io.node.Group]s if they do not exist.
             read_only: Whether to create the required [Dataset][msl.io.node.Dataset] in read-only mode.
                 If `None`, uses the mode for this [Group][msl.io.node.Group].
             kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].
@@ -891,10 +888,9 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     def add_dataset_logging(self, name: str, dataset_logging: DatasetLogging) -> None:
         """Add a [DatasetLogging][msl.io.node.DatasetLogging].
 
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
-
         Args:
             name: The name of the new [DatasetLogging][msl.io.node.DatasetLogging] to add.
+                Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
             dataset_logging: The [DatasetLogging][msl.io.node.DatasetLogging] to add. The
                 data and [Metadata][msl.io.metadata.Metadata] are copied.
         """
@@ -925,18 +921,17 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
     ) -> DatasetLogging:
         """Create a [Dataset][msl.io.node.Dataset] that handles [logging][] records.
 
-        Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
-
         !!! example "See [here][msl-io-dataset-logging] for an example."
 
         Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
+                Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
             level: The [logging level][levels] to use.
             attributes: The [attribute names][logrecord-attributes] to include in the
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
                 If `None`, uses _asctime_, _levelname_, _name_, and _message_.
             logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.node.DatasetLogging] object
-                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
+                will be associated with. If `None`, it is associated with the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] in.
                 If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.
@@ -988,17 +983,17 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         """Require that a [Dataset][msl.io.node.Dataset] exists for handling [logging][] records.
 
         If the [DatasetLogging][msl.io.node.DatasetLogging] exists it will be returned
-        otherwise it is created and then returned. Automatically creates the ancestor [Group][msl.io.node.Group]s
-        if they do not exist.
+        otherwise it is created and then returned.
 
         Args:
             name: A name to associate with the [Dataset][msl.io.node.Dataset].
+                Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.
             level: The [logging level][levels] to use.
             attributes: The [attribute names][logrecord-attributes] to include in the
                 [Dataset][msl.io.node.Dataset] for each [logging record][log-record].
                 If `None`, uses _asctime_, _levelname_, _name_, and _message_.
             logger: The [Logger][logging.Logger] that the [DatasetLogging][msl.io.node.DatasetLogging] object
-                will be added to. If `None`, it is added to the _root_ [Logger][logging.Logger].
+                will be associated with. If `None`, it is associated with the _root_ [Logger][logging.Logger].
             date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]
                 to use to represent the _asctime_ [attribute][logrecord-attributes] in.
                 If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.

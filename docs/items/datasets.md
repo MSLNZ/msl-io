@@ -67,7 +67,7 @@ or as attributes
 
 ```
 
-Depending on the [dtype][numpy.dtype]{:target="_blank"} that was used to create the [ndarray][numpy.ndarray]{:target="_blank"} for the [Dataset][msl.io.node.Dataset], the *field names* can also be accessed as class attributes. For example, you can access the fields in *my_dataset* as keys
+Depending on the [dtype][numpy.dtype]{:target="_blank"} that was used to create the [ndarray][numpy.ndarray]{:target="_blank"} for the [Dataset][msl.io.node.Dataset], the *field names* can also be accessed as class attributes. For example, you can access the fields in `my_dataset` as keys
 
 ```pycon
 >>> my_dataset["x"]
@@ -93,6 +93,23 @@ You can also chain multiple attribute calls together. For example, to get the ma
 ```pycon
 >>> print(my_dataset.x.max())
 8.73
+
+```
+
+## Automatic Group Creation
+
+If you want to create a new [Dataset][msl.io.node.Dataset] and its parent [Group][msl.io.node.Group]s do not exist yet, the parent [Group][msl.io.node.Group]s are automatically created for you
+
+```pycon
+>>> voltages = root.create_dataset("a/b/c/voltages", data=[3.2, 3.4, 3.3])
+>>> root.a
+<Group '/a' (2 groups, 1 datasets, 0 metadata)>
+>>> root.a.b
+<Group '/a/b' (1 groups, 1 datasets, 0 metadata)>
+>>> root.a.b.c
+<Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
+>>> voltages
+<Dataset '/a/b/c/voltages' shape=(3,) dtype='<f8' (0 metadata)>
 
 ```
 

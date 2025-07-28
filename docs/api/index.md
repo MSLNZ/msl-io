@@ -1,6 +1,6 @@
 # API Overview
 
-The following functions are available to read a generic file
+The following functions are available to read a file
 
 * [read][msl.io.base.read] &mdash; Read a file that has a [Reader][msl-io-readers] subclass implemented
 * [read_table][msl.io.read_table] &mdash; Read tabular data

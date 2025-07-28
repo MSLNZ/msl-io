@@ -68,7 +68,7 @@ and then you can modify the values
 
 ## Lists, tuples and arrays
 
-When the metadata *value* is a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} or [array.array][]{:target="_blank"}, it will automatically be converted to a numpy [ndarray][numpy.ndarray]{:target="_blank"}. The [dtype][numpy.dtype]{:target="_blank"} for a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} will be [object][]{:target="_blank"}
+When the metadata *value* is a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} or [array][array.array]{:target="_blank"}, it will automatically be converted to a numpy [ndarray][numpy.ndarray]{:target="_blank"}. The [dtype][numpy.dtype]{:target="_blank"} for a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} will be [object][]{:target="_blank"}
 
 ```pycon
 >>> root.metadata.temperatures = [20.1, 20.4, 19.8, 19.9]
@@ -83,7 +83,7 @@ array([45.6, 46.1, 46.3, 44.7], dtype=object)
 
 ```
 
-and the data type used by the [array.array][]{:target="_blank"} will be preserved
+and the data type used by the [array][array.array]{:target="_blank"} will be preserved
 
 ```pycon
 >>> root.metadata.unsigned_integers = array.array("I", [1, 2, 3, 4])
@@ -104,7 +104,7 @@ array([[1., 0.],
 
 ## Dictionaries
 
-When the metadata *value* is a [dict][]{:target="_blank"} it will automatically be converted to a [Metadata][msl.io.metadata.Metadata] instance
+When the metadata *value* is a [dict][]{:target="_blank"} it will be converted to a [Metadata][msl.io.metadata.Metadata] instance
 
 ```pycon
 >>> root.metadata.nested = {"one": 1, "two": 2, "three": 3}
