@@ -8,6 +8,7 @@ from .gsheets import GSheetsReader
 from .hdf5 import HDF5Reader
 from .json_ import JSONReader
 from .ods import ODSReader
+from .spectro_trans_reader import RegularTransmittanceReader
 
 __all__: list[str] = [
     "DRSReader",
@@ -16,4 +17,5 @@ __all__: list[str] = [
     "HDF5Reader",
     "JSONReader",
     "ODSReader",
+    "RegularTransmittanceReader",
 ]
