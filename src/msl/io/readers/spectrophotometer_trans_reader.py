@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import re
 from datetime import datetime
 from typing import TYPE_CHECKING
@@ -163,19 +162,19 @@ class RegularTransmittanceReader(Reader):
             "u(Monitor transmitted)",
             "Transmitted correlation",
         ]
-        dnames = ["Is", "Is_u", "Is_M", "Is_M_u", "Is_corr"]
+        d_names = ["Is", "Is_u", "Is_M", "Is_M_u", "Is_corr"]
         sample_data = np.array(
             (list(zip(*is_)), list(zip(*is_u)), list(zip(*is_m)), list(zip(*is_m_u)), list(zip(*is_corr)))
         )
         ind = 1
         for sample in sample_data:
             group.create_dataset(
-                dnames[ind - 1], data=np.array(sample), dtype=[(name, float) for name in fieldnames], **meta
+                d_names[ind - 1], data=np.array(sample), dtype=[(name, float) for name in fieldnames], **meta
             )
             ind += 1
 
     def _convert_date(self, date_str: str) -> datetime:
-        """Converts string of date into datestring object.
+        """Converts string of date into date-string object.
 
         :param date_str: string containing date in date month year format with month written in full
         :return: datetime object corresponding to the date
@@ -183,7 +182,7 @@ class RegularTransmittanceReader(Reader):
         return datetime.strptime(date_str, "%d %B %Y")
 
     def _convert_time(self, date_str: str, time_str: str) -> datetime:
-        """Converts string of date and time into datestring object.
+        """Converts string of date and time into date-string object.
 
         :param date_str: string containing date in date month year format with month written in full
         :param time_str: string containing time in hours:minutes:seconds am/pm format
