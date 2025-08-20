@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from msl.io import Reader
-from msl.io.utils import get_extension
+from msl.io.utils import get_basename, get_lines
 
 if TYPE_CHECKING:
     from typing import Any
@@ -26,18 +26,17 @@ class RegularTransmittanceReader(Reader):
             file: file to be read
             kwargs: All keyword arguments are ignored.
         """
-        if get_extension(file).lower() != ".dat":
-            return False
-        return "Trans_" in Path.name(file)
+        filename = get_basename(file)
+        return filename.startswith("Trans_") and filename.endswith((".dat", ".DAT"))
 
-    def read(self, **kwargs: Any) -> None:
+    def read(self, **kwargs: Any) -> None:  # noqa: ARG002, C901, PLR0915
         """Reads the data in the corresponding log file.
 
         Args:
             kwargs: All keyword arguments are ignored.
         """
         assert isinstance(self.file, str)  # noqa: S101
-        lines_log = self.get_lines(self.file[:-3] + "log", remove_empty_lines=True)
+        lines_log = get_lines(self.file[:-3] + "log", remove_empty_lines=True)
         num_lines_log = len(lines_log)
         group = self.create_group("trans_data")
         meta: dict[str, Any] = {}
@@ -179,7 +178,7 @@ class RegularTransmittanceReader(Reader):
         :param date_str: string containing date in date month year format with month written in full
         :return: datetime object corresponding to the date
         """
-        return datetime.strptime(date_str, "%d %B %Y")
+        return datetime.strptime(date_str, "%d %B %Y")  # noqa: DTZ007
 
     def _convert_time(self, date_str: str, time_str: str) -> datetime:
         """Converts string of date and time into date-string object.
@@ -188,21 +187,8 @@ class RegularTransmittanceReader(Reader):
         :param time_str: string containing time in hours:minutes:seconds am/pm format
         :return: datetime object corresponding to the time and date
         """
-        return datetime.strptime(date_str + " " + time_str, " %d %B %Y %I:%M:%S %p")
+        return datetime.strptime(date_str + " " + time_str, " %d %B %Y %I:%M:%S %p")  # noqa: DTZ007
 
-    def _read_celsius_file(self) -> Any:
+    def _read_celsius_file(self) -> float:
         assert isinstance(self.file, str)  # noqa: S101
-        lines_celsius = self.get_lines(self.file[:-3] + "celsius", remove_empty_lines=True)
-        num_lines = len(lines_celsius)
-        t1 = []
-        t2 = []
-        t3 = []
-        this_line = 0
-        while this_line < num_lines - 1:
-            temp_data = lines_celsius[this_line].split()
-            t1.append(float(temp_data[0]))
-            t2.append(float(temp_data[1]))
-            t3.append(float(temp_data[2]))
-            this_line += 1
-        temperatures = np.array([np.array(t2), np.array(t3)])
-        return np.mean(temperatures)
+        return float(np.mean(np.loadtxt(self.file[:-3] + "celsius", usecols=(1, 2))))
