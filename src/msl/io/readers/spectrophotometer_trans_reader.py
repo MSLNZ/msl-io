@@ -52,7 +52,7 @@ class RegularTransmittanceReader(Reader):
         meta["avg_temp"] = self._read_celsius_file()
 
         # skip lines until we get to the wavelength information and save comment
-        comment = []
+        comment: list[str] = []
         while not lines_log[this_line].startswith("Wavelengths Settings:"):
             comment.append(lines_log[this_line])
             this_line += 1
@@ -81,21 +81,21 @@ class RegularTransmittanceReader(Reader):
             n_samples = int(lines_log[this_line].split()[2])
             meta["n_samples"] = n_samples
 
-        wavelengths = []
-        dark_current = []
-        dark_current_u = []
-        dark_current_m = []
-        dark_current_m_u = []
-        i0 = []
-        i0_u = []
-        m0 = []
-        m0_u = []
-        corr = []
-        is_ = []
-        is_u = []
-        is_m = []
-        is_m_u = []
-        is_corr = []
+        wavelengths: list[str] = []
+        dark_current: list[float] = []
+        dark_current_u: list[float] = []
+        dark_current_m: list[float] = []
+        dark_current_m_u: list[float] = []
+        i0: list[float] = []
+        i0_u: list[float] = []
+        m0: list[float] = []
+        m0_u: list[float] = []
+        corr: list[float] = []
+        is_: list[tuple[float, ...]] = []
+        is_u: list[tuple[float, ...]] = []
+        is_m: list[tuple[float, ...]] = []
+        is_m_u: list[tuple[float, ...]] = []
+        is_corr: list[tuple[float, ...]] = []
 
         n_measurements = 0
 
@@ -152,7 +152,7 @@ class RegularTransmittanceReader(Reader):
             ),
             dtype=[(name, float) for name in fieldnames],
         )
-        group.create_dataset("data", data=data, dtype=[(name, float) for name in fieldnames], **meta)
+        _ = group.create_dataset("data", data=data, **meta)
 
         fieldnames = [
             "Transmitted signal",
@@ -167,9 +167,7 @@ class RegularTransmittanceReader(Reader):
         )
         ind = 1
         for sample in sample_data:
-            group.create_dataset(
-                d_names[ind - 1], data=np.array(sample), dtype=[(name, float) for name in fieldnames], **meta
-            )
+            _ = group.create_dataset(d_names[ind - 1], data=np.array(sample), **meta)
             ind += 1
 
     def _convert_date(self, date_str: str) -> datetime:
