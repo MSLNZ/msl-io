@@ -326,7 +326,7 @@ def test_pow() -> None:
         assert isinstance(result, Dataset)
         assert np.array_equal(result, np.array([4.0, 25.0, 216.0]))
 
-        result = pow(lhs, d1)
+        result = pow(lhs, d1)  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]
         assert isinstance(result, Dataset)
         assert np.array_equal(result, np.array([4.0, 25.0, 216.0]))
 
