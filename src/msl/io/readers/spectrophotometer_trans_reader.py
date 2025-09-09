@@ -6,12 +6,13 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from msl.io import Reader
+from msl.io.base import Reader
 from msl.io.utils import get_basename, get_lines
 
 if TYPE_CHECKING:
     from typing import Any
 
+    from msl.io.node import Group
     from msl.io.types import ReadLike
 
 
