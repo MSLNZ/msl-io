@@ -1332,32 +1332,32 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tree</span><span class="p">())</span>
 <span class="go">&lt;JSONReader &#39;my_file.json&#39; (4 groups, 3 datasets, 2 metadata)&gt;</span>
 <span class="go">  &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">  &lt;Group &#39;/group1&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">    &lt;Group &#39;/group1/group2&#39; (1 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">      &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">  &lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">    &lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">      &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 <span class="go">        &lt;Dataset &#39;/group1/group2/group3/dataset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">  &lt;Group &#39;/my_group&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">  &lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 <span class="go">    &lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
 </code></pre></div>
 <p>Since the <code>root</code> item is a <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a> instance (which operates like a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>) you can iterate over the items that are in the file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">node</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">&#39;/dataset1&#39; -- &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">&#39;/my_group&#39; -- &lt;Group &#39;/my_group&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">&#39;/my_group&#39; -- &lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 <span class="go">&#39;/my_group/dataset2&#39; -- &lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
-<span class="go">&#39;/group1&#39; -- &lt;Group &#39;/group1&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">&#39;/group1/group2&#39; -- &lt;Group &#39;/group1/group2&#39; (1 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">&#39;/group1/group2/group3&#39; -- &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">&#39;/group1&#39; -- &lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&#39;/group1/group2&#39; -- &lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&#39;/group1/group2/group3&#39; -- &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 <span class="go">&#39;/group1/group2/group3/dataset3&#39; -- &lt;Dataset &#39;/group1/group2/group3/dataset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <p>where <em>node</em> will either be a <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a> or a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>.</p>
 <p>You can iterate only over the <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s that are in the file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">groups</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-<span class="go">&lt;Group &#39;/my_group&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1/group2&#39; (1 groups, 1 datasets, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
+<span class="go">&lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 </code></pre></div>
 <p>or iterate over the <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">datasets</span><span class="p">():</span>
