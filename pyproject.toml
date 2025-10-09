@@ -96,7 +96,6 @@ addopts = [
     "--cov=src",
     "--cov-report=html",
     "--cov-config=pyproject.toml",
-    "--verbose",
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
