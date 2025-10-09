@@ -20,6 +20,7 @@ __pycache__/
 /src/msl/io/_version.py
 
 # Auto-generated during tests
+/archived.json
 /my_file.h5
 /my_file.json
 /my_table.txt

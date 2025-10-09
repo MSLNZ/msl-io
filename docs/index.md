@@ -8,7 +8,7 @@ The tree structure is similar to the file-system structure used by operating sys
 
 The data files that can be read or written are not restricted to [HDF5]{:target="_blank"} files, but any file format that has a [Reader][msl-io-readers] implemented can be read and data files can be created using any of the [Writers][msl-io-writers].
 
-### Write a file
+## Write a file
 
 <!-- invisible-code-block: pycon
 >>> from pathlib import Path
@@ -73,7 +73,7 @@ Finally, we write the file
 !!! note
     The file is not created until you call the [write][msl.io.base.Writer.write] (or [save][msl.io.base.Writer.save]) method.
 
-### Read a file
+## Read a file
 
 The [read][msl.io.read] function is available to read a file. Provided that a [Reader][msl-io-readers] subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above
 
@@ -237,7 +237,7 @@ You can access [Group][msl-io-group]s and [Dataset][msl-io-dataset]s as keys or 
 
 See [Accessing Keys as Class Attributes][attribute-key-limitations] for more information.
 
-### Convert a file
+## Convert a file
 
 You can convert between file formats using any of the [Writers][msl-io-writers]. Suppose you had a file in the [JSON]{:target="_blank"} format and you wanted to convert it to the [HDF5]{:target="_blank"} format
 
@@ -248,7 +248,31 @@ You can convert between file formats using any of the [Writers][msl-io-writers].
 
 ```
 
-### Read a table
+## GTC Archive
+
+By using the [JSONWriter][msl.io.writers.json_.JSONWriter], you can store and retrieve a [GTC Archive][persistence.Archive]{:target="_blank"} so that uncertain numbers can be used in later calculations.
+
+```python
+>>> from GTC import pr, ureal
+>>> from msl.io import JSONWriter, read
+
+# Create an Archive
+>>> archive = pr.Archive()
+>>> archive.add(x=ureal(1, 0.1))
+
+# Write the Archive as metadata
+>>> with JSONWriter("archived.json") as w:
+...     w.add_metadata(archive=pr.dumps_json(archive))
+
+# Read the file and load the Archive from metadata
+>>> root = read("archived.json")
+>>> archive = pr.loads_json(root.metadata.archive)
+>>> archive["x"]
+ureal(1.0,0.1,inf)
+
+```
+
+## Read a table
 
 The [read_table][msl.io.read_table] function will read tabular data from a file. A *table* has the following properties:
 
@@ -362,7 +386,7 @@ array([3, 6, 9], dtype=uint16)
 
 See [Specifying and constructing data types][arrays.dtypes.constructing]{:target="_blank"} for the character and string representations of the different data types that numpy supports.
 
-#### Extension-delimiter map
+### Extension-delimiter map
 
 Suppose you wanted to read a table from files that use a `;` character to separate columns
 
@@ -412,9 +436,10 @@ array([[6.317, 0.045],
 
 <!-- invisible-code-block: pycon
 >>> import os
->>> os.remove('my_file.h5')
->>> os.remove('my_file.json')
->>> os.remove('my_table.txt')
+>>> os.remove("my_file.h5")
+>>> os.remove("my_file.json")
+>>> os.remove("my_table.txt")
+>>> os.remove("archived.json")
 
 -->
 

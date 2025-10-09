@@ -80,6 +80,7 @@
         "ufunc",
         "uint",
         "uncert",
+        "ureal",
         "usecols",
         "vlen",
         "xldate",

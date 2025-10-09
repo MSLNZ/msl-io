@@ -101,6 +101,7 @@ plugins:
               domains: [std, py]
             - https://xlrd.readthedocs.io/en/latest/objects.inv
             - https://docs.h5py.org/en/stable/objects.inv
+            - https://gtc.readthedocs.io/en/stable/objects.inv
           options:
             # General
             show_source: true
