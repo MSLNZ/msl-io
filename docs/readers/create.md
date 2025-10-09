@@ -2,7 +2,7 @@
 
 When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_blank"} the following steps should be performed.
 
-[uv]{:target="_blank"} is used as the package and project manager for `msl-io` development, it is recommended to install it.
+[uv]{:target="_blank"} is used as the package and project manager for `msl-io` development, it is recommended to install it. [mypy]{:target="_blank"} and [basedpyright]{:target="_blank"} are used as type checkers, [ruff]{:target="_blank"} is used as the formatter/linter and the documentation is built with [MkDocs]{:target="_blank"} using the [Material]{:target="_blank"} theme and the [mkdocstrings-python]{:target="_blank"} plugin. Installation of these packages is automatically managed for you by [uv]{:target="_blank"}. [CSpell]{:target="_blank"} provides spell checking and can be installed by running `npm install -g cspell@latest` (which requires [Node.js and npm]{:target="_blank"} to be installed).
 
 !!! note
     If you do not want to contribute your new [Reader][msl.io.base.Reader] to the [repository]{:target="_blank"} then you only need to write the code shown in Step 2 to use your [Reader][msl.io.base.Reader] in your own software. Once you import your module in your code, your [Reader][msl.io.base.Reader] will be registered and it will be used to [read][msl.io.read] your data files.
@@ -70,7 +70,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
 
 4. Add an example data file to the `tests/samples` directory and add a test case to the `tests` directory. Make sure that your Reader is returned by calling the [read][msl.io.base.read] function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using `uv run pytest`.
 
-5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright` the code.
+5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to exist to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. *(These checks are also performed once you do step 10.)*
 
 6. Add the new Reader, alphabetically, to `docs/readers/index.md`. Follow what is done for the other Readers.
 
@@ -78,9 +78,19 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
 
 8. Build the documentation `uv run mkdocs serve` and check that your Reader renders correctly.
 
-9. If running the tests pass and linting, formatting, type checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
+9. Run the spell checker `cspell .`. Since this step requires [Node.js and npm]{:target="_blank"} to be installed, you may skip it. *(This check is also performed once you do step 10.)*
+
+10. If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
 
 [fork]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo
 [pull request]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork
 [repository]: https://github.com/MSLNZ/msl-io
 [uv]: https://docs.astral.sh/uv/
+[mypy]: https://mypy.readthedocs.io/en/stable/index.html
+[basedpyright]: https://docs.basedpyright.com/latest/
+[ruff]: https://docs.astral.sh/ruff/
+[MkDocs]: https://www.mkdocs.org/
+[Material]: https://squidfunk.github.io/mkdocs-material/
+[mkdocstrings-python]: https://mkdocstrings.github.io/python/
+[CSpell]: https://cspell.org/
+[Node.js and npm]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
