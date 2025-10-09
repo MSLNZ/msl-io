@@ -2632,7 +2632,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Checks is the file extension is .dat and the filename starts with 'Trans'.</p>
+        <p>Checks if the file extension is <code>.dat</code> and the filename starts with <code>Trans_</code>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2660,7 +2660,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>file to be read</p>
+                <p>The file to check.</p>
               </div>
             </td>
             <td>
@@ -2700,10 +2700,10 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">29</span>
 <span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># noqa: ARG004</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks is the file extension is .dat and the filename starts with &#39;Trans&#39;.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the file extension is `.dat` and the filename starts with `Trans_`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        file: file to be read</span>
+<span class="sd">        file: The file to check.</span>
 <span class="sd">        kwargs: All keyword arguments are ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">get_basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -2727,7 +2727,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Reads the data in the corresponding log file.</p>
+        <p>Reads the data in the corresponding <code>.log</code> and <code>.celsius</code> files.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2903,7 +2903,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002, C901, PLR0915</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the data in the corresponding log file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the data in the corresponding `.log` and `.celsius` files.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kwargs: All keyword arguments are ignored.</span>
