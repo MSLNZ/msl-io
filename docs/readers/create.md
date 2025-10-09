@@ -70,7 +70,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
 
 4. Add an example data file to the `tests/samples` directory and add a test case to the `tests` directory. Make sure that your Reader is returned by calling the [read][msl.io.base.read] function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using `uv run pytest`.
 
-5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to exist to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. *(These checks are also performed once you do step 10.)*
+5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to exist to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. These checks are also performed once you do Step 10.
 
 6. Add the new Reader, alphabetically, to `docs/readers/index.md`. Follow what is done for the other Readers.
 
@@ -78,7 +78,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
 
 8. Build the documentation `uv run mkdocs serve` and check that your Reader renders correctly.
 
-9. Run the spell checker `cspell .`. Since this step requires [Node.js and npm]{:target="_blank"} to be installed, you may skip it. *(This check is also performed once you do step 10.)*
+9. Run the spell checker `cspell .`. Since this step requires [Node.js and npm]{:target="_blank"} to be installed, you may skip it. This check is also performed once you do Step 10.
 
 10. If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
 
