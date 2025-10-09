@@ -1226,6 +1226,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gtc-archive" class="md-nav__link">
+    <span class="md-ellipsis">
+      GTC Archive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#read-a-table" class="md-nav__link">
     <span class="md-ellipsis">
       Read a table
@@ -1273,7 +1282,7 @@
 <p><img alt="hdf5_data_model.png" src="assets/images/hdf5_data_model.png" /></p>
 <p>The tree structure is similar to the file-system structure used by operating systems. <a class="autorefs autorefs-internal" href="items/groups/#msl-io-group">Groups</a> are analogous to directories (where <a class="autorefs autorefs-internal" title="            Root" href="api/base/#msl.io.base.Root">Root</a> is the root <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>) and <a class="autorefs autorefs-internal" href="items/datasets/#msl-io-dataset">Datasets</a> are analogous to files.</p>
 <p>The data files that can be read or written are not restricted to <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> files, but any file format that has a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> implemented can be read and data files can be created using any of the <a class="autorefs autorefs-internal" href="writers/#msl-io-writers">Writers</a>.</p>
-<h3 id="write-a-file">Write a file<a class="headerlink" href="#write-a-file" title="Permanent link">¤</a></h3>
+<h2 id="write-a-file">Write a file<a class="headerlink" href="#write-a-file" title="Permanent link">¤</a></h2>
 <!-- invisible-code-block: pycon
 >>> from pathlib import Path
 >>> Path("my_file.h5").unlink(missing_ok=True)
@@ -1314,7 +1323,7 @@
       abstractmethod
   " href="api/base/#msl.io.base.Writer.write">write</a> (or <a class="autorefs autorefs-internal" title="            save" href="api/base/#msl.io.base.Writer.save">save</a>) method.</p>
 </div>
-<h3 id="read-a-file">Read a file<a class="headerlink" href="#read-a-file" title="Permanent link">¤</a></h3>
+<h2 id="read-a-file">Read a file<a class="headerlink" href="#read-a-file" title="Permanent link">¤</a></h2>
 <p>The <a class="autorefs autorefs-internal" title="            read" href="api/base/#msl.io.base.read">read</a> function is available to read a file. Provided that a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">)</span>
@@ -1419,13 +1428,32 @@
 <span class="go">(2, 2)</span>
 </code></pre></div>
 <p>See <a class="autorefs autorefs-internal" href="items/attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information.</p>
-<h3 id="convert-a-file">Convert a file<a class="headerlink" href="#convert-a-file" title="Permanent link">¤</a></h3>
+<h2 id="convert-a-file">Convert a file<a class="headerlink" href="#convert-a-file" title="Permanent link">¤</a></h2>
 <p>You can convert between file formats using any of the <a class="autorefs autorefs-internal" href="writers/#msl-io-writers">Writers</a>. Suppose you had a file in the <a href="https://www.json.org/" target="_blank">JSON</a> format and you wanted to convert it to the <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> format</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">HDF5Writer</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">HDF5Writer</span><span class="p">(</span><span class="s2">&quot;my_file.h5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">))</span>
 </code></pre></div>
-<h3 id="read-a-table">Read a table<a class="headerlink" href="#read-a-table" title="Permanent link">¤</a></h3>
+<h2 id="gtc-archive">GTC Archive<a class="headerlink" href="#gtc-archive" title="Permanent link">¤</a></h2>
+<p>By using the <a class="autorefs autorefs-internal" title="            JSONWriter" href="writers/#msl.io.writers.json_.JSONWriter">JSONWriter</a>, you can store and retrieve a <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive" target="_blank">GTC Archive</a> so that uncertain numbers can be used in later calculations.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">GTC</span><span class="w"> </span><span class="kn">import</span> <span class="n">pr</span><span class="p">,</span> <span class="n">ureal</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONWriter</span><span class="p">,</span> <span class="n">read</span>
+
+<span class="c1"># Create an Archive</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">Archive</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ureal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+
+<span class="c1"># Write the Archive as metadata</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">JSONWriter</span><span class="p">(</span><span class="s2">&quot;archived.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+<span class="o">...</span>     <span class="n">w</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">archive</span><span class="o">=</span><span class="n">pr</span><span class="o">.</span><span class="n">dumps_json</span><span class="p">(</span><span class="n">archive</span><span class="p">))</span>
+
+<span class="c1"># Read the file and load the Archive from metadata</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;archived.json&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">loads_json</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">archive</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+<span class="n">ureal</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="read-a-table">Read a table<a class="headerlink" href="#read-a-table" title="Permanent link">¤</a></h2>
 <p>The <a class="autorefs autorefs-internal" title="            read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function will read tabular data from a file. A <em>table</em> has the following properties:</p>
 <ol>
 <li>The first row is a header</li>
@@ -1510,7 +1538,7 @@
 <span class="go">array([3, 6, 9], dtype=uint16)</span>
 </code></pre></div>
 <p>See <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.dtypes.html#arrays-dtypes-constructing" target="_blank">Specifying and constructing data types</a> for the character and string representations of the different data types that numpy supports.</p>
-<h4 id="extension-delimiter-map">Extension-delimiter map<a class="headerlink" href="#extension-delimiter-map" title="Permanent link">¤</a></h4>
+<h3 id="extension-delimiter-map">Extension-delimiter map<a class="headerlink" href="#extension-delimiter-map" title="Permanent link">¤</a></h3>
 <p>Suppose you wanted to read a table from files that use a <code>;</code> character to separate columns</p>
 <!--
 >>> from io import StringIO
@@ -1552,9 +1580,10 @@
 </code></pre></div>
 <!-- invisible-code-block: pycon
 >>> import os
->>> os.remove('my_file.h5')
->>> os.remove('my_file.json')
->>> os.remove('my_table.txt')
+>>> os.remove("my_file.h5")
+>>> os.remove("my_file.json")
+>>> os.remove("my_table.txt")
+>>> os.remove("archived.json")
 
 -->
 

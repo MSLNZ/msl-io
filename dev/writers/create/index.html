@@ -1223,7 +1223,7 @@
 
 <h1 id="msl-io-create-writer">Create a New Writer<a class="headerlink" href="#msl-io-create-writer" title="Permanent link">¤</a></h1>
 <p>When adding a new <a class="autorefs autorefs-internal" title="            Writer" href="../../api/base/#msl.io.base.Writer">Writer</a> to the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a> the following steps should be performed. You will also need to <a class="autorefs autorefs-internal" href="../../readers/create/#msl-io-create-reader">Create a New Reader</a>.</p>
-<p><a href="https://docs.astral.sh/uv/" target="_blank">uv</a> is used as the package and project manager for <code>msl-io</code> development, it is recommended to install it.</p>
+<p><a href="https://docs.astral.sh/uv/" target="_blank">uv</a> is used as the package and project manager for <code>msl-io</code> development, it is recommended to install it. <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> and <a href="https://docs.basedpyright.com/latest/" target="_blank">basedpyright</a> are used as type checkers, <a href="https://docs.astral.sh/ruff/" target="_blank">ruff</a> is used as the formatter/linter and the documentation is built with <a href="https://www.mkdocs.org/" target="_blank">MkDocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank">Material</a> theme and the <a href="https://mkdocstrings.github.io/python/" target="_blank">mkdocstrings-python</a> plugin. Installation of these packages is automatically managed for you by <a href="https://docs.astral.sh/uv/" target="_blank">uv</a>. <a href="https://cspell.org/" target="_blank">CSpell</a> provides spell checking and can be installed by running <code>npm install -g cspell@latest</code> (which requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed).</p>
 <ol>
 <li>
 <p>Create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo" target="_blank">fork</a> of the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a>.</p>
@@ -1269,7 +1269,7 @@
 <p>Add test cases to the <code>tests</code> directory to make sure that your Writer works as expected. It is recommended to try converting a <a class="autorefs autorefs-internal" title="            Root" href="../../api/base/#msl.io.base.Root">Root</a> object between your Writer and other Writers that are available to verify different file-format conversions. Also, look at the test modules that begin with <code>test_writer</code> for more examples. Run the tests using <code>uv run pytest</code>.</p>
 </li>
 <li>
-<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code> the code.</p>
+<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue. These checks are also performed once you do Step 10.</p>
 </li>
 <li>
 <p>Add the new Writer, alphabetically, to <code>docs/writers/index.md</code>. Follow what is done for the other Writers.</p>
@@ -1281,7 +1281,10 @@
 <p>Build the documentation <code>uv run mkdocs serve</code> and check that your Writer renders correctly.</p>
 </li>
 <li>
-<p>If running the tests pass and linting, formatting, type checking and building the documentation do not show errors/warnings then create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork" target="_blank">pull request</a>.</p>
+<p>Run the spell checker <code>cspell .</code>. Since this step requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed, you may skip it. This check is also performed once you do Step 10.</p>
+</li>
+<li>
+<p>If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork" target="_blank">pull request</a>.</p>
 </li>
 </ol>
 

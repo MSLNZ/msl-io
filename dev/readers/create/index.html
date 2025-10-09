@@ -1295,7 +1295,7 @@
 <p>Add an example data file to the <code>tests/samples</code> directory and add a test case to the <code>tests</code> directory. Make sure that your Reader is returned by calling the <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a> function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using <code>uv run pytest</code>.</p>
 </li>
 <li>
-<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to exist to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue. <em>(These checks are also performed once you do step 10.)</em></p>
+<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue. These checks are also performed once you do Step 10.</p>
 </li>
 <li>
 <p>Add the new Reader, alphabetically, to <code>docs/readers/index.md</code>. Follow what is done for the other Readers.</p>
@@ -1307,7 +1307,7 @@
 <p>Build the documentation <code>uv run mkdocs serve</code> and check that your Reader renders correctly.</p>
 </li>
 <li>
-<p>Run the spell checker <code>cspell .</code>. Since this step requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed, you may skip it. <em>(This check is also performed once you do step 10.)</em></p>
+<p>Run the spell checker <code>cspell .</code>. Since this step requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed, you may skip it. This check is also performed once you do Step 10.</p>
 </li>
 <li>
 <p>If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork" target="_blank">pull request</a>.</p>
