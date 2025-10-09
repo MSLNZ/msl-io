@@ -107,6 +107,8 @@ plugins:
 
             # Headings
             show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
             # Members
             filters: ["!^_"]
@@ -119,6 +121,8 @@ plugins:
 
             # Signatures
             separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
 
 extra:
   version:
