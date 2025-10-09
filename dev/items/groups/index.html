@@ -1222,8 +1222,8 @@
 
 
 <h1 id="msl-io-group">Groups<a class="headerlink" href="#msl-io-group" title="Permanent link">¤</a></h1>
-<p>A <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> is analogous to a <em>directory</em> in the file system used by an operating system. A <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> can contain zero or more sub-<a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a>s (<em>sub-directories</em>) and it can contain zero or more <a class="autorefs autorefs-internal" title="Datasets" href="../datasets/#msl-io-dataset">Dataset</a>s (analogous to a <em>file</em>). It uses a naming convention similar to UNIX file systems where every sub-directory is separated from its parent directory by the <code>/</code> character.</p>
-<p>From a Python perspective, a <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> operates like a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a>. The <em>keys</em> are the names of <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> members, and the <em>values</em> are the members themselves (<a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> or <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> objects).</p>
+<p>A <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> is analogous to a <em>directory</em> in the file system used by an operating system. A <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can contain zero or more sub-<a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s (<em>sub-directories</em>) and it can contain zero or more <a class="autorefs autorefs-internal" title="Datasets" href="../datasets/#msl-io-dataset">Dataset</a>s (analogous to a <em>file</em>). It uses a naming convention similar to UNIX file systems where every sub-directory is separated from its parent directory by the <code>/</code> character.</p>
+<p>From a Python perspective, a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> operates like a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a>. The <em>keys</em> are the names of <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> members, and the <em>values</em> are the members themselves (<a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> or <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> objects).</p>
 <!-- invisible-code-block: pycon
 >>> from msl.io import JSONWriter
 >>> root = JSONWriter("example.json")
@@ -1241,7 +1241,7 @@
 <span class="go">      &lt;Group &#39;/a/b/c&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
 <span class="go">        &lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
-<p>A <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> can either be in read-only mode</p>
+<p>A <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can either be in read-only mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dset_b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">   </span><span class="c">...</span>
@@ -1252,7 +1252,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dset_b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="go">&lt;Dataset &#39;/a/b/dset_b&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
-<p>The items in a <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> can be accessed as <em>keys</em></p>
+<p>The items in a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can be accessed as <em>keys</em></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">][</span><span class="s2">&quot;b&quot;</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">][</span><span class="s2">&quot;dset&quot;</span><span class="p">]</span>
 <span class="go">&lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
@@ -1261,7 +1261,7 @@
 <span class="go">&lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <p>See <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information.</p>
-<p>You can navigate through the tree by considering a <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> to be an ancestor or descendant of other <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a>s</p>
+<p>You can navigate through the tree by considering a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> to be an ancestor or descendant of other <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ancestor</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">ancestors</span><span class="p">():</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
 <span class="go">&lt;Group &#39;/a/b&#39; (1 groups, 2 datasets, 0 metadata)&gt;</span>
@@ -1272,7 +1272,7 @@
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">descendant</span><span class="p">)</span>
 <span class="go">&lt;Group &#39;/a/b/c&#39; (0 groups, 1 datasets, 0 metadata)&gt;</span>
 </code></pre></div>
-<p>If you want to create a new <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a> and its parent <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, they are automatically created for you</p>
+<p>If you want to create a new <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> and its parent <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, they are automatically created for you</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">day</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;2025/07/28&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;2025&quot;</span><span class="p">]</span>

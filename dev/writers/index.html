@@ -1203,17 +1203,17 @@
         <li class="md-nav__item">
   <a href="#msl.io.writers.hdf5.HDF5Writer" class="md-nav__link">
     <span class="md-ellipsis">
-      HDF5Writer
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HDF5Writer
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="HDF5Writer">
+    <nav class="md-nav" aria-label=" HDF5Writer">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#msl.io.writers.hdf5.HDF5Writer.write" class="md-nav__link">
     <span class="md-ellipsis">
-      write
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;write
     </span>
   </a>
   
@@ -1227,17 +1227,17 @@
         <li class="md-nav__item">
   <a href="#msl.io.writers.json_.JSONWriter" class="md-nav__link">
     <span class="md-ellipsis">
-      JSONWriter
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;JSONWriter
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="JSONWriter">
+    <nav class="md-nav" aria-label=" JSONWriter">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#msl.io.writers.json_.JSONWriter.write" class="md-nav__link">
     <span class="md-ellipsis">
-      write
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;write
     </span>
   </a>
   
@@ -1268,10 +1268,10 @@
 
 
 <h1 id="msl-io-writers">Writers<a class="headerlink" href="#msl-io-writers" title="Permanent link">¤</a></h1>
-<p>The following <a class="autorefs autorefs-internal" title="Writer" href="../api/base/#msl.io.base.Writer">Writer</a>s are available</p>
+<p>The following <a class="autorefs autorefs-internal" title="            Writer" href="../api/base/#msl.io.base.Writer">Writer</a>s are available</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> &mdash; HDF5 file format</li>
-<li><a class="autorefs autorefs-internal" title="JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> &mdash; JSON file format</li>
+<li><a class="autorefs autorefs-internal" title="            HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> &mdash; HDF5 file format</li>
+<li><a class="autorefs autorefs-internal" title="            JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> &mdash; JSON file format</li>
 </ul>
 
 
@@ -1306,16 +1306,29 @@
 
 
 <h2 id="msl.io.writers.hdf5.HDF5Writer" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">HDF5Writer</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">HDF5Writer</span>
 
 
 <a href="#msl.io.writers.hdf5.HDF5Writer" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">HDF5Writer</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">HDF5Writer</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PathLike
+
+
+  
+      module-attribute
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            WriteLike
+
+
+  
+      module-attribute
+   (msl.io.types.WriteLike)" href="../api/types/#msl.io.types.WriteLike">WriteLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
+<span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="Writer (msl.io.base.Writer)" href="../api/base/#msl.io.base.Writer">Writer</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="            Writer (msl.io.base.Writer)" href="../api/base/#msl.io.base.Writer">Writer</a></code></p>
 
 
         <p>Writer for the <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> file format.</p>
@@ -1378,11 +1391,25 @@ block exits.</p>
 
 
 <h3 id="msl.io.writers.hdf5.HDF5Writer.write" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">write</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">write</span>
 
 
 <a href="#msl.io.writers.hdf5.HDF5Writer.write" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PathLike
+
+
+  
+      module-attribute
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            WriteLike
+
+
+  
+      module-attribute
+   (msl.io.types.WriteLike)" href="../api/types/#msl.io.types.WriteLike">WriteLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1406,12 +1433,12 @@ block exits.</p>
                 <code>file</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="PathLike
+                  <code><a class="autorefs autorefs-internal" title="            PathLike
 
 
   
       module-attribute
-   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a> | <a class="autorefs autorefs-internal" title="WriteLike
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a> | <a class="autorefs autorefs-internal" title="            WriteLike
 
 
   
@@ -1421,7 +1448,7 @@ block exits.</p>
             <td>
               <div class="doc-md-description">
                 <p>The file to write a <em>root</em> to. If <code>None</code> then uses the value of
-<code>file</code> that was specified when <a class="autorefs autorefs-internal" title="HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> was instantiated.
+<code>file</code> that was specified when <a class="autorefs autorefs-internal" title="            HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> was instantiated.
 If a file-like object, it must be open for writing in binary I/O and it must have <code>read</code>, <code>write</code>,
 <code>seek</code>, <code>tell</code>, <code>truncate</code> and <code>flush</code> methods.</p>
               </div>
@@ -1435,13 +1462,13 @@ If a file-like object, it must be open for writing in binary I/O and it must hav
                 <code>root</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="            Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>Write <code>root</code> in <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> format.
-If <code>None</code> then write the <a class="autorefs autorefs-internal" title="Group" href="../api/node/#msl.io.node.Group">Group</a>s and <a class="autorefs autorefs-internal" title="Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>s
-in the <a class="autorefs autorefs-internal" title="HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> instance. This argument is useful when
+If <code>None</code> then write the <a class="autorefs autorefs-internal" title="            Group" href="../api/node/#msl.io.node.Group">Group</a>s and <a class="autorefs autorefs-internal" title="            Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>s
+in the <a class="autorefs autorefs-internal" title="            HDF5Writer" href="#msl.io.writers.hdf5.HDF5Writer">HDF5Writer</a> instance. This argument is useful when
 converting between different file formats.</p>
               </div>
             </td>
@@ -1748,16 +1775,29 @@ converting between different file formats.</p>
 
 
 <h2 id="msl.io.writers.json_.JSONWriter" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">JSONWriter</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">JSONWriter</span>
 
 
 <a href="#msl.io.writers.json_.JSONWriter" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">JSONWriter</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">JSONWriter</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PathLike
+
+
+  
+      module-attribute
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            WriteLike
+
+
+  
+      module-attribute
+   (msl.io.types.WriteLike)" href="../api/types/#msl.io.types.WriteLike">WriteLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
+<span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="Writer (msl.io.base.Writer)" href="../api/base/#msl.io.base.Writer">Writer</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="            Writer (msl.io.base.Writer)" href="../api/base/#msl.io.base.Writer">Writer</a></code></p>
 
 
         <p>Writer for a <a href="https://www.json.org/">JSON</a> file format.</p>
@@ -1817,29 +1857,43 @@ level (instead of the default value of two spaces) when the <a class="autorefs a
 
 
 <h3 id="msl.io.writers.json_.JSONWriter.write" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">write</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">write</span>
 
 
 <a href="#msl.io.writers.json_.JSONWriter.write" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PathLike
+
+
+  
+      module-attribute
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            WriteLike
+
+
+  
+      module-attribute
+   (msl.io.types.WriteLike)" href="../api/types/#msl.io.types.WriteLike">WriteLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Write to a <a href="https://www.json.org/" target="_blank">JSON</a> file.</p>
 <p>The first line in the output file contains a description that the file was created by the
-<a class="autorefs autorefs-internal" title="JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a>. It begins with a <code>#</code> and contains a version number.</p>
+<a class="autorefs autorefs-internal" title="            JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a>. It begins with a <code>#</code> and contains a version number.</p>
 <p>Version 1.0 specifications:</p>
 <ul>
 <li>
 <p>Use the <em>dtype</em> and <em>data</em> keys to uniquely identify a
-  <a href="https://www.json.org/" target="_blank">JSON</a> object as a <a class="autorefs autorefs-internal" title="Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>.</p>
+  <a href="https://www.json.org/" target="_blank">JSON</a> object as a <a class="autorefs autorefs-internal" title="            Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>.</p>
 </li>
 <li>
-<p>If a <a class="autorefs autorefs-internal" title="Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> <em>key</em> has a <em>value</em> that is a
-  <a class="autorefs autorefs-internal" title="Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> object then the <em>key</em> becomes the name
-  of a <a class="autorefs autorefs-internal" title="Group" href="../api/node/#msl.io.node.Group">Group</a> and the <em>value</em> becomes
-  <a class="autorefs autorefs-internal" title="Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> of that <a class="autorefs autorefs-internal" title="Group" href="../api/node/#msl.io.node.Group">Group</a>.</p>
+<p>If a <a class="autorefs autorefs-internal" title="            Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> <em>key</em> has a <em>value</em> that is a
+  <a class="autorefs autorefs-internal" title="            Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> object then the <em>key</em> becomes the name
+  of a <a class="autorefs autorefs-internal" title="            Group" href="../api/node/#msl.io.node.Group">Group</a> and the <em>value</em> becomes
+  <a class="autorefs autorefs-internal" title="            Metadata" href="../api/metadata/#msl.io.metadata.Metadata">Metadata</a> of that <a class="autorefs autorefs-internal" title="            Group" href="../api/node/#msl.io.node.Group">Group</a>.</p>
 </li>
 </ul>
 
@@ -1860,12 +1914,12 @@ level (instead of the default value of two spaces) when the <a class="autorefs a
                 <code>file</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="PathLike
+                  <code><a class="autorefs autorefs-internal" title="            PathLike
 
 
   
       module-attribute
-   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a> | <a class="autorefs autorefs-internal" title="WriteLike
+   (msl.io.types.PathLike)" href="../api/types/#msl.io.types.PathLike">PathLike</a> | <a class="autorefs autorefs-internal" title="            WriteLike
 
 
   
@@ -1875,7 +1929,7 @@ level (instead of the default value of two spaces) when the <a class="autorefs a
             <td>
               <div class="doc-md-description">
                 <p>The file to write a <em>root</em> to. If <code>None</code> then uses the value of
-<code>file</code> that was specified when <a class="autorefs autorefs-internal" title="JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> was instantiated.</p>
+<code>file</code> that was specified when <a class="autorefs autorefs-internal" title="            JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> was instantiated.</p>
               </div>
             </td>
             <td>
@@ -1887,13 +1941,13 @@ level (instead of the default value of two spaces) when the <a class="autorefs a
                 <code>root</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="            Group (msl.io.node.Group)" href="../api/node/#msl.io.node.Group">Group</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>Write <code>root</code> in <a href="https://www.json.org/" target="_blank">JSON</a> format.
-If <code>None</code> then write the <a class="autorefs autorefs-internal" title="Group" href="../api/node/#msl.io.node.Group">Group</a>s and <a class="autorefs autorefs-internal" title="Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>s
-in the <a class="autorefs autorefs-internal" title="JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> instance. This argument is useful when
+If <code>None</code> then write the <a class="autorefs autorefs-internal" title="            Group" href="../api/node/#msl.io.node.Group">Group</a>s and <a class="autorefs autorefs-internal" title="            Dataset" href="../api/node/#msl.io.node.Dataset">Dataset</a>s
+in the <a class="autorefs autorefs-internal" title="            JSONWriter" href="#msl.io.writers.json_.JSONWriter">JSONWriter</a> instance. This argument is useful when
 converting between different file formats.</p>
               </div>
             </td>

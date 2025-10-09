@@ -1222,25 +1222,25 @@
 
 
 <h1 id="msl-io-create-reader">Create a New Reader<a class="headerlink" href="#msl-io-create-reader" title="Permanent link">¤</a></h1>
-<p>When adding a new <a class="autorefs autorefs-internal" title="Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> to the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a> the following steps should be performed.</p>
+<p>When adding a new <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> to the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a> the following steps should be performed.</p>
 <p><a href="https://docs.astral.sh/uv/" target="_blank">uv</a> is used as the package and project manager for <code>msl-io</code> development, it is recommended to install it.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you do not want to contribute your new <a class="autorefs autorefs-internal" title="Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> to the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a> then you only need to write the code shown in Step 2 to use your <a class="autorefs autorefs-internal" title="Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> in your own software. Once you import your module in your code, your <a class="autorefs autorefs-internal" title="Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> will be registered and it will be used to <a class="autorefs autorefs-internal" title="read" href="../../api/base/#msl.io.base.read">read</a> your data files.</p>
+<p>If you do not want to contribute your new <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> to the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a> then you only need to write the code shown in Step 2 to use your <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> in your own software. Once you import your module in your code, your <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> will be registered and it will be used to <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a> your data files.</p>
 </div>
 <ol>
 <li>
 <p>Create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo" target="_blank">fork</a> of the <a href="https://github.com/MSLNZ/msl-io" target="_blank">repository</a>.</p>
 </li>
 <li>
-<p>Create a new <a class="autorefs autorefs-internal" title="Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> by following this template. Save it in the <code>src/msl/io/readers</code> folder.</p>
+<p>Create a new <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> by following this template. Save it in the <code>src/msl/io/readers</code> folder.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="c1"># It&#39;s a good idea to provide type annotations in your code</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="c1"># Import the necessary msl-io object to subclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.io.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reader</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
@@ -1292,7 +1292,7 @@
 <p>Import your Reader in the <code>src/msl/io/readers/__init__.py</code> module. Follow what is done for the other Readers.</p>
 </li>
 <li>
-<p>Add an example data file to the <code>tests/samples</code> directory and add a test case to the <code>tests</code> directory. Make sure that your Reader is returned by calling the <a class="autorefs autorefs-internal" title="read" href="../../api/base/#msl.io.base.read">read</a> function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using <code>uv run pytest</code>.</p>
+<p>Add an example data file to the <code>tests/samples</code> directory and add a test case to the <code>tests</code> directory. Make sure that your Reader is returned by calling the <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a> function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using <code>uv run pytest</code>.</p>
 </li>
 <li>
 <p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code> the code.</p>

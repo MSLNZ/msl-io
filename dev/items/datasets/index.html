@@ -1334,9 +1334,9 @@
 
 
 <h1 id="msl-io-dataset">Datasets<a class="headerlink" href="#msl-io-dataset" title="Permanent link">¤</a></h1>
-<p>A <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is analogous to a <em>file</em> in the file system used by an operating system and it is contained within a <a class="autorefs autorefs-internal" title="Groups" href="../groups/#msl-io-group">Group</a> (analogous to a <em>directory</em>).</p>
-<p>A <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> operates as a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> with <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> and it can be accessed in read-only mode or in read-write mode.</p>
-<p>Since a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, the attributes of <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> are also valid for a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. For example, suppose <code>my_dataset</code> is a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
+<p>A <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is analogous to a <em>file</em> in the file system used by an operating system and it is contained within a <a class="autorefs autorefs-internal" title="Groups" href="../groups/#msl-io-group">Group</a> (analogous to a <em>directory</em>).</p>
+<p>A <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> operates as a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> with <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> and it can be accessed in read-only mode or in read-write mode.</p>
+<p>Since a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, the attributes of <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> are also valid for a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. For example, suppose <code>my_dataset</code> is a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
 <!-- invisible-code-block: pycon
 >>> from msl.io import JSONWriter
 >>> root = JSONWriter()
@@ -1359,11 +1359,11 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dataset</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(5,)</span>
 </code></pre></div>
-<p>or convert the data in the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> to a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a> using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.tolist.html#numpy.ndarray.tolist" target="_blank">tolist</a></p>
+<p>or convert the data in the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> to a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a> using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.tolist.html#numpy.ndarray.tolist" target="_blank">tolist</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dataset</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="go">[(0.23, 1.27), (1.86, 2.74), (3.44, 2.91), (5.91, 1.83), (8.73, 0.74)]</span>
 </code></pre></div>
-<p>To access the <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> of a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>, you access the <a class="autorefs autorefs-internal" title="metadata
+<p>To access the <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> of a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>, you access the <a class="autorefs autorefs-internal" title="            metadata
 
 
   
@@ -1380,7 +1380,7 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dataset</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span>
 <span class="go">20.13</span>
 </code></pre></div>
-<p>Depending on the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> that was used to create the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> for the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>, the <em>field names</em> can also be accessed as class attributes. For example, you can access the fields in <code>my_dataset</code> as keys</p>
+<p>Depending on the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> that was used to create the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> for the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>, the <em>field names</em> can also be accessed as class attributes. For example, you can access the fields in <code>my_dataset</code> as keys</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dataset</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
 <span class="go">array([0.23, 1.86, 3.44, 5.91, 8.73])</span>
 </code></pre></div>
@@ -1390,7 +1390,7 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The returned object is a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> and therefore does not contain <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a>.</p>
+<p>The returned object is a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> and therefore does not contain <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a>.</p>
 </div>
 <p>See <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information.</p>
 <p>You can also chain multiple attribute calls together. For example, to get the maximum <code>x</code> value in <code>my_dataset</code> you can use</p>
@@ -1398,7 +1398,7 @@
 <span class="go">8.73</span>
 </code></pre></div>
 <h2 id="automatic-group-creation">Automatic Group Creation<a class="headerlink" href="#automatic-group-creation" title="Permanent link">¤</a></h2>
-<p>If you want to create a new <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> and its parent <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, the parent <a class="autorefs autorefs-internal" title="Group" href="../../api/node/#msl.io.node.Group">Group</a>s are automatically created for you</p>
+<p>If you want to create a new <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> and its parent <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, the parent <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s are automatically created for you</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">voltages</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;a/b/c/voltages&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">a</span>
 <span class="go">&lt;Group &#39;/a&#39; (2 groups, 1 datasets, 0 metadata)&gt;</span>
@@ -1410,7 +1410,7 @@
 <span class="go">&lt;Dataset &#39;/a/b/c/voltages&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <h2 id="slicing-and-indexing">Slicing and Indexing<a class="headerlink" href="#slicing-and-indexing" title="Permanent link">¤</a></h2>
-<p>Slicing and indexing a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is a valid operation, but returns a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> which does not contain <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a>.</p>
+<p>Slicing and indexing a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> is a valid operation, but returns a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> which does not contain <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a>.</p>
 <p>Consider <code>my_dataset</code> from above. You can slice it</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_dataset</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
 <span class="go">array([(0.23, 1.27), (3.44, 2.91), (8.73, 0.74)],</span>
@@ -1420,7 +1420,7 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">my_dataset</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">(3.44, 2.91)</span>
 </code></pre></div>
-<p>Since a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> is returned, you are responsible for keeping track of the <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> in slicing and indexing operations. For example, you can create a new <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> from the subset by calling the <a class="autorefs autorefs-internal" title="create_dataset" href="../../api/node/#msl.io.node.Group.create_dataset">create_dataset</a> method</p>
+<p>Since a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> is returned, you are responsible for keeping track of the <a class="autorefs autorefs-internal" href="../metadata/#msl-io-metadata">Metadata</a> in slicing and indexing operations. For example, you can create a new <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> from the subset by calling the <a class="autorefs autorefs-internal" title="            create_dataset" href="../../api/node/#msl.io.node.Group.create_dataset">create_dataset</a> method</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_subset</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;my_subset&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">my_dataset</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="o">**</span><span class="n">my_dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_subset</span>
 <span class="go">&lt;Dataset &#39;/my_subset&#39; shape=(3,) dtype=&#39;|V16&#39; (2 metadata)&gt;</span>
@@ -1431,13 +1431,13 @@
 <span class="go">&lt;Metadata &#39;/my_subset&#39; {&#39;temperature&#39;: 20.13, &#39;humidity&#39;: 45.31}&gt;</span>
 </code></pre></div>
 <h2 id="arithmetic-operations">Arithmetic Operations<a class="headerlink" href="#arithmetic-operations" title="Permanent link">¤</a></h2>
-<p>Arithmetic operations are valid with a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. The returned object is a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> with all <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> copied and the <a class="autorefs autorefs-internal" title="name
+<p>Arithmetic operations are valid with a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. The returned object is a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> with all <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> copied and the <a class="autorefs autorefs-internal" title="            name
 
 
   
       property
   " href="../../api/node/#msl.io.node.Dataset.name">name</a> attribute updated to represent the operation that was performed.</p>
-<p>For example, consider a <code>temperatures</code> <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
+<p>For example, consider a <code>temperatures</code> <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">temperatures</span>
 <span class="go">&lt;Dataset &#39;/temperatures&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">temperatures</span><span class="o">.</span><span class="n">data</span>
@@ -1456,15 +1456,15 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <a class="autorefs autorefs-internal" title="name
+<p>The <a class="autorefs autorefs-internal" title="            name
 
 
   
       property
-  " href="../../api/node/#msl.io.node.Dataset.name">name</a> attribute of the <code>plus_1</code> <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> became <code>add(/temperatures)</code>.</p>
+  " href="../../api/node/#msl.io.node.Dataset.name">name</a> attribute of the <code>plus_1</code> <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> became <code>add(/temperatures)</code>.</p>
 </div>
-<p>If the arithmetic operation involves multiple <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s then the <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> from the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s are merged into the resultant <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. Thus, if the <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> for the individual <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s have the same <em>keys</em> then only the key-value pair in the <em>right-most</em> <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> in the operation will exist after the merger.</p>
-<p>For example, suppose you have two <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s that contain the following information</p>
+<p>If the arithmetic operation involves multiple <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s then the <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> from the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s are merged into the resultant <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. Thus, if the <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> for the individual <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s have the same <em>keys</em> then only the key-value pair in the <em>right-most</em> <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> in the operation will exist after the merger.</p>
+<p>For example, suppose you have two <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s that contain the following information</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dset1</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([1., 2., 3.])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset1</span><span class="o">.</span><span class="n">metadata</span>
@@ -1475,19 +1475,19 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset2</span><span class="o">.</span><span class="n">metadata</span>
 <span class="go">&lt;Metadata &#39;/dset2&#39; {&#39;temperature&#39;: 21.7}&gt;</span>
 </code></pre></div>
-<p>You can add the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s, but the <em>temperature</em> value in <code>dset2</code> will be merged into the <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> of <code>dset3</code> (since <code>dset2</code> is to the <em>right</em> of <code>dset1</code> in the addition operation)</p>
+<p>You can add the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>s, but the <em>temperature</em> value in <code>dset2</code> will be merged into the <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> of <code>dset3</code> (since <code>dset2</code> is to the <em>right</em> of <code>dset1</code> in the addition operation)</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span> <span class="o">=</span> <span class="n">dset1</span> <span class="o">+</span> <span class="n">dset2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span>
 <span class="go">&lt;Dataset &#39;add(/dset1,/dset2)&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span><span class="o">.</span><span class="n">metadata</span>
 <span class="go">&lt;Metadata &#39;add(/dset1,/dset2)&#39; {&#39;temperature&#39;: 21.7}&gt;</span>
 </code></pre></div>
-<p>If you want to preserve both temperature values, or change the resultant <a class="autorefs autorefs-internal" title="name
+<p>If you want to preserve both temperature values, or change the resultant <a class="autorefs autorefs-internal" title="            name
 
 
   
       property
-  " href="../../api/node/#msl.io.node.Dataset.name">name</a>, you can do so by explicitly creating a new <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
+  " href="../../api/node/#msl.io.node.Dataset.name">name</a>, you can do so by explicitly creating a new <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dset3</span><span class="p">,</span> <span class="n">t1</span><span class="o">=</span><span class="n">dset1</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="n">dset2</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dset3</span>
 <span class="go">&lt;Dataset &#39;/dset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (2 metadata)&gt;</span>
@@ -1497,8 +1497,8 @@
 <span class="go">&lt;Metadata &#39;/dset3&#39; {&#39;t1&#39;: 20.3, &#39;t2&#39;: 21.7}&gt;</span>
 </code></pre></div>
 <h2 id="msl-io-dataset-logging">Logging Records<a class="headerlink" href="#msl-io-dataset-logging" title="Permanent link">¤</a></h2>
-<p>The <a class="autorefs autorefs-internal" title="DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> class is a custom <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> that is also a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#logging.Handler" target="_blank">Handler</a> which automatically appends <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records to the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. See <a class="autorefs autorefs-internal" title="create_dataset_logging" href="../../api/node/#msl.io.node.Group.create_dataset_logging">create_dataset_logging</a> for more details.</p>
-<p>The following illustrates how to automatically append <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records to a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
+<p>The <a class="autorefs autorefs-internal" title="            DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> class is a custom <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> that is also a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#logging.Handler" target="_blank">Handler</a> which automatically appends <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records to the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>. See <a class="autorefs autorefs-internal" title="            create_dataset_logging" href="../../api/node/#msl.io.node.Group.create_dataset_logging">create_dataset_logging</a> for more details.</p>
+<p>The following illustrates how to automatically append <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records to a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONWriter</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;my_logger&quot;</span><span class="p">)</span>
@@ -1516,18 +1516,18 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
 <span class="go">[(..., &#39;ERROR&#39;, &#39;my_logger&#39;, &#39;cannot do that!&#39;)]</span>
 </code></pre></div>
-<p>Stop the <a class="autorefs autorefs-internal" title="DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> instance
+<p>Stop the <a class="autorefs autorefs-internal" title="            DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> instance
 from receiving <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#log-record">logging records</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">log_dset</span><span class="o">.</span><span class="n">remove_handler</span><span class="p">()</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>When a file is <a class="autorefs autorefs-internal" title="read" href="../../api/base/#msl.io.base.read">read</a>, it will load an object that was once a <a class="autorefs autorefs-internal" title="DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> as a <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> (i.e., it will not be associated with new <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records that are emitted). If you want to convert the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> to be a <a class="autorefs autorefs-internal" title="DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> item again, so that <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records are once again appended to it when emitted, then you must call the <a class="autorefs autorefs-internal" title="require_dataset_logging" href="../../api/node/#msl.io.node.Group.require_dataset_logging">require_dataset_logging</a> method with the <em>name</em> argument equal to the value of the <a class="autorefs autorefs-internal" title="name
+<p>When a file is <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a>, it will load an object that was once a <a class="autorefs autorefs-internal" title="            DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> as a <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> (i.e., it will not be associated with new <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records that are emitted). If you want to convert the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a> to be a <a class="autorefs autorefs-internal" title="            DatasetLogging" href="../../api/node/#msl.io.node.DatasetLogging">DatasetLogging</a> item again, so that <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> records are once again appended to it when emitted, then you must call the <a class="autorefs autorefs-internal" title="            require_dataset_logging" href="../../api/node/#msl.io.node.Group.require_dataset_logging">require_dataset_logging</a> method with the <em>name</em> argument equal to the value of the <a class="autorefs autorefs-internal" title="            name
 
 
   
       property
-  " href="../../api/node/#msl.io.node.Dataset.name">name</a> attribute of the <a class="autorefs autorefs-internal" title="Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>.</p>
+  " href="../../api/node/#msl.io.node.Dataset.name">name</a> attribute of the <a class="autorefs autorefs-internal" title="            Dataset" href="../../api/node/#msl.io.node.Dataset">Dataset</a>.</p>
 </div>
 
 

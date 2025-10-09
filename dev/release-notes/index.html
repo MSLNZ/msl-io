@@ -1321,45 +1321,45 @@
 <p><strong><em>Added:</em></strong></p>
 <ul>
 <li>support for Python 3.14</li>
-<li><a class="autorefs autorefs-internal" title="RegularTransmittanceReader" href="../readers/#msl.io.readers.spectrophotometer_trans_reader.RegularTransmittanceReader">RegularTransmittanceReader</a> for reading transmittance files from the MSL spectrophotometer</li>
+<li><a class="autorefs autorefs-internal" title="            RegularTransmittanceReader" href="../readers/#msl.io.readers.spectrophotometer_trans_reader.RegularTransmittanceReader">RegularTransmittanceReader</a> for reading transmittance files from the MSL spectrophotometer</li>
 </ul>
 <h2 id="020-2025-07-28">0.2.0 (2025-07-28)<a class="headerlink" href="#020-2025-07-28" title="Permanent link">¤</a></h2>
 <p><strong><em>Added:</em></strong></p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="read_table" href="../api/tables/#msl.io.tables.read_table">read_table</a> supports <code>dtype="header"</code></li>
-<li>the <a class="autorefs autorefs-internal" title="dimensions" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader.dimensions">dimensions</a> method to <a class="autorefs autorefs-internal" title="ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a></li>
-<li>the <code>merged</code> keyword argument to <a class="autorefs autorefs-internal" title="read
+<li><a class="autorefs autorefs-internal" title="            read_table" href="../api/tables/#msl.io.tables.read_table">read_table</a> supports <code>dtype="header"</code></li>
+<li>the <a class="autorefs autorefs-internal" title="            dimensions" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader.dimensions">dimensions</a> method to <a class="autorefs autorefs-internal" title="            ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a></li>
+<li>the <code>merged</code> keyword argument to <a class="autorefs autorefs-internal" title="            read
 
 
   
       abstractmethod
   " href="../api/spreadsheets/#msl.io.readers.spreadsheet.Spreadsheet.read">Spreadsheet.read</a></li>
-<li><a class="autorefs autorefs-internal" title="ODSReader" href="../api/spreadsheets/#msl.io.readers.ods.ODSReader">ODSReader</a> for reading OpenDocument Spreadsheet files</li>
-<li><a class="autorefs autorefs-internal" title="GSheetsReader" href="../api/spreadsheets/#msl.io.readers.gsheets.GSheetsReader">GSheetsReader</a> and <a class="autorefs autorefs-internal" title="ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a> can now be used as a context manager</li>
+<li><a class="autorefs autorefs-internal" title="            ODSReader" href="../api/spreadsheets/#msl.io.readers.ods.ODSReader">ODSReader</a> for reading OpenDocument Spreadsheet files</li>
+<li><a class="autorefs autorefs-internal" title="            GSheetsReader" href="../api/spreadsheets/#msl.io.readers.gsheets.GSheetsReader">GSheetsReader</a> and <a class="autorefs autorefs-internal" title="            ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a> can now be used as a context manager</li>
 <li><a href="https://peps.python.org/pep-0484/">PEP-484</a> type annotations</li>
-<li>a <code>TEXT</code> member to the <a class="autorefs autorefs-internal" title="GCellType" href="../api/google/#msl.io.google_api.GCellType">GCellType</a> enum</li>
+<li>a <code>TEXT</code> member to the <a class="autorefs autorefs-internal" title="            GCellType" href="../api/google/#msl.io.google_api.GCellType">GCellType</a> enum</li>
 <li>support for Python 3.12 and 3.13</li>
 </ul>
 <p><strong><em>Changed:</em></strong></p>
 <ul>
-<li>implement the <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/datamodel.html#object.__init_subclass__">__init_subclass__</a> method to register <a class="autorefs autorefs-internal" title="Reader" href="../api/base/#msl.io.base.Reader">Reader</a> subclasses instead of using the <code>@register</code> decorator (<a href="https://peps.python.org/pep-0487/">PEP-487</a>)</li>
+<li>implement the <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/datamodel.html#object.__init_subclass__">__init_subclass__</a> method to register <a class="autorefs autorefs-internal" title="            Reader" href="../api/base/#msl.io.base.Reader">Reader</a> subclasses instead of using the <code>@register</code> decorator (<a href="https://peps.python.org/pep-0487/">PEP-487</a>)</li>
 <li>move the static <code>get_bytes</code>, <code>get_lines</code> and <code>get_extension</code> methods from the <code>Reader</code> class to the <a class="autorefs autorefs-internal" href="../api/utils/#utils">utils</a> module</li>
 <li>convert to an implicit namespace package (<a href="https://peps.python.org/pep-0420/">PEP-420</a>)</li>
-<li><a class="autorefs autorefs-internal" title="git_head" href="../api/utils/#msl.io.utils.git_head">utils.git_head</a> now returns a <a class="autorefs autorefs-internal" title="GitHead
+<li><a class="autorefs autorefs-internal" title="            git_head" href="../api/utils/#msl.io.utils.git_head">utils.git_head</a> now returns a <a class="autorefs autorefs-internal" title="            GitHead
 
 
   
       dataclass
   " href="../api/utils/#msl.io.utils.GitHead">GitHead</a> dataclass with the <code>datetime</code> key replaced with a <code>timestamp</code> attribute</li>
-<li>the names of the keyword arguments to <a class="autorefs autorefs-internal" title="search" href="../api/utils/#msl.io.utils.search">utils.search</a></li>
+<li>the names of the keyword arguments to <a class="autorefs autorefs-internal" title="            search" href="../api/utils/#msl.io.utils.search">utils.search</a></li>
 </ul>
 <p><strong><em>Fixed:</em></strong></p>
 <ul>
-<li>specifying only the top-left cell to <a class="autorefs autorefs-internal" title="read_table" href="../api/tables/#msl.io.tables.read_table">read_table</a> returned the wrong cells from the spreadsheet</li>
+<li>specifying only the top-left cell to <a class="autorefs autorefs-internal" title="            read_table" href="../api/tables/#msl.io.tables.read_table">read_table</a> returned the wrong cells from the spreadsheet</li>
 </ul>
 <p><strong><em>Removed:</em></strong></p>
 <ul>
-<li>the <code>workbook</code> property to <a class="autorefs autorefs-internal" title="ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a></li>
+<li>the <code>workbook</code> property to <a class="autorefs autorefs-internal" title="            ExcelReader" href="../api/spreadsheets/#msl.io.readers.excel.ExcelReader">ExcelReader</a></li>
 <li>support for Python &le; 3.8</li>
 </ul>
 <h2 id="010-2023-06-16">0.1.0 (2023-06-16)<a class="headerlink" href="#010-2023-06-16" title="Permanent link">¤</a></h2>

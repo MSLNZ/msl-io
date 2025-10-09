@@ -1316,8 +1316,8 @@
 
 
 <h1 id="msl-io-metadata">Metadata<a class="headerlink" href="#msl-io-metadata" title="Permanent link">¤</a></h1>
-<p>All <a class="autorefs autorefs-internal" title="Groups" href="../groups/#msl-io-group">Group</a> and <a class="autorefs autorefs-internal" title="Datasets" href="../datasets/#msl-io-dataset">Dataset</a> items contain <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a>. A <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> item is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> that can be made read only and it allows for accessing the <em>keys</em> of the <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> as class attributes (see <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information).</p>
-<p>For example, suppose that a file is <a class="autorefs autorefs-internal" title="read" href="../../api/base/#msl.io.base.read">read</a> that has the following <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a></p>
+<p>All <a class="autorefs autorefs-internal" title="Groups" href="../groups/#msl-io-group">Group</a> and <a class="autorefs autorefs-internal" title="Datasets" href="../datasets/#msl-io-dataset">Dataset</a> items contain <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a>. A <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> item is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> that can be made read only and it allows for accessing the <em>keys</em> of the <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> as class attributes (see <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information).</p>
+<p>For example, suppose that a file is <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a> that has the following <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a></p>
 <!-- invisible-code-block: pycon
 >>> import array
 >>> import numpy as np
@@ -1341,13 +1341,13 @@
 <span class="go">1.2</span>
 </code></pre></div>
 <h2 id="readwrite-mode">Read/Write mode<a class="headerlink" href="#readwrite-mode" title="Permanent link">¤</a></h2>
-<p>When a file is <a class="autorefs autorefs-internal" title="read" href="../../api/base/#msl.io.base.read">read</a>, the returned object is in read-only mode so you cannot modify the metadata</p>
+<p>When a file is <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a>, the returned object is in read-only mode so you cannot modify the metadata</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mf">7.64</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
 <span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Metadata &#39;/&#39; {&#39;voltage&#39;: 1.2, &#39;voltage_unit&#39;: &#39;V&#39;}&gt;. It is accessed in read-only mode.</span>
 </code></pre></div>
-<p>However, you can allow <code>metadata</code> to be modified by setting the <a class="autorefs autorefs-internal" title="read_only
+<p>However, you can allow <code>metadata</code> to be modified by setting the <a class="autorefs autorefs-internal" title="            read_only
 
 
   
@@ -1384,7 +1384,7 @@
 <span class="go">       [0., 1.]])</span>
 </code></pre></div>
 <h2 id="dictionaries">Dictionaries<a class="headerlink" href="#dictionaries" title="Permanent link">¤</a></h2>
-<p>When the metadata <em>value</em> is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> it will be converted to a <a class="autorefs autorefs-internal" title="Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> instance</p>
+<p>When the metadata <em>value</em> is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> it will be converted to a <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> instance</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;one&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span>
 <span class="go">&lt;Metadata &#39;/&#39; {&#39;one&#39;: 1, &#39;two&#39;: 2, &#39;three&#39;: 3}&gt;</span>

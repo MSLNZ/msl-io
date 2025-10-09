@@ -1271,7 +1271,7 @@
 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¤</a></h1>
 <p><code>msl-io</code> follows the data model used by <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> to read and write data files &mdash; where there are <a class="autorefs autorefs-internal" href="items/groups/#msl-io-group">Groups</a> and <a class="autorefs autorefs-internal" href="items/datasets/#msl-io-dataset">Datasets</a> and each item has <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a>.</p>
 <p><img alt="hdf5_data_model.png" src="assets/images/hdf5_data_model.png" /></p>
-<p>The tree structure is similar to the file-system structure used by operating systems. <a class="autorefs autorefs-internal" href="items/groups/#msl-io-group">Groups</a> are analogous to directories (where <a class="autorefs autorefs-internal" title="Root" href="api/base/#msl.io.base.Root">Root</a> is the root <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>) and <a class="autorefs autorefs-internal" href="items/datasets/#msl-io-dataset">Datasets</a> are analogous to files.</p>
+<p>The tree structure is similar to the file-system structure used by operating systems. <a class="autorefs autorefs-internal" href="items/groups/#msl-io-group">Groups</a> are analogous to directories (where <a class="autorefs autorefs-internal" title="            Root" href="api/base/#msl.io.base.Root">Root</a> is the root <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>) and <a class="autorefs autorefs-internal" href="items/datasets/#msl-io-dataset">Datasets</a> are analogous to files.</p>
 <p>The data files that can be read or written are not restricted to <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> files, but any file format that has a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> implemented can be read and data files can be created using any of the <a class="autorefs autorefs-internal" href="writers/#msl-io-writers">Writers</a>.</p>
 <h3 id="write-a-file">Write a file<a class="headerlink" href="#write-a-file" title="Permanent link">¤</a></h3>
 <!-- invisible-code-block: pycon
@@ -1283,11 +1283,11 @@
 
 -->
 
-<p>Suppose you want to create a new <a href="https://www.json.org/" target="_blank">JSON</a> file format. We first create an instance of <a class="autorefs autorefs-internal" title="JSONWriter" href="writers/#msl.io.writers.json_.JSONWriter">JSONWriter</a></p>
+<p>Suppose you want to create a new <a href="https://www.json.org/" target="_blank">JSON</a> file format. We first create an instance of <a class="autorefs autorefs-internal" title="            JSONWriter" href="writers/#msl.io.writers.json_.JSONWriter">JSONWriter</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONWriter</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">JSONWriter</span><span class="p">()</span>
 </code></pre></div>
-<p>then we can add <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a> to the <code>root</code> <a class="autorefs autorefs-internal" title="Root" href="api/base/#msl.io.base.Root">Root</a>,</p>
+<p>then we can add <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a> to the <code>root</code> <a class="autorefs autorefs-internal" title="            Root" href="api/base/#msl.io.base.Root">Root</a>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">one</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">two</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
 <p>create a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>,</p>
@@ -1307,19 +1307,19 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The file is not created until you call the <a class="autorefs autorefs-internal" title="write
+<p>The file is not created until you call the <a class="autorefs autorefs-internal" title="            write
 
 
   
       abstractmethod
-  " href="api/base/#msl.io.base.Writer.write">write</a> (or <a class="autorefs autorefs-internal" title="save" href="api/base/#msl.io.base.Writer.save">save</a>) method.</p>
+  " href="api/base/#msl.io.base.Writer.write">write</a> (or <a class="autorefs autorefs-internal" title="            save" href="api/base/#msl.io.base.Writer.save">save</a>) method.</p>
 </div>
 <h3 id="read-a-file">Read a file<a class="headerlink" href="#read-a-file" title="Permanent link">¤</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="read" href="api/base/#msl.io.base.read">read</a> function is available to read a file. Provided that a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above</p>
+<p>The <a class="autorefs autorefs-internal" title="            read" href="api/base/#msl.io.base.read">read</a> function is available to read a file. Provided that a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>You can print a <em>tree</em> representation of all <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s and <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s in the <a class="autorefs autorefs-internal" title="Root" href="api/base/#msl.io.base.Root">Root</a> by calling the <a class="autorefs autorefs-internal" title="tree" href="api/base/#msl.io.base.Root.tree">tree</a> method</p>
+<p>You can print a <em>tree</em> representation of all <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s and <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s in the <a class="autorefs autorefs-internal" title="            Root" href="api/base/#msl.io.base.Root">Root</a> by calling the <a class="autorefs autorefs-internal" title="            tree" href="api/base/#msl.io.base.Root.tree">tree</a> method</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tree</span><span class="p">())</span>
 <span class="go">&lt;JSONReader &#39;my_file.json&#39; (4 groups, 3 datasets, 2 metadata)&gt;</span>
 <span class="go">  &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
@@ -1426,7 +1426,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">))</span>
 </code></pre></div>
 <h3 id="read-a-table">Read a table<a class="headerlink" href="#read-a-table" title="Permanent link">¤</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function will read tabular data from a file. A <em>table</em> has the following properties:</p>
+<p>The <a class="autorefs autorefs-internal" title="            read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function will read tabular data from a file. A <em>table</em> has the following properties:</p>
 <ol>
 <li>The first row is a header</li>
 <li>All rows have the same number of columns</li>
@@ -1464,7 +1464,7 @@
 
 -->
 
-<p>You can read this table using the <a class="autorefs autorefs-internal" title="read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function</p>
+<p>You can read this table using the <a class="autorefs autorefs-internal" title="            read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_table</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
@@ -1532,7 +1532,7 @@
 
 -->
 
-<p>You can add the extension and delimiter to the <a class="autorefs autorefs-internal" title="extension_delimiter_map
+<p>You can add the extension and delimiter to the <a class="autorefs autorefs-internal" title="            extension_delimiter_map
 
 
   
