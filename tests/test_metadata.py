@@ -199,51 +199,51 @@ def test_read_only() -> None:  # noqa: PLR0915
     assert meta.read_only
 
     # cannot modify an existing value (key access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta["foo"] = 1
 
     # cannot modify an existing value (attrib access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.foo = 1
 
     # cannot delete a key (key access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         del meta["foo"]
 
     # cannot delete a key (attrib access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         del meta.foo
 
     # cannot create a new key-value pair (key access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta["anything"] = -1
 
     # cannot create a new key-value pair (attrib access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.anything = -1
 
     # cannot do an update()
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.update({"whatever": 1.234})
 
     # cannot do a pop()
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.pop("foo")
 
     # cannot do a popitem()
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         _ = meta.popitem()
 
     # cannot do a setdefault(), default value
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         _ = meta.setdefault("new_key")
 
     # cannot do a setdefault(), custom value
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.setdefault("new_key", "new_value")
 
     # cannot do a clear()
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.clear()
 
     # make sure that meta has the expected data
@@ -314,11 +314,11 @@ def test_read_only() -> None:  # noqa: PLR0915
     assert meta.read_only
 
     # cannot create a new key-value pair (key access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta["anything"] = -1
 
     # cannot create a new key-value pair (attrib access)
-    with pytest.raises(ValueError, match="read-only mode"):
+    with pytest.raises(ValueError, match=r"read-only mode"):
         meta.anything = -1
 
     # ndarray is initialised in read-only mode

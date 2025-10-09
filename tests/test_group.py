@@ -516,16 +516,16 @@ def test_invalid_name() -> None:
     assert v.name == "/this is ok"
 
     # the name must be a non-empty string
-    with pytest.raises(ValueError, match="cannot be an empty string"):
+    with pytest.raises(ValueError, match=r"cannot be an empty string"):
         _ = Group(name="", parent=root, read_only=True)
 
     # the name cannot contain a '/'
     for n in ["/", "/a", "a/b", "ab/"]:
-        with pytest.raises(ValueError, match="cannot contain the '/' character"):
+        with pytest.raises(ValueError, match=r"cannot contain the '/' character"):
             _ = Group(name=n, parent=root, read_only=True)
 
     # check that the name is forced to be unique
-    with pytest.raises(ValueError, match="is not unique"):
+    with pytest.raises(ValueError, match=r"is not unique"):
         _ = Group(name="this is ok", parent=root, read_only=True)
 
 

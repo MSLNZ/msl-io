@@ -111,11 +111,11 @@ def test_read_only() -> None:
     assert dset.metadata.read_only
 
     # cannot modify data
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         dset[:] = 1
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         dset[0] = 1
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         dset += 1
 
     # make writable
@@ -133,7 +133,7 @@ def test_read_only() -> None:
     assert dset.metadata.read_only
 
     # cannot modify data
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         dset[:] = 1
 
     # can make a dataset writeable but the metadata read-only
@@ -144,7 +144,7 @@ def test_read_only() -> None:
     assert not dset.read_only
     assert dset.metadata.read_only
     dset[:] = 1
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         _ = dset.add_metadata(some_more_info=1)
 
 
@@ -695,7 +695,7 @@ def test_invalid_name() -> None:
     assert d.name == "this is ok"
 
     # the name must be a non-empty string
-    with pytest.raises(ValueError, match="cannot be an empty string"):
+    with pytest.raises(ValueError, match=r"cannot be an empty string"):
         _ = Dataset(name="", parent=None, read_only=True)
 
     # the name can contain a '/' if the parent is None
@@ -704,13 +704,13 @@ def test_invalid_name() -> None:
 
     # the name cannot contain a '/' if the parent is not None
     for n in ["/", "/a", "a/b", "ab/"]:
-        with pytest.raises(ValueError, match="cannot contain the '/' character"):
+        with pytest.raises(ValueError, match=r"cannot contain the '/' character"):
             _ = Dataset(name=n, parent=Root(""), read_only=True)
 
     # check that the name is forced to be unique if the parent is not None
     root = Root("")
     _ = root.create_group("msl")
-    with pytest.raises(ValueError, match="is not unique"):
+    with pytest.raises(ValueError, match=r"is not unique"):
         _ = Dataset(name="msl", parent=root, read_only=True)
 
 

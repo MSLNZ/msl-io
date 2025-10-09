@@ -152,9 +152,9 @@ def test_checksum() -> None:
         assert isinstance(value, str)
 
     # file does not exist
-    with pytest.raises(OSError, match="does_not_exist.txt"):
+    with pytest.raises(OSError, match=r"does_not_exist.txt"):
         _ = utils.checksum("/the/file/does_not_exist.txt")
-    with pytest.raises(OSError, match="does_not_exist.txt"):
+    with pytest.raises(OSError, match=r"does_not_exist.txt"):
         _ = utils.checksum(b"/the/file/does_not_exist.txt")
 
     # invalid file type
@@ -237,7 +237,7 @@ def test_copy() -> None:  # noqa: C901, PLR0915
 
     # source file does not exist
     for item in [r"/the/file/does_not_exist.txt", r"/the/file/does_not_exist", r"does_not_exist"]:
-        with pytest.raises(OSError, match="does_not_exist"):
+        with pytest.raises(OSError, match=r"does_not_exist"):
             _ = utils.copy(item, "")
 
     # copy (with metadata) to a directory that already exists
@@ -330,12 +330,12 @@ def test_remove_write_permissions() -> None:
 
     # cannot open the file to modify it
     for m in ["wb", "ab", "wt", "at", "w+", "w+b"]:
-        with pytest.raises(OSError, match="denied"):
+        with pytest.raises(OSError, match=r"denied"):
             _ = path.open(m)
 
     # cannot delete the file (only valid on Windows)
     if sys.platform == "win32":
-        with pytest.raises(OSError, match="denied"):
+        with pytest.raises(OSError, match=r"denied"):
             path.unlink()
 
     # can still read it
@@ -569,24 +569,24 @@ def test_prepare_email() -> None:  # noqa: PLR0915
     def create(lines: list[str]) -> None:
         _ = temp.write_text("\n".join(lines))
 
-    with pytest.raises(OSError, match="does-not-exist.ini"):
+    with pytest.raises(OSError, match=r"does-not-exist.ini"):
         _ = _prepare_email("does-not-exist.ini", "", "")
 
     create(["[smtp]", "[gmail]"])
-    with pytest.raises(ValueError, match="Cannot specify both"):
+    with pytest.raises(ValueError, match=r"Cannot specify both"):
         _ = _prepare_email(temp, "", None)
 
     create(["[unknown]"])
-    with pytest.raises(ValueError, match="Must create either"):
+    with pytest.raises(ValueError, match=r"Must create either"):
         _ = _prepare_email(temp, "", None)
 
     for item in (["[smtp]"], ["[smtp]", "host=hostname"], ["[smtp]", "port=25"]):
         create(item)
-        with pytest.raises(ValueError, match="Must specify the 'host' and 'port'"):
+        with pytest.raises(ValueError, match=r"Must specify the 'host' and 'port'"):
             _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "port=not-an-int"])
-    with pytest.raises(ValueError, match="invalid literal for int()"):
+    with pytest.raises(ValueError, match=r"invalid literal for int()"):
         _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=smtp.example.com", "port=25"])
@@ -680,11 +680,11 @@ def test_prepare_email() -> None:  # noqa: PLR0915
         assert cfg.password is None
 
     create(["[smtp]", "host=h", "port=1", "username=user"])
-    with pytest.raises(ValueError, match="Must specify the 'password'"):
+    with pytest.raises(ValueError, match=r"Must specify the 'password'"):
         _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=h", "port=1", "password=pw"])
-    with pytest.raises(ValueError, match="Must specify the 'username'"):
+    with pytest.raises(ValueError, match=r"Must specify the 'username'"):
         _ = _prepare_email(temp, "", None)
 
     create(["[smtp]", "host=h", "port=1", "starttls=0", "username=uname", "password=pw"])

@@ -15,16 +15,16 @@ def test_to_indices() -> None:  # noqa: C901
     assert to_indices("XFD123456789") == (123456788, 16383)
 
     for c in ["", "1", "A:B", "A1C10", "1A1"]:
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_indices(c)
     for c in string.punctuation:
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_indices("A" + c)
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_indices(c + "A")
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_indices("A1" + c)
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_indices(c + "A1")
 
     index = 0
@@ -116,7 +116,7 @@ def test_to_letters_to_indices() -> None:
 def test_to_slices() -> None:
     to_slices = Spreadsheet.to_slices
     for cells in ["", "A", "A:B:", ":"]:
-        with pytest.raises(ValueError, match="Invalid cell"):
+        with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = to_slices(cells)
     assert to_slices("A:A") == (slice(0, None, None), slice(0, 1, None))
     assert to_slices("A:G") == (slice(0, None, None), slice(0, 7, None))

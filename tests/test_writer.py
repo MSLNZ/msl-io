@@ -101,7 +101,7 @@ def test_set_root() -> None:  # noqa: PLR0915
     writer.set_root(d4)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     # a non-empty Dataset is not ok
-    with pytest.raises(TypeError, match="Group object"):
+    with pytest.raises(TypeError, match=r"Group object"):
         writer.set_root(d5)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
     # pass in a Group instead of a Root

@@ -86,7 +86,7 @@ def test_raises() -> None:
         _ = read_table("does not exist")
 
     # the 'unpack' argument is not supported for text-based files
-    with pytest.raises(ValueError, match="unpack"):
+    with pytest.raises(ValueError, match=r"unpack"):
         _ = read_table(get_url(".csv"), unpack=True)
 
     # invalid cell range

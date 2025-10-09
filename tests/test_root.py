@@ -529,7 +529,7 @@ def test_auto_create_subgroups() -> None:
     _ = root.create_dataset("/w/x/y/z", shape=(10,))
 
     # intermediate Groups get created automatically
-    with pytest.raises(ValueError, match="unique"):
+    with pytest.raises(ValueError, match=r"unique"):
         _ = root.create_group("a/group2/c")
     with pytest.raises(ValueError, match=r"unique"):
         _ = root.create_group("/w/x")

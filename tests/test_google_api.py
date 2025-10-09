@@ -473,7 +473,7 @@ def test_gdrive_file_id_multiple() -> None:
 
     assert dr is not None
 
-    with pytest.raises(OSError, match="Multiple") as err:
+    with pytest.raises(OSError, match=r"Multiple") as err:
         _ = dr.file_id(path)
     assert "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" in str(err.value)
     assert GSheets.MIME_TYPE in str(err.value)
@@ -507,7 +507,7 @@ def test_gdrive_create_delete_folder() -> None:
     # delete
     for folder in [u1, u2 + "/sub-2/a b c", u2 + "/sub-2", u2]:
         dw.delete(dw.folder_id(folder))
-        with pytest.raises(OSError, match="Not a valid Google Drive folder"):
+        with pytest.raises(OSError, match=r"Not a valid Google Drive folder"):
             _ = dw.folder_id(folder)
 
     # create (relative to a parent folder)
@@ -537,7 +537,7 @@ def test_gdrive_create_delete_folder() -> None:
     assert dw.path(id2) == "My Drive/Temporary"
     assert id1 != id2
     assert dw.is_folder("Temporary") is True
-    with pytest.raises(OSError, match="^Multiple folders"):
+    with pytest.raises(OSError, match=r"^Multiple folders"):
         _ = dw.folder_id("Temporary")
     dw.delete(id1)
     dw.delete(id2)
@@ -694,10 +694,10 @@ def test_gsheets_copy_rename_add_delete() -> None:
     sw.delete_sheets(["g", next(iter(d_sheet.keys()))], id1)
     assert sw.sheet_names(id1) == ("b", "c", "e", "f")
 
-    with pytest.raises(ValueError, match="A sheet named 'invalid' does not exist"):
+    with pytest.raises(ValueError, match=r"A sheet named 'invalid' does not exist"):
         _ = sw.copy("invalid", id1, id2)
 
-    with pytest.raises(ValueError, match="A sheet named 'invalid' does not exist"):
+    with pytest.raises(ValueError, match=r"A sheet named 'invalid' does not exist"):
         sw.delete_sheets("invalid", id1)
 
     # cleanup
@@ -733,7 +733,7 @@ def test_read_only() -> None:
         dw.rename(fid, "New Name")
 
     # cannot delete
-    with pytest.raises(RuntimeError, match="Cannot delete"):
+    with pytest.raises(RuntimeError, match=r"Cannot delete"):
         dw.delete(fid)
 
     # cannot modify a cell
@@ -919,7 +919,7 @@ def test_gdrive_copy() -> None:
     cid = dw.copy(file_txt_id)
     assert cid != file_txt_id
     assert dw.path(cid) == "My Drive/MSL/msl-io-testing/file.txt"
-    with pytest.raises(OSError, match="^Multiple files"):
+    with pytest.raises(OSError, match=r"^Multiple files"):
         _ = dw.file_id("file.txt", folder_id=msl_io_testing_id)
     assert dw.is_file("file.txt", folder_id=msl_io_testing_id) is True
     dw.delete(cid)
