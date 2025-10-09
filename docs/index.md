@@ -250,7 +250,7 @@ You can convert between file formats using any of the [Writers][msl-io-writers].
 
 ## GTC Archive
 
-By using the [JSONWriter][msl.io.writers.json_.JSONWriter], you can store and retrieve a [GTC Archive][persistence.Archive]{:target="_blank"} so that uncertain numbers can be used in later calculations.
+You can store and retrieve a [GTC Archive][persistence.Archive]{:target="_blank"} so that uncertain numbers can be used in later calculations.
 
 ```python
 >>> from GTC import pr, ureal
@@ -260,7 +260,7 @@ By using the [JSONWriter][msl.io.writers.json_.JSONWriter], you can store and re
 >>> archive = pr.Archive()
 >>> archive.add(x=ureal(1, 0.1))
 
-# Write the Archive as metadata
+# Write the Archive as metadata (using any Writer is okay)
 >>> with JSONWriter("archived.json") as w:
 ...     w.add_metadata(archive=pr.dumps_json(archive))
 
