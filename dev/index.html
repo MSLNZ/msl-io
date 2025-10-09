@@ -1435,7 +1435,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">))</span>
 </code></pre></div>
 <h2 id="gtc-archive">GTC Archive<a class="headerlink" href="#gtc-archive" title="Permanent link">¤</a></h2>
-<p>By using the <a class="autorefs autorefs-internal" title="            JSONWriter" href="writers/#msl.io.writers.json_.JSONWriter">JSONWriter</a>, you can store and retrieve a <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive" target="_blank">GTC Archive</a> so that uncertain numbers can be used in later calculations.</p>
+<p>You can store and retrieve a <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive" target="_blank">GTC Archive</a> so that uncertain numbers can be used in later calculations.</p>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">GTC</span><span class="w"> </span><span class="kn">import</span> <span class="n">pr</span><span class="p">,</span> <span class="n">ureal</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONWriter</span><span class="p">,</span> <span class="n">read</span>
 
@@ -1443,7 +1443,7 @@
 <span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">Archive</span><span class="p">()</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ureal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 
-<span class="c1"># Write the Archive as metadata</span>
+<span class="c1"># Write the Archive as metadata (using any Writer is okay)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">JSONWriter</span><span class="p">(</span><span class="s2">&quot;archived.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
 <span class="o">...</span>     <span class="n">w</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">archive</span><span class="o">=</span><span class="n">pr</span><span class="o">.</span><span class="n">dumps_json</span><span class="p">(</span><span class="n">archive</span><span class="p">))</span>
 
