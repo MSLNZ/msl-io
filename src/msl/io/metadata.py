@@ -116,7 +116,7 @@ class Metadata(FreezableMap[Any]):  # noqa: PLW1641
 
     def __eq__(self, other: object, /) -> bool:  # noqa: PLR0911
         """Comparison with another Metadata instance."""
-        # Do not implement __hash__ (see https://docs.python.org/3.13/reference/datamodel.html#object.__hash__)
+        # Do not implement __hash__ (see https://docs.python.org/3/reference/datamodel.html#object.__hash__)
         #
         # "If a class defines mutable objects and implements an __eq__() method, it should not implement __hash__(),
         # since the implementation of hashable collections requires that a key's hash value is immutable (if the

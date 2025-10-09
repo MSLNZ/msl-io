@@ -14,11 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         os: [windows, ubuntu, macos]
         xml: [builtin]
         include:
-          - python-version: "3.13"
+          - python-version: "3.14"
             os: windows
             xml: defusedxml
           - python-version: "3.9"
@@ -36,7 +36,7 @@ jobs:
       - name: Install package (and test dependencies)
         run: |
           python -m pip install --upgrade pytest pytest-cov
-          python -m pip install --upgrade .[h5py,google] --prefer-binary
+          python -m pip install --upgrade .[h5py,google] --prefer-binary --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
       - name: Install defusedxml
         if: ${{ matrix.xml == 'defusedxml' }}
         run: python -m pip install --upgrade defusedxml

@@ -1,7 +1,12 @@
 # Release Notes
 
 ---
+
 ## unreleased
+
+***Added:***
+
+- support for Python 3.14
 - [RegularTransmittanceReader][msl.io.readers.spectrophotometer_trans_reader.RegularTransmittanceReader] for reading transmittance files from the MSL spectrophotometer
 
 ## 0.2.0 (2025-07-28)
