@@ -16,10 +16,10 @@ From a Python perspective, a [Group][msl.io.node.Group] operates like a [dict][]
 
 ```pycon
 >>> print(root.tree())
-<JSONWriter 'example.json' (3 groups, 1 datasets, 0 metadata)>
-  <Group '/a' (2 groups, 1 datasets, 0 metadata)>
-    <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>
-      <Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
+<JSONWriter 'example.json' (3 groups, 1 dataset, 0 metadata)>
+  <Group '/a' (2 groups, 1 dataset, 0 metadata)>
+    <Group '/a/b' (1 group, 1 dataset, 0 metadata)>
+      <Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)>
         <Dataset '/a/b/c/dset' shape=(100,) dtype='<f8' (0 metadata)>
 
 ```
@@ -30,7 +30,7 @@ A [Group][msl.io.node.Group] can either be in read-only mode
 >>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
 Traceback (most recent call last):
    ...
-ValueError: Cannot modify <Group '/a/b' (1 groups, 1 datasets, 0 metadata)>. It is accessed in read-only mode.
+ValueError: Cannot modify <Group '/a/b' (1 group, 1 dataset, 0 metadata)>. It is accessed in read-only mode.
 
 ```
 
@@ -66,7 +66,7 @@ You can navigate through the tree by considering a [Group][msl.io.node.Group] to
 ```pycon
 >>> for ancestor in c.ancestors():
 ...    print(ancestor)
-<Group '/a/b' (1 groups, 2 datasets, 0 metadata)>
+<Group '/a/b' (1 group, 2 datasets, 0 metadata)>
 <Group '/a' (2 groups, 2 datasets, 0 metadata)>
 <JSONWriter 'example.json' (3 groups, 2 datasets, 0 metadata)>
 
@@ -75,7 +75,7 @@ You can navigate through the tree by considering a [Group][msl.io.node.Group] to
 ```pycon
 >>> for descendant in b.descendants():
 ...    print(descendant)
-<Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
+<Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)>
 
 ```
 
@@ -87,7 +87,7 @@ If you want to create a new [Group][msl.io.node.Group] and its parent [Group][ms
 >>> root["2025"]
 <Group '/2025' (2 groups, 0 datasets, 0 metadata)>
 >>> root["2025"]["07"]
-<Group '/2025/07' (1 groups, 0 datasets, 0 metadata)>
+<Group '/2025/07' (1 group, 0 datasets, 0 metadata)>
 >>> day
 <Group '/2025/07/28' (0 groups, 0 datasets, 0 metadata)>
 

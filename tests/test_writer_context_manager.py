@@ -75,7 +75,7 @@ def test_file_path() -> None:
             assert root.file == path
             fill_root_with_data(root)
             assert_root_data(root)
-            assert repr(root) == f"<{writer.__name__} 'foo' (2 groups, 1 datasets, 2 metadata)>"
+            assert repr(root) == f"<{writer.__name__} 'foo' (2 groups, 1 dataset, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == path
@@ -113,7 +113,7 @@ def test_exception_raised() -> None:
                 assert root.file == path
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == f"<{writer.__name__} 'bar' (2 groups, 1 datasets, 2 metadata)>"
+                assert repr(root) == f"<{writer.__name__} 'bar' (2 groups, 1 dataset, 2 metadata)>"
                 _ = 1 / 0
 
         root2 = read(path)

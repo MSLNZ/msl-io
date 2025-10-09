@@ -62,7 +62,7 @@ def test_string_io() -> None:
                 assert repr(root) == f"<{writer.__name__} 'StringIO' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == f"<{writer.__name__} 'StringIO' (2 groups, 1 datasets, 2 metadata)>"
+                assert repr(root) == f"<{writer.__name__} 'StringIO' (2 groups, 1 dataset, 2 metadata)>"
 
             _ = buf.seek(0)
             root2 = read(buf)
@@ -81,7 +81,7 @@ def test_bytes_io() -> None:
                 assert repr(root) == f"<{writer.__name__} 'BytesIO' (0 groups, 0 datasets, 0 metadata)>"
                 fill_root_with_data(root)
                 assert_root_data(root)
-                assert repr(root) == f"<{writer.__name__} 'BytesIO' (2 groups, 1 datasets, 2 metadata)>"
+                assert repr(root) == f"<{writer.__name__} 'BytesIO' (2 groups, 1 dataset, 2 metadata)>"
 
             _ = buf.seek(0)
             root2 = read(buf)
@@ -104,7 +104,7 @@ def test_open_text() -> None:
             assert repr(root) == f"<{writer.__name__} 'textfile.txt' (0 groups, 0 datasets, 0 metadata)>"
             fill_root_with_data(root)
             assert_root_data(root)
-            assert repr(root) == f"<{writer.__name__} 'textfile.txt' (2 groups, 1 datasets, 2 metadata)>"
+            assert repr(root) == f"<{writer.__name__} 'textfile.txt' (2 groups, 1 dataset, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == str(path)
@@ -127,7 +127,7 @@ def test_open_binary() -> None:
             assert repr(root) == f"<{writer.__name__} 'binary_file.bin' (0 groups, 0 datasets, 0 metadata)>"
             fill_root_with_data(root)
             assert_root_data(root)
-            assert repr(root) == f"<{writer.__name__} 'binary_file.bin' (2 groups, 1 datasets, 2 metadata)>"
+            assert repr(root) == f"<{writer.__name__} 'binary_file.bin' (2 groups, 1 dataset, 2 metadata)>"
 
         root2 = read(path)
         assert root2.file == str(path)

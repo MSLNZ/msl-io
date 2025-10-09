@@ -103,11 +103,11 @@ If you want to create a new [Dataset][msl.io.node.Dataset] and its parent [Group
 ```pycon
 >>> voltages = root.create_dataset("a/b/c/voltages", data=[3.2, 3.4, 3.3])
 >>> root.a
-<Group '/a' (2 groups, 1 datasets, 0 metadata)>
+<Group '/a' (2 groups, 1 dataset, 0 metadata)>
 >>> root.a.b
-<Group '/a/b' (1 groups, 1 datasets, 0 metadata)>
+<Group '/a/b' (1 group, 1 dataset, 0 metadata)>
 >>> root.a.b.c
-<Group '/a/b/c' (0 groups, 1 datasets, 0 metadata)>
+<Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)>
 >>> voltages
 <Dataset '/a/b/c/voltages' shape=(3,) dtype='<f8' (0 metadata)>
 

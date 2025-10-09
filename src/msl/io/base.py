@@ -51,7 +51,9 @@ class Root(Group):
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return f"<{self.__class__.__name__} {b!r} ({g} groups, {d} datasets, {m} metadata)>"
+        groups = "group" if g == 1 else "groups"
+        datasets = "dataset" if d == 1 else "datasets"
+        return f"<{self.__class__.__name__} {b!r} ({g} {groups}, {d} {datasets}, {m} metadata)>"
 
     def tree(self, *, indent: int = 2) -> str:
         """Returns a string representation of the [tree structure](https://en.wikipedia.org/wiki/Tree_structure){:target="_blank"}.

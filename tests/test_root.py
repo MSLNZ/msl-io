@@ -790,7 +790,7 @@ def test_tree() -> None:
 <Root '' (7 groups, 7 datasets, 0 metadata)>
   <Group '/a' (3 groups, 5 datasets, 0 metadata)>
     <Group '/a/b' (2 groups, 3 datasets, 0 metadata)>
-      <Group '/a/b/c' (1 groups, 2 datasets, 0 metadata)>
+      <Group '/a/b/c' (1 group, 2 datasets, 0 metadata)>
         <Group '/a/b/c/d' (0 groups, 2 datasets, 0 metadata)>
           <Dataset '/a/b/c/d/d5' shape=(0,) dtype='<f8' (0 metadata)>
           <Dataset '/a/b/c/d/d6' shape=(0,) dtype='<f8' (0 metadata)>
@@ -800,7 +800,7 @@ def test_tree() -> None:
   <Dataset '/d4' shape=(0,) dtype='<f8' (0 metadata)>
   <Dataset '/d7' shape=(0,) dtype='<f8' (0 metadata)>
   <Group '/x' (2 groups, 0 datasets, 0 metadata)>
-    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 group, 0 datasets, 0 metadata)>
       <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
 
     assert root.tree() == tree[1:]  # skip the first line
@@ -810,15 +810,15 @@ def test_tree() -> None:
 
     tree = """
 <Root '' (5 groups, 5 datasets, 0 metadata)>
-  <Group '/a' (1 groups, 3 datasets, 0 metadata)>
-    <Group '/a/b' (0 groups, 1 datasets, 0 metadata)>
+  <Group '/a' (1 group, 3 datasets, 0 metadata)>
+    <Group '/a/b' (0 groups, 1 dataset, 0 metadata)>
       <Dataset '/a/b/d2' shape=(0,) dtype='<f8' (0 metadata)>
     <Dataset '/a/d1' shape=(0,) dtype='<f8' (0 metadata)>
     <Dataset '/a/d3' shape=(0,) dtype='<f8' (0 metadata)>
   <Dataset '/d4' shape=(0,) dtype='<f8' (0 metadata)>
   <Dataset '/d7' shape=(0,) dtype='<f8' (0 metadata)>
   <Group '/x' (2 groups, 0 datasets, 0 metadata)>
-    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 group, 0 datasets, 0 metadata)>
       <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
 
     assert root.tree() == tree[1:]  # skip the first line
@@ -831,7 +831,7 @@ def test_tree() -> None:
   <Dataset '/d4' shape=(0,) dtype='<f8' (0 metadata)>
   <Dataset '/d7' shape=(0,) dtype='<f8' (0 metadata)>
   <Group '/x' (2 groups, 0 datasets, 0 metadata)>
-    <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+    <Group '/x/y' (1 group, 0 datasets, 0 metadata)>
       <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
 
     assert root.tree() == tree[1:]  # skip the first line
@@ -842,7 +842,7 @@ def test_tree() -> None:
      <Dataset '/d4' shape=(0,) dtype='<f8' (0 metadata)>
      <Dataset '/d7' shape=(0,) dtype='<f8' (0 metadata)>
      <Group '/x' (2 groups, 0 datasets, 0 metadata)>
-          <Group '/x/y' (1 groups, 0 datasets, 0 metadata)>
+          <Group '/x/y' (1 group, 0 datasets, 0 metadata)>
                <Group '/x/y/z' (0 groups, 0 datasets, 0 metadata)>"""
 
     assert root.tree(indent=5) == tree[1:]  # skip the first line

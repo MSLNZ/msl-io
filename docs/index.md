@@ -89,11 +89,11 @@ You can print a _tree_ representation of all [Group][msl-io-group]s and [Dataset
 >>> print(root.tree())
 <JSONReader 'my_file.json' (4 groups, 3 datasets, 2 metadata)>
   <Dataset '/dataset1' shape=(4,) dtype='<f8' (0 metadata)>
-  <Group '/group1' (2 groups, 1 datasets, 0 metadata)>
-    <Group '/group1/group2' (1 groups, 1 datasets, 0 metadata)>
-      <Group '/group1/group2/group3' (0 groups, 1 datasets, 0 metadata)>
+  <Group '/group1' (2 groups, 1 dataset, 0 metadata)>
+    <Group '/group1/group2' (1 group, 1 dataset, 0 metadata)>
+      <Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)>
         <Dataset '/group1/group2/group3/dataset3' shape=(3,) dtype='<f8' (0 metadata)>
-  <Group '/my_group' (0 groups, 1 datasets, 0 metadata)>
+  <Group '/my_group' (0 groups, 1 dataset, 0 metadata)>
     <Dataset '/my_group/dataset2' shape=(2, 2) dtype='<f8' (1 metadata)>
 
 ```
@@ -104,11 +104,11 @@ Since the `root` item is a [Group][msl-io-group] instance (which operates like a
 >>> for name, node in root.items():
 ...     print(f"{name!r} -- {node!r}")
 '/dataset1' -- <Dataset '/dataset1' shape=(4,) dtype='<f8' (0 metadata)>
-'/my_group' -- <Group '/my_group' (0 groups, 1 datasets, 0 metadata)>
+'/my_group' -- <Group '/my_group' (0 groups, 1 dataset, 0 metadata)>
 '/my_group/dataset2' -- <Dataset '/my_group/dataset2' shape=(2, 2) dtype='<f8' (1 metadata)>
-'/group1' -- <Group '/group1' (2 groups, 1 datasets, 0 metadata)>
-'/group1/group2' -- <Group '/group1/group2' (1 groups, 1 datasets, 0 metadata)>
-'/group1/group2/group3' -- <Group '/group1/group2/group3' (0 groups, 1 datasets, 0 metadata)>
+'/group1' -- <Group '/group1' (2 groups, 1 dataset, 0 metadata)>
+'/group1/group2' -- <Group '/group1/group2' (1 group, 1 dataset, 0 metadata)>
+'/group1/group2/group3' -- <Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)>
 '/group1/group2/group3/dataset3' -- <Dataset '/group1/group2/group3/dataset3' shape=(3,) dtype='<f8' (0 metadata)>
 
 ```
@@ -120,10 +120,10 @@ You can iterate only over the [Group][msl-io-group]s that are in the file
 ```pycon
 >>> for group in root.groups():
 ...     print(group)
-<Group '/my_group' (0 groups, 1 datasets, 0 metadata)>
-<Group '/group1' (2 groups, 1 datasets, 0 metadata)>
-<Group '/group1/group2' (1 groups, 1 datasets, 0 metadata)>
-<Group '/group1/group2/group3' (0 groups, 1 datasets, 0 metadata)>
+<Group '/my_group' (0 groups, 1 dataset, 0 metadata)>
+<Group '/group1' (2 groups, 1 dataset, 0 metadata)>
+<Group '/group1/group2' (1 group, 1 dataset, 0 metadata)>
+<Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)>
 
 ```
 

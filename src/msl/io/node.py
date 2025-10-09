@@ -546,7 +546,9 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         g = len(list(self.groups()))
         d = len(list(self.datasets()))
         m = len(self.metadata)
-        return f"<Group {self._name!r} ({g} groups, {d} datasets, {m} metadata)>"
+        groups = "group" if g == 1 else "groups"
+        datasets = "dataset" if d == 1 else "datasets"
+        return f"<Group {self._name!r} ({g} {groups}, {d} {datasets}, {m} metadata)>"
 
     def __getitem__(self, item: str) -> Dataset | Group:
         """Get an item from the `Group`."""
