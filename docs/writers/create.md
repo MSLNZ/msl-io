@@ -2,7 +2,7 @@
 
 When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_blank"} the following steps should be performed. You will also need to [Create a New Reader][msl-io-create-reader].
 
-[uv]{:target="_blank"} is used as the package and project manager for `msl-io` development, it is recommended to install it.
+[uv]{:target="_blank"} is used as the package and project manager for `msl-io` development, it is recommended to install it. [mypy]{:target="_blank"} and [basedpyright]{:target="_blank"} are used as type checkers, [ruff]{:target="_blank"} is used as the formatter/linter and the documentation is built with [MkDocs]{:target="_blank"} using the [Material]{:target="_blank"} theme and the [mkdocstrings-python]{:target="_blank"} plugin. Installation of these packages is automatically managed for you by [uv]{:target="_blank"}. [CSpell]{:target="_blank"} provides spell checking and can be installed by running `npm install -g cspell@latest` (which requires [Node.js and npm]{:target="_blank"} to be installed).
 
 1. Create a [fork]{:target="_blank"} of the [repository]{:target="_blank"}.
 
@@ -45,7 +45,7 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
 
 4. Add test cases to the `tests` directory to make sure that your Writer works as expected. It is recommended to try converting a [Root][msl.io.base.Root] object between your Writer and other Writers that are available to verify different file-format conversions. Also, look at the test modules that begin with `test_writer` for more examples. Run the tests using `uv run pytest`.
 
-5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright` the code.
+5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. These checks are also performed once you do Step 10.
 
 6. Add the new Writer, alphabetically, to `docs/writers/index.md`. Follow what is done for the other Writers.
 
@@ -53,9 +53,19 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
 
 8. Build the documentation `uv run mkdocs serve` and check that your Writer renders correctly.
 
-9. If running the tests pass and linting, formatting, type checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
+9. Run the spell checker `cspell .`. Since this step requires [Node.js and npm]{:target="_blank"} to be installed, you may skip it. This check is also performed once you do Step 10.
+
+10. If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
 
 [fork]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo
 [pull request]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork
 [repository]: https://github.com/MSLNZ/msl-io
 [uv]: https://docs.astral.sh/uv/
+[mypy]: https://mypy.readthedocs.io/en/stable/index.html
+[basedpyright]: https://docs.basedpyright.com/latest/
+[ruff]: https://docs.astral.sh/ruff/
+[MkDocs]: https://www.mkdocs.org/
+[Material]: https://squidfunk.github.io/mkdocs-material/
+[mkdocstrings-python]: https://mkdocstrings.github.io/python/
+[CSpell]: https://cspell.org/
+[Node.js and npm]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
