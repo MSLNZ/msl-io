@@ -20,17 +20,17 @@ class RegularTransmittanceReader(Reader):
 
     @staticmethod
     def can_read(file: ReadLike | str, **kwargs: Any) -> bool:  # noqa: ARG004
-        """Checks is the file extension is .dat and the filename starts with 'Trans'.
+        """Checks if the file extension is `.dat` and the filename starts with `Trans_`.
 
         Args:
-            file: file to be read
+            file: The file to check.
             kwargs: All keyword arguments are ignored.
         """
         filename = get_basename(file)
         return filename.startswith("Trans_") and filename.endswith((".dat", ".DAT"))
 
     def read(self, **kwargs: Any) -> None:  # noqa: ARG002, C901, PLR0915
-        """Reads the data in the corresponding log file.
+        """Reads the data in the corresponding `.log` and `.celsius` files.
 
         Args:
             kwargs: All keyword arguments are ignored.
