@@ -18,7 +18,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
     from typing import TYPE_CHECKING
 
     # Import the necessary msl-io object to subclass
-    from msl.io import Reader
+    from msl.io.base import Reader
 
     if TYPE_CHECKING:
         from typing import Any
