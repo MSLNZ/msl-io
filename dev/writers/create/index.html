@@ -1269,7 +1269,7 @@
 <p>Add test cases to the <code>tests</code> directory to make sure that your Writer works as expected. It is recommended to try converting a <a class="autorefs autorefs-internal" title="            Root" href="../../api/base/#msl.io.base.Root">Root</a> object between your Writer and other Writers that are available to verify different file-format conversions. Also, look at the test modules that begin with <code>test_writer</code> for more examples. Run the tests using <code>uv run pytest</code>.</p>
 </li>
 <li>
-<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue. These checks are also performed once you do Step 10.</p>
+<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. These checks are also performed once you do Step 10. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue.</p>
 </li>
 <li>
 <p>Add the new Writer, alphabetically, to <code>docs/writers/index.md</code>. Follow what is done for the other Writers.</p>

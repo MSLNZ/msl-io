@@ -1295,7 +1295,7 @@
 <p>Add an example data file to the <code>tests/samples</code> directory and add a test case to the <code>tests</code> directory. Make sure that your Reader is returned by calling the <a class="autorefs autorefs-internal" title="            read" href="../../api/base/#msl.io.base.read">read</a> function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using <code>uv run pytest</code>.</p>
 </li>
 <li>
-<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue. These checks are also performed once you do Step 10.</p>
+<p>Lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. These checks are also performed once you do Step 10. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names: "io" and "msl.io"</em> issue.</p>
 </li>
 <li>
 <p>Add the new Reader, alphabetically, to <code>docs/readers/index.md</code>. Follow what is done for the other Readers.</p>
