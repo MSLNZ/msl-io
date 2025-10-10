@@ -1,10 +1,26 @@
 # Install
 
-`msl-io` is available for installation via the [Python Package Index]{:target="_blank"}
+`msl-io` is available for installation via the [Python Package Index]{:target="_blank"}. It can be installed using a variety of package managers.
 
-```console
-pip install msl-io
-```
+=== "pip"
+    ```console
+    pip install msl-io
+    ```
+
+=== "uv"
+    ```console
+    uv add msl-io
+    ```
+
+=== "poetry"
+    ```console
+    poetry add msl-io
+    ```
+
+=== "pdm"
+    ```console
+    pdm add msl-io
+    ```
 
 ## Dependencies
 
@@ -23,15 +39,48 @@ The following packages are not automatically installed when `msl-io` is installe
 
 To include [h5py]{:target="_blank"} when installing `msl-io` run
 
-```console
-pip install msl-io[h5py]
-```
+
+=== "pip"
+    ```console
+    pip install msl-io[h5py]
+    ```
+
+=== "uv"
+    ```console
+    uv add msl-io[h5py]
+    ```
+
+=== "poetry"
+    ```console
+    poetry add msl-io[h5py]
+    ```
+
+=== "pdm"
+    ```console
+    pdm add msl-io[h5py]
+    ```
 
 To include the Google-API packages run
 
-```console
-pip install msl-io[google]
-```
+=== "pip"
+    ```console
+    pip install msl-io[google]
+    ```
+
+=== "uv"
+    ```console
+    uv add msl-io[google]
+    ```
+
+=== "poetry"
+    ```console
+    poetry add msl-io[google]
+    ```
+
+=== "pdm"
+    ```console
+    pdm add msl-io[google]
+    ```
 
 [Python Package Index]: https://pypi.org/project/msl-io/
 [numpy]: https://www.numpy.org/
