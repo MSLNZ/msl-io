@@ -45,7 +45,7 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
 
 4. Add test cases to the `tests` directory to make sure that your Writer works as expected. It is recommended to try converting a [Root][msl.io.base.Root] object between your Writer and other Writers that are available to verify different file-format conversions. Also, look at the test modules that begin with `test_writer` for more examples. Run the tests using `uv run pytest`.
 
-5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. These checks are also performed once you do Step 10.
+5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. These checks are also performed once you do Step 10. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names: "io" and "msl.io"* issue.
 
 6. Add the new Writer, alphabetically, to `docs/writers/index.md`. Follow what is done for the other Writers.
 

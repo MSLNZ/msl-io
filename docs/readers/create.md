@@ -70,7 +70,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
 
 4. Add an example data file to the `tests/samples` directory and add a test case to the `tests` directory. Make sure that your Reader is returned by calling the [read][msl.io.base.read] function, using your example data file as the input, and that the information in the returned object is correct. Run the tests using `uv run pytest`.
 
-5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names: "io" and "msl.io"* issue. These checks are also performed once you do Step 10.
+5. Lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. These checks are also performed once you do Step 10. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names: "io" and "msl.io"* issue.
 
 6. Add the new Reader, alphabetically, to `docs/readers/index.md`. Follow what is done for the other Readers.
 
