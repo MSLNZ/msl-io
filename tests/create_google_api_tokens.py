@@ -2,6 +2,8 @@
 
 from msl.io import GDrive, GMail, GSheets, constants
 
+constants.MSL_IO_DIR.mkdir(exist_ok=True)
+
 account = "testing"
 credentials = constants.MSL_IO_DIR / f"{account}-client-secret.json"
 
