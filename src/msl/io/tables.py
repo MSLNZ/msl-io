@@ -146,7 +146,7 @@ def read_table_excel(
     cells: str | None = None,
     sheet: str | None = None,
     as_datetime: bool = True,
-    dtype: DTypeLike = None,
+    dtype: DTypeLike | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from an Excel spreadsheet.
@@ -196,7 +196,7 @@ def read_table_gsheets(
     sheet: str | None = None,
     *,
     as_datetime: bool = True,
-    dtype: DTypeLike = None,
+    dtype: DTypeLike | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from a Google Sheets spreadsheet.
@@ -251,7 +251,7 @@ def read_table_ods(  # noqa: PLR0913
     sheet: str | None = None,
     as_datetime: bool = True,
     merged: bool = False,
-    dtype: DTypeLike = None,
+    dtype: DTypeLike | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from an OpenDocument Spreadsheet.
@@ -297,7 +297,7 @@ def read_table_ods(  # noqa: PLR0913
     return _spreadsheet_to_dataset(table, file, dtype)
 
 
-def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype: DTypeLike) -> Dataset:
+def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype: DTypeLike | None) -> Dataset:
     header: Any
     data: Any
     if not table:

@@ -34,7 +34,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
         parent: Group | None,
         read_only: bool,
         shape: ShapeLike = (0,),
-        dtype: DTypeLike = float,
+        dtype: DTypeLike | None = float,
         buffer: Buffer | None = None,
         offset: SupportsIndex = 0,
         strides: ShapeLike | None = None,
