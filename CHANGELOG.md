@@ -2,6 +2,12 @@
 
 ---
 
+## unreleased
+
+***Added:***
+
+- Reading a table using `dtype="header"` now supports specifying the number of repeats for each data type
+
 ## 0.3.0 (2025-10-10)
 
 ***Added:***

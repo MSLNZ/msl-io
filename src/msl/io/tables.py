@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 _spreadsheet_top_left_regex = re.compile(r"^([A-Z]+)(\d+)$")
 _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")
+_header_dtype_regex = re.compile(r"([<>|=]*)([*\d]*)([^,]+)")
 
 
 def _header_dtype(dtype: str, header: list[str]) -> np.dtype:
@@ -31,8 +32,36 @@ def _header_dtype(dtype: str, header: list[str]) -> np.dtype:
     if not data_types:
         return np.dtype({"names": header, "formats": [np.double] * len(header)})
 
-    splitted = [h.strip() for h in data_types.split(",")]
-    formats = [splitted[0]] * len(header) if len(splitted) == 1 else splitted
+    splitted = [d.strip() for d in data_types.split(",")]
+    if len(splitted) == 1:
+        formats = [splitted[0].replace("*", "")] * len(header)
+        return np.dtype({"names": header, "formats": formats})
+
+    before: list[str] = []
+    after: list[str] = []
+    repeat_dtype: str = ""
+    for item in splitted:
+        match = _header_dtype_regex.match(item)
+        if match is None:
+            msg = f"Invalid data type {data_types!r} (check commas)" if not item else f"Invalid data type {item!r}"
+            raise ValueError(msg)
+
+        byte_order, repeat, dtype = match.groups()
+        typ: str = byte_order + dtype
+        if repeat == "*":
+            if repeat_dtype:
+                msg = "Using the * character to repeat a data type can only be used once"
+                raise ValueError(msg)
+            repeat_dtype = typ
+            continue
+
+        n = int(repeat) if repeat else 1
+        if repeat_dtype:
+            after.extend([typ] * n)
+        else:
+            before.extend([typ] * n)
+
+    formats = before if not repeat_dtype else before + [repeat_dtype] * (len(header) - len(before) - len(after)) + after
     return np.dtype({"names": header, "formats": formats})
 
 
@@ -92,7 +121,7 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
             header = [header[i] for i in use_cols]
 
         dtype = kwargs.get("dtype")
-        if isinstance(dtype, str) and dtype.startswith("header"):
+        if isinstance(dtype, str) and dtype[:6].lower().startswith("header"):
             kwargs["dtype"] = _header_dtype(dtype, header)
 
         # Calling np.loadtxt (on Python 3.5, 3.6 and 3.7) on a file
@@ -282,7 +311,7 @@ def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype
         if len(data) == 1:  # a single row
             data = data[0]
 
-    if isinstance(dtype, str) and dtype.startswith("header"):
+    if isinstance(dtype, str) and dtype[:6].lower().startswith("header"):
         dtype = _header_dtype(dtype, header)
 
     return Dataset(

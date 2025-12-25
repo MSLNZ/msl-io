@@ -11,6 +11,7 @@ import pytest
 from msl.io import read_table
 from msl.io.tables import (
     _header_dtype,  # pyright: ignore[reportPrivateUsage]
+    _header_dtype_regex,  # pyright: ignore[reportPrivateUsage]
     read_table_excel,
     read_table_gsheets,
     read_table_ods,
@@ -473,16 +474,20 @@ def test_header_dtype_with_spaces() -> None:
     assert np.dtype([("a", "f4"), ("b", "U16"), ("c", "i4")]) == _header_dtype(dtype, header)
 
 
-@pytest.mark.parametrize("dtype", [":f4,i4,", ":f8,,f8", ":apple"])
+@pytest.mark.parametrize("dtype", [":f4,i4,", ":f8,,f8", ":,"])
 def test_header_dtype_type_error(dtype: str) -> None:
-    with pytest.raises(TypeError, match=r"not understood"):
+    with pytest.raises(ValueError, match=rf"Invalid data type {dtype[1:]!r} \(check commas\)"):
         _ = _header_dtype(dtype, ["a", "b", "c"])
 
 
-@pytest.mark.parametrize("dtype", [":f8,f8", ":,"])
-def test_header_dtype_value_error(dtype: str) -> None:
+def test_header_dtype_not_same_length() -> None:
     with pytest.raises(ValueError, match=r"same length"):
-        _ = _header_dtype(dtype, ["a", "b", "c"])
+        _ = _header_dtype(":f8,f8", ["a", "b", "c"])
+
+
+def test_header_dtype_invalid_dtype() -> None:
+    with pytest.raises(TypeError, match=r"'apple' not understood"):
+        _ = _header_dtype(":f8,apple,i4", ["a", "b", "c"])
 
 
 @pytest.mark.parametrize(("ext", "kwargs"), [(".txt", {"delimiter": "\t"}), (".csv", {})])
@@ -779,3 +784,112 @@ def test_gsheet_raises() -> None:
     for c in INVALID_CELL_RANGES:
         with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = read_table(ssid, cells=c, sheet="StartA1", account="testing")
+
+
+@pytest.mark.parametrize(
+    ("string", "groups"),
+    [
+        ("?", ("", "", "?")),
+        ("f4", ("", "", "f4")),
+        ("<i8", ("<", "", "i8")),
+        ("|2U16", ("|", "2", "U16")),
+        ("2|U16", ("", "2", "|U16")),
+        ("21<uint16", ("", "21", "<uint16")),
+        ("=32H", ("=", "32", "H")),
+        (">*?", (">", "*", "?")),
+        ("<>*1*float64", ("<>", "*1*", "float64")),
+        ("9c16 c", ("", "9", "c16 c")),
+        (">*ab,c", (">", "*", "ab")),  # does not capture comma
+        ("e=>3iWew7y4nRc&%#!@~h4r6i=-176n", ("", "", "e=>3iWew7y4nRc&%#!@~h4r6i=-176n")),
+    ],
+)
+def test_header_dtype_regex(string: str, groups: tuple[str, str, str]) -> None:
+    match = _header_dtype_regex.match(string)
+    assert match is not None
+    assert match.groups() == groups
+
+
+def test_header_dtype_multiple_asterisk() -> None:
+    with pytest.raises(ValueError, match=r"can only be used once"):
+        _ = _header_dtype(":i4,*f8,i4,*f8", header=["a", "b", "c", "d", "e"])
+
+
+@pytest.mark.parametrize(
+    ("value", "output"),
+    [
+        (("f8"), [("a", "f8"), ("b", "f8"), ("c", "f8")]),
+        (("*f8"), [("a", "f8"), ("b", "f8"), ("c", "f8"), ("d", "f8"), ("e", "f8")]),
+        (("U2,*f8"), [("a", "U2"), ("b", "f8")]),
+        (("U2,*f8"), [("a", "U2"), ("b", "f8"), ("c", "f8")]),
+        (("2U8, *f8"), [("a", "U8"), ("b", "U8"), ("c", "f8")]),
+        (("i4, H, *f8"), [("a", "i4"), ("b", "H"), ("c", "f8")]),
+        (("*f8,U1"), [("a", "f8"), ("b", "U1")]),
+        (("*f8,U1"), [("a", "f8"), ("b", "f8"), ("c", "f8"), ("d", "U1")]),
+        (("i4,*f8,U1"), [("a", "i4"), ("b", "f8"), ("c", "U1")]),
+        (("i8,*uint32,f4"), [("a", "i8"), ("b", "uint32"), ("c", "uint32"), ("d", "uint32"), ("e", "f4")]),
+        (
+            ("3U8  , *?,  S1 , 2>f8,i4,=2H,uint32,1S256, 2double"),
+            [
+                ("a", "U8"),
+                ("b", "U8"),
+                ("c", "U8"),
+                ("d", "?"),
+                ("e", "?"),
+                ("f", "?"),
+                ("g", "S1"),
+                ("h", ">f8"),
+                ("i", ">f8"),
+                ("j", "i4"),
+                ("k", "=H"),
+                ("l", "=H"),
+                ("m", "uint32"),
+                ("n", "S256"),
+                ("o", "double"),
+                ("p", "double"),
+            ],
+        ),
+    ],
+)
+def test_header_dtype_asterisk(value: str, output: list[tuple[str, str]]) -> None:
+    header = list("abcdefghijklmnopqrstuvwxyz")[: len(output)]
+    assert np.dtype(output) == _header_dtype(f"header: {value}", header)
+
+
+@pytest.mark.parametrize("header", ["header", "Header", "HEADER"])
+def test_read_table_asterisk(header: str) -> None:
+    s = StringIO("a b c d e f g h\ni j 1 2 3 4 5 k\nl m 6 7 8 9 10 n\no p 11 12 13 14 15 q")
+    dset = read_table(s, dtype=f"{header}: 2U1, *H, U1")
+    assert np.array_equal(dset["a"], ["i", "l", "o"])
+    assert np.array_equal(dset["b"], ["j", "m", "p"])
+    assert np.array_equal(dset["c"], [1, 6, 11])
+    assert np.array_equal(dset["d"], [2, 7, 12])
+    assert np.array_equal(dset["e"], [3, 8, 13])
+    assert np.array_equal(dset["f"], [4, 9, 14])
+    assert np.array_equal(dset["g"], [5, 10, 15])
+    assert np.array_equal(dset["h"], ["k", "n", "q"])
+
+
+@pytest.mark.parametrize("ext", [".xls", ".xlsx"])
+def test_header_dtype_repeats_excel_spreadsheet(ext: str) -> None:
+    table = read_table(get_url(ext), dtype="header:*U19,f8,f8", sheet="A1", as_datetime=False)
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["<U19", "<U19", "<U19", "float64", "float64"]
+    assert np.array_equal(table.timestamp, data["f0"])
+    assert np.array_equal(table["val1"], [str(f) for f in data["f1"]])
+    assert np.array_equal(table.uncert1, [str(f) for f in data["f2"]])
+    assert np.array_equal(table["val2"], data["f3"])
+    assert np.array_equal(table.uncert2, data["f4"])
+
+
+@pytest.mark.parametrize("header", ["header", "Header", "HEADER"])
+def test_header_dtype_repeats_open_document_spreadsheet(header: str) -> None:
+    table = read_table(get_url(".ods"), dtype=f"{header}: 2U19, *f8, i4", sheet="A1", as_datetime=False)
+    assert table.shape == (10,)
+    assert table.dtype.names == ("timestamp", "val1", "uncert1", "val2", "uncert2")
+    assert [str(v) for v, _ in table.dtype.fields.values()] == ["<U19", "<U19", "float64", "float64", "int32"]
+    assert np.array_equal(table.timestamp, ods_data["f0"])
+    assert np.array_equal(table["val1"], [str(f) for f in ods_data["f1"]])
+    assert np.array_equal(table.uncert1, ods_data["f2"])
+    assert np.array_equal(table["val2"], ods_data["f3"])
+    assert np.array_equal(table.uncert2, [0] * 10)

@@ -15,6 +15,7 @@ The data files that can be read or written are not restricted to [HDF5]{:target=
 >>> Path("my_file.h5").unlink(missing_ok=True)
 >>> Path("my_file.json").unlink(missing_ok=True)
 >>> Path("my_table.csv").unlink(missing_ok=True)
+>>> Path("archived.json").unlink(missing_ok=True)
 >>> SKIP_IF_NO_H5PY()
 
 -->
@@ -282,7 +283,7 @@ The [read_table][msl.io.read_table] function will read tabular data from a file.
 
 The returned item is a [Dataset][msl-io-dataset] with the header provided in the [Metadata][msl-io-metadata]. You can read a table from a text-based file or from a spreadsheet.
 
-For example, suppose a file named *my_table.txt* contains the following information
+For example, suppose a file named *my_table.txt* contains the following information.
 
 <table>
    <tr>
@@ -330,7 +331,7 @@ array([[1., 2., 3.],
 
 ```
 
-and since a [Dataset][msl-io-dataset] behaves like a numpy [ndarray][numpy.ndarray]{:target="_blank"}, you can call [ndarray][numpy.ndarray]{:target="_blank"} attributes directly with the `table` instance
+and since a [Dataset][msl-io-dataset] behaves like a numpy [ndarray][numpy.ndarray]{:target="_blank"}, you can call [ndarray][numpy.ndarray]{:target="_blank"} attributes directly with the `table` instance.
 
 ```pycon
 >>> table.shape
@@ -340,7 +341,7 @@ and since a [Dataset][msl-io-dataset] behaves like a numpy [ndarray][numpy.ndarr
 
 ```
 
-You can define the [dtype][numpy.dtype]{:target="_blank"} of each column. For example, to return integer values instead of floating-point numbers you can include the `dtype=int` keyword argument
+You can define the [dtype][numpy.dtype]{:target="_blank"} of the items in the table. For example, to return integer values instead of floating-point numbers you can include the `dtype=int` keyword argument.
 
 ```pycon
 >>> table = read_table("my_table.txt", dtype=int)
@@ -349,9 +350,7 @@ dtype('int64')
 
 ```
 
-and the `dtype` value is passed to the [dtype][numpy.dtype]{:target="_blank"} constructor.
-
-However, if you specify the `dtype` value as a string which starts with the text `header`, then the values in the *header* are used as field names for the [structured array][structured_arrays]{:target="_blank"} that is created where each data type is by default a [double][numpy.double]{:target="_blank"} *(note: the header is still included as metadata)*
+If you specify the `dtype` value as a string that starts with the text `header`, then the values in the *header* are used as field names for the [structured array][structured_arrays]{:target="_blank"} that is created where each data type is by default a [double][numpy.double]{:target="_blank"} *(the header is still included as metadata)*.
 
 ```pycon
 >>> table = read_table("my_table.txt", dtype="header")
@@ -362,7 +361,7 @@ array([1., 4., 7.])
 
 ```
 
-You can also specify the data type to use for all columns by specifying `header:` followed by the data type
+You can also specify the data type to use for all items by specifying `header:` followed by the data type
 
 ```pycon
 >>> table = read_table("my_table.txt", dtype="header:f4")
@@ -373,14 +372,27 @@ array([2., 5., 8.], dtype=float32)
 
 ```
 
-or you can specify the data type of each column by separating each data type with a comma
+or you can specify the data type of each column by separating each data type with a comma.
 
 ```pycon
->>> table = read_table("my_table.txt", dtype="header:f4,f8,H")
+>>> table = read_table("my_table.txt", dtype="header:int32,f8,H")
 >>> table.dtype
-dtype([('x', '<f4'), ('y', '<f8'), ('z', '<u2')])
+dtype([('x', '<i4'), ('y', '<f8'), ('z', '<u2')])
 >>> table.z
 array([3, 6, 9], dtype=uint16)
+
+```
+
+You can also specify the number of times to repeat a data type for adjacent columns and use the `*` character to repeat a data type as many times as necessary to match the length of the *header*. For example, `header:2U16,*double,?` means that the first two columns are [unicode strings][numpy.str_]{:target="_blank"} that may contain up to 16 characters, the third to second-to-last columns are of type [double][numpy.double]{:target="_blank"} and the last column is of type [bool][numpy.bool]{:target="_blank"}. Note that using *repeats* when using the `header:` prefix is different than how numpy treats a *repeats* specification. Here, *repeats* is the number of times to repeat the data type for adjacent columns, e.g., `3f8` is expanded to `f8,f8,f8`, whereas numpy would treat `3f8` as a 3 x 1 sub-array of type `f8`. If you want the sub-array feature, do not use the `header:` prefix.
+
+```pycon
+>>> table = read_table("my_table.txt", dtype="header:U8,*int")
+>>> table.dtype
+dtype([('x', '<U8'), ('y', '<i8'), ('z', '<i8')])
+>>> table.x
+array(['1', '4', '7'], dtype='<U8')
+>>> table.y
+array([2, 5, 8])
 
 ```
 
