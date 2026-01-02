@@ -170,6 +170,11 @@ reportAny = false
 reportExplicitAny = false
 reportImplicitOverride = false
 
+[tool.ty.src]
+exclude = [
+    "src/msl/io/readers/_xlrd",
+]
+
 [tool.ruff]
 cache-dir = ".cache/ruff"
 line-length = 120
