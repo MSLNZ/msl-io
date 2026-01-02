@@ -506,21 +506,21 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         _notify_created(self, parent)
         super().__init__(read_only=read_only)
 
-    def __delitem__(self, item: str) -> None:  # noqa: C901
+    def __delitem__(self, key: str) -> None:  # noqa: C901
         """Maybe delete a Group, if the Group is not in read-only mode."""
         self._raise_if_read_only()
-        if item and item[0] != "/":
-            item = f"/{item}"
+        if key and key[0] != "/":
+            key = f"/{key}"
 
         try:
-            popped = self._mapping.pop(item)
+            popped = self._mapping.pop(key)
         except KeyError:
-            msg = f"{item!r} is not in {self!r}"
+            msg = f"{key!r} is not in {self!r}"
             raise KeyError(msg) from None
         else:
             # use recursion to delete the reference to
             # `popped` from the head of this Group
-            head, tail = os.path.split(item)
+            head, tail = os.path.split(key)
             if head != "/":
                 assert self[head].pop(tail) is popped  # noqa: S101
 
@@ -550,15 +550,15 @@ class Group(FreezableMap["Dataset | Group"]):  # noqa: PLW1641
         datasets = "dataset" if d == 1 else "datasets"
         return f"<Group {self._name!r} ({g} {groups}, {d} {datasets}, {m} metadata)>"
 
-    def __getitem__(self, item: str) -> Dataset | Group:
+    def __getitem__(self, key: str) -> Dataset | Group:
         """Get an item from the `Group`."""
-        if item and item[0] != "/":
-            item = f"/{item}"
+        if key and key[0] != "/":
+            key = f"/{key}"
 
         try:
-            return self._mapping[item]
+            return self._mapping[key]
         except KeyError:
-            msg = f"{item!r} is not in {self!r}"
+            msg = f"{key!r} is not in {self!r}"
             raise KeyError(msg) from None
 
     def __getattr__(self, item: str) -> Dataset | Group:
