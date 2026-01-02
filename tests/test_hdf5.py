@@ -1,20 +1,18 @@
 import os
 import tempfile
+from importlib.util import find_spec
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
-
 from msl.io import Dataset, Group, HDF5Writer, JSONWriter, read
 from msl.io.readers import HDF5Reader
 
+has_h5py = find_spec("h5py") is not None
 
-@pytest.mark.skipif(h5py is None, reason="h5py not installed")
+
+@pytest.mark.skipif(not has_h5py, reason="h5py not installed")
 def test_read_write_convert() -> None:  # noqa: PLR0915
     root1 = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
 
@@ -126,7 +124,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
         assert g2.metadata["hello"] == "world"
 
 
-@pytest.mark.skipif(h5py is None, reason="h5py not installed")
+@pytest.mark.skipif(not has_h5py, reason="h5py not installed")
 def test_raises() -> None:
     root = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
 
@@ -173,7 +171,7 @@ def test_raises() -> None:
     file.unlink()
 
 
-@pytest.mark.skipif(h5py is None, reason="h5py not installed")
+@pytest.mark.skipif(not has_h5py, reason="h5py not installed")
 def test_numpy_unicode_dtype() -> None:
     writer = HDF5Writer()
     writer.add_metadata(wide_chars=np.array(["1", "-4e+99", "True"], dtype="<U6"))

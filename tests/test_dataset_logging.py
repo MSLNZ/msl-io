@@ -1,20 +1,18 @@
 import logging
 import tempfile
+from importlib.util import find_spec
 from pathlib import Path
 
 import numpy as np
 import pytest
-
-try:
-    import h5py  # type: ignore[import-untyped] # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
 
 from msl.io import DatasetLogging, HDF5Writer, JSONWriter, read
 
 logger = logging.getLogger(__name__)
 
 num_initial_handlers = 0
+
+has_h5py = find_spec("h5py") is not None
 
 
 def setup_module() -> None:
@@ -207,14 +205,14 @@ def test_save_then_read() -> None:  # noqa: C901, PLR0912, PLR0915
     logger.warning("foo")
 
     json.write(mode="w")
-    if h5py is not None:
+    if has_h5py:
         h5.write(mode="w")
 
     assert isinstance(json.file, Path)
     assert isinstance(h5.file, Path)
 
     json_2 = read(json.file)
-    if h5py is not None:
+    if has_h5py:
         h5_2 = read(h5.file)
         Path(h5.file).unlink()
     else:

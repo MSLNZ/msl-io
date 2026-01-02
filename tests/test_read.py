@@ -1,15 +1,11 @@
 import socket
 import threading
 import time
+from importlib.util import find_spec
 from io import BytesIO
 from pathlib import Path
 
 import pytest
-
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
 
 from msl.io import JSONWriter, read
 from msl.io.readers import JSONReader
@@ -35,7 +31,7 @@ def test_raises() -> None:
         _ = read(samples / "uñicödé")  # cSpell: ignore uñicödé
 
 
-@pytest.mark.skipif(h5py is None, reason="h5py is not installed")
+@pytest.mark.skipif(find_spec("h5py") is None, reason="h5py is not installed")
 def test_unicode_filename() -> None:
     root = read(samples / "uñicödé.h5")
     assert root.metadata.is_unicode

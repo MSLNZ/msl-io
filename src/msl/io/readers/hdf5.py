@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, no_type_check
 try:
     import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
-    h5py = None
+    has_h5py = False
+else:
+    has_h5py = True
 
 from msl.io.base import Reader
 from msl.io.utils import get_bytes
@@ -52,7 +54,7 @@ class HDF5Reader(Reader):
         Args:
             kwargs: All keyword arguments are passed to [h5py.File][]{:target="_blank"}.
         """
-        if h5py is None:
+        if not has_h5py:
             msg = "You must install h5py to read HDF5 files, run\n  pip install h5py"
             raise ImportError(msg)
 

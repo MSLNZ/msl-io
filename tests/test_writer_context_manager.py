@@ -2,20 +2,18 @@
 
 import os
 import tempfile
+from importlib.util import find_spec
 from io import StringIO
 
 import numpy as np
 import pytest
 
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
+from msl.io import Dataset, HDF5Writer, JSONWriter, Root, Writer, read
 
-from msl.io import Dataset, HDF5Writer, JSONWriter, Root, read
-
-# Append new Writers to test
-writers = [JSONWriter, HDF5Writer]
+# Writers to test
+writers: list[type[Writer]] = [JSONWriter]
+if find_spec("h5py") is not None:
+    writers.append(HDF5Writer)
 
 
 def fill_root_with_data(root: Root) -> None:
@@ -53,8 +51,6 @@ def assert_root_data(root: Root) -> None:
 
 def test_none_type() -> None:
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with pytest.raises(ValueError) as err:  # noqa: PT011, PT012, SIM117
             with writer() as root:
                 assert root.file is None
@@ -69,8 +65,6 @@ def test_file_path() -> None:
         os.remove(path)  # noqa: PTH107
 
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with writer(path) as root:
             assert root.file == path
             fill_root_with_data(root)
@@ -90,8 +84,6 @@ def test_exception_raised() -> None:
         os.remove(path)  # noqa: PTH107
 
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with pytest.raises(ZeroDivisionError):  # noqa: PT012, SIM117
             with writer(path) as root:
                 assert root.file == path
@@ -106,8 +98,6 @@ def test_exception_raised() -> None:
         os.remove(path)  # noqa: PTH107
 
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with pytest.raises(ZeroDivisionError):  # noqa: PT012, SIM117
             with writer(path) as root:
                 assert root.file == path

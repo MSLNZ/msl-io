@@ -8,7 +8,9 @@ import numpy as np
 try:
     import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 except ImportError:
-    h5py = None
+    has_h5py = False
+else:
+    has_h5py = True
 
 from msl.io.base import Writer
 from msl.io.metadata import Metadata
@@ -55,7 +57,7 @@ class HDF5Writer(Writer):
                 converting between different file formats.
             kwargs: All additional keyword arguments are passed to [h5py.File][]{:target="_blank"}.
         """
-        if h5py is None:
+        if not has_h5py:
             msg = "You must install h5py to write HDF5 files, run\n  pip install h5py"
             raise ImportError(msg)
 

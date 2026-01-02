@@ -1,19 +1,17 @@
 import os
 import tempfile
+from importlib.util import find_spec
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
-
 from msl.io import Dataset, HDF5Writer, JSONWriter, Reader, read
 from msl.io.readers import JSONReader
 
 samples = Path(__file__).parent / "samples"
+
+has_h5py = find_spec("h5py") is not None
 
 
 def test_read_write_convert() -> None:  # noqa: PLR0915
@@ -42,7 +40,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
     assert np.array_equal(array_mixed_null, ["a", False, 5, 72.3, "hey", None])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert "array_mixed_null" not in temp.metadata
     root3 = None
-    if h5py is not None:
+    if has_h5py:
         hdf5_writer.write(root=temp, mode="w")
         assert isinstance(hdf5_writer.file, Path)
         root_hdf5 = read(hdf5_writer.file)
@@ -55,7 +53,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
         os.remove(writer2.file)  # noqa: PTH107
 
     roots = [root1, root2]
-    if h5py is not None and root3 is not None:
+    if has_h5py and root3 is not None:
         roots.append(root3)
 
     for root in roots:
@@ -73,7 +71,7 @@ def test_read_write_convert() -> None:  # noqa: PLR0915
 
         # HDF5 does not support NULL type values
         # also, "array_mixed" gets converted to be all strings by h5py
-        if h5py is not None and root is root3:
+        if has_h5py and root is root3:
             assert len(root.metadata) == 9
             # use tolist() not np.array_equal
             assert root.metadata.array_mixed.tolist() == ["True", "-5", "0.002345", "something", "49.1871524"]

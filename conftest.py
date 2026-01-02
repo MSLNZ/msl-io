@@ -1,17 +1,14 @@
-"""Configuration file for doctests."""  # cSpell: ignore doctests
+"""Configuration file for doctests."""
 
+# cSpell: ignore doctests
 from __future__ import annotations
 
 import os
+from importlib.util import find_spec
 from typing import TYPE_CHECKING
 
 import pytest
 from google.auth.exceptions import GoogleAuthError
-
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
 
 from msl.io.google_api import GSheets
 
@@ -35,7 +32,7 @@ def check_h5py() -> None:
 
     h5py 2.10.0 was the last release to provide wheels for Windows x86 on PyPI (Python <= 3.8).
     """
-    if h5py is None:
+    if find_spec("h5py") is None:
         pytest.skip("h5py not installed")
 
 

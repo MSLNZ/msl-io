@@ -1,13 +1,9 @@
 import os
+from importlib.util import find_spec
 from pathlib import Path
 
 import numpy as np
 import pytest
-
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
 
 from msl.io import HDF5Writer, JSONWriter, copy, is_dir_accessible, read, read_table
 
@@ -18,7 +14,7 @@ skipif_not_mapped = pytest.mark.skipif(not is_dir_accessible(folder), reason="ma
 
 
 @skipif_not_mapped
-@pytest.mark.skipif(h5py is None, reason="h5py is not installed")
+@pytest.mark.skipif(find_spec("h5py") is None, reason="h5py is not installed")
 def test_hdf5() -> None:
     root = read(Path(__file__).parent / "samples" / "hdf5_sample.h5")
     w = HDF5Writer(os.path.join(folder, "msl-io-testing.h5"))  # noqa: PTH118

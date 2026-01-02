@@ -1,20 +1,18 @@
 """When a new Writer is created it should be added to the list of writers to test."""
 
 import tempfile
+from importlib.util import find_spec
 from io import BufferedWriter, BytesIO, StringIO, TextIOWrapper
 from pathlib import Path
 
 import numpy as np
 
-try:
-    import h5py  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-except ImportError:
-    h5py = None
+from msl.io import Dataset, HDF5Writer, JSONWriter, Root, Writer, read
 
-from msl.io import Dataset, HDF5Writer, JSONWriter, Root, read
-
-# Append new Writers to test
-writers = [JSONWriter, HDF5Writer]
+# Writers to test
+writers: list[type[Writer]] = [JSONWriter]
+if find_spec("h5py") is not None:
+    writers.append(HDF5Writer)
 
 
 def fill_root_with_data(root: Root) -> None:
@@ -73,8 +71,6 @@ def test_string_io() -> None:
 def test_bytes_io() -> None:
     # write Root to a BytesIO stream and then read it back
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with BytesIO() as buf:
             with writer(buf) as root:
                 assert isinstance(root.file, BytesIO)
@@ -120,8 +116,6 @@ def test_open_binary() -> None:
         path.unlink()
 
     for writer in writers:
-        if writer is HDF5Writer and h5py is None:
-            continue
         with path.open("wb") as fp, writer(fp) as root:
             assert isinstance(root.file, BufferedWriter)
             assert repr(root) == f"<{writer.__name__} 'binary_file.bin' (0 groups, 0 datasets, 0 metadata)>"
