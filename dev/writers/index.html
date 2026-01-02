@@ -1650,9 +1650,7 @@ converting between different file formats.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/writers/hdf5.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 42</span>
-<span class="normal"> 43</span>
-<span class="normal"> 44</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 44</span>
 <span class="normal"> 45</span>
 <span class="normal"> 46</span>
 <span class="normal"> 47</span>
@@ -1761,7 +1759,9 @@ converting between different file formats.</p>
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0915</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0915</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">WriteLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write to a [HDF5](https://www.hdfgroup.org/){:target=&quot;_blank&quot;} file.</span>
@@ -1777,7 +1777,7 @@ converting between different file formats.</p>
 <span class="sd">            converting between different file formats.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [h5py.File][]{:target=&quot;_blank&quot;}.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">h5py</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_h5py</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must install h5py to write HDF5 files, run</span><span class="se">\n</span><span class="s2">  pip install h5py&quot;</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
