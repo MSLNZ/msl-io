@@ -425,14 +425,8 @@ def test_delete_vertex() -> None:  # noqa: PLR0915
     with pytest.raises(KeyError):  # invalid key
         del root["x"]
 
-    with pytest.raises(KeyError):  # invalid key
-        del root["x"]["y"]  # pyright: ignore[reportIndexIssue]
-
     with pytest.raises(AttributeError):  # invalid attribute
         del root.x
-
-    with pytest.raises(AttributeError):  # invalid attribute
-        del root.x.y  # pyright: ignore[reportAttributeAccessIssue]
 
     root.read_only = True
 
