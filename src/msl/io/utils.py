@@ -476,7 +476,7 @@ def get_lines(
 ) -> list[bytes]: ...
 
 
-def get_lines(  # noqa: PLR0912
+def get_lines(  # noqa: C901, PLR0912
     file: PathLike | ReadLike,
     *lines: int | None,
     remove_empty_lines: bool = False,
@@ -528,13 +528,15 @@ def get_lines(  # noqa: PLR0912
             result = [line.rstrip() for line in file]  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
             _ = file.seek(position)
 
-        assert lines  # noqa: S101
         if len(lines) == 1:
             result = result[lines[0] :]
         elif len(lines) == 2:  # noqa: PLR2004
             result = result[lines[0] : lines[1]]
-        else:
+        elif len(lines) == 3:  # noqa: PLR2004
             result = result[lines[0] : lines[1] : lines[2]]
+        else:
+            msg = "Too many values in *lines, a maximum of 3 values may be specified"
+            raise ValueError(msg)
 
     else:
         if not lines:

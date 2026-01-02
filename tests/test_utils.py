@@ -907,6 +907,15 @@ def test_get_lines() -> None:  # noqa: PLR0915
         assert utils.get_lines(obj, 15, 25, 3) == ["line15", "line18", "", "line24"]
         assert utils.get_lines(obj, 15, 25, 3, remove_empty_lines=True) == ["line15", "line18", "line24"]
 
+        # itertools.islice supports up to 4 arguments
+        # if all values in *lines are positive, the builtin exception for islice is raised
+        with pytest.raises(TypeError, match=r"islice"):
+            _ = utils.get_lines(obj, 1, 2, 3, 4)
+
+        # if any value is negative, our exception is raised
+        with pytest.raises(ValueError, match=r"Too many values in \*lines"):
+            _ = utils.get_lines(obj, 1, -2, 3, 4)
+
     string_io.close()
     open_.close()
 
