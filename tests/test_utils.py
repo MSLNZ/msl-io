@@ -483,7 +483,7 @@ def test_run_as_admin() -> None:  # noqa: PLR0915
     file.unlink()
 
     # call the Python interpreter
-    expected = subprocess.check_output([sys.executable, "-VV"])  # noqa: S603
+    expected = subprocess.check_output([sys.executable, "-VV"])
     out = utils.run_as_admin(args="-VV", executable=sys.executable, verb=None)
     assert out == expected
     out = utils.run_as_admin(args=f"{sys.executable} -VV", verb=None)

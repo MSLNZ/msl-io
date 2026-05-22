@@ -176,7 +176,7 @@ def test_nested_dict_as_value() -> None:
     assert np.array_equal(meta.nested["dict1"].dict2["dict3"], (1, 2, 3))
 
     with pytest.raises(AttributeError):
-        _ = meta.none.read_only  # type: ignore[attr-defined]
+        _ = meta.none.read_only  # type: ignore[attr-defined]  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType, reportUnknownVariableType]
     with pytest.raises(AttributeError):
         _ = meta["none"].read_only  # type: ignore[attr-defined]
 

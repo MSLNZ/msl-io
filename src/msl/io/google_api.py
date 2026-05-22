@@ -91,7 +91,7 @@ def _authenticate(token: Path, client_secrets_file: Path | None, scopes: list[st
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:  # pyright: ignore[reportUnknownMemberType]
             try:
-                credentials.refresh(Request())  # type: ignore[no-untyped-call] # pyright: ignore[reportUnknownMemberType,reportPossiblyUnboundVariable]
+                credentials.refresh(Request())  # pyright: ignore[reportUnknownMemberType,reportPossiblyUnboundVariable]
             except RefreshError as err:  # pyright: ignore[reportPossiblyUnboundVariable,reportUnknownVariableType]
                 if token.is_file() and not os.getenv("MSL_IO_RUNNING_TESTS"):
                     yes_no = input(f"RefreshError: {err}\nDelete the token file and re-authenticate (y/N)? ")

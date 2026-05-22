@@ -241,8 +241,10 @@ def test_accessing_subgroups_sub_datasets() -> None:  # noqa: PLR0915
     assert root.a is root["a"]
     assert root.a.d1 is root["a"]["d1"]
     assert root.a.b is root["a"]["b"]
+    assert isinstance(root.a.b, Group)
     assert root.a.b.c is root["a"]["b"]["c"]
     assert root.a.b.c.d is root["a"]["b"]["c"]["d"]
+    assert isinstance(root.a.b.c, Group)
     assert root.a.b.c.d.d2 is root["a"]["b"]["c"]["d"]["d2"]
     assert root.a.b.c.d.d3 is root["a"]["b"]["c"]["d"]["d3"]
 
@@ -646,7 +648,7 @@ def test_requires() -> None:  # noqa: PLR0915
     assert bb2 is root.aa.bb
     assert bb2.read_only
     assert root.aa.bb.read_only
-    with pytest.raises(ValueError, match=r"read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):  # type: ignore[unreachable]
         bb2.add_metadata(three=3)
 
     #
@@ -755,11 +757,11 @@ def test_requires() -> None:  # noqa: PLR0915
     assert isinstance(root["b"], Group)
     b = root["b"]
     assert b.require_dataset("x/y/z") is root.b.x.y.z
-    x = root["b"]["x"]  # type: ignore[assignment]
+    x = root["b"]["x"]
     assert x.require_dataset("/y/z") is root.b.x.y.z  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
     y = root["b"]["x"]["y"]
-    assert y.require_dataset("/z/") is root.b.x.y.z  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
-    assert root["b"]["x"]["y"].require_dataset("z") is root.b.x.y.z  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
+    assert y.require_dataset("/z/") is root.b.x.y.z  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
+    assert root["b"]["x"]["y"].require_dataset("z") is root.b.x.y.z  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
     xx = root.xx
     assert xx.require_dataset("yy") is root["xx"]["yy"]
     assert root.xx.require_dataset("yy/") is yy2
@@ -1000,6 +1002,7 @@ def test_add_dataset() -> None:
     assert len(list(root.datasets())) == 3
     assert len(list(root.a.datasets())) == 2
     assert len(list(root.a.b.datasets())) == 2
+    assert isinstance(root.a.b.c, Group)
     assert len(list(root.a.b.c.datasets())) == 2
     assert len(list(root.a.b.c.x.datasets())) == 1
     assert len(list(root.a.b.c.x.y.datasets())) == 1
