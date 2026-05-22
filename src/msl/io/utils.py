@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from subprocess import Popen
     from typing import Any, AnyStr, Literal
 
-    from .types import FileLikeRead, PathLike, ReadLike, SupportsRead, WriteLike
+    from .typing import FileLikeRead, PathLike, ReadLike, SupportsRead, WriteLike
 
 
 logger = logging.getLogger(__package__)

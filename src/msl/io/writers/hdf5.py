@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from io import BufferedIOBase
     from typing import Any
 
-    from msl.io.types import PathLike, WriteLike
+    from msl.io.typing import PathLike, WriteLike
 
 
 class HDF5Writer(Writer):

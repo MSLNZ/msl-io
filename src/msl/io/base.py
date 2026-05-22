@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import sys
     from typing import Any
 
-    from .types import PathLike, ReadLike, WriteLike
+    from .typing import PathLike, ReadLike, WriteLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11
@@ -85,7 +85,7 @@ class Writer(Root, ABC):
 
     @property
     def file(self) -> PathLike | WriteLike | None:
-        """[PathLike][msl.io.types.PathLike] | [WriteLike][msl.io.types.WriteLike] | None &mdash; The file object associated with the [Writer][msl.io.base.Writer]."""  # noqa: E501
+        """[PathLike][msl.io.typing.PathLike] | [WriteLike][msl.io.typing.WriteLike] | None &mdash; The file object associated with the [Writer][msl.io.base.Writer]."""  # noqa: E501
         return self._file
 
     def set_root(self, root: Group) -> None:
@@ -189,7 +189,7 @@ class Reader(Root, ABC):
 
     @property
     def file(self) -> ReadLike | str:
-        """[ReadLike][msl.io.types.ReadLike] | [str][] &mdash; The file object associated with the [Reader][msl.io.base.Reader]."""  # noqa: E501
+        """[ReadLike][msl.io.typing.ReadLike] | [str][] &mdash; The file object associated with the [Reader][msl.io.base.Reader]."""  # noqa: E501
         return self._file
 
     @abstractmethod

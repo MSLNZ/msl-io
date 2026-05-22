@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from numpy.typing import DTypeLike
 
-    from .types import PathLike, ReadLike
+    from .typing import PathLike, ReadLike
 
 _spreadsheet_top_left_regex = re.compile(r"^([A-Z]+)(\d+)$")
 _spreadsheet_range_regex = re.compile(r"^[A-Z]+\d*:[A-Z]+\d*$")

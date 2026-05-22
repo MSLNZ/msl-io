@@ -73,7 +73,7 @@ nav:
     - api/node.md
     - api/spreadsheets.md
     - api/tables.md
-    - api/types.md
+    - api/typing.md
     - api/utils.md
 
 markdown_extensions:

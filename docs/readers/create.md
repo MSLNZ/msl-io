@@ -23,7 +23,7 @@ When adding a new [Reader][msl.io.base.Reader] to the [repository]{:target="_bla
     if TYPE_CHECKING:
         from typing import Any
 
-        from msl.io.types import ReadLike
+        from msl.io.typing import ReadLike
 
 
     # Sub-classing Reader will tell msl-io that your MyReader exists

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from typing import Any, ClassVar
     from xml.etree.ElementTree import Element
 
-    from msl.io.types import PathLike
+    from msl.io.typing import PathLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11

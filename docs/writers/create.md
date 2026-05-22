@@ -21,7 +21,7 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
         from typing import Any
 
         from msl.io import Group
-        from msl.io.types import PathLike, WriteLike
+        from msl.io.typing import PathLike, WriteLike
 
 
     class MyWriter(Writer):

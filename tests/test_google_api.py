@@ -56,7 +56,7 @@ except (OSError, RefreshError):
 
 
 if TYPE_CHECKING:
-    from msl.io.types import MediaDownloadProgress
+    from msl.io.typing import MediaDownloadProgress
 
 
 skipif_no_gdrive_readonly = pytest.mark.skipif(dr is None, reason="No GDrive readonly token")

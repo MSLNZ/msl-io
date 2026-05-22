@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from io import BufferedWriter
     from typing import Any, Callable, Literal
 
-    from .types import FileLikeWrite, MediaDownloadProgress, PathLike
+    from .typing import FileLikeWrite, MediaDownloadProgress, PathLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11
@@ -479,7 +479,7 @@ class GDrive(GoogleAPI):
             chunk_size: The file will be downloaded in chunks of this many bytes.
             callback: The callback function to call after each chunk of the file is downloaded.
                 The `callback` accepts one positional argument that is of type
-                [MediaDownloadProgress][msl.io.types.MediaDownloadProgress].
+                [MediaDownloadProgress][msl.io.typing.MediaDownloadProgress].
         """
         response = self._files.get(
             fileId=file_id,

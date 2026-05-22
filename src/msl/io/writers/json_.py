@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable
 
     from msl.io.node import Dataset
-    from msl.io.types import PathLike, WriteLike
+    from msl.io.typing import PathLike, WriteLike
 
 
 class JSONWriter(Writer):

@@ -17,7 +17,7 @@ from msl.io.utils import get_bytes
 if TYPE_CHECKING:
     from typing import Any
 
-    from msl.io.types import ReadLike
+    from msl.io.typing import ReadLike
 
 
 class HDF5Reader(Reader):

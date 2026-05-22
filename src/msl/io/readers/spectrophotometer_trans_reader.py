@@ -12,7 +12,7 @@ from msl.io.utils import get_basename, get_lines
 if TYPE_CHECKING:
     from typing import Any
 
-    from msl.io.types import ReadLike
+    from msl.io.typing import ReadLike
 
 
 class RegularTransmittanceReader(Reader):

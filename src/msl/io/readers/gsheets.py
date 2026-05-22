@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import sys
     from typing import Any
 
-    from msl.io.types import PathLike
+    from msl.io.typing import PathLike
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11

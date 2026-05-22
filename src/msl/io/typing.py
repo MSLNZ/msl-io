@@ -1,6 +1,6 @@
 """Custom type annotations."""
-# pyright: reportGeneralTypeIssues=false
 
+# pyright: reportGeneralTypeIssues=false
 from __future__ import annotations
 
 import array

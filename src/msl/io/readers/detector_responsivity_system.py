@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from typing import Any
 
     from msl.io.node import Group
-    from msl.io.types import ReadLike
+    from msl.io.typing import ReadLike
 
 
 class DRSReader(Reader):
