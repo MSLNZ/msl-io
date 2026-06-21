@@ -1495,14 +1495,12 @@
   </span>
 
 <a href="#msl.io.constants.MSL_IO_DIR" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">MSL_IO_DIR</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-external" title="os.getenv" href="https://docs.python.org/3/library/os.html#os.getenv">getenv</a></span><span class="p">(</span><span class="s2">&quot;MSL_IO_DIR&quot;</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            USER_DIR
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">MSL_IO_DIR</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/c-api/sys.html#os">os</a></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="os.getenv" href="https://docs.python.org/3/library/os.html#os.getenv">getenv</a></span><span class="p">(</span><span class="s1">&#39;MSL_IO_DIR&#39;</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            USER_DIR
 
 
   
       module-attribute
-   (msl.io.constants.USER_DIR)" href="#msl.io.constants.USER_DIR">USER_DIR</a></span> <span class="o">/</span> <span class="s2">&quot;.msl&quot;</span> <span class="o">/</span> <span class="s2">&quot;io&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+   (msl.io.constants.USER_DIR)" href="#msl.io.constants.USER_DIR">USER_DIR</a></span> <span class="o">/</span> <span class="s1">&#39;.msl&#39;</span> <span class="o">/</span> <span class="s1">&#39;io&#39;</span><span class="p">))</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1527,7 +1525,7 @@
   </span>
 
 <a href="#msl.io.constants.USER_DIR" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">USER_DIR</span> <span class="o">=</span> <span class="n"><span title="expanduser">expanduser</span></span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">USER_DIR</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a></span><span class="p">(</span><span class="s1">&#39;~&#39;</span> <span class="o">+</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/c-api/sys.html#os">os</a></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="os.getenv" href="https://docs.python.org/3/library/os.html#os.getenv">getenv</a></span><span class="p">(</span><span class="s1">&#39;SUDO_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span><span class="o">.</span><span class="n"><span title="expanduser">expanduser</span></span><span class="p">()</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
