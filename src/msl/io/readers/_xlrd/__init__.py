@@ -25,6 +25,7 @@ from .xlsx import open_workbook_2007_xml
 
 __all__: list[str] = [
   "Book",
+  "XLDateError",
   "XLRDError",
   "XL_CELL_NUMBER",
   "XL_CELL_DATE",

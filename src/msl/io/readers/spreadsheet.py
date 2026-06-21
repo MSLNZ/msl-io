@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from datetime import date, datetime
     from typing import Any
 
 _cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
@@ -31,7 +32,13 @@ class Spreadsheet(ABC):
 
     @abstractmethod
     def read(
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
+        self,
+        cells: str | None = None,
+        sheet: str | None = None,
+        *,
+        as_datetime: bool = True,
+        merged: bool = False,
+        replace_invalid_dates: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
@@ -51,6 +58,9 @@ class Spreadsheet(ABC):
                 the hidden cells that are part of a merger to retain its unmerged value. Other
                 documents associate the merged value only with the top-left cell and all
                 other cells in the merger are empty.
+            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+                is an invalid date. If not `None`, all cells that contain an invalid date are
+                replaced with the specified value.
 
         Returns:
             The value(s) of the requested cell(s).

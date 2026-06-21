@@ -1005,3 +1005,14 @@ def test_gmail_profile() -> None:
     assert profile["threads_total"] > 1
     assert isinstance(profile.history_id, str)
     assert isinstance(profile["history_id"], str)
+
+
+def test_gsheets_to_datetime_replace_invalid_date() -> None:
+    default = datetime(1900, 1, 8)  # noqa: DTZ001
+    assert GSheets.to_datetime(9) == default
+
+    match = r"Invalid date 9000000000.0, specify a value for `replace_invalid_dates` to suppress this error."
+    with pytest.raises(OverflowError, match=match):
+        _ = GSheets.to_datetime(9e9)
+
+    assert GSheets.to_datetime(9e9, replace_invalid_dates=default) == default

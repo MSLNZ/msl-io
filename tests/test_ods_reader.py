@@ -1,4 +1,6 @@
-from datetime import date, datetime
+from __future__ import annotations
+
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -29,7 +31,7 @@ def test_raises() -> None:
     [
         ("ods_datatypes.ods", ("Sheet1",)),
         ("ods_datatypes.fods", ("Sheet1",)),
-        ("table.ods", ("A1", "BH11", "AEX154041")),
+        ("table.ods", ("A1", "BH11", "AEX154041", "BadDates")),
         ("lab_environment.ods", ("Lab Environment",)),
         ("repeats.ods", ("Ones", "Hidden", "Merged", "Multi-Merged")),
     ],
@@ -86,7 +88,7 @@ def test_table() -> None:  # noqa: PLR0915
     ]
 
     assert ods.file == file
-    assert ods.sheet_names() == ("A1", "BH11", "AEX154041")
+    assert ods.sheet_names() == ("A1", "BH11", "AEX154041", "BadDates")
 
     # single cell
     assert ods.read("A1", sheet="A1") == "timestamp"
@@ -329,3 +331,40 @@ def test_dimensions_raises() -> None:
     ods = ODSReader(samples / "ods_datatypes.ods")
     with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
         _ = ods.dimensions("Nope")
+
+
+def test_invalid_dates() -> None:
+    ods = ODSReader(samples / "table.ods")
+    match = (
+        r"Invalid isoformat date '10000-07-17' in sheet 'BadDates'. "
+        r"Specify a value for `replace_invalid_dates` to suppress this error."
+    )
+    with pytest.raises(ValueError, match=match):
+        _ = ods.read(sheet="BadDates")
+
+    # testing for str, date and datetime types allows for testing static type checkers as well
+
+    data = ods.read(sheet="BadDates", replace_invalid_dates="N/A")
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        ("N/A",),
+        (date(2024, 10, 1),),
+    ]
+
+    data = ods.read(sheet="BadDates", replace_invalid_dates=date(1900, 1, 1))
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        (date(1900, 1, 1),),
+        (date(2024, 10, 1),),
+    ]
+
+    default = datetime(1900, 1, 1, 9, 8, 7, tzinfo=UTC)
+    data = ods.read(sheet="BadDates", replace_invalid_dates=default)
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        (default,),
+        (date(2024, 10, 1),),
+    ]

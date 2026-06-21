@@ -1,4 +1,6 @@
-from datetime import date, datetime
+from __future__ import annotations
+
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -52,7 +54,7 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
     ]
 
     assert excel.file == str(file)
-    assert excel.sheet_names() == ("A1", "BH11", "AEX154041")
+    assert excel.sheet_names() == ("A1", "BH11", "AEX154041", "BadDates")
 
     # single cell
     assert excel.read("A1", sheet="A1") == "timestamp"
@@ -178,3 +180,41 @@ def test_dimensions_raises(extension: str) -> None:
     excel = ExcelReader(f"tests/samples/table.{extension}")
     with pytest.raises(ValueError, match=r"A sheet named 'Nope' is not in"):
         _ = excel.dimensions("Nope")
+
+
+@pytest.mark.parametrize("extension", ["xls", "xlsx"])
+def test_invalid_dates(extension: str) -> None:
+    excel = ExcelReader(f"tests/samples/table.{extension}")
+    match = (
+        r"Invalid date in sheet 'BadDates' at cell 'A3' \[value=1.0, datemode=0\]. "
+        "Specify a value for `replace_invalid_dates` to suppress this error."
+    )
+    with pytest.raises(ValueError, match=match):
+        _ = excel.read(sheet="BadDates")
+
+    # testing for str, date and datetime types allows for testing static type checkers as well
+
+    data = excel.read(sheet="BadDates", replace_invalid_dates="N/A")
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        ("N/A",),
+        (date(2024, 10, 1),),
+    ]
+
+    data = excel.read(sheet="BadDates", replace_invalid_dates=date(1900, 1, 1))
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        (date(1900, 1, 1),),
+        (date(2024, 10, 1),),
+    ]
+
+    default = datetime(1900, 1, 1, 9, 8, 7, tzinfo=UTC)
+    data = excel.read(sheet="BadDates", replace_invalid_dates=default)
+    assert data == [
+        ("Date Acquired",),
+        (date(2022, 6, 18),),
+        (default,),
+        (date(2024, 10, 1),),
+    ]

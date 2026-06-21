@@ -6,7 +6,8 @@
 
 ***Added:***
 
-- Reading a table using `dtype="header"` now supports specifying the number of repeats for each data type
+- reading a table using `dtype="header"` now supports specifying the number of repeats for each data type
+- the `replace_invalid_dates` keyword argument to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read] (and all spreadsheet subclasses)
 
 ## 0.3.0 (2025-10-10)
 

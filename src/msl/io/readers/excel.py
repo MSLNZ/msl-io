@@ -12,6 +12,7 @@ from ._xlrd import (
     XL_CELL_EMPTY,
     XL_CELL_ERROR,
     XL_CELL_NUMBER,
+    XLDateError,
     XLRDError,
     error_text_from_code,
     open_workbook,
@@ -21,6 +22,7 @@ from .spreadsheet import Spreadsheet
 
 if TYPE_CHECKING:
     import sys
+    from datetime import date
     from typing import Any
 
     from ..typing import PathLike  # noqa: TID252
@@ -88,7 +90,13 @@ class ExcelReader(Spreadsheet):
         self._workbook.release_resources()
 
     def read(  # noqa: C901
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
+        self,
+        cells: str | None = None,
+        sheet: str | None = None,
+        *,
+        as_datetime: bool = True,
+        merged: bool = False,
+        replace_invalid_dates: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Excel spreadsheet.
 
@@ -105,6 +113,9 @@ class ExcelReader(Spreadsheet):
             merged: Applies to cells that are merged with other cells. If cells are merged, then
                 only the top-left cell has the value and all other cells in the merger are empty.
                 Enabling this argument is currently not supported and the value must be `False`.
+            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+                is an invalid date. If not `None`, all cells that contain an invalid date are
+                replaced with the specified value.
 
         Returns:
             The value(s) of the requested cell(s).
@@ -159,7 +170,8 @@ class ExcelReader(Spreadsheet):
 
         if not cells:
             return [
-                tuple(self._value(_sheet, r, c, as_datetime) for c in range(_sheet.ncols)) for r in range(_sheet.nrows)
+                tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in range(_sheet.ncols))
+                for r in range(_sheet.nrows)
             ]
 
         split = cells.split(":")
@@ -169,7 +181,7 @@ class ExcelReader(Spreadsheet):
 
         if len(split) == 1:
             try:
-                return self._value(_sheet, r1, c1, as_datetime=as_datetime)
+                return self._value(_sheet, r1, c1, as_datetime, replace_invalid_dates)
             except IndexError:
                 return None
 
@@ -179,7 +191,10 @@ class ExcelReader(Spreadsheet):
         r2, c2 = self.to_indices(split[1])
         r2 = _sheet.nrows if r2 is None else min(r2 + 1, _sheet.nrows)
         c2 = min(c2 + 1, _sheet.ncols)
-        return [tuple(self._value(_sheet, r, c, as_datetime) for c in range(c1, c2)) for r in range(r1, r2)]
+        return [
+            tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in range(c1, c2))
+            for r in range(r1, r2)
+        ]
 
     def dimensions(self, sheet: str) -> tuple[int, int]:
         """Get the number of rows and columns in a sheet.
@@ -206,7 +221,14 @@ class ExcelReader(Spreadsheet):
         """
         return tuple(self._workbook.sheet_names())
 
-    def _value(self, sheet: Sheet, row: int, col: int, as_datetime: bool) -> Any:  # noqa: FBT001, PLR0911
+    def _value(  # noqa: PLR0911
+        self,
+        sheet: Sheet,
+        row: int,
+        col: int,
+        as_datetime: bool,  # noqa: FBT001
+        replace_invalid_dates: str | date | datetime | None,
+    ) -> Any:
         """Get the value of a cell."""
         cell = sheet.cell(row, col)
         t = cell.ctype
@@ -216,7 +238,18 @@ class ExcelReader(Spreadsheet):
             return cell.value
 
         if t == XL_CELL_DATE:
-            tup = xldate_as_tuple(cell.value, self._workbook.datemode)
+            try:
+                tup = xldate_as_tuple(cell.value, self._workbook.datemode)
+            except XLDateError as e:
+                if replace_invalid_dates is not None:
+                    return replace_invalid_dates
+                letter = self.to_letters(col)
+                msg = (
+                    f"Invalid date in sheet {sheet.name!r} at cell '{letter}{row + 1}' "
+                    f"[value={cell.value}, datemode={self._workbook.datemode}]. "
+                    "Specify a value for `replace_invalid_dates` to suppress this error."
+                )
+                raise type(e)(msg) from None
             dt = datetime(*tup)  # noqa: DTZ001
             if dt.hour + dt.minute + dt.second + dt.microsecond == 0:
                 _date = dt.date()

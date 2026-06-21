@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ..google_api import GCellType, GDrive, GSheets  # noqa: TID252
@@ -11,6 +12,7 @@ from .spreadsheet import Spreadsheet
 
 if TYPE_CHECKING:
     import sys
+    from datetime import date
     from typing import Any
 
     from msl.io.typing import PathLike
@@ -106,7 +108,13 @@ class GSheetsReader(Spreadsheet):
         self._gsheets.close()
 
     def read(  # noqa: C901, PLR0912
-        self, cells: str | None = None, sheet: str | None = None, *, as_datetime: bool = True, merged: bool = False
+        self,
+        cells: str | None = None,
+        sheet: str | None = None,
+        *,
+        as_datetime: bool = True,
+        merged: bool = False,
+        replace_invalid_dates: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Google Sheets spreadsheet.
 
@@ -122,6 +130,11 @@ class GSheetsReader(Spreadsheet):
             merged: Applies to cells that are merged with other cells. If cells are merged, then
                 only the top-left cell has the value and all other cells in the merger are empty.
                 Enabling this argument is currently not supported and the value must be `False`.
+            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+                is an invalid date. If a [datetime][datetime.datetime] instance (which is the
+                only other allowed type besides `None`, the other types are kept for consistency
+                with other spreadsheet readers), all cells that contain an invalid date are
+                replaced with the specified value.
 
         Returns:
             The value(s) of the requested cell(s).
@@ -152,6 +165,10 @@ class GSheetsReader(Spreadsheet):
             msg = "The `merged` argument must be False to read a Google spreadsheet"
             raise ValueError(msg)
 
+        if (replace_invalid_dates is not None) and (not isinstance(replace_invalid_dates, datetime)):
+            msg = "The `replace_invalid_dates` type must be an instance of `datetime`"
+            raise TypeError(msg)
+
         if not sheet:
             if self._cached_sheet_name:
                 sheet = self._cached_sheet_name
@@ -180,9 +197,11 @@ class GSheetsReader(Spreadsheet):
             row_values: list[Any] = []
             for item in row:
                 if item.type == GCellType.DATE:
-                    value = GSheets.to_datetime(item.value).date() if as_datetime else item.formatted
+                    value = (
+                        GSheets.to_datetime(item.value, replace_invalid_dates).date() if as_datetime else item.formatted
+                    )
                 elif item.type == GCellType.DATE_TIME:
-                    value = GSheets.to_datetime(item.value) if as_datetime else item.formatted
+                    value = GSheets.to_datetime(item.value, replace_invalid_dates) if as_datetime else item.formatted
                 else:
                     value = item.value
                 row_values.append(value)
