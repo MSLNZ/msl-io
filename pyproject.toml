@@ -129,7 +129,6 @@ title = "MSL-IO coverage report"
 
 [tool.mypy]
 cache_dir = ".cache/mypy"
-platform = "win32"
 exclude = [
     "src/msl/io/readers/_xlrd",
 ]
