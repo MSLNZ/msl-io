@@ -22,7 +22,7 @@ def _value(value: Any, *, name: str, read_only: bool = False) -> Any:
         #   >>> np.asarray([True, -5, 0.002345, 'something', 49.1871524])
         #   array(['True', '-5', '0.002345', 'something', '49.1871524'], dtype='<U32')  # noqa: ERA001
         # casts every element to a string. Also, a regular Python list stores items as objects.
-        a = np.asarray(value, dtype=object)
+        a = np.asarray(value, dtype=object)  # pyright: ignore[reportUnknownArgumentType]
         a.setflags(write=not read_only)
         return a
     if isinstance(value, array):
