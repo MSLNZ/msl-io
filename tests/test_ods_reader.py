@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, date, datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
@@ -360,7 +360,7 @@ def test_invalid_dates() -> None:
         (date(2024, 10, 1),),
     ]
 
-    default = datetime(1900, 1, 1, 9, 8, 7, tzinfo=UTC)
+    default = datetime(1900, 1, 1, 9, 8, 7)  # noqa: DTZ001
     data = ods.read(sheet="BadDates", replace_invalid_dates=default)
     assert data == [
         ("Date Acquired",),
