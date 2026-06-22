@@ -129,6 +129,7 @@ title = "MSL-IO coverage report"
 
 [tool.mypy]
 cache_dir = ".cache/mypy"
+platform = "win32"  # required since using ctypes windll in utils.py
 exclude = [
     "src/msl/io/readers/_xlrd",
 ]
