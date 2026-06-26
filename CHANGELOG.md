@@ -6,6 +6,7 @@
 
 ***Added:***
 
+- [ExcelReader.read][msl.io.readers.excel.ExcelReader.read] now supports specifying a comma in the `cells` argument
 - reading a table using `dtype="header"` now supports specifying the number of repeats for each data type
 - the `replace_invalid_dates` keyword argument to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read] (and all spreadsheet subclasses)
 

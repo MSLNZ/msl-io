@@ -18,7 +18,7 @@ from ._xlrd import (
     open_workbook,
     xldate_as_tuple,
 )
-from .spreadsheet import Spreadsheet
+from .spreadsheet import Spreadsheet, to_ranges
 
 if TYPE_CHECKING:
     import sys
@@ -89,7 +89,7 @@ class ExcelReader(Spreadsheet):
         """Close the workbook."""
         self._workbook.release_resources()
 
-    def read(  # noqa: C901
+    def read(
         self,
         cells: str | None = None,
         sheet: str | None = None,
@@ -101,9 +101,16 @@ class ExcelReader(Spreadsheet):
         """Read cell values from the Excel spreadsheet.
 
         Args:
-            cells: The cell(s) to read. For example, `C9` will return a single value
-                and `C9:G20` will return all values in the specified range. If not
-                specified then returns all values in the specified `sheet`.
+            cells: The cell(s) to read. For example,
+
+                * `C9` &mdash; a single value,
+                * `B` &mdash; all values in column *B*,
+                * `A2:D2` &mdash; all values in row 2 for columns *A B C D*,
+                * `C9:G20` &mdash; all values in rows 9 to 20 for columns *C D E F G*,
+                * `D,F,H:K` &mdash; all values in columns *D F H I J K*
+                * `F3:H10,K` &mdash; all values in rows 3 to 10 for columns *F G H K*.
+
+                If not specified, returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only
                 one sheet in the spreadsheet then you do not need to specify the name
                 of the sheet.
@@ -132,12 +139,16 @@ class ExcelReader(Spreadsheet):
         [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
         >>> excel.read("B2")
         49.82
-        >>> excel.read("A:A")
+        >>> excel.read("A")
         [('temperature',), (20.33,), (20.23,), (20.41,), (20.29,)]
+        >>> excel.read("B:B")
+        [('humidity',), (49.82,), (46.06,), (47.06,), (48.32,)]
         >>> excel.read("A1:B1")
         [('temperature', 'humidity')]
         >>> excel.read("A2:B4")
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
+        >>> excel.read("A,B")
+        [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
 
         ```
         """
@@ -168,33 +179,30 @@ class ExcelReader(Spreadsheet):
             msg = f"A sheet named {sheet_name!r} is not in {self._file!r}"
             raise ValueError(msg) from None
 
-        if not cells:
-            return [
-                tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in range(_sheet.ncols))
-                for r in range(_sheet.nrows)
-            ]
+        cols: range | list[int]
+        nrows, ncols = _sheet.nrows, _sheet.ncols
+        if cells is None:
+            is_range = True
+            r1, r2, cols = 0, nrows, range(ncols)
+        else:
+            is_range, r1, r, cols = to_ranges(cells)
+            r2 = nrows if r is None else min(r, nrows)
+            cols = [c for c in cols if c < ncols]
 
-        split = cells.split(":")
-        r1, c1 = self.to_indices(split[0])
-        if r1 is None:
-            r1 = 0
+        if r1 >= nrows or not cols:
+            return [] if is_range else None
 
-        if len(split) == 1:
-            try:
-                return self._value(_sheet, r1, c1, as_datetime, replace_invalid_dates)
-            except IndexError:
-                return None
-
-        if r1 >= _sheet.nrows or c1 >= _sheet.ncols:
-            return []
-
-        r2, c2 = self.to_indices(split[1])
-        r2 = _sheet.nrows if r2 is None else min(r2 + 1, _sheet.nrows)
-        c2 = min(c2 + 1, _sheet.ncols)
-        return [
-            tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in range(c1, c2))
-            for r in range(r1, r2)
+        data = [
+            tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in cols) for r in range(r1, r2)
         ]
+
+        if is_range:
+            return data
+
+        try:
+            return data[0][0]
+        except IndexError:
+            return None
 
     def dimensions(self, sheet: str) -> tuple[int, int]:
         """Get the number of rows and columns in a sheet.

@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import string
 
 import pytest
 
-from msl.io.readers.spreadsheet import Spreadsheet
+from msl.io.readers.spreadsheet import Spreadsheet, to_ranges
 
 
 def test_to_indices() -> None:  # noqa: C901
@@ -124,3 +126,24 @@ def test_to_slices() -> None:
     assert to_slices("A2:G10", row_step=2, column_step=2) == (slice(1, 10, 2), slice(0, 7, 2))
     assert to_slices("H25:AA47", column_step=2) == (slice(24, 47, None), slice(7, 27, 2))
     assert to_slices("HF11:JK4321", row_step=5) == (slice(10, 4321, 5), slice(213, 271, None))
+
+
+@pytest.mark.parametrize(
+    ("cells", "expected"),
+    [
+        ("A1", (False, 0, 1, [0])),
+        ("Z10", (False, 9, 10, [25])),
+        ("AC4", (False, 3, 4, [28])),
+        ("D", (True, 0, None, [3])),
+        ("B,AA", (True, 0, None, [1, 26])),
+        ("C,R5:T10", (True, 4, 10, [2, 17, 18, 19])),
+        ("C:E,H", (True, 0, None, [2, 3, 4, 7])),
+        ("Z,C:E", (True, 0, None, [25, 2, 3, 4])),
+        ("R:T10,Z,AB:AD", (True, 0, 10, [17, 18, 19, 25, 27, 28, 29])),
+        ("A1:B1", (True, 0, 1, [0, 1])),
+        ("B2:G4", (True, 1, 4, [1, 2, 3, 4, 5, 6])),
+        ("A1:A1", (True, 0, 1, [0])),
+    ],
+)
+def test_to_ranges(cells: str, expected: tuple[bool, int, int | None, list[int]]) -> None:
+    assert to_ranges(cells) == expected

@@ -34,9 +34,25 @@ def test_on_demand_default() -> None:
     assert excel._workbook.on_demand is True  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
 
-@pytest.mark.parametrize("on_demand", [True, False])
-def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
+def test_sheet_names_xls() -> None:
+    file = Path(__file__).parent / "samples" / "table.xls"
+    excel = ExcelReader(file)
+    assert excel.file == str(file)
+    assert excel.sheet_names() == ("A1", "BH11", "BadDates")
+
+
+def test_sheet_names_xlsx() -> None:
     file = Path(__file__).parent / "samples" / "table.xlsx"
+    excel = ExcelReader(file)
+    assert excel.file == str(file)
+    assert excel.sheet_names() == ("A1", "BH11", "AEX154041", "BadDates")
+
+
+@pytest.mark.parametrize("on_demand", [True, False])
+@pytest.mark.parametrize("extension", ["xls", "xlsx"])
+def test_read(on_demand: bool, extension: str) -> None:  # noqa: FBT001, PLR0915
+    has_large_sheet = extension == "xlsx"
+    file = Path(__file__).parent / "samples" / f"table.{extension}"
     excel = ExcelReader(file, on_demand=on_demand)
     assert excel._workbook.on_demand is on_demand  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     values = [
@@ -54,7 +70,6 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
     ]
 
     assert excel.file == str(file)
-    assert excel.sheet_names() == ("A1", "BH11", "AEX154041", "BadDates")
 
     # single cell
     assert excel.read("A1", sheet="A1") == "timestamp"
@@ -64,9 +79,10 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
     assert excel.read("BI12", sheet="BH11") == -0.505382
     assert excel.read("A1", sheet="BH11") is None  # A1 is empty
     assert excel.read("ZZ1000", sheet="BH11") is None  # ZZ1000 is empty (also out of bounds)
-    assert excel.read("AFB154045", sheet="AEX154041") == 0.00012
-    assert excel.read("AA25", sheet="AEX154041") is None  # AA25 is empty
-    assert excel.read("BAA200000", sheet="AEX154041") is None  # BAA200000 is empty (also out of bounds)
+    if has_large_sheet:
+        assert excel.read("AFB154045", sheet="AEX154041") == 0.00012
+        assert excel.read("AA25", sheet="AEX154041") is None  # AA25 is empty
+        assert excel.read("BAA200000", sheet="AEX154041") is None  # BAA200000 is empty (also out of bounds)
 
     # single row
     assert excel.read("A1:E1", sheet="A1") == [values[0]]
@@ -100,10 +116,15 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
     assert excel.read("D9:D9", sheet="A1") == [(0.500805,)]
 
     # single column
+    assert excel.read("A", sheet="A1") == [(item[0],) for item in values]
     assert excel.read("A:A", sheet="A1") == [(item[0],) for item in values]
+    assert excel.read("B", sheet="A1") == [(item[1],) for item in values]
     assert excel.read("B:B", sheet="A1") == [(item[1],) for item in values]
+    assert excel.read("C", sheet="A1") == [(item[2],) for item in values]
     assert excel.read("C:C", sheet="A1") == [(item[2],) for item in values]
+    assert excel.read("D", sheet="A1") == [(item[3],) for item in values]
     assert excel.read("D:D", sheet="A1") == [(item[3],) for item in values]
+    assert excel.read("E", sheet="A1") == [(item[4],) for item in values]
     assert excel.read("E:E", sheet="A1") == [(item[4],) for item in values]
     assert excel.read("F:F", sheet="A1") == []  # column F is empty (also out of bounds)
     assert excel.read("ABC:ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
@@ -124,10 +145,11 @@ def test_cell(on_demand: bool) -> None:  # noqa: FBT001, PLR0915
         new.append((None, *row))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: PERF401
     assert excel.read("BG10:BM22", sheet="BH11") == new
     assert excel.read("BK20:BL21", sheet="BH11") == [row[-2:] for row in values[-2:]]
-    assert excel.read("AEX154041:AFB154051", sheet="AEX154041") == values
-    assert excel.read("AEX154041:ZZZ1000000", sheet="AEX154041") == values  # slicing out of range is okay
-    assert excel.read("AEY154042:AFA154044", sheet="AEX154041") == [row[1:4] for row in values[1:4]]
     assert excel.read("J1:M10", sheet="A1") == []
+    if has_large_sheet:
+        assert excel.read("AEX154041:AFB154051", sheet="AEX154041") == values
+        assert excel.read("AEX154041:ZZZ1000000", sheet="AEX154041") == values  # slicing out of range is okay
+        assert excel.read("AEY154042:AFA154044", sheet="AEX154041") == [row[1:4] for row in values[1:4]]
 
     # calling close() multiple times is okay
     for _ in range(10):
@@ -218,3 +240,42 @@ def test_invalid_dates(extension: str) -> None:
         (default,),
         (date(2024, 10, 1),),
     ]
+
+    excel.close()
+
+
+@pytest.mark.parametrize("extension", ["xls", "xlsx"])
+def test_commas(extension: str) -> None:
+    with ExcelReader(f"tests/samples/table.{extension}") as excel:
+        assert excel.read("B,C,D,E", sheet="A1") == [
+            ("val1", "uncert1", "val2", "uncert2"),
+            (-0.505382, 0.000077, 0.501073, 0.000079),
+            (-0.505191, 0.000066, 0.500877, 0.000083),
+            (-0.505308, 0.000086, 0.500988, 0.000087),
+            (-0.505250, 0.000119, 0.500923, 0.000120),
+            (-0.505275, 0.000070, 0.500965, 0.000088),
+            (-0.505137, 0.000079, 0.500817, 0.000085),
+            (-0.505073, 0.000099, 0.500786, 0.000084),
+            (-0.505133, 0.000088, 0.500805, 0.000076),
+            (-0.505096, 0.000062, 0.500759, 0.000062),
+            (-0.505072, 0.000142, 0.500739, 0.000149),
+        ]
+
+        assert excel.read("B,D2:E10", sheet="A1") == [
+            (-0.505382, 0.501073, 0.000079),
+            (-0.505191, 0.500877, 0.000083),
+            (-0.505308, 0.500988, 0.000087),
+            (-0.505250, 0.500923, 0.000120),
+            (-0.505275, 0.500965, 0.000088),
+            (-0.505137, 0.500817, 0.000085),
+            (-0.505073, 0.500786, 0.000084),
+            (-0.505133, 0.500805, 0.000076),
+            (-0.505096, 0.500759, 0.000062),
+        ]
+
+        assert excel.read("A:C4,E", sheet="A1", as_datetime=False) == [
+            ("timestamp", "val1", "uncert1", "uncert2"),
+            ("2019-09-11 14:06:55", -0.505382, 0.000077, 0.000079),
+            ("2019-09-11 14:06:59", -0.505191, 0.000066, 0.000083),
+            ("2019-09-11 14:07:03", -0.505308, 0.000086, 0.000087),
+        ]

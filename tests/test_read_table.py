@@ -90,12 +90,17 @@ def test_raises() -> None:
     with pytest.raises(ValueError, match=r"unpack"):
         _ = read_table(get_url(".csv"), unpack=True)
 
-    # invalid cell range
-    for c in INVALID_CELL_RANGES:
-        with pytest.raises(ValueError, match=r"Invalid cell"):
-            _ = read_table(get_url(".xls"), cells=c, sheet="A1")
-        with pytest.raises(ValueError, match=r"Invalid cell"):
-            _ = read_table(get_url(".ods"), cells=c, sheet="A1")
+
+@pytest.mark.parametrize("cells", ["", ":", "A:", "1", "A-B", "A1D10", "A1-D10"])
+def test_invalid_cell_range_xls(cells: str) -> None:
+    with pytest.raises(ValueError, match=r"Invalid cell"):
+        _ = read_table(get_url(".xls"), cells=cells, sheet="A1")
+
+
+@pytest.mark.parametrize("cells", INVALID_CELL_RANGES)
+def test_invalid_cell_range_ods(cells: str) -> None:
+    with pytest.raises(ValueError, match=r"Invalid cell"):
+        _ = read_table(get_url(".ods"), cells=cells, sheet="A1")
 
 
 @pytest.mark.parametrize("extension", [".xls", ".xlsx"])
@@ -893,3 +898,20 @@ def test_header_dtype_repeats_open_document_spreadsheet(header: str) -> None:
     assert np.array_equal(table.uncert1, ods_data["f2"])
     assert np.array_equal(table["val2"], ods_data["f3"])
     assert np.array_equal(table.uncert2, [0] * 10)
+
+
+@pytest.mark.parametrize("ext", [".xls", ".xlsx"])
+def test_excel_spreadsheet_cells_with_commas(ext: str) -> None:
+    table = read_table(get_url(ext), sheet="A1", cells="B,D")
+    assert table.shape == (10, 2)
+    assert np.array_equal(table.metadata.header, ("val1", "val2"))
+    assert np.array_equal(table[:, 0], data["f1"])
+    assert np.array_equal(table[:, 1], data["f3"])
+
+    table = read_table(get_url(ext), sheet="A1", cells="A:C,E")
+    assert table.shape == (10, 4)
+    assert np.array_equal(table.metadata.header, ("timestamp", "val1", "uncert1", "uncert2"))
+    assert np.array_equal(table[:, 0], [datetime.strptime(d, "%Y-%m-%d %H:%M:%S") for d in data["f0"]])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: DTZ007
+    assert np.array_equal(table[:, 1], data["f1"])
+    assert np.array_equal(table[:, 2], data["f2"])
+    assert np.array_equal(table[:, 3], data["f4"])

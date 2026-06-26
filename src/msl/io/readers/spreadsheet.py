@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 _cell_regex = re.compile(r"^([A-Z]+)(\d*)$")
+_single_cell_regex = re.compile(r"^([A-Z]+)(\d+)$")
 
 
 class Spreadsheet(ABC):
@@ -208,3 +209,30 @@ class Spreadsheet(ABC):
             r2 += 1
         c2 += 1
         return slice(r1, r2, row_step), slice(c1, c2, column_step)
+
+
+def to_ranges(cells: str) -> tuple[bool, int, int | None, list[int]]:
+    """Convert `cells` to `(is-range, r1, r2, columns)`."""
+    if _single_cell_regex.match(cells):  # special case
+        r1, c1 = Spreadsheet.to_indices(cells)
+        if r1 is None:
+            r1 = 0
+        return False, r1, r1 + 1, [c1]
+
+    r1, r2 = None, None
+    cols: list[int] = []
+    for c in cells.split(","):
+        first, *second = c.split(":")
+        ra, c1 = Spreadsheet.to_indices(first)
+        if ra is not None:
+            r1 = ra if r1 is None else min(r1, ra)
+        rb, c2 = Spreadsheet.to_indices(second[0]) if second else (None, c1)
+        if rb is not None:
+            rb += 1
+            r2 = rb if r2 is None else max(r2, rb)
+        cols.extend(range(c1, c2 + 1))
+
+    if r1 is None:
+        r1 = 0
+
+    return True, r1, r2, cols
