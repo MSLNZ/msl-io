@@ -1347,6 +1347,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#msl.io.readers.spreadsheet.to_ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;to_ranges
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.io.readers.excel.ExcelReader" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1728,6 +1739,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#msl.io.readers.spreadsheet.to_ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;to_ranges
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.io.readers.excel.ExcelReader" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2011,13 +2033,13 @@
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
-<span class="normal">21</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">26</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for spreadsheets.</span>
 
 <span class="sd">    Args:</span>
@@ -2082,7 +2104,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 </code></pre></div>
 
@@ -2180,7 +2202,7 @@ other cells in the merger are empty.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -2225,8 +2247,7 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
-<span class="normal">34</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
@@ -2259,7 +2280,8 @@ replaced with the specified value.</p>
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2267,7 +2289,7 @@ replaced with the specified value.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read values from the spreadsheet.</span>
 
@@ -2287,7 +2309,7 @@ replaced with the specified value.</p>
 <span class="sd">            the hidden cells that are part of a merger to retain its unmerged value. Other</span>
 <span class="sd">            documents associate the merged value only with the top-left cell and all</span>
 <span class="sd">            other cells in the merger are empty.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 
@@ -2348,15 +2370,15 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
-<span class="normal">70</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the spreadsheet.</span>
 
@@ -2469,8 +2491,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
-<span class="normal">119</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
@@ -2513,7 +2534,8 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
-<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">162</span>
+<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_indices</span><span class="p">(</span><span class="n">cell</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a string representation of a cell to row and column indices.</span>
 
@@ -2658,8 +2680,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 79</span>
-<span class="normal"> 80</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
 <span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
@@ -2695,7 +2716,8 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_letters</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a column index to column letters.</span>
 
@@ -2866,8 +2888,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span>
@@ -2912,7 +2933,8 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">207</span>
 <span class="normal">208</span>
 <span class="normal">209</span>
-<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">210</span>
+<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_slices</span><span class="p">(</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">column_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
@@ -2973,6 +2995,79 @@ then the row index is <code>None</code>. The row and column index are zero based
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="msl.io.readers.spreadsheet.to_ranges" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">to_ranges</span>
+
+
+<a href="#msl.io.readers.spreadsheet.to_ranges" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Convert <code>cells</code> to <code>(is-range, r1, r2, columns)</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert `cells` to `(is-range, r1, r2, columns)`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_single_cell_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>  <span class="c1"># special case</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="n">c1</span><span class="p">]</span>
+
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cells</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+        <span class="n">first</span><span class="p">,</span> <span class="o">*</span><span class="n">second</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">ra</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="n">ra</span> <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">ra</span><span class="p">)</span>
+        <span class="n">rb</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">second</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">second</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rb</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="n">rb</span> <span class="k">if</span> <span class="n">r2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">rb</span><span class="p">)</span>
+        <span class="n">cols</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">cols</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
@@ -3292,13 +3387,7 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
 <span class="normal">208</span>
@@ -3307,7 +3396,13 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
 
 <span class="sd">    Args:</span>
@@ -3343,7 +3438,7 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 </code></pre></div>
 
@@ -3372,9 +3467,16 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The cell(s) to read. For example, <code>C9</code> will return a single value
-and <code>C9:G20</code> will return all values in the specified range. If not
-specified then returns all values in the specified <code>sheet</code>.</p>
+                <p>The cell(s) to read. For example,</p>
+<ul>
+<li><code>C9</code> &mdash; a single value,</li>
+<li><code>B</code> &mdash; all values in column <em>B</em>,</li>
+<li><code>A2:D2</code> &mdash; all values in row 2 for columns <em>A B C D</em>,</li>
+<li><code>C9:G20</code> &mdash; all values in rows 9 to 20 for columns <em>C D E F G</em>,</li>
+<li><code>D,F,H:K</code> &mdash; all values in columns <em>D F H I J K</em></li>
+<li><code>F3:H10,K</code> &mdash; all values in rows 3 to 10 for columns <em>F G H K</em>.</li>
+</ul>
+<p>If not specified, returns all values in the specified <code>sheet</code>.</p>
               </div>
             </td>
             <td>
@@ -3437,7 +3539,7 @@ Enabling this argument is currently not supported and the value must be <code>Fa
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -3489,12 +3591,16 @@ replaced with the specified value.</p>
 <span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B2&quot;</span><span class="p">)</span>
 <span class="go">49.82</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A:A&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
 <span class="go">[(&#39;temperature&#39;,), (20.33,), (20.23,), (20.41,), (20.29,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B:B&quot;</span><span class="p">)</span>
+<span class="go">[(&#39;humidity&#39;,), (49.82,), (46.06,), (47.06,), (48.32,)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A1:B1&quot;</span><span class="p">)</span>
 <span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A2:B4&quot;</span><span class="p">)</span>
 <span class="go">[(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A,B&quot;</span><span class="p">)</span>
+<span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 </code></pre></div>
 
 
@@ -3605,21 +3711,34 @@ replaced with the specified value.</p>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
-<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the Excel spreadsheet.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cells: The cell(s) to read. For example, `C9` will return a single value</span>
-<span class="sd">            and `C9:G20` will return all values in the specified range. If not</span>
-<span class="sd">            specified then returns all values in the specified `sheet`.</span>
+<span class="sd">        cells: The cell(s) to read. For example,</span>
+
+<span class="sd">            * `C9` &amp;mdash; a single value,</span>
+<span class="sd">            * `B` &amp;mdash; all values in column *B*,</span>
+<span class="sd">            * `A2:D2` &amp;mdash; all values in row 2 for columns *A B C D*,</span>
+<span class="sd">            * `C9:G20` &amp;mdash; all values in rows 9 to 20 for columns *C D E F G*,</span>
+<span class="sd">            * `D,F,H:K` &amp;mdash; all values in columns *D F H I J K*</span>
+<span class="sd">            * `F3:H10,K` &amp;mdash; all values in rows 3 to 10 for columns *F G H K*.</span>
+
+<span class="sd">            If not specified, returns all values in the specified `sheet`.</span>
 <span class="sd">        sheet: The name of the sheet to read the value(s) from. If there is only</span>
 <span class="sd">            one sheet in the spreadsheet then you do not need to specify the name</span>
 <span class="sd">            of the sheet.</span>
@@ -3629,7 +3748,7 @@ replaced with the specified value.</p>
 <span class="sd">        merged: Applies to cells that are merged with other cells. If cells are merged, then</span>
 <span class="sd">            only the top-left cell has the value and all other cells in the merger are empty.</span>
 <span class="sd">            Enabling this argument is currently not supported and the value must be `False`.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 
@@ -3648,12 +3767,16 @@ replaced with the specified value.</p>
 <span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 <span class="sd">    &gt;&gt;&gt; excel.read(&quot;B2&quot;)</span>
 <span class="sd">    49.82</span>
-<span class="sd">    &gt;&gt;&gt; excel.read(&quot;A:A&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; excel.read(&quot;A&quot;)</span>
 <span class="sd">    [(&#39;temperature&#39;,), (20.33,), (20.23,), (20.41,), (20.29,)]</span>
+<span class="sd">    &gt;&gt;&gt; excel.read(&quot;B:B&quot;)</span>
+<span class="sd">    [(&#39;humidity&#39;,), (49.82,), (46.06,), (47.06,), (48.32,)]</span>
 <span class="sd">    &gt;&gt;&gt; excel.read(&quot;A1:B1&quot;)</span>
 <span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="sd">    &gt;&gt;&gt; excel.read(&quot;A2:B4&quot;)</span>
 <span class="sd">    [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
+<span class="sd">    &gt;&gt;&gt; excel.read(&quot;A,B&quot;)</span>
+<span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -3684,33 +3807,28 @@ replaced with the specified value.</p>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">sheet_name</span><span class="si">!r}</span><span class="s2"> is not in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">!r}</span><span class="s2">&quot;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">cells</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">(</span><span class="n">_sheet</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_sheet</span><span class="o">.</span><span class="n">ncols</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_sheet</span><span class="o">.</span><span class="n">nrows</span><span class="p">)</span>
-        <span class="p">]</span>
+    <span class="n">cols</span><span class="p">:</span> <span class="nb">range</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">ncols</span>
+    <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">is_range</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nrows</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_range</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">nrows</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">nrows</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">ncols</span><span class="p">]</span>
 
-    <span class="n">split</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-    <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">r1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">r1</span> <span class="o">&gt;=</span> <span class="n">nrows</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">cols</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">is_range</span> <span class="k">else</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">(</span><span class="n">_sheet</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">(</span><span class="n">_sheet</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)]</span>
 
-    <span class="k">if</span> <span class="n">r1</span> <span class="o">&gt;=</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">nrows</span> <span class="ow">or</span> <span class="n">c1</span> <span class="o">&gt;=</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">ncols</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">is_range</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
 
-    <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">r2</span> <span class="o">=</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">nrows</span> <span class="k">if</span> <span class="n">r2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">nrows</span><span class="p">)</span>
-    <span class="n">c2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">c2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_sheet</span><span class="o">.</span><span class="n">ncols</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span>
-        <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">(</span><span class="n">_sheet</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
-    <span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3758,13 +3876,13 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the Excel spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
@@ -4153,7 +4271,7 @@ the token file that was created when you previously authenticated.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 </code></pre></div>
 
@@ -4246,7 +4364,7 @@ Enabling this argument is currently not supported and the value must be <code>Fa
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -4418,16 +4536,14 @@ replaced with the specified value.</p>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the Google Sheets spreadsheet.</span>
 
@@ -4443,7 +4559,7 @@ replaced with the specified value.</p>
 <span class="sd">        merged: Applies to cells that are merged with other cells. If cells are merged, then</span>
 <span class="sd">            only the top-left cell has the value and all other cells in the merger are empty.</span>
 <span class="sd">            Enabling this argument is currently not supported and the value must be `False`.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If a [datetime][datetime.datetime] instance (which is the</span>
 <span class="sd">            only other allowed type besides `None`, the other types are kept for consistency</span>
 <span class="sd">            with other spreadsheet readers), all cells that contain an invalid date are</span>
@@ -4478,8 +4594,8 @@ replaced with the specified value.</p>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The `merged` argument must be False to read a Google spreadsheet&quot;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">replace_invalid_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">replace_invalid_dates</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The `replace_invalid_dates` type must be an instance of `datetime`&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">invalid_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">invalid_date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The `invalid_date` type must be an instance of `datetime`&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">sheet</span><span class="p">:</span>
@@ -4510,11 +4626,9 @@ replaced with the specified value.</p>
         <span class="n">row_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">DATE</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">GSheets</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_datetime</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">formatted</span>
-                <span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">GSheets</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_datetime</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">formatted</span>
             <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">DATE_TIME</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">GSheets</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">)</span> <span class="k">if</span> <span class="n">as_datetime</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">formatted</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">GSheets</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">)</span> <span class="k">if</span> <span class="n">as_datetime</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">formatted</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span>
             <span class="n">row_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -4576,13 +4690,13 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/gsheets.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">220</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the Google Sheets spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
@@ -5015,7 +5129,7 @@ that package is used to parse the contents of the file instead of the
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 </code></pre></div>
 
@@ -5111,7 +5225,7 @@ of a hidden cell that is merged with a visible cell can still be retained
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -5284,7 +5398,7 @@ replaced with the specified value.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the OpenDocument Spreadsheet.</span>
 
@@ -5303,7 +5417,7 @@ replaced with the specified value.</p>
 <span class="sd">            returned for all merged cells. In an OpenDocument Spreadsheet, the value</span>
 <span class="sd">            of a hidden cell that is merged with a visible cell can still be retained</span>
 <span class="sd">            (depends on how the merger was performed).</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 
@@ -5370,7 +5484,7 @@ replaced with the specified value.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rows</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">):</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">merged</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">))</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">as_datetime</span><span class="p">,</span> <span class="n">merged</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 

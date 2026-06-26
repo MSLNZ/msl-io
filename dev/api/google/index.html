@@ -7732,9 +7732,7 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
   </span>
 
 <a href="#msl.io.google_api.GSheets.to_datetime" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_datetime</span><span class="p">(</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7771,7 +7769,7 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -7838,12 +7836,12 @@ specified value.</p>
 <span class="normal">1171</span>
 <span class="normal">1172</span>
 <span class="normal">1173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a *serial number* date into a [datetime][datetime.datetime].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: A date in the *serial number* format.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if the `value` is an invalid date.</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if the `value` is an invalid date.</span>
 <span class="sd">            If a [datetime][datetime.datetime] instance, the `value` is replaced with the</span>
 <span class="sd">            specified value.</span>
 
@@ -7855,9 +7853,9 @@ specified value.</p>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">GSheets</span><span class="o">.</span><span class="n">SERIAL_NUMBER_ORIGIN</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">replace_invalid_dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">replace_invalid_dates</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid date </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, specify a value for `replace_invalid_dates` to suppress this error.&quot;</span>
+        <span class="k">if</span> <span class="n">invalid_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">invalid_date</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid date </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, specify a value for `invalid_date` to suppress this error.&quot;</span>
         <span class="k">raise</span> <span class="ne">OverflowError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>

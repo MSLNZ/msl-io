@@ -1727,7 +1727,14 @@ passed to <a class="autorefs autorefs-internal" title="            read_table_te
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
@@ -1756,14 +1763,7 @@ passed to <a class="autorefs autorefs-internal" title="            read_table_te
 <span class="normal">370</span>
 <span class="normal">371</span>
 <span class="normal">372</span>
-<span class="normal">373</span>
-<span class="normal">374</span>
-<span class="normal">375</span>
-<span class="normal">376</span>
-<span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
-<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data in a table format from a file.</span>
 
 <span class="sd">    A *table* has the following properties:</span>
@@ -1831,7 +1831,7 @@ passed to <a class="autorefs autorefs-internal" title="            read_table_te
     <span class="n">sheet</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Dataset (msl.io.node.Dataset)" href="../node/#msl.io.node.Dataset">Dataset</a></span>
 </code></pre></div>
@@ -1890,9 +1890,10 @@ passed to <a class="autorefs autorefs-internal" title="            read_table_te
               <div class="doc-md-description">
                 <p>The cells to read. For example, <code>C9</code> (i.e, specifying only the top-left cell
 of the table) will start at cell C9 and include all columns to the right and
-all rows below C9, <code>A:C</code> includes all rows in columns A, B and C, and, <code>C9:G20</code>
-includes only the specified cells. If not specified, assumes that the table
-starts at cell <code>A1</code> and returns all cells from the specified <code>sheet</code>.</p>
+all rows below C9, <code>A:C</code> includes all rows in columns A, B and C, <code>C9:G20</code>
+includes only the specified cells, and <code>A:C,E</code> includes all values in columns
+A, B, C and E. If not specified, assumes that the table starts at cell <code>A1</code>
+and returns all cells from the specified <code>sheet</code>.</p>
               </div>
             </td>
             <td>
@@ -1952,7 +1953,7 @@ ISO 8601 string.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -2063,17 +2064,14 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_excel</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a data table from an Excel spreadsheet.</span>
@@ -2084,16 +2082,17 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
 <span class="sd">        file: The file to read.</span>
 <span class="sd">        cells: The cells to read. For example, `C9` (i.e, specifying only the top-left cell</span>
 <span class="sd">            of the table) will start at cell C9 and include all columns to the right and</span>
-<span class="sd">            all rows below C9, `A:C` includes all rows in columns A, B and C, and, `C9:G20`</span>
-<span class="sd">            includes only the specified cells. If not specified, assumes that the table</span>
-<span class="sd">            starts at cell `A1` and returns all cells from the specified `sheet`.</span>
+<span class="sd">            all rows below C9, `A:C` includes all rows in columns A, B and C, `C9:G20`</span>
+<span class="sd">            includes only the specified cells, and `A:C,E` includes all values in columns</span>
+<span class="sd">            A, B, C and E. If not specified, assumes that the table starts at cell `A1`</span>
+<span class="sd">            and returns all cells from the specified `sheet`.</span>
 <span class="sd">        sheet: The name of the sheet to read the data from. If there is only one sheet</span>
 <span class="sd">            in the workbook then you do not need to specify the name of the sheet.</span>
 <span class="sd">        as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or</span>
 <span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as an</span>
 <span class="sd">            ISO 8601 string.</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].</span>
@@ -2106,16 +2105,12 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
     <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">))</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">ExcelReader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">excel</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_spreadsheet_range_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">_spreadsheet_top_left_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid cell </span><span class="si">{</span><span class="n">cells</span><span class="si">!r}</span><span class="s2">&quot;</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">_spreadsheet_top_left_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">sheet</span> <span class="ow">or</span> <span class="n">excel</span><span class="o">.</span><span class="n">sheet_names</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">dimensions</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="n">letters</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">to_letters</span><span class="p">(</span><span class="n">num_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">cells</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;:</span><span class="si">{</span><span class="n">letters</span><span class="si">}{</span><span class="n">num_rows</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="o">=</span><span class="n">replace_invalid_dates</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">invalid_date</span><span class="o">=</span><span class="n">invalid_date</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_spreadsheet_to_dataset</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2149,7 +2144,7 @@ Can use an <code>encoding</code> keyword argument as an alias for <code>encoding
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Dataset (msl.io.node.Dataset)" href="../node/#msl.io.node.Dataset">Dataset</a></span>
 </code></pre></div>
@@ -2276,7 +2271,7 @@ the display format of the spreadsheet cell.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -2338,7 +2333,10 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">198</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
@@ -2390,19 +2388,14 @@ replaced with the specified value.</p>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_gsheets</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a data table from a Google Sheets spreadsheet.</span>
@@ -2427,7 +2420,7 @@ replaced with the specified value.</p>
 <span class="sd">            [date][datetime.date] objects. If `False`, dates are returned as a string in</span>
 <span class="sd">            the display format of the spreadsheet cell.</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].</span>
@@ -2445,12 +2438,10 @@ replaced with the specified value.</p>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="o">=</span><span class="n">replace_invalid_dates</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">invalid_date</span><span class="o">=</span><span class="n">invalid_date</span><span class="p">)</span>
             <span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">c</span><span class="p">:]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">r</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-                <span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="o">=</span><span class="n">replace_invalid_dates</span>
-            <span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">sheets</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">invalid_date</span><span class="o">=</span><span class="n">invalid_date</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_spreadsheet_to_dataset</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2485,7 +2476,7 @@ replaced with the specified value.</p>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Dataset (msl.io.node.Dataset)" href="../node/#msl.io.node.Dataset">Dataset</a></span>
 </code></pre></div>
@@ -2626,7 +2617,7 @@ of a hidden cell that is merged with a visible cell can still be retained
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>replace_invalid_dates</code>
+                <code>invalid_date</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a> | <a class="autorefs autorefs-external" title="datetime.datetime" href="https://docs.python.org/3/library/datetime.html#datetime.datetime">datetime</a> | None</code>
@@ -2688,7 +2679,12 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/tables.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">258</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
@@ -2737,14 +2733,7 @@ replaced with the specified value.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
-<span class="normal">309</span>
-<span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_table_ods</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2752,7 +2741,7 @@ replaced with the specified value.</p>
     <span class="n">as_datetime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">merged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">replace_invalid_dates</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invalid_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">date</span> <span class="o">|</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a data table from an OpenDocument Spreadsheet.</span>
@@ -2777,7 +2766,7 @@ replaced with the specified value.</p>
 <span class="sd">            of a hidden cell that is merged with a visible cell can still be retained</span>
 <span class="sd">            (depends on how the merger was performed).</span>
 <span class="sd">        dtype: The data type(s) to use for the table.</span>
-<span class="sd">        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that</span>
+<span class="sd">        invalid_date: If `None`, an error is raised if a cell contains a value that</span>
 <span class="sd">            is an invalid date. If not `None`, all cells that contain an invalid date are</span>
 <span class="sd">            replaced with the specified value.</span>
 <span class="sd">        kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].</span>
@@ -2797,9 +2786,7 @@ replaced with the specified value.</p>
             <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">=</span> <span class="n">ods</span><span class="o">.</span><span class="n">dimensions</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="n">letters</span> <span class="o">=</span> <span class="n">ods</span><span class="o">.</span><span class="n">to_letters</span><span class="p">(</span><span class="n">num_columns</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">cells</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;:</span><span class="si">{</span><span class="n">letters</span><span class="si">}{</span><span class="n">num_rows</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-            <span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">merged</span><span class="o">=</span><span class="n">merged</span><span class="p">,</span> <span class="n">replace_invalid_dates</span><span class="o">=</span><span class="n">replace_invalid_dates</span>
-        <span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="n">sheet</span><span class="p">,</span> <span class="n">as_datetime</span><span class="o">=</span><span class="n">as_datetime</span><span class="p">,</span> <span class="n">merged</span><span class="o">=</span><span class="n">merged</span><span class="p">,</span> <span class="n">invalid_date</span><span class="o">=</span><span class="n">invalid_date</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_spreadsheet_to_dataset</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
