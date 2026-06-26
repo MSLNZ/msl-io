@@ -3599,8 +3599,8 @@ replaced with the specified value.</p>
 <span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A2:B4&quot;</span><span class="p">)</span>
 <span class="go">[(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A,B&quot;</span><span class="p">)</span>
-<span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">excel</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B,A&quot;</span><span class="p">)</span>
+<span class="go">[(&#39;humidity&#39;, &#39;temperature&#39;), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]</span>
 </code></pre></div>
 
 
@@ -3775,8 +3775,8 @@ replaced with the specified value.</p>
 <span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="sd">    &gt;&gt;&gt; excel.read(&quot;A2:B4&quot;)</span>
 <span class="sd">    [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
-<span class="sd">    &gt;&gt;&gt; excel.read(&quot;A,B&quot;)</span>
-<span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
+<span class="sd">    &gt;&gt;&gt; excel.read(&quot;B,A&quot;)</span>
+<span class="sd">    [(&#39;humidity&#39;, &#39;temperature&#39;), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]</span>
 
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -4903,7 +4903,8 @@ that package is used to parse the contents of the file instead of the
 <span class="normal">90</span>
 <span class="normal">91</span>
 <span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
+<span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an OpenDocument Spreadsheet (*.ods* and *.fods* files, Version 1.2).</span>
 
 <span class="sd">    This class simply provides a convenience for reading cell values (not</span>
@@ -4931,6 +4932,7 @@ that package is used to parse the contents of the file instead of the
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># column-index: (spans-remaining, cell-value)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_row_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># column-index: cell-value</span>
 
     <span class="n">ext</span> <span class="o">=</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -4985,13 +4987,15 @@ that package is used to parse the contents of the file instead of the
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">103</span>
-<span class="normal">104</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
 <span class="normal">105</span>
-<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Free memory resources that are used to read the OpenDocument Spreadsheet.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_tables</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_row_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5070,18 +5074,7 @@ that package is used to parse the contents of the file instead of the
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
@@ -5089,7 +5082,18 @@ that package is used to parse the contents of the file instead of the
 <span class="normal">229</span>
 <span class="normal">230</span>
 <span class="normal">231</span>
-<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
 
 <span class="sd">    Args:</span>
@@ -5158,9 +5162,16 @@ that package is used to parse the contents of the file instead of the
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The cell(s) to read. For example, <code>C9</code> will return a single value
-and <code>C9:G20</code> will return all values in the specified range. If not
-specified then returns all values in the specified <code>sheet</code>.</p>
+                <p>The cell(s) to read. For example,</p>
+<ul>
+<li><code>C9</code> &mdash; a single value,</li>
+<li><code>B</code> &mdash; all values in column <em>B</em>,</li>
+<li><code>A2:D2</code> &mdash; all values in row 2 for columns <em>A B C D</em>,</li>
+<li><code>C9:G20</code> &mdash; all values in rows 9 to 20 for columns <em>C D E F G</em>,</li>
+<li><code>D,F,H:K</code> &mdash; all values in columns <em>D F H I J K</em></li>
+<li><code>F3:H10,K</code> &mdash; all values in rows 3 to 10 for columns <em>F G H K</em>.</li>
+</ul>
+<p>If not specified, returns all values in the specified <code>sheet</code>.</p>
               </div>
             </td>
             <td>
@@ -5277,20 +5288,22 @@ replaced with the specified value.</p>
 <span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B2&quot;</span><span class="p">)</span>
 <span class="go">49.82</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A:A&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
 <span class="go">[(&#39;temperature&#39;,), (20.33,), (20.23,), (20.41,), (20.29,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B:B&quot;</span><span class="p">)</span>
+<span class="go">[(&#39;humidity&#39;,), (49.82,), (46.06,), (47.06,), (48.32,)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A1:B1&quot;</span><span class="p">)</span>
 <span class="go">[(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;A2:B4&quot;</span><span class="p">)</span>
 <span class="go">[(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ods</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;B,A&quot;</span><span class="p">)</span>
+<span class="go">[(&#39;humidity&#39;, &#39;temperature&#39;), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]</span>
 </code></pre></div>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
@@ -5391,7 +5404,18 @@ replaced with the specified value.</p>
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5403,9 +5427,16 @@ replaced with the specified value.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read cell values from the OpenDocument Spreadsheet.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cells: The cell(s) to read. For example, `C9` will return a single value</span>
-<span class="sd">            and `C9:G20` will return all values in the specified range. If not</span>
-<span class="sd">            specified then returns all values in the specified `sheet`.</span>
+<span class="sd">        cells: The cell(s) to read. For example,</span>
+
+<span class="sd">            * `C9` &amp;mdash; a single value,</span>
+<span class="sd">            * `B` &amp;mdash; all values in column *B*,</span>
+<span class="sd">            * `A2:D2` &amp;mdash; all values in row 2 for columns *A B C D*,</span>
+<span class="sd">            * `C9:G20` &amp;mdash; all values in rows 9 to 20 for columns *C D E F G*,</span>
+<span class="sd">            * `D,F,H:K` &amp;mdash; all values in columns *D F H I J K*</span>
+<span class="sd">            * `F3:H10,K` &amp;mdash; all values in rows 3 to 10 for columns *F G H K*.</span>
+
+<span class="sd">            If not specified, returns all values in the specified `sheet`.</span>
 <span class="sd">        sheet: The name of the sheet to read the value(s) from. If there is only</span>
 <span class="sd">            one sheet in the spreadsheet then you do not need to specify the name</span>
 <span class="sd">            of the sheet.</span>
@@ -5436,12 +5467,16 @@ replaced with the specified value.</p>
 <span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]</span>
 <span class="sd">    &gt;&gt;&gt; ods.read(&quot;B2&quot;)</span>
 <span class="sd">    49.82</span>
-<span class="sd">    &gt;&gt;&gt; ods.read(&quot;A:A&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; ods.read(&quot;A&quot;)</span>
 <span class="sd">    [(&#39;temperature&#39;,), (20.33,), (20.23,), (20.41,), (20.29,)]</span>
+<span class="sd">    &gt;&gt;&gt; ods.read(&quot;B:B&quot;)</span>
+<span class="sd">    [(&#39;humidity&#39;,), (49.82,), (46.06,), (47.06,), (48.32,)]</span>
 <span class="sd">    &gt;&gt;&gt; ods.read(&quot;A1:B1&quot;)</span>
 <span class="sd">    [(&#39;temperature&#39;, &#39;humidity&#39;)]</span>
 <span class="sd">    &gt;&gt;&gt; ods.read(&quot;A2:B4&quot;)</span>
 <span class="sd">    [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]</span>
+<span class="sd">    &gt;&gt;&gt; ods.read(&quot;B,A&quot;)</span>
+<span class="sd">    [(&#39;humidity&#39;, &#39;temperature&#39;), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]</span>
 
 <span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -5468,18 +5503,16 @@ replaced with the specified value.</p>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">maxsize</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">contains_colon</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">,</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">cells</span><span class="p">:</span>
-        <span class="n">split</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-        <span class="n">r</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">r1</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">r</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">contains_colon</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">r</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">r2</span> <span class="o">=</span> <span class="n">r</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span>
+    <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">is_range</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxsize</span>
+        <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_range</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">maxsize</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cols</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>  <span class="c1"># A cell cannot contain bytes so b&quot;-&quot; cannot be a cell value</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spans</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5488,13 +5521,13 @@ replaced with the specified value.</p>
         <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">contains_colon</span> <span class="ow">and</span> <span class="n">r1</span> <span class="o">==</span> <span class="n">r2</span> <span class="ow">and</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">c2</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">is_range</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
 
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5542,13 +5575,13 @@ replaced with the specified value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the OpenDocument Spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
