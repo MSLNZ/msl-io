@@ -147,8 +147,8 @@ class ExcelReader(Spreadsheet):
         [('temperature', 'humidity')]
         >>> excel.read("A2:B4")
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
-        >>> excel.read("A,B")
-        [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
+        >>> excel.read("B,A")
+        [('humidity', 'temperature'), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]
 
         ```
         """
