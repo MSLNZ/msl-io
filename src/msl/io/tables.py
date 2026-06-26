@@ -148,7 +148,7 @@ def read_table_excel(  # noqa: PLR0913
     sheet: str | None = None,
     as_datetime: bool = True,
     dtype: DTypeLike | None = None,
-    replace_invalid_dates: str | date | datetime | None = None,
+    invalid_date: str | date | datetime | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from an Excel spreadsheet.
@@ -169,7 +169,7 @@ def read_table_excel(  # noqa: PLR0913
             [date][datetime.date] objects. If `False`, dates are returned as an
             ISO 8601 string.
         dtype: The data type(s) to use for the table.
-        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+        invalid_date: If `None`, an error is raised if a cell contains a value that
             is an invalid date. If not `None`, all cells that contain an invalid date are
             replaced with the specified value.
         kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].
@@ -187,7 +187,7 @@ def read_table_excel(  # noqa: PLR0913
             num_rows, num_cols = excel.dimensions(name)
             letters = excel.to_letters(num_cols - 1)
             cells += f":{letters}{num_rows}"
-        table = excel.read(cells, sheet=sheet, as_datetime=as_datetime, replace_invalid_dates=replace_invalid_dates)
+        table = excel.read(cells, sheet=sheet, as_datetime=as_datetime, invalid_date=invalid_date)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
@@ -199,7 +199,7 @@ def read_table_gsheets(  # noqa: PLR0913
     *,
     as_datetime: bool = True,
     dtype: DTypeLike | None = None,
-    replace_invalid_dates: datetime | None = None,
+    invalid_date: datetime | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from a Google Sheets spreadsheet.
@@ -224,7 +224,7 @@ def read_table_gsheets(  # noqa: PLR0913
             [date][datetime.date] objects. If `False`, dates are returned as a string in
             the display format of the spreadsheet cell.
         dtype: The data type(s) to use for the table.
-        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+        invalid_date: If `None`, an error is raised if a cell contains a value that
             is an invalid date. If not `None`, all cells that contain an invalid date are
             replaced with the specified value.
         kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].
@@ -242,12 +242,10 @@ def read_table_gsheets(  # noqa: PLR0913
                 raise ValueError(msg)
 
             r, c = sheets.to_indices(cells)
-            data = sheets.read(sheet=sheet, as_datetime=as_datetime, replace_invalid_dates=replace_invalid_dates)
+            data = sheets.read(sheet=sheet, as_datetime=as_datetime, invalid_date=invalid_date)
             table = [row[c:] for row in data[r:]]
         else:
-            table = sheets.read(
-                cells, sheet=sheet, as_datetime=as_datetime, replace_invalid_dates=replace_invalid_dates
-            )
+            table = sheets.read(cells, sheet=sheet, as_datetime=as_datetime, invalid_date=invalid_date)
 
     return _spreadsheet_to_dataset(table, file, dtype)
 
@@ -260,7 +258,7 @@ def read_table_ods(  # noqa: PLR0913
     as_datetime: bool = True,
     merged: bool = False,
     dtype: DTypeLike | None = None,
-    replace_invalid_dates: str | date | datetime | None = None,
+    invalid_date: str | date | datetime | None = None,
     **kwargs: Any,
 ) -> Dataset:
     """Read a data table from an OpenDocument Spreadsheet.
@@ -285,7 +283,7 @@ def read_table_ods(  # noqa: PLR0913
             of a hidden cell that is merged with a visible cell can still be retained
             (depends on how the merger was performed).
         dtype: The data type(s) to use for the table.
-        replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+        invalid_date: If `None`, an error is raised if a cell contains a value that
             is an invalid date. If not `None`, all cells that contain an invalid date are
             replaced with the specified value.
         kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].
@@ -305,9 +303,7 @@ def read_table_ods(  # noqa: PLR0913
             num_rows, num_columns = ods.dimensions(name)
             letters = ods.to_letters(num_columns - 1)
             cells += f":{letters}{num_rows}"
-        table = ods.read(
-            cells, sheet=sheet, as_datetime=as_datetime, merged=merged, replace_invalid_dates=replace_invalid_dates
-        )
+        table = ods.read(cells, sheet=sheet, as_datetime=as_datetime, merged=merged, invalid_date=invalid_date)
     return _spreadsheet_to_dataset(table, file, dtype)
 
 

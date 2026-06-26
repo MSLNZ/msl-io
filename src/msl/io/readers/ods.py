@@ -112,7 +112,7 @@ class ODSReader(Spreadsheet):
         *,
         as_datetime: bool = True,
         merged: bool = False,
-        replace_invalid_dates: str | date | datetime | None = None,
+        invalid_date: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the OpenDocument Spreadsheet.
 
@@ -131,7 +131,7 @@ class ODSReader(Spreadsheet):
                 returned for all merged cells. In an OpenDocument Spreadsheet, the value
                 of a hidden cell that is merged with a visible cell can still be retained
                 (depends on how the merger was performed).
-            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+            invalid_date: If `None`, an error is raised if a cell contains a value that
                 is an invalid date. If not `None`, all cells that contain an invalid date are
                 replaced with the specified value.
 
@@ -198,7 +198,7 @@ class ODSReader(Spreadsheet):
         self._spans.clear()
         data: list[tuple[Any, ...]] = []
         for row in self._rows(table, r1, r2):
-            values = tuple(self._cell(name, row, c1, c2, as_datetime, merged, replace_invalid_dates))
+            values = tuple(self._cell(name, row, c1, c2, as_datetime, merged, invalid_date))
             if values:
                 data.append(values)
 
@@ -274,7 +274,7 @@ class ODSReader(Spreadsheet):
         stop: int,
         as_datetime: bool,  # noqa: FBT001
         merged: bool,  # noqa: FBT001
-        replace_invalid_dates: str | date | datetime | None,
+        invalid_date: str | date | datetime | None,
     ) -> Any:
         """Yield the value of each cell between the `start` and `stop` indices in the `row`."""
         start += 1
@@ -285,13 +285,13 @@ class ODSReader(Spreadsheet):
                 nrs = int(self._attribute(cell, "table", "number-rows-spanned", "0"))
                 ncs = int(self._attribute(cell, "table", "number-columns-spanned", "0"))
                 if nrs > 1 and ncs > 1:
-                    value = self._value(sheet, cell, as_datetime, replace_invalid_dates)
+                    value = self._value(sheet, cell, as_datetime, invalid_date)
                     for j in range(ncs):
                         self._spans[index + j] = (nrs, value)
                 elif nrs > 1:
-                    self._spans[index] = (nrs, self._value(sheet, cell, as_datetime, replace_invalid_dates))
+                    self._spans[index] = (nrs, self._value(sheet, cell, as_datetime, invalid_date))
                 elif ncs > 1:
-                    value = self._value(sheet, cell, as_datetime, replace_invalid_dates)
+                    value = self._value(sheet, cell, as_datetime, invalid_date)
                     self._spans[index] = (1, value)
                     # The following will be consumed by the "covered-table-cell" element in the next `row` iteration
                     self._spans[index + 1] = (ncs - 1, value)
@@ -306,7 +306,7 @@ class ODSReader(Spreadsheet):
                     _, value = self._spans[index]
                     del self._spans[index]
                 else:
-                    value = self._value(sheet, cell, as_datetime, replace_invalid_dates)
+                    value = self._value(sheet, cell, as_datetime, invalid_date)
                 for i in range(start, position + 1):
                     if i > stop:
                         return
@@ -325,14 +325,14 @@ class ODSReader(Spreadsheet):
                     yield span_value
             else:
                 start += 1
-                yield self._value(sheet, cell, as_datetime, replace_invalid_dates)
+                yield self._value(sheet, cell, as_datetime, invalid_date)
 
     def _value(  # noqa: C901, PLR0911
         self,
         sheet: str,
         cell: Element[str],
         as_datetime: bool,  # noqa: FBT001
-        replace_invalid_dates: str | date | datetime | None,
+        invalid_date: str | date | datetime | None,
     ) -> Any:
         """Returns the value of a table-cell as a Python object."""
         # See Section 19.385 office:value-type
@@ -362,11 +362,11 @@ class ODSReader(Spreadsheet):
             try:
                 dt = datetime.fromisoformat(value)
             except ValueError:
-                if replace_invalid_dates is not None:
-                    return replace_invalid_dates
+                if invalid_date is not None:
+                    return invalid_date
                 msg = (
                     f"Invalid isoformat date {value!r} in sheet {sheet!r}. "
-                    "Specify a value for `replace_invalid_dates` to suppress this error."
+                    "Specify a value for `invalid_date` to suppress this error."
                 )
                 raise ValueError(msg) from None
             if dt.hour + dt.minute + dt.second + dt.microsecond == 0:

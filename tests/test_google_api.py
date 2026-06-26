@@ -1011,8 +1011,8 @@ def test_gsheets_to_datetime_replace_invalid_date() -> None:
     default = datetime(1900, 1, 8)  # noqa: DTZ001
     assert GSheets.to_datetime(9) == default
 
-    match = r"Invalid date 9000000000.0, specify a value for `replace_invalid_dates` to suppress this error."
+    match = r"Invalid date 9000000000.0, specify a value for `invalid_date` to suppress this error."
     with pytest.raises(OverflowError, match=match):
         _ = GSheets.to_datetime(9e9)
 
-    assert GSheets.to_datetime(9e9, replace_invalid_dates=default) == default
+    assert GSheets.to_datetime(9e9, invalid_date=default) == default

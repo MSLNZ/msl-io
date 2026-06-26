@@ -1150,12 +1150,12 @@ class GSheets(GoogleAPI):
         return cells
 
     @staticmethod
-    def to_datetime(value: float, replace_invalid_dates: datetime | None = None) -> datetime:
+    def to_datetime(value: float, invalid_date: datetime | None = None) -> datetime:
         """Convert a *serial number* date into a [datetime][datetime.datetime].
 
         Args:
             value: A date in the *serial number* format.
-            replace_invalid_dates: If `None`, an error is raised if the `value` is an invalid date.
+            invalid_date: If `None`, an error is raised if the `value` is an invalid date.
                 If a [datetime][datetime.datetime] instance, the `value` is replaced with the
                 specified value.
 
@@ -1167,9 +1167,9 @@ class GSheets(GoogleAPI):
         try:
             return GSheets.SERIAL_NUMBER_ORIGIN + timedelta(days=days, seconds=seconds)
         except OverflowError:
-            if replace_invalid_dates is not None:
-                return replace_invalid_dates
-            msg = f"Invalid date {value}, specify a value for `replace_invalid_dates` to suppress this error."
+            if invalid_date is not None:
+                return invalid_date
+            msg = f"Invalid date {value}, specify a value for `invalid_date` to suppress this error."
             raise OverflowError(msg) from None
 
     def _get_range(self, sheet: str | None, cells: str | None, spreadsheet_id: str) -> str:

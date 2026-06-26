@@ -209,14 +209,14 @@ def test_invalid_dates(extension: str) -> None:
     excel = ExcelReader(f"tests/samples/table.{extension}")
     match = (
         r"Invalid date in sheet 'BadDates' at cell 'A3' \[value=1.0, datemode=0\]. "
-        "Specify a value for `replace_invalid_dates` to suppress this error."
+        "Specify a value for `invalid_date` to suppress this error."
     )
     with pytest.raises(ValueError, match=match):
         _ = excel.read(sheet="BadDates")
 
     # testing for str, date and datetime types allows for testing static type checkers as well
 
-    data = excel.read(sheet="BadDates", replace_invalid_dates="N/A")
+    data = excel.read(sheet="BadDates", invalid_date="N/A")
     assert data == [
         ("Date Acquired",),
         (date(2022, 6, 18),),
@@ -224,7 +224,7 @@ def test_invalid_dates(extension: str) -> None:
         (date(2024, 10, 1),),
     ]
 
-    data = excel.read(sheet="BadDates", replace_invalid_dates=date(1900, 1, 1))
+    data = excel.read(sheet="BadDates", invalid_date=date(1900, 1, 1))
     assert data == [
         ("Date Acquired",),
         (date(2022, 6, 18),),
@@ -233,7 +233,7 @@ def test_invalid_dates(extension: str) -> None:
     ]
 
     default = datetime(1900, 1, 1, 9, 8, 7)  # noqa: DTZ001
-    data = excel.read(sheet="BadDates", replace_invalid_dates=default)
+    data = excel.read(sheet="BadDates", invalid_date=default)
     assert data == [
         ("Date Acquired",),
         (date(2022, 6, 18),),

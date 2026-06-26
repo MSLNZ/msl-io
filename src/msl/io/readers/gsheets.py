@@ -114,7 +114,7 @@ class GSheetsReader(Spreadsheet):
         *,
         as_datetime: bool = True,
         merged: bool = False,
-        replace_invalid_dates: str | date | datetime | None = None,
+        invalid_date: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Google Sheets spreadsheet.
 
@@ -130,7 +130,7 @@ class GSheetsReader(Spreadsheet):
             merged: Applies to cells that are merged with other cells. If cells are merged, then
                 only the top-left cell has the value and all other cells in the merger are empty.
                 Enabling this argument is currently not supported and the value must be `False`.
-            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+            invalid_date: If `None`, an error is raised if a cell contains a value that
                 is an invalid date. If a [datetime][datetime.datetime] instance (which is the
                 only other allowed type besides `None`, the other types are kept for consistency
                 with other spreadsheet readers), all cells that contain an invalid date are
@@ -165,8 +165,8 @@ class GSheetsReader(Spreadsheet):
             msg = "The `merged` argument must be False to read a Google spreadsheet"
             raise ValueError(msg)
 
-        if (replace_invalid_dates is not None) and (not isinstance(replace_invalid_dates, datetime)):
-            msg = "The `replace_invalid_dates` type must be an instance of `datetime`"
+        if (invalid_date is not None) and (not isinstance(invalid_date, datetime)):
+            msg = "The `invalid_date` type must be an instance of `datetime`"
             raise TypeError(msg)
 
         if not sheet:
@@ -197,11 +197,9 @@ class GSheetsReader(Spreadsheet):
             row_values: list[Any] = []
             for item in row:
                 if item.type == GCellType.DATE:
-                    value = (
-                        GSheets.to_datetime(item.value, replace_invalid_dates).date() if as_datetime else item.formatted
-                    )
+                    value = GSheets.to_datetime(item.value, invalid_date).date() if as_datetime else item.formatted
                 elif item.type == GCellType.DATE_TIME:
-                    value = GSheets.to_datetime(item.value, replace_invalid_dates) if as_datetime else item.formatted
+                    value = GSheets.to_datetime(item.value, invalid_date) if as_datetime else item.formatted
                 else:
                     value = item.value
                 row_values.append(value)

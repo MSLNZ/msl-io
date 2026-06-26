@@ -47,8 +47,8 @@ def test_raises() -> None:
     with pytest.raises(ValueError, match=r"The `merged` argument must be False"):
         _ = GSheetsReader(table_gsheet_id, account="testing").read(merged=True)
 
-    with pytest.raises(TypeError, match=r"The `replace_invalid_dates` type must be an instance of `datetime`"):
-        _ = GSheetsReader(table_gsheet_id, account="testing").read(replace_invalid_dates="N/A")
+    with pytest.raises(TypeError, match=r"The `invalid_date` type must be an instance of `datetime`"):
+        _ = GSheetsReader(table_gsheet_id, account="testing").read(invalid_date="N/A")
 
 
 @skipif_no_sheets_readonly

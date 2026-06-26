@@ -96,7 +96,7 @@ class ExcelReader(Spreadsheet):
         *,
         as_datetime: bool = True,
         merged: bool = False,
-        replace_invalid_dates: str | date | datetime | None = None,
+        invalid_date: str | date | datetime | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Excel spreadsheet.
 
@@ -120,7 +120,7 @@ class ExcelReader(Spreadsheet):
             merged: Applies to cells that are merged with other cells. If cells are merged, then
                 only the top-left cell has the value and all other cells in the merger are empty.
                 Enabling this argument is currently not supported and the value must be `False`.
-            replace_invalid_dates: If `None`, an error is raised if a cell contains a value that
+            invalid_date: If `None`, an error is raised if a cell contains a value that
                 is an invalid date. If not `None`, all cells that contain an invalid date are
                 replaced with the specified value.
 
@@ -192,9 +192,7 @@ class ExcelReader(Spreadsheet):
         if r1 >= nrows or not cols:
             return [] if is_range else None
 
-        data = [
-            tuple(self._value(_sheet, r, c, as_datetime, replace_invalid_dates) for c in cols) for r in range(r1, r2)
-        ]
+        data = [tuple(self._value(_sheet, r, c, as_datetime, invalid_date) for c in cols) for r in range(r1, r2)]
 
         if is_range:
             return data
@@ -235,7 +233,7 @@ class ExcelReader(Spreadsheet):
         row: int,
         col: int,
         as_datetime: bool,  # noqa: FBT001
-        replace_invalid_dates: str | date | datetime | None,
+        invalid_date: str | date | datetime | None,
     ) -> Any:
         """Get the value of a cell."""
         cell = sheet.cell(row, col)
@@ -249,13 +247,13 @@ class ExcelReader(Spreadsheet):
             try:
                 tup = xldate_as_tuple(cell.value, self._workbook.datemode)
             except XLDateError as e:
-                if replace_invalid_dates is not None:
-                    return replace_invalid_dates
+                if invalid_date is not None:
+                    return invalid_date
                 letter = self.to_letters(col)
                 msg = (
                     f"Invalid date in sheet {sheet.name!r} at cell '{letter}{row + 1}' "
                     f"[value={cell.value}, datemode={self._workbook.datemode}]. "
-                    "Specify a value for `replace_invalid_dates` to suppress this error."
+                    "Specify a value for `invalid_date` to suppress this error."
                 )
                 raise type(e)(msg) from None
             dt = datetime(*tup)  # noqa: DTZ001
