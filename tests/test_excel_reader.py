@@ -126,10 +126,15 @@ def test_read(on_demand: bool, extension: str) -> None:  # noqa: FBT001, PLR0915
     assert excel.read("D:D", sheet="A1") == [(item[3],) for item in values]
     assert excel.read("E", sheet="A1") == [(item[4],) for item in values]
     assert excel.read("E:E", sheet="A1") == [(item[4],) for item in values]
+    assert excel.read("F", sheet="A1") == []  # column F is empty (also out of bounds)
     assert excel.read("F:F", sheet="A1") == []  # column F is empty (also out of bounds)
+    assert excel.read("ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
     assert excel.read("ABC:ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
+    assert excel.read("BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
     assert excel.read("BH:BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
+    assert excel.read("A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
     assert excel.read("A:A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
+    assert excel.read("BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
     assert excel.read("BG:BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
 
     # 2D slices

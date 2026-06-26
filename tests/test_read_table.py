@@ -74,9 +74,6 @@ gsheet_data = np.asarray(
 )
 
 
-INVALID_CELL_RANGES = ["", ":", "A", "A:", "1", "ZZ", "AB", "A-B", "A1D10", "A1-D10"]
-
-
 def get_url(extension: str) -> Path:
     return Path(__file__).parent / "samples" / f"table{extension}"
 
@@ -97,7 +94,7 @@ def test_invalid_cell_range_xls(cells: str) -> None:
         _ = read_table(get_url(".xls"), cells=cells, sheet="A1")
 
 
-@pytest.mark.parametrize("cells", INVALID_CELL_RANGES)
+@pytest.mark.parametrize("cells", ["", ":", "A:", "1", "A-B", "A1D10", "A1-D10"])
 def test_invalid_cell_range_ods(cells: str) -> None:
     with pytest.raises(ValueError, match=r"Invalid cell"):
         _ = read_table(get_url(".ods"), cells=cells, sheet="A1")
@@ -786,7 +783,7 @@ def test_gsheet_raises() -> None:
     ssid = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet"
 
     # invalid cell range
-    for c in INVALID_CELL_RANGES:
+    for c in ["", ":", "A", "A:", "1", "ZZ", "AB", "A-B", "A1D10", "A1-D10"]:
         with pytest.raises(ValueError, match=r"Invalid cell"):
             _ = read_table(ssid, cells=c, sheet="StartA1", account="testing")
 
@@ -909,6 +906,22 @@ def test_excel_spreadsheet_cells_with_commas(ext: str) -> None:
     assert np.array_equal(table[:, 1], data["f3"])
 
     table = read_table(get_url(ext), sheet="A1", cells="A:C,E")
+    assert table.shape == (10, 4)
+    assert np.array_equal(table.metadata.header, ("timestamp", "val1", "uncert1", "uncert2"))
+    assert np.array_equal(table[:, 0], [datetime.strptime(d, "%Y-%m-%d %H:%M:%S") for d in data["f0"]])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: DTZ007
+    assert np.array_equal(table[:, 1], data["f1"])
+    assert np.array_equal(table[:, 2], data["f2"])
+    assert np.array_equal(table[:, 3], data["f4"])
+
+
+def test_ods_spreadsheet_cells_with_commas() -> None:
+    table = read_table(get_url(".ods"), sheet="A1", cells="B,D")
+    assert table.shape == (10, 2)
+    assert np.array_equal(table.metadata.header, ("val1", "val2"))
+    assert np.array_equal(table[:, 0], data["f1"])
+    assert np.array_equal(table[:, 1], data["f3"])
+
+    table = read_table(get_url(".ods"), sheet="A1", cells="A:C,E")
     assert table.shape == (10, 4)
     assert np.array_equal(table.metadata.header, ("timestamp", "val1", "uncert1", "uncert2"))
     assert np.array_equal(table[:, 0], [datetime.strptime(d, "%Y-%m-%d %H:%M:%S") for d in data["f0"]])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # noqa: DTZ007

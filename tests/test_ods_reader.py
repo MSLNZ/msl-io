@@ -134,15 +134,25 @@ def test_table() -> None:  # noqa: PLR0915
     assert ods.read("D9:D9", sheet="A1") == [(0.500805,)]
 
     # single column
+    assert ods.read("A", sheet="A1") == [(item[0],) for item in values]
     assert ods.read("A:A", sheet="A1") == [(item[0],) for item in values]
+    assert ods.read("B", sheet="A1") == [(item[1],) for item in values]
     assert ods.read("B:B", sheet="A1") == [(item[1],) for item in values]
+    assert ods.read("C", sheet="A1") == [(item[2],) for item in values]
     assert ods.read("C:C", sheet="A1") == [(item[2],) for item in values]
+    assert ods.read("D", sheet="A1") == [(item[3],) for item in values]
     assert ods.read("D:D", sheet="A1") == [(item[3],) for item in values]
+    assert ods.read("E", sheet="A1") == [(item[4],) for item in values]
     assert ods.read("E:E", sheet="A1") == [(item[4],) for item in values]
+    assert ods.read("F", sheet="A1") == []  # column F is empty (also out of bounds)
     assert ods.read("F:F", sheet="A1") == []  # column F is empty (also out of bounds)
+    assert ods.read("ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
     assert ods.read("ABC:ABC", sheet="A1") == []  # column ABC is empty (also out of bounds)
+    assert ods.read("BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
     assert ods.read("BH:BH", sheet="BH11") == [(None,) for _ in range(10)] + [(item[0],) for item in values]
+    assert ods.read("A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
     assert ods.read("A:A", sheet="BH11") == [(None,) for _ in range(21)]  # column A is empty
+    assert ods.read("BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
     assert ods.read("BG:BG", sheet="BH11") == [(None,) for _ in range(21)]  # column BG is empty
 
     # 2D slices
@@ -228,11 +238,25 @@ def test_repeats_merged() -> None:
         (None, 9, 10, 11),
     ]
 
+    assert ods.read(sheet="Merged", cells="A,C") == [
+        ("A", None),
+        (1, 3),
+        (5, 7),
+        (None, 10),
+    ]
+
     assert ods.read(sheet="Merged", merged=True) == [
         ("A", "B", "B", "C"),
         (1, 2, 3, 4),
         (5, 6, 7, 8),
         (5, 9, 10, 11),
+    ]
+
+    assert ods.read(sheet="Merged", merged=True, cells="A,C") == [
+        ("A", "B"),
+        (1, 3),
+        (5, 7),
+        (5, 10),
     ]
 
     assert ods.read("C1:D2", sheet="Merged", merged=False) == [(None, "C"), (3, 4)]
@@ -262,6 +286,18 @@ def test_repeats_multi_merged() -> None:
         ("#VALUE!", "#DIV/0!", "#NUM!", "#NAME?", None, None, None),
     ]
 
+    assert ods.read(sheet="Multi-Merged", cells="A:C,G") == [
+        ("A", "B", "C1 (1x4)", "G"),
+        (1, 2, 3, 7),
+        (8, 9, 10, 14),
+        ("A4 (4x1)", 15, 16, 20),
+        (None, 21, 22, 26),
+        (None, 27, 28, 32),
+        (None, 33, 34, 38),
+        (39, 40, 41, 45),
+        ("#VALUE!", "#DIV/0!", "#NUM!", None),
+    ]
+
     assert ods.read(sheet="Multi-Merged", merged=True) == [
         ("A", "B", "C1 (1x4)", "C1 (1x4)", "C1 (1x4)", "C1 (1x4)", "G"),
         (1, 2, 3, 4, 5, 6, 7),
@@ -272,6 +308,18 @@ def test_repeats_multi_merged() -> None:
         ("A4 (4x1)", 33, 34, 35, 36, 36, 36),  # 37 and 38 become 36
         (39, 40, 41, 42, 36, 36, 36),  # 43, 44 and 45 become 36
         ("#VALUE!", "#DIV/0!", "#NUM!", "#NAME?", 36, 36, 36),  # None become 36
+    ]
+
+    assert ods.read(sheet="Multi-Merged", merged=True, cells="A,C:E") == [
+        ("A", "C1 (1x4)", "C1 (1x4)", "C1 (1x4)"),
+        (1, 3, 4, 5),
+        (8, 10, 11, 12),
+        ("A4 (4x1)", 16, 17, 18),
+        ("A4 (4x1)", 22, 23, 23),  # 24 becomes 23
+        ("A4 (4x1)", 28, 23, 23),  # 29 and 30 become 23
+        ("A4 (4x1)", 34, 35, 36),  # 37 and 38 become 36
+        (39, 41, 42, 36),  # 43, 44 and 45 become 36
+        ("#VALUE!", "#NUM!", "#NAME?", 36),  # None become 36
     ]
 
     for merged in [True, False]:
@@ -368,3 +416,41 @@ def test_invalid_dates() -> None:
         (default,),
         (date(2024, 10, 1),),
     ]
+
+    ods.close()
+
+
+def test_commas() -> None:
+    with ODSReader("tests/samples/table.ods") as ods:
+        assert ods.read("B,C,D,E", sheet="A1") == [
+            ("val1", "uncert1", "val2", "uncert2"),
+            (-0.505382, 0.000077, 0.501073, 0.000079),
+            (-0.505191, 0.000066, 0.500877, 0.000083),
+            (-0.505308, 0.000086, 0.500988, 0.000087),
+            (-0.505250, 0.000119, 0.500923, 0.000120),
+            (-0.505275, 0.000070, 0.500965, 0.000088),
+            (-0.505137, 0.000079, 0.500817, 0.000085),
+            (-0.505073, 0.000099, 0.500786, 0.000084),
+            (-0.505133, 0.000088, 0.500805, 0.000076),
+            (-0.505096, 0.000062, 0.500759, 0.000062),
+            (-0.505072, 0.000142, 0.500739, 0.000149),
+        ]
+
+        assert ods.read("B,D2:E10", sheet="A1") == [
+            (-0.505382, 0.501073, 0.000079),
+            (-0.505191, 0.500877, 0.000083),
+            (-0.505308, 0.500988, 0.000087),
+            (-0.505250, 0.500923, 0.000120),
+            (-0.505275, 0.500965, 0.000088),
+            (-0.505137, 0.500817, 0.000085),
+            (-0.505073, 0.500786, 0.000084),
+            (-0.505133, 0.500805, 0.000076),
+            (-0.505096, 0.500759, 0.000062),
+        ]
+
+        assert ods.read("A:C4,E", sheet="A1", as_datetime=False) == [
+            ("timestamp", "val1", "uncert1", "uncert2"),
+            ("09/11/2019 14:06:55", -0.505382, 0.000077, 0.000079),
+            ("09/11/2019 14:06:59", -0.505191, 0.000066, 0.000083),
+            ("09/11/2019 14:07:03", -0.505308, 0.000086, 0.000087),
+        ]

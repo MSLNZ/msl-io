@@ -269,9 +269,10 @@ def read_table_ods(  # noqa: PLR0913
         file: The file to read.
         cells: The cells to read. For example, `C9` (i.e, specifying only the top-left cell
             of the table) will start at cell C9 and include all columns to the right and
-            all rows below C9, `A:C` includes all rows in columns A, B and C, and, `C9:G20`
-            includes only the specified cells. If not specified, assumes that the table
-            starts at cell `A1` and returns all cells from the specified `sheet`.
+            all rows below C9, `A:C` includes all rows in columns A, B and C, `C9:G20`
+            includes only the specified cells, and `A:C,E` includes all values in columns
+            A, B, C and E. If not specified, assumes that the table starts at cell `A1`
+            and returns all cells from the specified `sheet`.
         sheet: The name of the sheet to read the data from. If there is only one sheet
             in the OpenDocument then you do not need to specify the name of the sheet.
         as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
@@ -294,14 +295,10 @@ def read_table_ods(  # noqa: PLR0913
     """
     file = os.fsdecode(file) if isinstance(file, (bytes, str, os.PathLike)) else str(file.name)
     with ODSReader(file, **kwargs) as ods:
-        if cells is not None and not _spreadsheet_range_regex.match(cells):
-            match = _spreadsheet_top_left_regex.match(cells)
-            if not match:
-                msg = f"Invalid cell {cells!r}"
-                raise ValueError(msg)
+        if cells is not None and _spreadsheet_top_left_regex.match(cells):
             name = sheet or ods.sheet_names()[0]
-            num_rows, num_columns = ods.dimensions(name)
-            letters = ods.to_letters(num_columns - 1)
+            num_rows, num_cols = ods.dimensions(name)
+            letters = ods.to_letters(num_cols - 1)
             cells += f":{letters}{num_rows}"
         table = ods.read(cells, sheet=sheet, as_datetime=as_datetime, merged=merged, invalid_date=invalid_date)
     return _spreadsheet_to_dataset(table, file, dtype)

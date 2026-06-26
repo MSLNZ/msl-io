@@ -14,7 +14,7 @@ except ImportError:
     from xml.etree import ElementTree as ET
 
 from ..utils import get_extension  # noqa: TID252
-from .spreadsheet import Spreadsheet
+from .spreadsheet import Spreadsheet, to_ranges
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -71,6 +71,7 @@ class ODSReader(Spreadsheet):
         super().__init__(f)
 
         self._spans: dict[int, tuple[int, Any]] = {}  # column-index: (spans-remaining, cell-value)
+        self._row_data: dict[int, Any] = {}  # column-index: cell-value
 
         ext = get_extension(f).lower()
         content: Element[str]
@@ -104,8 +105,9 @@ class ODSReader(Spreadsheet):
         """Free memory resources that are used to read the OpenDocument Spreadsheet."""
         self._tables.clear()
         self._spans.clear()
+        self._row_data.clear()
 
-    def read(  # noqa: C901, PLR0912
+    def read(
         self,
         cells: str | None = None,
         sheet: str | None = None,
@@ -117,9 +119,16 @@ class ODSReader(Spreadsheet):
         """Read cell values from the OpenDocument Spreadsheet.
 
         Args:
-            cells: The cell(s) to read. For example, `C9` will return a single value
-                and `C9:G20` will return all values in the specified range. If not
-                specified then returns all values in the specified `sheet`.
+            cells: The cell(s) to read. For example,
+
+                * `C9` &mdash; a single value,
+                * `B` &mdash; all values in column *B*,
+                * `A2:D2` &mdash; all values in row 2 for columns *A B C D*,
+                * `C9:G20` &mdash; all values in rows 9 to 20 for columns *C D E F G*,
+                * `D,F,H:K` &mdash; all values in columns *D F H I J K*
+                * `F3:H10,K` &mdash; all values in rows 3 to 10 for columns *F G H K*.
+
+                If not specified, returns all values in the specified `sheet`.
             sheet: The name of the sheet to read the value(s) from. If there is only
                 one sheet in the spreadsheet then you do not need to specify the name
                 of the sheet.
@@ -150,12 +159,16 @@ class ODSReader(Spreadsheet):
         [('temperature', 'humidity'), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
         >>> ods.read("B2")
         49.82
-        >>> ods.read("A:A")
+        >>> ods.read("A")
         [('temperature',), (20.33,), (20.23,), (20.41,), (20.29,)]
+        >>> ods.read("B:B")
+        [('humidity',), (49.82,), (46.06,), (47.06,), (48.32,)]
         >>> ods.read("A1:B1")
         [('temperature', 'humidity')]
         >>> ods.read("A2:B4")
         [(20.33, 49.82), (20.23, 46.06), (20.41, 47.06)]
+        >>> ods.read("B,A")
+        [('humidity', 'temperature'), (49.82, 20.33), (46.06, 20.23), (47.06, 20.41), (48.32, 20.29)]
 
         ```
         """
@@ -182,18 +195,16 @@ class ODSReader(Spreadsheet):
             raise ValueError(msg)
 
         maxsize = sys.maxsize - 1
-        r1, c1, r2, c2, contains_colon = 0, 0, maxsize, maxsize, False
-        if cells:
-            split = cells.split(":")
-            r, c1 = self.to_indices(split[0])
-            r1 = 0 if r is None else r
-            if len(split) > 1:
-                contains_colon = True
-                r, c2 = self.to_indices(split[1])
-                if r is not None:
-                    r2 = r
-            else:
-                r2, c2 = r1, c1
+        if cells is None:
+            is_range = True
+            r1, r2 = 0, maxsize
+            c1, c2 = 0, maxsize
+            self._row_data.clear()
+        else:
+            is_range, r1, r, cols = to_ranges(cells)
+            r2 = maxsize if r is None else r - 1
+            c1, c2 = min(cols), max(cols)
+            self._row_data = dict.fromkeys(cols, b"-")  # A cell cannot contain bytes so b"-" cannot be a cell value
 
         self._spans.clear()
         data: list[tuple[Any, ...]] = []
@@ -202,13 +213,13 @@ class ODSReader(Spreadsheet):
             if values:
                 data.append(values)
 
-        if not contains_colon and r1 == r2 and c1 == c2:
-            try:
-                return data[0][0]
-            except IndexError:
-                return None
+        if is_range:
+            return data
 
-        return data
+        try:
+            return data[0][0]
+        except IndexError:
+            return None
 
     def dimensions(self, sheet: str) -> tuple[int, int]:
         """Get the number of rows and columns in a sheet.
@@ -266,7 +277,7 @@ class ODSReader(Spreadsheet):
                 start += 1
                 yield row
 
-    def _cell(  # noqa: C901, PLR0912, PLR0913
+    def _cell(  # noqa: C901, PLR0912, PLR0913, PLR0915
         self,
         sheet: str,
         row: Element[str],
@@ -275,11 +286,13 @@ class ODSReader(Spreadsheet):
         as_datetime: bool,  # noqa: FBT001
         merged: bool,  # noqa: FBT001
         invalid_date: str | date | datetime | None,
-    ) -> Any:
+    ) -> list[Any]:
         """Yield the value of each cell between the `start` and `stop` indices in the `row`."""
         start += 1
         stop += 1
         position = 0
+        column = start - 1
+        values: list[Any] = []
         for index, cell in enumerate(row):
             if merged:
                 nrs = int(self._attribute(cell, "table", "number-rows-spanned", "0"))
@@ -309,11 +322,15 @@ class ODSReader(Spreadsheet):
                     value = self._value(sheet, cell, as_datetime, invalid_date)
                 for i in range(start, position + 1):
                     if i > stop:
-                        return
+                        break
+                    if not self._row_data:
+                        values.append(value)
+                    elif column in self._row_data:
+                        self._row_data[column] = value
+                    column += 1
                     start += 1
-                    yield value
             elif position > stop:
-                return
+                break
             elif merged and index in self._spans:
                 remaining, span_value = self._spans[index]
                 if remaining > 0:
@@ -321,11 +338,22 @@ class ODSReader(Spreadsheet):
                         del self._spans[index]
                     else:
                         self._spans[index] = (remaining - 1, span_value)
+                    if not self._row_data:
+                        values.append(span_value)
+                    elif column in self._row_data:
+                        self._row_data[column] = span_value
+                    column += 1
                     start += 1
-                    yield span_value
             else:
+                value = self._value(sheet, cell, as_datetime, invalid_date)
+                if not self._row_data:
+                    values.append(value)
+                elif column in self._row_data:
+                    self._row_data[column] = value
+                column += 1
                 start += 1
-                yield self._value(sheet, cell, as_datetime, invalid_date)
+
+        return values or [v for v in self._row_data.values() if v != b"-"]
 
     def _value(  # noqa: C901, PLR0911
         self,
