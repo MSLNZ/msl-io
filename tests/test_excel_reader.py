@@ -284,3 +284,38 @@ def test_commas(extension: str) -> None:
             ("2019-09-11 14:06:59", -0.505191, 0.000066, 0.000083),
             ("2019-09-11 14:07:03", -0.505308, 0.000086, 0.000087),
         ]
+
+
+@pytest.mark.parametrize("extension", ["xls", "xlsx"])
+def test_skip_rows(extension: str) -> None:
+    with ExcelReader(f"tests/samples/table.{extension}") as excel:
+        assert excel.read(sheet="A1", skip_rows=[2, 3, 6, 9]) == [
+            ("timestamp", "val1", "uncert1", "val2", "uncert2"),
+            (datetime(2019, 9, 11, 14, 7, 3), -0.505308, 0.000086, 0.500988, 0.000087),  # noqa: DTZ001
+            (datetime(2019, 9, 11, 14, 7, 7), -0.505250, 0.000119, 0.500923, 0.000120),  # noqa: DTZ001
+            (datetime(2019, 9, 11, 14, 7, 15), -0.505137, 0.000079, 0.500817, 0.000085),  # noqa: DTZ001
+            (datetime(2019, 9, 11, 14, 7, 19), -0.505073, 0.000099, 0.500786, 0.000084),  # noqa: DTZ001
+            (datetime(2019, 9, 11, 14, 7, 27), -0.505096, 0.000062, 0.500759, 0.000062),  # noqa: DTZ001
+            (datetime(2019, 9, 11, 14, 7, 31), -0.505072, 0.000142, 0.500739, 0.000149),  # noqa: DTZ001
+        ]
+
+        assert excel.read("B,D2:E10", sheet="A1", skip_rows=[3]) == [
+            (-0.505382, 0.501073, 0.000079),
+            (-0.505308, 0.500988, 0.000087),
+            (-0.505250, 0.500923, 0.000120),
+            (-0.505275, 0.500965, 0.000088),
+            (-0.505137, 0.500817, 0.000085),
+            (-0.505073, 0.500786, 0.000084),
+            (-0.505133, 0.500805, 0.000076),
+            (-0.505096, 0.500759, 0.000062),
+        ]
+
+        assert excel.read("A:C4,E", sheet="A1", as_datetime=False, skip_rows=[4, 99, 100]) == [
+            ("timestamp", "val1", "uncert1", "uncert2"),
+            ("2019-09-11 14:06:55", -0.505382, 0.000077, 0.000079),
+            ("2019-09-11 14:06:59", -0.505191, 0.000066, 0.000083),
+        ]
+
+        assert excel.read(sheet="A1", skip_rows=range(20)) == []
+        assert excel.read(cells="C4", sheet="A1") == 0.000086
+        assert excel.read(cells="C4", sheet="A1", skip_rows=[4]) is None

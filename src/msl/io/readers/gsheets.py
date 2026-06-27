@@ -8,10 +8,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ..google_api import GCellType, GDrive, GSheets  # noqa: TID252
-from .spreadsheet import Spreadsheet
+from .spreadsheet import Spreadsheet, to_ranges
 
 if TYPE_CHECKING:
     import sys
+    from collections.abc import Iterable
     from datetime import date
     from typing import Any
 
@@ -107,14 +108,15 @@ class GSheetsReader(Spreadsheet):
         """Close the connection to the GSheet API service."""
         self._gsheets.close()
 
-    def read(  # noqa: C901, PLR0912
+    def read(  # noqa: C901, PLR0912, PLR0913
         self,
         cells: str | None = None,
         sheet: str | None = None,
         *,
         as_datetime: bool = True,
-        merged: bool = False,
         invalid_date: str | date | datetime | None = None,
+        merged: bool = False,
+        skip_rows: Iterable[int] | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Google Sheets spreadsheet.
 
@@ -127,14 +129,15 @@ class GSheetsReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as a string in
                 the display format of the spreadsheet cell.
-            merged: Applies to cells that are merged with other cells. If cells are merged, then
-                only the top-left cell has the value and all other cells in the merger are empty.
-                Enabling this argument is currently not supported and the value must be `False`.
             invalid_date: If `None`, an error is raised if a cell contains a value that
                 is an invalid date. If a [datetime][datetime.datetime] instance (which is the
                 only other allowed type besides `None`, the other types are kept for consistency
                 with other spreadsheet readers), all cells that contain an invalid date are
                 replaced with the specified value.
+            merged: Applies to cells that are merged with other cells. If cells are merged, then
+                only the top-left cell has the value and all other cells in the merger are empty.
+                Enabling this argument is currently not supported and the value must be `False`.
+            skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
 
         Returns:
             The value(s) of the requested cell(s).
@@ -184,7 +187,12 @@ class GSheetsReader(Spreadsheet):
                 sheet = names[0]
                 self._cached_sheet_name = sheet
 
-        ranges = f"{sheet}!{cells}" if cells else sheet
+        if cells:
+            _, r1, _, _ = to_ranges(cells)
+            ranges = f"{sheet}!{cells}"
+        else:
+            r1 = 0
+            ranges = sheet
 
         cells_dict = self._gsheets.cells(self._spreadsheet_id, ranges=ranges)
 
@@ -193,7 +201,10 @@ class GSheetsReader(Spreadsheet):
             raise ValueError(msg)
 
         values: list[tuple[Any, ...]] = []
-        for row in cells_dict[sheet]:
+        skip: set[int] = {r - r1 - 1 for r in skip_rows} if skip_rows else set()
+        for i, row in enumerate(cells_dict[sheet]):
+            if i in skip:
+                continue
             row_values: list[Any] = []
             for item in row:
                 if item.type == GCellType.DATE:

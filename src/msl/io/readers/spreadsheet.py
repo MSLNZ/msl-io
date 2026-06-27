@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from datetime import date, datetime
     from typing import Any
 
@@ -32,14 +33,15 @@ class Spreadsheet(ABC):
         return self._file
 
     @abstractmethod
-    def read(
+    def read(  # noqa: PLR0913
         self,
         cells: str | None = None,
         sheet: str | None = None,
         *,
         as_datetime: bool = True,
-        merged: bool = False,
         invalid_date: str | date | datetime | None = None,
+        merged: bool = False,
+        skip_rows: Iterable[int] | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read values from the spreadsheet.
 
@@ -54,14 +56,15 @@ class Spreadsheet(ABC):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as a string in
                 the format of the spreadsheet cell.
+            invalid_date: If `None`, an error is raised if a cell contains a value that
+                is an invalid date. If not `None`, all cells that contain an invalid date are
+                replaced with the specified value.
             merged: Applies to cells that are merged with other cells. The details depend
                 on the type of spreadsheet document that is being read. Some documents allow
                 the hidden cells that are part of a merger to retain its unmerged value. Other
                 documents associate the merged value only with the top-left cell and all
                 other cells in the merger are empty.
-            invalid_date: If `None`, an error is raised if a cell contains a value that
-                is an invalid date. If not `None`, all cells that contain an invalid date are
-                replaced with the specified value.
+            skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
 
         Returns:
             The value(s) of the requested cell(s).

@@ -22,6 +22,7 @@ from .spreadsheet import Spreadsheet, to_ranges
 
 if TYPE_CHECKING:
     import sys
+    from collections.abc import Iterable
     from datetime import date
     from typing import Any
 
@@ -89,14 +90,15 @@ class ExcelReader(Spreadsheet):
         """Close the workbook."""
         self._workbook.release_resources()
 
-    def read(
+    def read(  # noqa: PLR0913
         self,
         cells: str | None = None,
         sheet: str | None = None,
         *,
         as_datetime: bool = True,
-        merged: bool = False,
         invalid_date: str | date | datetime | None = None,
+        merged: bool = False,
+        skip_rows: Iterable[int] | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the Excel spreadsheet.
 
@@ -117,12 +119,13 @@ class ExcelReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime] or
                 [date][datetime.date] objects. If `False`, dates are returned as an
                 ISO 8601 string.
-            merged: Applies to cells that are merged with other cells. If cells are merged, then
-                only the top-left cell has the value and all other cells in the merger are empty.
-                Enabling this argument is currently not supported and the value must be `False`.
             invalid_date: If `None`, an error is raised if a cell contains a value that
                 is an invalid date. If not `None`, all cells that contain an invalid date are
                 replaced with the specified value.
+            merged: Applies to cells that are merged with other cells. If cells are merged, then
+                only the top-left cell has the value and all other cells in the merger are empty.
+                Enabling this argument is currently not supported and the value must be `False`.
+            skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
 
         Returns:
             The value(s) of the requested cell(s).
@@ -192,7 +195,12 @@ class ExcelReader(Spreadsheet):
         if r1 >= nrows or not cols:
             return [] if is_range else None
 
-        data = [tuple(self._value(_sheet, r, c, as_datetime, invalid_date) for c in cols) for r in range(r1, r2)]
+        skip: set[int] = {r - r1 - 1 for r in skip_rows} if skip_rows else set()
+        data = [
+            tuple(self._value(_sheet, r, c, as_datetime, invalid_date) for c in cols)
+            for i, r in enumerate(range(r1, r2))
+            if i not in skip
+        ]
 
         if is_range:
             return data

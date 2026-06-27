@@ -17,7 +17,7 @@ from ..utils import get_extension  # noqa: TID252
 from .spreadsheet import Spreadsheet, to_ranges
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import Generator, Iterable
     from datetime import date
     from typing import Any, ClassVar
     from xml.etree.ElementTree import Element
@@ -107,14 +107,15 @@ class ODSReader(Spreadsheet):
         self._spans.clear()
         self._row_data.clear()
 
-    def read(
+    def read(  # noqa: C901, PLR0912, PLR0913
         self,
         cells: str | None = None,
         sheet: str | None = None,
         *,
         as_datetime: bool = True,
-        merged: bool = False,
         invalid_date: str | date | datetime | None = None,
+        merged: bool = False,
+        skip_rows: Iterable[int] | None = None,
     ) -> Any | list[tuple[Any, ...]]:
         """Read cell values from the OpenDocument Spreadsheet.
 
@@ -135,14 +136,15 @@ class ODSReader(Spreadsheet):
             as_datetime: Whether dates should be returned as [datetime][datetime.datetime]
                 or [date][datetime.date] objects. If `False`, dates are returned as a
                 string in the display format of the spreadsheet cell.
+            invalid_date: If `None`, an error is raised if a cell contains a value that
+                is an invalid date. If not `None`, all cells that contain an invalid date are
+                replaced with the specified value.
             merged: Applies to cells that are merged with other cells. If `False`, the
                 value of each unmerged cell is returned, otherwise the same value is
                 returned for all merged cells. In an OpenDocument Spreadsheet, the value
                 of a hidden cell that is merged with a visible cell can still be retained
                 (depends on how the merger was performed).
-            invalid_date: If `None`, an error is raised if a cell contains a value that
-                is an invalid date. If not `None`, all cells that contain an invalid date are
-                replaced with the specified value.
+            skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
 
         Returns:
             The value(s) of the requested cell(s).
@@ -208,7 +210,10 @@ class ODSReader(Spreadsheet):
 
         self._spans.clear()
         data: list[tuple[Any, ...]] = []
-        for row in self._rows(table, r1, r2):
+        skip: set[int] = {r - r1 - 1 for r in skip_rows} if skip_rows else set()
+        for i, row in enumerate(self._rows(table, r1, r2)):
+            if i in skip:
+                continue
             values = tuple(self._cell(name, row, c1, c2, as_datetime, merged, invalid_date))
             if values:
                 data.append(values)

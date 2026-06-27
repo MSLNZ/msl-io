@@ -52,7 +52,7 @@ def test_raises() -> None:
 
 
 @skipif_no_sheets_readonly
-def test_cell() -> None:
+def test_read() -> None:
     # lab_environment.gsheet
     ssid = "1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo"
     values = [("temperature", "humidity"), (20.33, 49.82), (20.23, 46.06), (20.41, 47.06), (20.29, 48.32)]
@@ -167,3 +167,13 @@ def test_google_file_id_regex() -> None:
     # contains an invalid character
     for c in r""" !"#$%&'()*+,./:;<=>?@[\]^`{|}~""":
         assert not _google_file_id_regex.search(f"1Q0TAgnw6AJQWkLMf{c}V3qEhEXuCEXTFAc95cEcshOXnQ")
+
+
+@skipif_no_sheets_readonly
+def test_skip_rows() -> None:
+    # lab_environment.gsheet
+    ssid = "1TI3pM-534SZ5DQTEZ-7vCI04l48f8ZpLGbfEWJuCFSo"
+    sheets = GSheetsReader(ssid, account="testing")
+    assert sheets.read(skip_rows=[1, 3]) == [(20.33, 49.82), (20.41, 47.06), (20.29, 48.32)]
+    assert sheets.read(cells="B2", skip_rows=[2]) is None
+    assert sheets.read(cells="A1:B4", skip_rows=[3]) == [("temperature", "humidity"), (20.33, 49.82), (20.41, 47.06)]
