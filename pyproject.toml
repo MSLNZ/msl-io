@@ -112,6 +112,7 @@ data_file = ".cache/coverage/.coverage"
 branch = true
 omit = [
     "src/msl/io/readers/_xlrd/*",
+    "src/msl/io/typing.py",
 ]
 
 [tool.coverage.report]
