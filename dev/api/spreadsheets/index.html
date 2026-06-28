@@ -2228,7 +2228,11 @@ other cells in the merger are empty.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</p>
+                <p>Row numbers to skip. The row numbers are as shown when the spreadsheet is
+viewed in the spreadsheet application and are not based on the row number in the
+data that would be returned. For example, if <code>cells=A3:D10</code> and you want to skip
+the data in rows <code>A5:D5</code> and <code>A7:D7</code> then <code>skip_rows=[5, 7]</code> achieves the desired
+result.</p>
               </div>
             </td>
             <td>
@@ -2300,7 +2304,11 @@ other cells in the merger are empty.</p>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
-<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2332,7 +2340,11 @@ other cells in the merger are empty.</p>
 <span class="sd">            the hidden cells that are part of a merger to retain its unmerged value. Other</span>
 <span class="sd">            documents associate the merged value only with the top-left cell and all</span>
 <span class="sd">            other cells in the merger are empty.</span>
-<span class="sd">        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</span>
+<span class="sd">        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is</span>
+<span class="sd">            viewed in the spreadsheet application and are not based on the row number in the</span>
+<span class="sd">            data that would be returned. For example, if `cells=A3:D10` and you want to skip</span>
+<span class="sd">            the data in rows `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired</span>
+<span class="sd">            result.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>
@@ -2391,15 +2403,15 @@ other cells in the merger are empty.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
-<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the spreadsheet.</span>
 
@@ -2512,11 +2524,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span>
@@ -2556,7 +2564,11 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_indices</span><span class="p">(</span><span class="n">cell</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a string representation of a cell to row and column indices.</span>
 
@@ -2701,11 +2713,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
 <span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
@@ -2738,7 +2746,11 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
-<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_letters</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a column index to column letters.</span>
 
@@ -2909,11 +2921,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
@@ -2955,7 +2963,11 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_slices</span><span class="p">(</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">column_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
@@ -3035,11 +3047,7 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
@@ -3059,7 +3067,11 @@ then the row index is <code>None</code>. The row and column index are zero based
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
-<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert `cells` to `(is-range, r1, r2, columns)`.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">_single_cell_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>  <span class="c1"># special case</span>
         <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
@@ -3408,10 +3420,7 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
@@ -3423,7 +3432,10 @@ The default <code>on_demand</code> value is <code>True</code>.</p>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
-<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
 
 <span class="sd">    Args:</span>
@@ -3586,7 +3598,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</p>
+                <p>Row numbers to skip. The row numbers are as shown when the spreadsheet is
+viewed in Excel and are not based on the row number in the data that would be
+returned. For example, if <code>cells=A3:D10</code> and you want to skip the data in rows
+<code>A5:D5</code> and <code>A7:D7</code> then <code>skip_rows=[5, 7]</code> achieves the desired result.</p>
               </div>
             </td>
             <td>
@@ -3762,7 +3777,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3797,7 +3815,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <span class="sd">        merged: Applies to cells that are merged with other cells. If cells are merged, then</span>
 <span class="sd">            only the top-left cell has the value and all other cells in the merger are empty.</span>
 <span class="sd">            Enabling this argument is currently not supported and the value must be `False`.</span>
-<span class="sd">        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</span>
+<span class="sd">        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is</span>
+<span class="sd">            viewed in Excel and are not based on the row number in the data that would be</span>
+<span class="sd">            returned. For example, if `cells=A3:D10` and you want to skip the data in rows</span>
+<span class="sd">            `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>
@@ -3928,13 +3949,13 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/excel.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
-<span class="normal">236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the Excel spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
@@ -4444,7 +4465,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</p>
+                <p>Row numbers to skip. The row numbers are as shown when the spreadsheet is
+viewed in Google Sheets and are not based on the row number in the data that would
+be returned. For example, if <code>cells=A3:D10</code> and you want to skip the data in rows
+<code>A5:D5</code> and <code>A7:D7</code> then <code>skip_rows=[5, 7]</code> achieves the desired result.</p>
               </div>
             </td>
             <td>
@@ -4615,7 +4639,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
-<span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0913</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4644,7 +4671,10 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 <span class="sd">        merged: Applies to cells that are merged with other cells. If cells are merged, then</span>
 <span class="sd">            only the top-left cell has the value and all other cells in the merger are empty.</span>
 <span class="sd">            Enabling this argument is currently not supported and the value must be `False`.</span>
-<span class="sd">        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</span>
+<span class="sd">        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is</span>
+<span class="sd">            viewed in Google Sheets and are not based on the row number in the data that would</span>
+<span class="sd">            be returned. For example, if `cells=A3:D10` and you want to skip the data in rows</span>
+<span class="sd">            `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>
@@ -4779,13 +4809,13 @@ Enabling this argument is currently not supported and the value must be <code>Fa
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/gsheets.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span>
-<span class="normal">235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the Google Sheets spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
@@ -5163,11 +5193,7 @@ that package is used to parse the contents of the file instead of the
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
@@ -5182,7 +5208,11 @@ that package is used to parse the contents of the file instead of the
 <span class="normal">245</span>
 <span class="normal">246</span>
 <span class="normal">247</span>
-<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of rows and columns in a sheet.</span>
 
 <span class="sd">    Args:</span>
@@ -5351,7 +5381,11 @@ of a hidden cell that is merged with a visible cell can still be retained
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</p>
+                <p>Row numbers to skip. The row numbers are as shown when the spreadsheet
+is viewed in the OpenDocument application and are not based on the row number
+in the data that would be returned. For example, if <code>cells=A3:D10</code> and you
+want to skip the data in rows <code>A5:D5</code> and <code>A7:D7</code> then <code>skip_rows=[5, 7]</code>
+achieves the desired result.</p>
               </div>
             </td>
             <td>
@@ -5526,7 +5560,11 @@ of a hidden cell that is merged with a visible cell can still be retained
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
-<span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0913</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912, PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sheet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5563,7 +5601,11 @@ of a hidden cell that is merged with a visible cell can still be retained
 <span class="sd">            returned for all merged cells. In an OpenDocument Spreadsheet, the value</span>
 <span class="sd">            of a hidden cell that is merged with a visible cell can still be retained</span>
 <span class="sd">            (depends on how the merger was performed).</span>
-<span class="sd">        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).</span>
+<span class="sd">        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet</span>
+<span class="sd">            is viewed in the OpenDocument application and are not based on the row number</span>
+<span class="sd">            in the data that would be returned. For example, if `cells=A3:D10` and you</span>
+<span class="sd">            want to skip the data in rows `A5:D5` and `A7:D7` then `skip_rows=[5, 7]`</span>
+<span class="sd">            achieves the desired result.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value(s) of the requested cell(s).</span>
@@ -5691,13 +5733,13 @@ of a hidden cell that is merged with a visible cell can still be retained
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/ods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">254</span>
 <span class="normal">255</span>
-<span class="normal">256</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in the OpenDocument Spreadsheet.</span>
 
 <span class="sd">    Returns:</span>
