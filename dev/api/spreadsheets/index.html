@@ -1330,17 +1330,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#msl.io.readers.spreadsheet.Spreadsheet.to_slices" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;to_slices
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1716,17 +1705,6 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;to_letters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#msl.io.readers.spreadsheet.Spreadsheet.to_slices" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;to_slices
       
     </span>
   </a>
@@ -2794,232 +2772,6 @@ then the row index is <code>None</code>. The row and column index are zero based
 
 </div>
 
-<div class="doc doc-object doc-function">
-
-
-<h3 id="msl.io.readers.spreadsheet.Spreadsheet.to_slices" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">to_slices</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
-  </span>
-
-<a href="#msl.io.readers.spreadsheet.Spreadsheet.to_slices" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_slices</span><span class="p">(</span>
-    <span class="n">cells</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n">row_step</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">column_step</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Convert a range of cells to slices of row and column indices.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>cells</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The cells. Can be letters only (a column) or letters and a number
-(a column and a row).</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>row_step</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The step-by value for the row slice.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>column_step</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The step-by value for the column slice.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None], <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None]]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The row <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a>, the column <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-slice">slice</a>.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-        <p><strong>Examples:</strong></p>
-<!-- invisible-code-block: pycon
->>> from msl.io.readers.spreadsheet import Spreadsheet
->>> to_slices = Spreadsheet.to_slices
-
--->
-
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">to_slices</span><span class="p">(</span><span class="s2">&quot;A:A&quot;</span><span class="p">)</span>
-<span class="go">(slice(0, None, None), slice(0, 1, None))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">to_slices</span><span class="p">(</span><span class="s2">&quot;A:H&quot;</span><span class="p">)</span>
-<span class="go">(slice(0, None, None), slice(0, 8, None))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">to_slices</span><span class="p">(</span><span class="s2">&quot;B2:M10&quot;</span><span class="p">)</span>
-<span class="go">(slice(1, 10, None), slice(1, 13, None))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">to_slices</span><span class="p">(</span><span class="s2">&quot;A5:M100&quot;</span><span class="p">,</span> <span class="n">row_step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">column_step</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="go">(slice(4, 100, 2), slice(0, 13, 4))</span>
-</code></pre></div>
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">to_slices</span><span class="p">(</span>
-    <span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">column_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">slice</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a range of cells to slices of row and column indices.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        cells: The cells. Can be letters only (a column) or letters and a number</span>
-<span class="sd">            (a column and a row).</span>
-<span class="sd">        row_step: The step-by value for the row slice.</span>
-<span class="sd">        column_step: The step-by value for the column slice.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The row [slice][], the column [slice][].</span>
-
-<span class="sd">    **Examples:**</span>
-<span class="sd">    &lt;!-- invisible-code-block: pycon</span>
-<span class="sd">    &gt;&gt;&gt; from msl.io.readers.spreadsheet import Spreadsheet</span>
-<span class="sd">    &gt;&gt;&gt; to_slices = Spreadsheet.to_slices</span>
-
-<span class="sd">    --&gt;</span>
-
-<span class="sd">    ```pycon</span>
-<span class="sd">    &gt;&gt;&gt; to_slices(&quot;A:A&quot;)</span>
-<span class="sd">    (slice(0, None, None), slice(0, 1, None))</span>
-<span class="sd">    &gt;&gt;&gt; to_slices(&quot;A:H&quot;)</span>
-<span class="sd">    (slice(0, None, None), slice(0, 8, None))</span>
-<span class="sd">    &gt;&gt;&gt; to_slices(&quot;B2:M10&quot;)</span>
-<span class="sd">    (slice(1, 10, None), slice(1, 13, None))</span>
-<span class="sd">    &gt;&gt;&gt; to_slices(&quot;A5:M100&quot;, row_step=2, column_step=4)</span>
-<span class="sd">    (slice(4, 100, 2), slice(0, 13, 4))</span>
-
-<span class="sd">    ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">split</span> <span class="o">=</span> <span class="n">cells</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid cell range </span><span class="si">{</span><span class="n">cells</span><span class="si">!r}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-    <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">r2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">r1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">r1</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="n">r2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">r2</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">c2</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="nb">slice</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">row_step</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">column_step</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
 
 
   </div>
@@ -3047,31 +2799,31 @@ then the row index is <code>None</code>. The row and column index are zero based
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/io/readers/spreadsheet.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_ranges</span><span class="p">(</span><span class="n">cells</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert `cells` to `(is-range, r1, r2, columns)`.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">_single_cell_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>  <span class="c1"># special case</span>
         <span class="n">r1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Spreadsheet</span><span class="o">.</span><span class="n">to_indices</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
