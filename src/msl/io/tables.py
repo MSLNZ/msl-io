@@ -176,7 +176,7 @@ def read_table_excel(  # noqa: PLR0913
             replaced with the specified value.
         skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
             viewed in Excel and are not based on the row number in the data that would be
-            returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+            returned. For example, if `cells="A3:D10"` and you want to skip the data in rows
             `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
         kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].
             Can use an `encoding` keyword argument as an alias for `encoding_override`.
@@ -236,7 +236,7 @@ def read_table_gsheets(  # noqa: PLR0913
             replaced with the specified value.
         skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
             viewed in Google Sheets and are not based on the row number in the data that would
-            be returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+            be returned. For example, if `cells="A3:D10"` and you want to skip the data in rows
             `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
         kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].
 
@@ -303,7 +303,7 @@ def read_table_ods(  # noqa: PLR0913
             (depends on how the merger was performed).
         skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
             viewed in the OpenDocument application and are not based on the row number in the
-            data that would be returned. For example, if `cells=A3:D10` and you want to skip
+            data that would be returned. For example, if `cells="A3:D10"` and you want to skip
             the data in rows `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired
             result.
         kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].

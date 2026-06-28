@@ -127,7 +127,7 @@ class ExcelReader(Spreadsheet):
                 Enabling this argument is currently not supported and the value must be `False`.
             skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
                 viewed in Excel and are not based on the row number in the data that would be
-                returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+                returned. For example, if `cells="A3:D10"` and you want to skip the data in rows
                 `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
 
         Returns:

@@ -146,7 +146,7 @@ class ODSReader(Spreadsheet):
                 (depends on how the merger was performed).
             skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet
                 is viewed in the OpenDocument application and are not based on the row number
-                in the data that would be returned. For example, if `cells=A3:D10` and you
+                in the data that would be returned. For example, if `cells="A3:D10"` and you
                 want to skip the data in rows `A5:D5` and `A7:D7` then `skip_rows=[5, 7]`
                 achieves the desired result.
 
