@@ -137,7 +137,10 @@ class GSheetsReader(Spreadsheet):
             merged: Applies to cells that are merged with other cells. If cells are merged, then
                 only the top-left cell has the value and all other cells in the merger are empty.
                 Enabling this argument is currently not supported and the value must be `False`.
-            skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
+            skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
+                viewed in Google Sheets and are not based on the row number in the data that would
+                be returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+                `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
 
         Returns:
             The value(s) of the requested cell(s).

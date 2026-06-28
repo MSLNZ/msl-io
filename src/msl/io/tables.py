@@ -174,7 +174,10 @@ def read_table_excel(  # noqa: PLR0913
         invalid_date: If `None`, an error is raised if a cell contains a value that
             is an invalid date. If not `None`, all cells that contain an invalid date are
             replaced with the specified value.
-        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
+        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
+            viewed in Excel and are not based on the row number in the data that would be
+            returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+            `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
         kwargs: All additional keyword arguments are passed to [xlrd.open_workbook][].
             Can use an `encoding` keyword argument as an alias for `encoding_override`.
 
@@ -231,7 +234,10 @@ def read_table_gsheets(  # noqa: PLR0913
         invalid_date: If `None`, an error is raised if a cell contains a value that
             is an invalid date. If not `None`, all cells that contain an invalid date are
             replaced with the specified value.
-        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
+        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
+            viewed in Google Sheets and are not based on the row number in the data that would
+            be returned. For example, if `cells=A3:D10` and you want to skip the data in rows
+            `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired result.
         kwargs: All additional keyword arguments are passed to [GSheetsReader][msl.io.readers.gsheets.GSheetsReader].
 
     Returns:
@@ -295,7 +301,11 @@ def read_table_ods(  # noqa: PLR0913
             returned for all merged cells. In an OpenDocument Spreadsheet, the value
             of a hidden cell that is merged with a visible cell can still be retained
             (depends on how the merger was performed).
-        skip_rows: Row numbers to skip. The first row number in a spreadsheet is 1 (not 0).
+        skip_rows: Row numbers to skip. The row numbers are as shown when the spreadsheet is
+            viewed in the OpenDocument application and are not based on the row number in the
+            data that would be returned. For example, if `cells=A3:D10` and you want to skip
+            the data in rows `A5:D5` and `A7:D7` then `skip_rows=[5, 7]` achieves the desired
+            result.
         kwargs: All keyword arguments are passed to [ODSReader][msl.io.readers.ods.ODSReader].
 
     Returns:
