@@ -10,6 +10,10 @@
 - the `invalid_date` and `skip_rows` keyword arguments to [Spreadsheet.read][msl.io.readers.spreadsheet.Spreadsheet.read] (and all spreadsheet subclasses)
 - reading a table using `dtype="header"` now supports specifying the number of repeats for each data type
 
+***Removed:***
+
+- the `to_slices` static method in [Spreadsheet][msl.io.readers.spreadsheet.Spreadsheet]
+
 ## 0.3.0 (2025-10-10)
 
 ***Added:***

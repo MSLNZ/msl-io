@@ -169,54 +169,6 @@ class Spreadsheet(ABC):
         col = sum((26**i) * (1 + uppercase.index(c)) for i, c in enumerate(letters[::-1]))
         return row, col - 1
 
-    @staticmethod
-    def to_slices(
-        cells: str, row_step: int | None = None, column_step: int | None = None
-    ) -> tuple[slice[int, int | None, int | None], slice[int, int, int | None]]:
-        """Convert a range of cells to slices of row and column indices.
-
-        Args:
-            cells: The cells. Can be letters only (a column) or letters and a number
-                (a column and a row).
-            row_step: The step-by value for the row slice.
-            column_step: The step-by value for the column slice.
-
-        Returns:
-            The row [slice][], the column [slice][].
-
-        **Examples:**
-        <!-- invisible-code-block: pycon
-        >>> from msl.io.readers.spreadsheet import Spreadsheet
-        >>> to_slices = Spreadsheet.to_slices
-
-        -->
-
-        ```pycon
-        >>> to_slices("A:A")
-        (slice(0, None, None), slice(0, 1, None))
-        >>> to_slices("A:H")
-        (slice(0, None, None), slice(0, 8, None))
-        >>> to_slices("B2:M10")
-        (slice(1, 10, None), slice(1, 13, None))
-        >>> to_slices("A5:M100", row_step=2, column_step=4)
-        (slice(4, 100, 2), slice(0, 13, 4))
-
-        ```
-        """
-        split = cells.split(":")
-        if len(split) != 2:  # noqa: PLR2004
-            msg = f"Invalid cell range {cells!r}"
-            raise ValueError(msg)
-
-        r1, c1 = Spreadsheet.to_indices(split[0])
-        r2, c2 = Spreadsheet.to_indices(split[1])
-        if r1 is None:
-            r1 = 0
-        if r2 is not None:
-            r2 += 1
-        c2 += 1
-        return slice(r1, r2, row_step), slice(c1, c2, column_step)
-
 
 def to_ranges(cells: str) -> tuple[bool, int, int | None, list[int]]:
     """Convert `cells` to `(is-range, r1, r2, columns)`."""

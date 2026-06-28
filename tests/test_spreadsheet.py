@@ -115,19 +115,6 @@ def test_to_letters_to_indices() -> None:
         assert to_indices(to_letters(index) + str(index)) == (index - 1, index)
 
 
-def test_to_slices() -> None:
-    to_slices = Spreadsheet.to_slices
-    for cells in ["", "A", "A:B:", ":"]:
-        with pytest.raises(ValueError, match=r"Invalid cell"):
-            _ = to_slices(cells)
-    assert to_slices("A:A") == (slice(0, None, None), slice(0, 1, None))
-    assert to_slices("A:G") == (slice(0, None, None), slice(0, 7, None))
-    assert to_slices("A1:A100") == (slice(0, 100, None), slice(0, 1, None))
-    assert to_slices("A2:G10", row_step=2, column_step=2) == (slice(1, 10, 2), slice(0, 7, 2))
-    assert to_slices("H25:AA47", column_step=2) == (slice(24, 47, None), slice(7, 27, 2))
-    assert to_slices("HF11:JK4321", row_step=5) == (slice(10, 4321, 5), slice(213, 271, None))
-
-
 @pytest.mark.parametrize(
     ("cells", "expected"),
     [
