@@ -870,7 +870,7 @@ def test_add_group() -> None:  # noqa: PLR0915
     root2.clear()  # also tests Root.clear()
     assert len(root2) == 0
 
-    # creates an "/B" Group and then add to it
+    # creates a "/B" Group and then add to it
     root2.add_group("B", root.create_group("b", two=2))
     assert len(root2) == 2
     assert root2.B.b is not root.b
@@ -885,7 +885,7 @@ def test_add_group() -> None:  # noqa: PLR0915
     root2.clear()
     assert len(root2) == 0
 
-    # creates an "/A/B/C" Group and then add to it (add a ridiculous amount of '/')
+    # creates a "/A/B/C" Group and then add to it (add a ridiculous amount of '/')
     root2.add_group("/////A/B/C//////////", root.create_group("c", x="x", y="y"))
     assert len(root2) == 4
     assert root2.A.B.C.c is not root.c
@@ -1233,7 +1233,7 @@ def test_remove() -> None:  # noqa: PLR0915
     root.clear()
     assert len(root) == 0
 
-    # Check that removing an Group/Dataset also removes it from the descendants
+    # Check that removing a Group/Dataset also removes it from the descendants
     root = Root("")
     _ = root.require_group("g1/g2/g3/g4")
     _ = root.require_dataset("g1/d0")
