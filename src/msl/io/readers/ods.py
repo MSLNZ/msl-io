@@ -286,7 +286,7 @@ class ODSReader(Spreadsheet):
                 start += 1
                 yield row
 
-    def _cell(  # noqa: C901, PLR0912, PLR0913, PLR0915
+    def _cell(  # noqa: C901, PLR0912, PLR0913, PLR0915, PLR0917
         self,
         sheet: str,
         row: Element[str],

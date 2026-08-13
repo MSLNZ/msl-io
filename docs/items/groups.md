@@ -27,7 +27,7 @@ From a Python perspective, a [Group][msl.io.node.Group] operates like a [dict][]
 A [Group][msl.io.node.Group] can either be in read-only mode
 
 ```pycon
->>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
+>>> b.create_dataset("dset_b", data=[1, 2, 3, 4])
 Traceback (most recent call last):
    ...
 ValueError: Cannot modify <Group '/a/b' (1 group, 1 dataset, 0 metadata)>. It is accessed in read-only mode.
@@ -38,7 +38,7 @@ or in read-write mode
 
 ```pycon
 >>> b.read_only = False
->>> b.create_dataset('dset_b', data=[1, 2, 3, 4])
+>>> b.create_dataset("dset_b", data=[1, 2, 3, 4])
 <Dataset '/a/b/dset_b' shape=(4,) dtype='<f8' (0 metadata)>
 
 ```
@@ -65,7 +65,7 @@ You can navigate through the tree by considering a [Group][msl.io.node.Group] to
 
 ```pycon
 >>> for ancestor in c.ancestors():
-...    print(ancestor)
+...     print(ancestor)
 <Group '/a/b' (1 group, 2 datasets, 0 metadata)>
 <Group '/a' (2 groups, 2 datasets, 0 metadata)>
 <JSONWriter 'example.json' (3 groups, 2 datasets, 0 metadata)>
@@ -74,7 +74,7 @@ You can navigate through the tree by considering a [Group][msl.io.node.Group] to
 
 ```pycon
 >>> for descendant in b.descendants():
-...    print(descendant)
+...     print(descendant)
 <Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)>
 
 ```

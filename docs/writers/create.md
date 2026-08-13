@@ -27,9 +27,7 @@ When adding a new [Writer][msl.io.base.Writer] to the [repository]{:target="_bla
     class MyWriter(Writer):
         """Name your class to be whatever you want, i.e., change MyWriter."""
 
-        def write(
-            self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any
-        ) -> None:
+        def write(self, file: PathLike | WriteLike | None = None, root: Group | None = None, **kwargs: Any) -> None:
             """Implement your write method with the above signature.
 
             Args:

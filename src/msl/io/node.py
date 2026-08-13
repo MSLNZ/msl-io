@@ -86,7 +86,7 @@ class Dataset(np.lib.mixins.NDArrayOperatorsMixin, Sequence[Any]):  # noqa: PLW1
 
     def __array_ufunc__(
         self, ufunc: np.ufunc, method: str, *inputs: Any, **kwargs: Any
-    ) -> None | Dataset | tuple[Dataset, ...]:
+    ) -> Dataset | tuple[Dataset, ...] | None:
         """Handles numpy functions and Python operators."""
         # See https://numpy.org/doc/stable/reference/generated/numpy.lib.mixins.NDArrayOperatorsMixin.html
         if method == "at":
