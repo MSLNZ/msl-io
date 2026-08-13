@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1385,14 +1385,14 @@
 <span class="go">        &lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <p>A <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can either be in read-only mode</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dset_b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset_b&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">   </span><span class="c">...</span>
 <span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Group &#39;/a/b&#39; (1 group, 1 dataset, 0 metadata)&gt;. It is accessed in read-only mode.</span>
 </code></pre></div>
 <p>or in read-write mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dset_b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset_b&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="go">&lt;Dataset &#39;/a/b/dset_b&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
 </code></pre></div>
 <p>The items in a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can be accessed as <em>keys</em></p>
@@ -1406,13 +1406,13 @@
 <p>See <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information.</p>
 <p>You can navigate through the tree by considering a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> to be an ancestor or descendant of other <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ancestor</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">ancestors</span><span class="p">():</span>
-<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
 <span class="go">&lt;Group &#39;/a/b&#39; (1 group, 2 datasets, 0 metadata)&gt;</span>
 <span class="go">&lt;Group &#39;/a&#39; (2 groups, 2 datasets, 0 metadata)&gt;</span>
 <span class="go">&lt;JSONWriter &#39;example.json&#39; (3 groups, 2 datasets, 0 metadata)&gt;</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">descendant</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">descendants</span><span class="p">():</span>
-<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">descendant</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">descendant</span><span class="p">)</span>
 <span class="go">&lt;Group &#39;/a/b/c&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
 </code></pre></div>
 <p>If you want to create a new <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> and its parent <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, they are automatically created for you</p>
@@ -1554,7 +1554,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.top", "navigation.tabs", "navigation.tabs.sticky", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
