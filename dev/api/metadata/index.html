@@ -1743,7 +1743,7 @@ when <a class="autorefs autorefs-internal" title="            create_dataset" hr
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides information about data.</span>
+<span class="w">    </span><span class="sd">"""Provides information about data.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Do not instantiate directly. A [Metadata][msl.io.metadata.Metadata] object is created automatically</span>
@@ -1754,7 +1754,7 @@ when <a class="autorefs autorefs-internal" title="            create_dataset" hr
 <span class="sd">        read_only: Whether [Metadata][msl.io.metadata.Metadata] is initialised in read-only mode.</span>
 <span class="sd">        node_name: The name of the node that the [Metadata][msl.io.metadata.Metadata] is associated with.</span>
 <span class="sd">        kwargs: All other keyword arguments are used to create the mapping.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">node_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">node_name</span>
@@ -1821,7 +1821,7 @@ when <a class="autorefs autorefs-internal" title="            create_dataset" hr
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maybe remove all items from the map, only if the map is not in read-only mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Maybe remove all items from the map, only if the map is not in read-only mode."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_read_only</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1917,7 +1917,7 @@ object that is being copied.</p>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a copy of the [Metadata][msl.io.metadata.Metadata].</span>
+<span class="w">    </span><span class="sd">"""Create a copy of the [Metadata][msl.io.metadata.Metadata].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        read_only: Whether the copy should be created in read-only mode.</span>
@@ -1926,7 +1926,7 @@ object that is being copied.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A copy of the [Metadata][msl.io.metadata.Metadata].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_only</span> <span class="k">if</span> <span class="n">read_only</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">read_only</span>
     <span class="k">return</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">ro</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2058,7 +2058,7 @@ to call this method.</p>
 <span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Metadata][msl.io.metadata.Metadata] object with keys from `seq` and values set to `value`.</span>
+<span class="w">    </span><span class="sd">"""Create a new [Metadata][msl.io.metadata.Metadata] object with keys from `seq` and values set to `value`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        seq: Any iterable object that contains the names of the keys.</span>
@@ -2069,7 +2069,7 @@ to call this method.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new [Metadata][msl.io.metadata.Metadata] object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_only</span> <span class="k">if</span> <span class="n">read_only</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">read_only</span>
     <span class="k">return</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">ro</span><span class="p">,</span> <span class="n">node_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_node_name</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
@@ -2099,7 +2099,7 @@ to call this method.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VT</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[ItemsView][collections.abc.ItemsView][[str][], VT] &amp;mdash; Return a view of the map&#39;s items.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[ItemsView][collections.abc.ItemsView][[str][], VT] &amp;mdash; Return a view of the map's items."""</span>
     <span class="k">return</span> <span class="n">ItemsView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2128,7 +2128,7 @@ to call this method.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[KeysView][collections.abc.KeysView][[str][]] &amp;mdash; Returns a view of the map&#39;s keys.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[KeysView][collections.abc.KeysView][[str][]] &amp;mdash; Returns a view of the map's keys."""</span>
     <span class="k">return</span> <span class="n">KeysView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2157,7 +2157,7 @@ to call this method.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="n">VT</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[ValuesView][collections.abc.ValuesView][VT] &amp;mdash; Returns a view of the map&#39;s values.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[ValuesView][collections.abc.ValuesView][VT] &amp;mdash; Returns a view of the map's values."""</span>
     <span class="k">return</span> <span class="n">ValuesView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

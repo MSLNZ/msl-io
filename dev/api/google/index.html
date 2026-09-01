@@ -2875,7 +2875,7 @@
   </span>
 
 <a href="#msl.io.google_api.GDateTimeOption.FORMATTED_STRING" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMATTED_STRING</span> <span class="o">=</span> <span class="s1">&#39;FORMATTED_STRING&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMATTED_STRING</span> <span class="o">=</span> <span class="s1">'FORMATTED_STRING'</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2902,7 +2902,7 @@ spreadsheet locale).</p>
   </span>
 
 <a href="#msl.io.google_api.GDateTimeOption.SERIAL_NUMBER" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">SERIAL_NUMBER</span> <span class="o">=</span> <span class="s1">&#39;SERIAL_NUMBER&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">SERIAL_NUMBER</span> <span class="o">=</span> <span class="s1">'SERIAL_NUMBER'</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3146,13 +3146,13 @@ for more details. If not specified, default scopes are chosen based on the value
     <span class="n">scopes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interact with Google Drive.</span>
+<span class="w">    </span><span class="sd">"""Interact with Google Drive.</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        You must follow the instructions in the prerequisites section for setting up the</span>
-<span class="sd">        [Drive API](https://developers.google.com/drive/api/quickstart/python#prerequisites){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [Drive API](https://developers.google.com/drive/api/quickstart/python#prerequisites){:target="_blank"}</span>
 <span class="sd">        before you can use this class. It is also useful to be aware of the</span>
-<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}</span>
 <span class="sd">        policy.</span>
 
 <span class="sd">    Args:</span>
@@ -3171,25 +3171,25 @@ for more details. If not specified, default scopes are chosen based on the value
 <span class="sd">            needs to be specified the first time that you authenticate with a particular Google</span>
 <span class="sd">            `account` or if you delete the token file that was created when you previously authenticated.</span>
 <span class="sd">        scopes: The list of scopes to enable for the Google API. See</span>
-<span class="sd">            [Drive scopes](https://developers.google.com/identity/protocols/oauth2/scopes#drive){:target=&quot;_blank&quot;}</span>
+<span class="sd">            [Drive scopes](https://developers.google.com/identity/protocols/oauth2/scopes#drive){:target="_blank"}</span>
 <span class="sd">            for more details. If not specified, default scopes are chosen based on the value of `read_only`.</span>
 <span class="sd">        read_only: Whether to interact with Google Drive in read-only mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">scopes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">read_only</span><span class="p">:</span>
             <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;https://www.googleapis.com/auth/drive.readonly&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;https://www.googleapis.com/auth/drive.metadata.readonly&quot;</span><span class="p">,</span>
+                <span class="s2">"https://www.googleapis.com/auth/drive.readonly"</span><span class="p">,</span>
+                <span class="s2">"https://www.googleapis.com/auth/drive.metadata.readonly"</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;https://www.googleapis.com/auth/drive&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;https://www.googleapis.com/auth/drive.metadata&quot;</span><span class="p">,</span>
+                <span class="s2">"https://www.googleapis.com/auth/drive"</span><span class="p">,</span>
+                <span class="s2">"https://www.googleapis.com/auth/drive.metadata"</span><span class="p">,</span>
             <span class="p">]</span>
 
     <span class="n">c</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">credentials</span><span class="p">))</span> <span class="k">if</span> <span class="n">credentials</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="n">service</span><span class="o">=</span><span class="s2">&quot;drive&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v3&quot;</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span>
+        <span class="n">service</span><span class="o">=</span><span class="s2">"drive"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"v3"</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span>
     <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">files</span><span class="p">()</span>
@@ -3341,28 +3341,28 @@ the file to the <em>My Drive</em> root folder then specify <code>'root'</code> a
 <span class="normal">603</span>
 <span class="normal">604</span>
 <span class="normal">605</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a file.</span>
+<span class="w">    </span><span class="sd">"""Copy a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_id: The ID of a file to copy. Folders cannot be copied.</span>
 <span class="sd">        folder_id: The ID of the destination folder. If not specified then creates</span>
 <span class="sd">            a copy in the same folder that the original file is located in. To copy</span>
-<span class="sd">            the file to the *My Drive* root folder then specify `&#39;root&#39;` as the `folder_id`.</span>
+<span class="sd">            the file to the *My Drive* root folder then specify `'root'` as the `folder_id`.</span>
 <span class="sd">        name: The filename of the destination file.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the destination file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
         <span class="n">fileId</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;parents&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">folder_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">folder_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">"parents"</span><span class="p">:</span> <span class="p">[</span><span class="n">folder_id</span><span class="p">]</span> <span class="k">if</span> <span class="n">folder_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3498,33 +3498,33 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 <span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">parent_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a folder.</span>
+<span class="w">    </span><span class="sd">"""Create a folder.</span>
 
 <span class="sd">    Makes all intermediate-level folders needed to contain the leaf directory.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        folder: The folder(s) to create, for example, `&#39;folder1&#39;` or `&#39;folder1/folder2/folder3&#39;`.</span>
+<span class="sd">        folder: The folder(s) to create, for example, `'folder1'` or `'folder1/folder2/folder3'`.</span>
 <span class="sd">        parent_id: The ID of the parent folder that `folder` is relative to. If not</span>
 <span class="sd">            specified, `folder` is relative to the *My Drive* root folder. If `folder`</span>
 <span class="sd">            is in a *Shared drive* then you must specify the ID of the parent folder.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the last (right most) folder that was created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">GDrive</span><span class="o">.</span><span class="n">_folder_hierarchy</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">parent_id</span> <span class="ow">or</span> <span class="s2">&quot;root&quot;</span><span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">parent_id</span> <span class="ow">or</span> <span class="s2">"root"</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
             <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-                <span class="s2">&quot;mimeType&quot;</span><span class="p">:</span> <span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="p">,</span>
-                <span class="s2">&quot;parents&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]],</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s2">"mimeType"</span><span class="p">:</span> <span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="p">,</span>
+                <span class="s2">"parents"</span><span class="p">:</span> <span class="p">[</span><span class="n">response</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]],</span>
             <span class="p">},</span>
-            <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span>
             <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3612,7 +3612,7 @@ user) are also permanently deleted.</p>
 <span class="normal">408</span>
 <span class="normal">409</span>
 <span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_or_folder_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a file or a folder.</span>
+<span class="w">    </span><span class="sd">"""Delete a file or a folder.</span>
 
 <span class="sd">    Files that are in read-only mode cannot be deleted.</span>
 
@@ -3624,11 +3624,11 @@ user) are also permanently deleted.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_or_folder_id: The ID of the file or folder to delete.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_read_only</span><span class="p">(</span><span class="n">file_or_folder_id</span><span class="p">):</span>
         <span class="c1"># The API allows for a file to be deleted if it is in read-only mode,</span>
         <span class="c1"># but we will not allow it to be deleted</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot delete the file since it is in read-only mode&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot delete the file since it is in read-only mode"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
@@ -3835,7 +3835,7 @@ The <code>callback</code> accepts one positional argument that is of type
     <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_CHUNK_SIZE</span><span class="p">,</span>
     <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">MediaDownloadProgress</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download a file.</span>
+<span class="w">    </span><span class="sd">"""Download a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_id: The ID of the file to download.</span>
@@ -3849,20 +3849,20 @@ The <code>callback</code> accepts one positional argument that is of type
 <span class="sd">        callback: The callback function to call after each chunk of the file is downloaded.</span>
 <span class="sd">            The `callback` accepts one positional argument that is of type</span>
 <span class="sd">            [MediaDownloadProgress][msl.io.typing.MediaDownloadProgress].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">fileId</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="s2">"name"</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
 
     <span class="n">file</span><span class="p">:</span> <span class="n">BufferedWriter</span> <span class="o">|</span> <span class="n">FileLikeWrite</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span>  <span class="c1"># noqa: SIM115</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span>  <span class="c1"># noqa: SIM115</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_to</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">save_to</span><span class="p">))</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="k">else</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="k">else</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">save_to</span>
 
@@ -3903,7 +3903,7 @@ The <code>callback</code> accepts one positional argument that is of type
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">412</span>
 <span class="normal">413</span>
 <span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">empty_trash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Permanently delete all files in the trash.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Permanently delete all files in the trash."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">emptyTrash</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4076,12 +4076,12 @@ you must specify the ID of the parent folder.</p>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">file_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mime_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">folder_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the ID of a Google Drive file.</span>
+<span class="w">    </span><span class="sd">"""Get the ID of a Google Drive file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The path to a Google Drive file.</span>
-<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target=&quot;_blank&quot;}</span>
-<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target=&quot;_blank&quot;} to use</span>
+<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target="_blank"}</span>
+<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target="_blank"} to use</span>
 <span class="sd">            to filter the results.</span>
 <span class="sd">        folder_id: The ID of the folder that `file` is relative to. If not specified, `file`</span>
 <span class="sd">            is relative to the *My Drive* root folder. If `file` is in a *Shared drive* then</span>
@@ -4089,34 +4089,34 @@ you must specify the ID of the parent folder.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The file ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">folders</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
     <span class="n">folder_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_id</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">parent_id</span><span class="o">=</span><span class="n">folder_id</span><span class="p">)</span>
 
-    <span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s1">&quot; in parents and name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; and trashed=false&#39;</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s1">" in parents and name="</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">" and trashed=false'</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">mime_type</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; and mimeType!=&quot;</span><span class="si">{</span><span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">q</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">' and mimeType!="</span><span class="si">{</span><span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="si">}</span><span class="s1">"'</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39; and mimeType=&quot;</span><span class="si">{</span><span class="n">mime_type</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">q</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">' and mimeType="</span><span class="si">{</span><span class="n">mime_type</span><span class="si">}</span><span class="s1">"'</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
         <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;files(id,name,mimeType)&quot;</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="s2">"files(id,name,mimeType)"</span><span class="p">,</span>
         <span class="n">includeItemsFromAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"files"</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Not a valid Google Drive file </span><span class="si">{</span><span class="n">file</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Not a valid Google Drive file </span><span class="si">{</span><span class="n">file</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">mime_types</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;mimeType&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Multiple files exist for </span><span class="si">{</span><span class="n">file</span><span class="si">!r}</span><span class="s2">. Filter by MIME type:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">mime_types</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">mime_types</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">"mimeType"</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Multiple files exist for </span><span class="si">{</span><span class="n">file</span><span class="si">!r}</span><span class="s2">. Filter by MIME type:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">mime_types</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">first</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">assert</span> <span class="n">name</span> <span class="o">==</span> <span class="n">first</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="s2">&quot;</span><span class="si">{name!r}</span><span class="s2"> != </span><span class="si">{first[&#39;name&#39;]!r}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: S101</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">name</span> <span class="o">==</span> <span class="n">first</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="s2">"</span><span class="si">{name!r}</span><span class="s2"> != </span><span class="si">{first['name']!r}</span><span class="s2">"</span>  <span class="c1"># noqa: S101</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4260,7 +4260,7 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 <span class="normal">270</span>
 <span class="normal">271</span>
 <span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">folder_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">parent_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the ID of a Google Drive folder.</span>
+<span class="w">    </span><span class="sd">"""Get the ID of a Google Drive folder.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        folder: The path to a Google Drive file.</span>
@@ -4270,30 +4270,30 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The folder ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">folder_id</span> <span class="o">=</span> <span class="n">parent_id</span> <span class="ow">or</span> <span class="s2">&quot;root&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">folder_id</span> <span class="o">=</span> <span class="n">parent_id</span> <span class="ow">or</span> <span class="s2">"root"</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">GDrive</span><span class="o">.</span><span class="n">_folder_hierarchy</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s1">&quot; in parents and name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; and trashed=false and mimeType=&quot;</span><span class="si">{</span><span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">folder_id</span><span class="si">}</span><span class="s1">" in parents and name="</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">" and trashed=false and mimeType="</span><span class="si">{</span><span class="n">GDrive</span><span class="o">.</span><span class="n">MIME_TYPE_FOLDER</span><span class="si">}</span><span class="s1">"'</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
             <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;files(id,name)&quot;</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="s2">"files(id,name)"</span><span class="p">,</span>
             <span class="n">includeItemsFromAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-        <span class="n">files</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"files"</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Not a valid Google Drive folder </span><span class="si">{</span><span class="n">folder</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Not a valid Google Drive folder </span><span class="si">{</span><span class="n">folder</span><span class="si">!r}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">matches</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Multiple folders exist for </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Multiple folders exist for </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">first</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="n">name</span> <span class="o">==</span> <span class="n">first</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> != </span><span class="si">{</span><span class="n">first</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">!r}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: S101</span>
-        <span class="n">folder_id</span> <span class="o">=</span> <span class="n">first</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="o">==</span> <span class="n">first</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> != </span><span class="si">{</span><span class="n">first</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">!r}</span><span class="s2">"</span>  <span class="c1"># noqa: S101</span>
+        <span class="n">folder_id</span> <span class="o">=</span> <span class="n">first</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">folder_id</span>
 </code></pre></div></td></tr></table></div>
@@ -4446,12 +4446,12 @@ you must specify the ID of the parent folder.</p>
 <span class="normal">335</span>
 <span class="normal">336</span>
 <span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mime_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">folder_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a file exists.</span>
+<span class="w">    </span><span class="sd">"""Check if a file exists.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The path to a Google Drive file.</span>
-<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){target=&quot;_blank&quot;}</span>
-<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){target=&quot;_blank&quot;} to use</span>
+<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){target="_blank"}</span>
+<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){target="_blank"} to use</span>
 <span class="sd">            to filter the results.</span>
 <span class="sd">        folder_id: The ID of the folder that `file` is relative to. If not specified, `file`</span>
 <span class="sd">            is relative to the *My Drive* root folder. If `file` is in a *Shared drive* then</span>
@@ -4459,11 +4459,11 @@ you must specify the ID of the parent folder.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the file exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_id</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mime_type</span><span class="o">=</span><span class="n">mime_type</span><span class="p">,</span> <span class="n">folder_id</span><span class="o">=</span><span class="n">folder_id</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Multiple files&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Multiple files"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -4590,7 +4590,7 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 <span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">parent_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a folder exists.</span>
+<span class="w">    </span><span class="sd">"""Check if a folder exists.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        folder: The path to a Google Drive folder.</span>
@@ -4600,11 +4600,11 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the folder exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_id</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">parent_id</span><span class="o">=</span><span class="n">parent_id</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Multiple folders&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Multiple folders"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -4704,23 +4704,23 @@ is in a <em>Shared drive</em> then you must specify the ID of the parent folder.
 <span class="normal">662</span>
 <span class="normal">663</span>
 <span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_or_folder_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns whether the file or folder is accessed in read-only mode.</span>
+<span class="w">    </span><span class="sd">"""Returns whether the file or folder is accessed in read-only mode.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_or_folder_id: The ID of a file or folder.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the file or folder is accessed in read-only mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">fileId</span><span class="o">=</span><span class="n">file_or_folder_id</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;contentRestrictions&quot;</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="s2">"contentRestrictions"</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="n">restrictions</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;contentRestrictions&quot;</span><span class="p">)</span>
+    <span class="n">restrictions</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"contentRestrictions"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">restrictions</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="n">r</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">restrictions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;readOnly&quot;</span><span class="p">]</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">restrictions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"readOnly"</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">r</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4827,7 +4827,7 @@ after the move).</p>
 <span class="normal">563</span>
 <span class="normal">564</span>
 <span class="normal">565</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move a file or a folder.</span>
+<span class="w">    </span><span class="sd">"""Move a file or a folder.</span>
 
 <span class="sd">    When moving a file or folder between *My Drive* and a *Shared drive*</span>
 <span class="sd">    the access permissions will change.</span>
@@ -4839,20 +4839,20 @@ after the move).</p>
 <span class="sd">    Args:</span>
 <span class="sd">        source_id: The ID of a file or folder to move.</span>
 <span class="sd">        destination_id: The ID of the destination folder. To move the file or folder to the</span>
-<span class="sd">            *My Drive* root folder then specify `&#39;root&#39;` as the `destination_id`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fileId&quot;</span><span class="p">:</span> <span class="n">source_id</span><span class="p">,</span> <span class="s2">&quot;supportsAllDrives&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="sd">            *My Drive* root folder then specify `'root'` as the `destination_id`.</span>
+<span class="sd">    """</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"fileId"</span><span class="p">:</span> <span class="n">source_id</span><span class="p">,</span> <span class="s2">"supportsAllDrives"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">addParents</span><span class="o">=</span><span class="n">destination_id</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
     <span class="k">except</span> <span class="n">HttpError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportPossiblyUnboundVariable,reportUnknownVariableType]</span>
-        <span class="k">if</span> <span class="s2">&quot;exactly one parent&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
+        <span class="k">if</span> <span class="s2">"exactly one parent"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
             <span class="k">raise</span>
 
         <span class="c1"># Handle the following error:</span>
         <span class="c1">#   A shared drive item must have exactly one parent</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="s2">&quot;parents&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="s2">"parents"</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">addParents</span><span class="o">=</span><span class="n">destination_id</span><span class="p">,</span> <span class="n">removeParents</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;parents&quot;</span><span class="p">]),</span> <span class="o">**</span><span class="n">params</span>
+            <span class="n">addParents</span><span class="o">=</span><span class="n">destination_id</span><span class="p">,</span> <span class="n">removeParents</span><span class="o">=</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"parents"</span><span class="p">]),</span> <span class="o">**</span><span class="n">params</span>
         <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4958,31 +4958,31 @@ after the move).</p>
 <span class="normal">534</span>
 <span class="normal">535</span>
 <span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_or_folder_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an ID to a path.</span>
+<span class="w">    </span><span class="sd">"""Convert an ID to a path.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_or_folder_id: The ID of a file or folder.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The corresponding path of the ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="n">fileId</span><span class="o">=</span><span class="n">file_or_folder_id</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;name,parents&quot;</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="s2">"name,parents"</span><span class="p">,</span>
             <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
-        <span class="n">parents</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parents&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"parents"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parents</span><span class="p">:</span>
             <span class="k">break</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Multiple parents exist. This case has not been handled yet. Contact developers.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Multiple parents exist. This case has not been handled yet. Contact developers."</span>
             <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">file_or_folder_id</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;parents&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">file_or_folder_id</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">"parents"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5094,17 +5094,17 @@ Only used if <code>read_only</code> is <code>True</code>.</p>
 <span class="normal">642</span>
 <span class="normal">643</span>
 <span class="normal">644</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a file to be in read-only or read-write mode.</span>
+<span class="w">    </span><span class="sd">"""Set a file to be in read-only or read-write mode.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_id: The ID of a file.</span>
 <span class="sd">        read_only: Whether to set the file to be in read-only mode.</span>
 <span class="sd">        reason: The reason for putting the file in read-only mode.</span>
 <span class="sd">            Only used if `read_only` is `True`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">restrictions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;readOnly&quot;</span><span class="p">:</span> <span class="n">read_only</span><span class="p">}</span>
+<span class="sd">    """</span>
+    <span class="n">restrictions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"readOnly"</span><span class="p">:</span> <span class="n">read_only</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">read_only</span><span class="p">:</span>
-        <span class="n">restrictions</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reason</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">restrictions</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reason</span> <span class="ow">or</span> <span class="s2">""</span>
 
         <span class="c1"># If `file_id` is already in read-only mode, and it is being set</span>
         <span class="c1"># to read-only mode then the API raises a TimeoutError waiting for</span>
@@ -5114,7 +5114,7 @@ Only used if <code>read_only</code> is <code>True</code>.</p>
             <span class="k">return</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-        <span class="n">fileId</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span> <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;contentRestrictions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">restrictions</span><span class="p">]}</span>
+        <span class="n">fileId</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span> <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">"contentRestrictions"</span><span class="p">:</span> <span class="p">[</span><span class="n">restrictions</span><span class="p">]}</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5202,18 +5202,18 @@ Only used if <code>read_only</code> is <code>True</code>.</p>
 <span class="normal">618</span>
 <span class="normal">619</span>
 <span class="normal">620</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_or_folder_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rename a file or folder.</span>
+<span class="w">    </span><span class="sd">"""Rename a file or folder.</span>
 
 <span class="sd">    Renaming a file or folder does not change its ID.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_or_folder_id: The ID of a file or folder.</span>
 <span class="sd">        new_name: The new name of the file or folder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="n">fileId</span><span class="o">=</span><span class="n">file_or_folder_id</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">new_name</span><span class="p">},</span>
+        <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">new_name</span><span class="p">},</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5277,17 +5277,17 @@ Only used if <code>read_only</code> is <code>True</code>.</p>
 <span class="normal">579</span>
 <span class="normal">580</span>
 <span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shared_drives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the IDs and names of all `Shared drives`.</span>
+<span class="w">    </span><span class="sd">"""Returns the IDs and names of all `Shared drives`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The keys are the IDs of the shared drives and the values are the names of the shared drives.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">drives</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">next_page_token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">next_page_token</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drives</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">pageSize</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pageToken</span><span class="o">=</span><span class="n">next_page_token</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-        <span class="n">drives</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;drives&quot;</span><span class="p">]})</span>
-        <span class="n">next_page_token</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nextPageToken&quot;</span><span class="p">)</span>
+        <span class="n">drives</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">d</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]:</span> <span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"drives"</span><span class="p">]})</span>
+        <span class="n">next_page_token</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"nextPageToken"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">next_page_token</span><span class="p">:</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">drives</span>
@@ -5507,15 +5507,15 @@ so you should not set <code>chunk_size</code> to be &gt; 5MB or to the value <co
     <span class="n">resumable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_CHUNK_SIZE</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file.</span>
+<span class="w">    </span><span class="sd">"""Upload a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to upload.</span>
 <span class="sd">        folder_id: The ID of the folder to upload the file to. If not specified,</span>
 <span class="sd">            uploads to the *My Drive* root folder.</span>
-<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target=&quot;_blank&quot;}</span>
-<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target=&quot;_blank&quot;} of the</span>
-<span class="sd">            file (e.g., `&#39;text/csv&#39;`). If not specified then a type will be guessed based on the file extension.</span>
+<span class="sd">        mime_type: The [Drive MIME type](https://developers.google.com/drive/api/guides/mime-types){:target="_blank"}</span>
+<span class="sd">            or [media type](https://www.iana.org/assignments/media-types/media-types.xhtml){:target="_blank"} of the</span>
+<span class="sd">            file (e.g., `'text/csv'`). If not specified then a type will be guessed based on the file extension.</span>
 <span class="sd">        resumable: Whether the upload can be resumed.</span>
 <span class="sd">        chunk_size: The file will be uploaded in chunks of this many bytes. Only used</span>
 <span class="sd">            if `resumable` is `True`. Specify a value of -1 if the file is to be uploaded</span>
@@ -5524,23 +5524,23 @@ so you should not set <code>chunk_size</code> to be &gt; 5MB or to the value <co
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the file that was uploaded.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">folder_id</span> <span class="ow">or</span> <span class="s2">&quot;root&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">folder_id</span> <span class="ow">or</span> <span class="s2">"root"</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;parents&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">parent_id</span><span class="p">]}</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">"parents"</span><span class="p">:</span> <span class="p">[</span><span class="n">parent_id</span><span class="p">]}</span>
     <span class="k">if</span> <span class="n">mime_type</span><span class="p">:</span>
-        <span class="n">body</span><span class="p">[</span><span class="s2">&quot;mimeType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mime_type</span>
+        <span class="n">body</span><span class="p">[</span><span class="s2">"mimeType"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mime_type</span>
 
     <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
         <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
         <span class="n">media_body</span><span class="o">=</span><span class="n">MediaFileUpload</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="n">mime_type</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">resumable</span><span class="o">=</span><span class="n">resumable</span><span class="p">),</span>  <span class="c1"># pyright: ignore[reportPossiblyUnboundVariable]</span>
-        <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span>
         <span class="n">supportsAllDrives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5740,13 +5740,13 @@ for more details. If not specified then default scopes are chosen.</p>
     <span class="n">credentials</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">scopes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interact with Gmail.</span>
+<span class="w">    </span><span class="sd">"""Interact with Gmail.</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        You must follow the instructions in the prerequisites section for setting up the</span>
-<span class="sd">        [Gmail API](https://developers.google.com/gmail/api/quickstart/python#prerequisites){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [Gmail API](https://developers.google.com/gmail/api/quickstart/python#prerequisites){:target="_blank"}</span>
 <span class="sd">        before you can use this class. It is also useful to be aware of the</span>
-<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}</span>
 <span class="sd">        policy.</span>
 
 <span class="sd">    Args:</span>
@@ -5767,14 +5767,14 @@ for more details. If not specified then default scopes are chosen.</p>
 <span class="sd">            authenticate with a particular Google account or if you delete</span>
 <span class="sd">            the token file that was created when you previously authenticated.</span>
 <span class="sd">        scopes: The list of scopes to enable for the Google API. See</span>
-<span class="sd">            [Gmail scopes](https://developers.google.com/identity/protocols/oauth2/scopes#gmail){:target=&quot;_blank&quot;}</span>
+<span class="sd">            [Gmail scopes](https://developers.google.com/identity/protocols/oauth2/scopes#gmail){:target="_blank"}</span>
 <span class="sd">            for more details. If not specified then default scopes are chosen.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">scopes</span><span class="p">:</span>
-        <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.googleapis.com/auth/gmail.send&quot;</span><span class="p">,</span> <span class="s2">&quot;https://www.googleapis.com/auth/gmail.metadata&quot;</span><span class="p">]</span>
+        <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"https://www.googleapis.com/auth/gmail.send"</span><span class="p">,</span> <span class="s2">"https://www.googleapis.com/auth/gmail.metadata"</span><span class="p">]</span>
 
     <span class="n">c</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">credentials</span><span class="p">))</span> <span class="k">if</span> <span class="n">credentials</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">service</span><span class="o">=</span><span class="s2">&quot;gmail&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">service</span><span class="o">=</span><span class="s2">"gmail"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"v1"</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_my_email_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">users</span><span class="p">()</span>
@@ -5858,17 +5858,17 @@ for more details. If not specified then default scopes are chosen.</p>
 <span class="normal">1292</span>
 <span class="normal">1293</span>
 <span class="normal">1294</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the authenticated user&#39;s GMail profile.</span>
+<span class="w">    </span><span class="sd">"""Gets the authenticated user's GMail profile.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The current users GMail profile.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="o">.</span><span class="n">getProfile</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="s2">&quot;me&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="o">.</span><span class="n">getProfile</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="s2">"me"</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">Profile</span><span class="p">(</span>
-        <span class="n">email_address</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">&quot;emailAddress&quot;</span><span class="p">]),</span>
-        <span class="n">messages_total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">&quot;messagesTotal&quot;</span><span class="p">]),</span>
-        <span class="n">threads_total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">&quot;threadsTotal&quot;</span><span class="p">]),</span>
-        <span class="n">history_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">&quot;historyId&quot;</span><span class="p">]),</span>
+        <span class="n">email_address</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">"emailAddress"</span><span class="p">]),</span>
+        <span class="n">messages_total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">"messagesTotal"</span><span class="p">]),</span>
+        <span class="n">threads_total</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">"threadsTotal"</span><span class="p">]),</span>
+        <span class="n">history_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">"historyId"</span><span class="p">]),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5886,7 +5886,7 @@ for more details. If not specified then default scopes are chosen.</p>
 <a href="#msl.io.google_api.GMail.send" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">send</span><span class="p">(</span>
     <span class="n">recipients</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.MutableSequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence">MutableSequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">],</span>
-    <span class="n">sender</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;me&quot;</span><span class="p">,</span>
+    <span class="n">sender</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"me"</span><span class="p">,</span>
     <span class="n">subject</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">body</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
@@ -6029,23 +6029,23 @@ the authenticated user.</p>
 <span class="normal">1338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">recipients</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">MutableSequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">sender</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;me&quot;</span><span class="p">,</span>
+    <span class="n">sender</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"me"</span><span class="p">,</span>
     <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send an email.</span>
+<span class="w">    </span><span class="sd">"""Send an email.</span>
 
-<span class="sd">    !!! note &quot;See also [send_email][msl.io.utils.send_email].&quot;</span>
+<span class="sd">    !!! note "See also [send_email][msl.io.utils.send_email]."</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        recipients: The email address(es) of the recipient(s). The value `&#39;me&#39;` can be used</span>
+<span class="sd">        recipients: The email address(es) of the recipient(s). The value `'me'` can be used</span>
 <span class="sd">            to indicate the authenticated user.</span>
-<span class="sd">        sender: The email address of the sender. The value `&#39;me&#39;` can be used to indicate</span>
+<span class="sd">        sender: The email address of the sender. The value `'me'` can be used to indicate</span>
 <span class="sd">            the authenticated user.</span>
 <span class="sd">        subject: The text to include in the subject field.</span>
 <span class="sd">        body: The text to include in the body of the email. The text can be enclosed in</span>
 <span class="sd">            `&lt;html&gt;&lt;/html&gt;` tags to use HTML elements to format the message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">b64encode</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">email.mime.multipart</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIMEMultipart</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">email.mime.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIMEText</span>  <span class="c1"># noqa: PLC0415</span>
@@ -6054,21 +6054,21 @@ the authenticated user.</p>
         <span class="n">recipients</span> <span class="o">=</span> <span class="p">[</span><span class="n">recipients</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">recipients</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">recipients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;me&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">recipients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"me"</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_my_email_address</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_my_email_address</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="p">()[</span><span class="s2">&quot;email_address&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_my_email_address</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="p">()[</span><span class="s2">"email_address"</span><span class="p">])</span>
             <span class="n">recipients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_my_email_address</span>
 
     <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
-    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender</span>
-    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">recipients</span><span class="p">)</span>
-    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span> <span class="ow">or</span> <span class="s2">&quot;(no subject)&quot;</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">"From"</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">"To"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">recipients</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span> <span class="ow">or</span> <span class="s2">"(no subject)"</span>
 
-    <span class="n">text</span> <span class="o">=</span> <span class="n">body</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">subtype</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;html&gt;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;plain&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">body</span> <span class="ow">or</span> <span class="s2">""</span>
+    <span class="n">subtype</span> <span class="o">=</span> <span class="s2">"html"</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;html&gt;"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"plain"</span>
     <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">subtype</span><span class="p">))</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">as_bytes</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()})</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">"raw"</span><span class="p">:</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">as_bytes</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()})</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6295,13 +6295,13 @@ for more details. If not specified, default scopes are chosen based on the value
     <span class="n">scopes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interact with Google Sheets.</span>
+<span class="w">    </span><span class="sd">"""Interact with Google Sheets.</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        You must follow the instructions in the prerequisites section for setting up the</span>
-<span class="sd">        [Sheets API](https://developers.google.com/sheets/api/quickstart/python#prerequisites){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [Sheets API](https://developers.google.com/sheets/api/quickstart/python#prerequisites){:target="_blank"}</span>
 <span class="sd">        before you can use this class. It is also useful to be aware of the</span>
-<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target=&quot;_blank&quot;}</span>
+<span class="sd">        [refresh token expiration](https://developers.google.com/identity/protocols/oauth2#expiration){:target="_blank"}</span>
 <span class="sd">        policy.</span>
 
 <span class="sd">    Args:</span>
@@ -6322,19 +6322,19 @@ for more details. If not specified, default scopes are chosen based on the value
 <span class="sd">            authenticate with a particular Google account or if you delete</span>
 <span class="sd">            the token file that was created when you previously authenticated.</span>
 <span class="sd">        scopes: The list of scopes to enable for the Google API. See</span>
-<span class="sd">            [Sheets scopes](https://developers.google.com/identity/protocols/oauth2/scopes#sheets){:target=&quot;_blank&quot;}</span>
+<span class="sd">            [Sheets scopes](https://developers.google.com/identity/protocols/oauth2/scopes#sheets){:target="_blank"}</span>
 <span class="sd">            for more details. If not specified, default scopes are chosen based on the value of `read_only`.</span>
 <span class="sd">        read_only: Whether to interact with Google Sheets in read-only mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">scopes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">read_only</span><span class="p">:</span>
-            <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.googleapis.com/auth/spreadsheets.readonly&quot;</span><span class="p">]</span>
+            <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"https://www.googleapis.com/auth/spreadsheets.readonly"</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.googleapis.com/auth/spreadsheets&quot;</span><span class="p">]</span>
+            <span class="n">scopes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"https://www.googleapis.com/auth/spreadsheets"</span><span class="p">]</span>
 
     <span class="n">c</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">credentials</span><span class="p">))</span> <span class="k">if</span> <span class="n">credentials</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="n">service</span><span class="o">=</span><span class="s2">&quot;sheets&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v4&quot;</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span>
+        <span class="n">service</span><span class="o">=</span><span class="s2">"sheets"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"v4"</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">scopes</span><span class="o">=</span><span class="n">scopes</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span>
     <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">spreadsheets</span><span class="p">()</span>
@@ -6463,7 +6463,7 @@ for more details. If not specified, default scopes are chosen based on the value
 <span class="normal">986</span>
 <span class="normal">987</span>
 <span class="normal">988</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_sheets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add sheets to a spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Add sheets to a spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        names: The name(s) of the new sheet(s) to add.</span>
@@ -6471,17 +6471,17 @@ for more details. If not specified, default scopes are chosen based on the value
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The keys are the IDs of the new sheets and the values are the names.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">names</span><span class="p">]</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">batchUpdate</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
-        <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;requests&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;addSheet&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">}}}</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]},</span>
+        <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">"requests"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"addSheet"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">name</span><span class="p">}}}</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]},</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;addSheet&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;sheetId&quot;</span><span class="p">]:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;addSheet&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;replies&quot;</span><span class="p">]</span>
+        <span class="n">r</span><span class="p">[</span><span class="s2">"addSheet"</span><span class="p">][</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"sheetId"</span><span class="p">]:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"addSheet"</span><span class="p">][</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"replies"</span><span class="p">]</span>
     <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6691,14 +6691,14 @@ Sheets UI.</p>
     <span class="n">row_major</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append values to a sheet.</span>
+<span class="w">    </span><span class="sd">"""Append values to a sheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        values: The value(s) to append</span>
 <span class="sd">        spreadsheet_id: The ID of a Google Sheets file.</span>
 <span class="sd">        cell: The cell (top-left corner) to start appending the values to. If the</span>
 <span class="sd">            cell already contains data then new rows are inserted and the values</span>
-<span class="sd">            are written to the new rows. For example, `&#39;D100&#39;`.</span>
+<span class="sd">            are written to the new rows. For example, `'D100'`.</span>
 <span class="sd">        sheet: The name of a sheet in the spreadsheet to append the values to.</span>
 <span class="sd">            If not specified and only one sheet exists in the spreadsheet</span>
 <span class="sd">            then automatically determines the sheet name; however, it is</span>
@@ -6711,15 +6711,15 @@ Sheets UI.</p>
 <span class="sd">            be converted to numbers, dates, etc. following the same rules</span>
 <span class="sd">            that are applied when entering text into a cell via the Google</span>
 <span class="sd">            Sheets UI.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
         <span class="nb">range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">),</span>
-        <span class="n">valueInputOption</span><span class="o">=</span><span class="s2">&quot;RAW&quot;</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="s2">&quot;USER_ENTERED&quot;</span><span class="p">,</span>
-        <span class="n">insertDataOption</span><span class="o">=</span><span class="s2">&quot;INSERT_ROWS&quot;</span><span class="p">,</span>
+        <span class="n">valueInputOption</span><span class="o">=</span><span class="s2">"RAW"</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="s2">"USER_ENTERED"</span><span class="p">,</span>
+        <span class="n">insertDataOption</span><span class="o">=</span><span class="s2">"INSERT_ROWS"</span><span class="p">,</span>
         <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
-            <span class="s2">&quot;majorDimension&quot;</span><span class="p">:</span> <span class="s2">&quot;ROWS&quot;</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">&quot;COLUMNS&quot;</span><span class="p">,</span>
+            <span class="s2">"values"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+            <span class="s2">"majorDimension"</span><span class="p">:</span> <span class="s2">"ROWS"</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">"COLUMNS"</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -6884,62 +6884,62 @@ from all sheets. For example,</p>
 <span class="normal">1148</span>
 <span class="normal">1149</span>
 <span class="normal">1150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">cells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">GCell</span><span class="p">]]]:</span>  <span class="c1"># noqa: C901</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return cells from a spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Return cells from a spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        spreadsheet_id: The ID of a Google Sheets file.</span>
 <span class="sd">        ranges: The ranges to retrieve from the spreadsheet. If not specified then return all cells</span>
 <span class="sd">            from all sheets. For example,</span>
 
-<span class="sd">            * `&#39;Sheet1&#39;` &amp;#8594; Return all cells from the sheet named `Sheet1`</span>
-<span class="sd">            * `&#39;Sheet1!A1:H5&#39;` &amp;#8594; Return cells `A1:H5` from the sheet named `Sheet1`</span>
-<span class="sd">            * `[&#39;Sheet1!A1:H5&#39;, &#39;Data&#39;, &#39;Devices!B4:B9&#39;]` &amp;#8594; Return cells `A1:H5`</span>
+<span class="sd">            * `'Sheet1'` &amp;#8594; Return all cells from the sheet named `Sheet1`</span>
+<span class="sd">            * `'Sheet1!A1:H5'` &amp;#8594; Return cells `A1:H5` from the sheet named `Sheet1`</span>
+<span class="sd">            * `['Sheet1!A1:H5', 'Data', 'Devices!B4:B9']` &amp;#8594; Return cells `A1:H5`</span>
 <span class="sd">                from the sheet named `Sheet1`, all cells from the sheet named `Data`</span>
 <span class="sd">                and cells `B4:B9` from the sheet named Devices</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The cells from the spreadsheet. The keys are the names of the sheets.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
         <span class="n">includeGridData</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">ranges</span><span class="o">=</span><span class="n">ranges</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
     <span class="n">cells</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">GCell</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;sheets&quot;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"sheets"</span><span class="p">]:</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">GCell</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sheet</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rowData&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sheet</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rowData"</span><span class="p">,</span> <span class="p">[]):</span>
                 <span class="n">row_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GCell</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-                    <span class="n">effective_value</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;effectiveValue&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="n">formatted</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;formattedValue&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"values"</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="n">effective_value</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"effectiveValue"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">formatted</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"formattedValue"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">effective_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">EMPTY</span>
-                    <span class="k">elif</span> <span class="s2">&quot;numberValue&quot;</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">&quot;numberValue&quot;</span><span class="p">]</span>
-                        <span class="n">t</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;effectiveFormat&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;numberFormat&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;NUMBER&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">"numberValue"</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">"numberValue"</span><span class="p">]</span>
+                        <span class="n">t</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"effectiveFormat"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"numberFormat"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"NUMBER"</span><span class="p">)</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                             <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">UNKNOWN</span>
-                    <span class="k">elif</span> <span class="s2">&quot;stringValue&quot;</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">&quot;stringValue&quot;</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="s2">"stringValue"</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">"stringValue"</span><span class="p">]</span>
                         <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">STRING</span>
-                    <span class="k">elif</span> <span class="s2">&quot;boolValue&quot;</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">&quot;boolValue&quot;</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="s2">"boolValue"</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">"boolValue"</span><span class="p">]</span>
                         <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">BOOLEAN</span>
-                    <span class="k">elif</span> <span class="s2">&quot;errorValue&quot;</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">&quot;errorValue&quot;</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
-                        <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="s1">&#39;formattedValue&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="k">elif</span> <span class="s2">"errorValue"</span> <span class="ow">in</span> <span class="n">effective_value</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="n">effective_value</span><span class="p">[</span><span class="s2">"errorValue"</span><span class="p">][</span><span class="s2">"message"</span><span class="p">]</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">col</span><span class="p">[</span><span class="s1">'formattedValue'</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">)"</span>
                         <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">ERROR</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">value</span> <span class="o">=</span> <span class="n">formatted</span>
                         <span class="n">typ</span> <span class="o">=</span> <span class="n">GCellType</span><span class="o">.</span><span class="n">UNKNOWN</span>
                     <span class="n">row_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GCell</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">typ</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="n">formatted</span><span class="p">))</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
-            <span class="n">cells</span><span class="p">[</span><span class="n">sheet</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;title&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">cells</span><span class="p">[</span><span class="n">sheet</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span>
     <span class="k">return</span> <span class="n">cells</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7078,7 +7078,7 @@ from all sheets. For example,</p>
 <span class="normal">918</span>
 <span class="normal">919</span>
 <span class="normal">920</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_or_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a sheet from one spreadsheet to another spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Copy a sheet from one spreadsheet to another spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name_or_id: The name or ID of the sheet to copy.</span>
@@ -7087,7 +7087,7 @@ from all sheets. For example,</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the sheet in the destination spreadsheet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">sheet_id</span> <span class="o">=</span> <span class="n">name_or_id</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_or_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_id</span><span class="p">(</span><span class="n">name_or_id</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">)</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="p">(</span>
@@ -7096,12 +7096,12 @@ from all sheets. For example,</p>
             <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
             <span class="n">sheetId</span><span class="o">=</span><span class="n">sheet_id</span><span class="p">,</span>
             <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;destination_spreadsheet_id&quot;</span><span class="p">:</span> <span class="n">destination_spreadsheet_id</span><span class="p">,</span>
+                <span class="s2">"destination_spreadsheet_id"</span><span class="p">:</span> <span class="n">destination_spreadsheet_id</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="o">.</span><span class="n">execute</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;sheetId&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"sheetId"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7218,7 +7218,7 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 <span class="normal">1026</span>
 <span class="normal">1027</span>
 <span class="normal">1028</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sheet_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Create a new spreadsheet.</span>
 
 <span class="sd">    The spreadsheet will be created in the *My Drive* root folder.</span>
 <span class="sd">    To move it to a different folder use [GDrive.create_folder][msl.io.google_api.GDrive.create_folder]</span>
@@ -7230,12 +7230,12 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the spreadsheet that was created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">}}</span>
+<span class="sd">    """</span>
+    <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">name</span><span class="p">}}</span>
     <span class="k">if</span> <span class="n">sheet_names</span><span class="p">:</span>
-        <span class="n">body</span><span class="p">[</span><span class="s2">&quot;sheets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">sn</span><span class="p">}}</span> <span class="k">for</span> <span class="n">sn</span> <span class="ow">in</span> <span class="n">sheet_names</span><span class="p">]</span>
+        <span class="n">body</span><span class="p">[</span><span class="s2">"sheets"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">sn</span><span class="p">}}</span> <span class="k">for</span> <span class="n">sn</span> <span class="ow">in</span> <span class="n">sheet_names</span><span class="p">]</span>
     <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;spreadsheetId&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"spreadsheetId"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7328,20 +7328,20 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 <span class="normal">1006</span>
 <span class="normal">1007</span>
 <span class="normal">1008</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_sheets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_or_ids</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete sheets from a spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Delete sheets from a spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        names_or_ids: The name(s) or ID(s) of the sheet(s) to delete.</span>
 <span class="sd">        spreadsheet_id: The ID of the spreadsheet to delete the sheet(s) from.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_or_ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
         <span class="n">names_or_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">names_or_ids</span><span class="p">]</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">batchUpdate</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
         <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;requests&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="s2">&quot;deleteSheet&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sheetId&quot;</span><span class="p">:</span> <span class="n">n</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_id</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">)}}</span>
+            <span class="s2">"requests"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">"deleteSheet"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"sheetId"</span><span class="p">:</span> <span class="n">n</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_id</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">)}}</span>
                 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names_or_ids</span>
             <span class="p">]</span>
         <span class="p">},</span>
@@ -7459,26 +7459,26 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 <span class="normal">964</span>
 <span class="normal">965</span>
 <span class="normal">966</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_or_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rename a sheet.</span>
+<span class="w">    </span><span class="sd">"""Rename a sheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name_or_id: The name or ID of the sheet to rename.</span>
 <span class="sd">        new_name: The new name of the sheet.</span>
 <span class="sd">        spreadsheet_id: The ID of the spreadsheet that contains the sheet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">sheet_id</span> <span class="o">=</span> <span class="n">name_or_id</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name_or_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_id</span><span class="p">(</span><span class="n">name_or_id</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">batchUpdate</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
         <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;requests&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"requests"</span><span class="p">:</span> <span class="p">[</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;updateSheetProperties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s2">&quot;sheetId&quot;</span><span class="p">:</span> <span class="n">sheet_id</span><span class="p">,</span>
-                            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">new_name</span><span class="p">,</span>
+                    <span class="s2">"updateSheetProperties"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">"sheetId"</span><span class="p">:</span> <span class="n">sheet_id</span><span class="p">,</span>
+                            <span class="s2">"title"</span><span class="p">:</span> <span class="n">new_name</span><span class="p">,</span>
                         <span class="p">},</span>
-                        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+                        <span class="s2">"fields"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">]</span>
@@ -7596,7 +7596,7 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 <span class="normal">937</span>
 <span class="normal">938</span>
 <span class="normal">939</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the ID of a sheet.</span>
+<span class="w">    </span><span class="sd">"""Returns the ID of a sheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the sheet.</span>
@@ -7604,14 +7604,14 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID of the sheet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">)</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;sheets&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">sheet</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sheet</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;sheetId&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"sheets"</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">sheet</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sheet</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"sheetId"</span><span class="p">])</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A sheet named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> does not exist&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"A sheet named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> does not exist"</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7703,17 +7703,17 @@ and/or <a class="autorefs autorefs-internal" title="            move" href="#msl
 <span class="normal">1039</span>
 <span class="normal">1040</span>
 <span class="normal">1041</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sheet_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of all sheets in a spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Get the names of all sheets in a spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        spreadsheet_id: The ID of a Google Sheets file.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The names of all sheets.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">)</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;sheets&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"title"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">"sheets"</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7837,7 +7837,7 @@ specified value.</p>
 <span class="normal">1172</span>
 <span class="normal">1173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">invalid_date</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a *serial number* date into a [datetime][datetime.datetime].</span>
+<span class="w">    </span><span class="sd">"""Convert a *serial number* date into a [datetime][datetime.datetime].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: A date in the *serial number* format.</span>
@@ -7847,7 +7847,7 @@ specified value.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The date converted.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">days</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">days</span><span class="p">)</span> <span class="o">*</span> <span class="mi">86400</span>  <span class="c1"># 60 * 60 * 24</span>
     <span class="k">try</span><span class="p">:</span>
@@ -7855,7 +7855,7 @@ specified value.</p>
     <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">invalid_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">invalid_date</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid date </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, specify a value for `invalid_date` to suppress this error.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid date </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, specify a value for `invalid_date` to suppress this error."</span>
         <span class="k">raise</span> <span class="ne">OverflowError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8119,7 +8119,7 @@ output. If a <a class="autorefs autorefs-external" href="https://docs.python.org
     <span class="n">value_option</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">GValueOption</span> <span class="o">=</span> <span class="n">GValueOption</span><span class="o">.</span><span class="n">FORMATTED</span><span class="p">,</span>
     <span class="n">datetime_option</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">GDateTimeOption</span> <span class="o">=</span> <span class="n">GDateTimeOption</span><span class="o">.</span><span class="n">SERIAL_NUMBER</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a range of values from a spreadsheet.</span>
+<span class="w">    </span><span class="sd">"""Return a range of values from a spreadsheet.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        spreadsheet_id: The ID of a Google Sheets file.</span>
@@ -8139,7 +8139,7 @@ output. If a <a class="autorefs autorefs-external" href="https://docs.python.org
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The values from the sheet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_option</span><span class="p">,</span> <span class="n">GValueOption</span><span class="p">):</span>
         <span class="n">value_option</span> <span class="o">=</span> <span class="n">value_option</span><span class="o">.</span><span class="n">value</span>
 
@@ -8151,13 +8151,13 @@ output. If a <a class="autorefs autorefs-external" href="https://docs.python.org
         <span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
             <span class="nb">range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">),</span>
-            <span class="n">majorDimension</span><span class="o">=</span><span class="s2">&quot;ROWS&quot;</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">&quot;COLUMNS&quot;</span><span class="p">,</span>
+            <span class="n">majorDimension</span><span class="o">=</span><span class="s2">"ROWS"</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">"COLUMNS"</span><span class="p">,</span>
             <span class="n">valueRenderOption</span><span class="o">=</span><span class="n">value_option</span><span class="p">,</span>
             <span class="n">dateTimeRenderOption</span><span class="o">=</span><span class="n">datetime_option</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="o">.</span><span class="n">execute</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="p">[[]])</span>  <span class="c1"># type: ignore[no-any-return]</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"values"</span><span class="p">,</span> <span class="p">[[]])</span>  <span class="c1"># type: ignore[no-any-return]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8366,7 +8366,7 @@ Sheets UI.</p>
     <span class="n">row_major</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write values to a sheet.</span>
+<span class="w">    </span><span class="sd">"""Write values to a sheet.</span>
 
 <span class="sd">    If a cell that is being written to already contains a value,</span>
 <span class="sd">    the value in that cell is overwritten with the new value.</span>
@@ -8374,7 +8374,7 @@ Sheets UI.</p>
 <span class="sd">    Args:</span>
 <span class="sd">        values: The value(s) to write.</span>
 <span class="sd">        spreadsheet_id: The ID of a Google Sheets file.</span>
-<span class="sd">        cell: The cell (top-left corner) to start writing the values to. For example, `&#39;C9&#39;`.</span>
+<span class="sd">        cell: The cell (top-left corner) to start writing the values to. For example, `'C9'`.</span>
 <span class="sd">        sheet: The name of a sheet in the spreadsheet to write the values to.</span>
 <span class="sd">            If not specified and only one sheet exists in the spreadsheet</span>
 <span class="sd">            then automatically determines the sheet name; however, it is</span>
@@ -8387,14 +8387,14 @@ Sheets UI.</p>
 <span class="sd">            be converted to numbers, dates, etc. following the same rules</span>
 <span class="sd">            that are applied when entering text into a cell via the Google</span>
 <span class="sd">            Sheets UI.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_spreadsheets</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
         <span class="nb">range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">),</span>
-        <span class="n">valueInputOption</span><span class="o">=</span><span class="s2">&quot;RAW&quot;</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="s2">&quot;USER_ENTERED&quot;</span><span class="p">,</span>
+        <span class="n">valueInputOption</span><span class="o">=</span><span class="s2">"RAW"</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="s2">"USER_ENTERED"</span><span class="p">,</span>
         <span class="n">body</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
-            <span class="s2">&quot;majorDimension&quot;</span><span class="p">:</span> <span class="s2">&quot;ROWS&quot;</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">&quot;COLUMNS&quot;</span><span class="p">,</span>
+            <span class="s2">"values"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+            <span class="s2">"majorDimension"</span><span class="p">:</span> <span class="s2">"ROWS"</span> <span class="k">if</span> <span class="n">row_major</span> <span class="k">else</span> <span class="s2">"COLUMNS"</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -8462,7 +8462,7 @@ Sheets UI.</p>
   </span>
 
 <a href="#msl.io.google_api.GValueOption.FORMATTED" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMATTED</span> <span class="o">=</span> <span class="s1">&#39;FORMATTED_VALUE&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMATTED</span> <span class="o">=</span> <span class="s1">'FORMATTED_VALUE'</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8490,7 +8490,7 @@ and formatted as currency, then A2 would return <em>"$1.23"</em>.</p>
   </span>
 
 <a href="#msl.io.google_api.GValueOption.FORMULA" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMULA</span> <span class="o">=</span> <span class="s1">&#39;FORMULA&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">FORMULA</span> <span class="o">=</span> <span class="s1">'FORMULA'</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8517,7 +8517,7 @@ then A2 would return <em>"=A1"</em>.</p>
   </span>
 
 <a href="#msl.io.google_api.GValueOption.UNFORMATTED" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">UNFORMATTED</span> <span class="o">=</span> <span class="s1">&#39;UNFORMATTED_VALUE&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">UNFORMATTED</span> <span class="o">=</span> <span class="s1">'UNFORMATTED_VALUE'</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8601,10 +8601,10 @@ A2 would return the number <em>1.23</em>.</p>
     <span class="n">scopes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all Google APIs.&quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">-&quot;</span> <span class="k">if</span> <span class="n">account</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">readonly</span> <span class="o">=</span> <span class="s2">&quot;-readonly&quot;</span> <span class="k">if</span> <span class="n">read_only</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">token</span> <span class="o">=</span> <span class="n">MSL_IO_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">token-</span><span class="si">{</span><span class="n">service</span><span class="si">}{</span><span class="n">readonly</span><span class="si">}</span><span class="s2">.json&quot;</span>
+<span class="w">    </span><span class="sd">"""Base class for all Google APIs."""</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">-"</span> <span class="k">if</span> <span class="n">account</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="n">readonly</span> <span class="o">=</span> <span class="s2">"-readonly"</span> <span class="k">if</span> <span class="n">read_only</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">MSL_IO_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">token-</span><span class="si">{</span><span class="n">service</span><span class="si">}{</span><span class="n">readonly</span><span class="si">}</span><span class="s2">.json"</span>
     <span class="n">oauth</span> <span class="o">=</span> <span class="n">_authenticate</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">scopes</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">oauth</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPossiblyUnboundVariable]</span>
 </code></pre></div></td></tr></table></div>
@@ -8668,7 +8668,7 @@ A2 would return the number <em>1.23</em>.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the connection to the API service.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Close the connection to the API service."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>

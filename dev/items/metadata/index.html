@@ -1490,10 +1490,10 @@
 -->
 
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;/&#39; {&#39;voltage&#39;: 1.2, &#39;voltage_unit&#39;: &#39;V&#39;}&gt;</span>
+<span class="go">&lt;Metadata '/' {'voltage': 1.2, 'voltage_unit': 'V'}&gt;</span>
 </code></pre></div>
 <p>A <em>value</em> can be accessed by <em>key</em></p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;voltage&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"voltage"</span><span class="p">]</span>
 <span class="go">1.2</span>
 </code></pre></div>
 <p>or as a class attribute</p>
@@ -1505,7 +1505,7 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mf">7.64</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Metadata &#39;/&#39; {&#39;voltage&#39;: 1.2, &#39;voltage_unit&#39;: &#39;V&#39;}&gt;. It is accessed in read-only mode.</span>
+<span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Metadata '/' {'voltage': 1.2, 'voltage_unit': 'V'}&gt;. It is accessed in read-only mode.</span>
 </code></pre></div>
 <p>However, you can allow <code>metadata</code> to be modified by setting the <a class="autorefs autorefs-internal" title="            read_only
 
@@ -1518,9 +1518,9 @@
 </code></pre></div>
 <p>and then you can modify the values</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mf">7.64</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">current</span><span class="o">=</span><span class="mf">10.3</span><span class="p">,</span> <span class="n">current_unit</span><span class="o">=</span><span class="s2">&quot;mA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">current</span><span class="o">=</span><span class="mf">10.3</span><span class="p">,</span> <span class="n">current_unit</span><span class="o">=</span><span class="s2">"mA"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;/&#39; {&#39;voltage&#39;: 7.64, &#39;voltage_unit&#39;: &#39;V&#39;, &#39;current&#39;: 10.3, &#39;current_unit&#39;: &#39;mA&#39;}&gt;</span>
+<span class="go">&lt;Metadata '/' {'voltage': 7.64, 'voltage_unit': 'V', 'current': 10.3, 'current_unit': 'mA'}&gt;</span>
 </code></pre></div>
 <h2 id="lists-tuples-and-arrays">Lists, tuples and arrays<a class="headerlink" href="#lists-tuples-and-arrays" title="Permanent link">¤</a></h2>
 <p>When the metadata <em>value</em> is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a> or <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/array.html#array.array" target="_blank">array</a>, it will automatically be converted to a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>. The <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> for a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a> will be <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-object" target="_blank">object</a></p>
@@ -1533,7 +1533,7 @@
 <span class="go">array([45.6, 46.1, 46.3, 44.7], dtype=object)</span>
 </code></pre></div></p>
 <p>and the data type used by the <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/array.html#array.array" target="_blank">array</a> will be preserved</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">unsigned_integers</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">unsigned_integers</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s2">"I"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">unsigned_integers</span>
 <span class="go">array([1, 2, 3, 4], dtype=uint32)</span>
 </code></pre></div>
@@ -1545,9 +1545,9 @@
 </code></pre></div>
 <h2 id="dictionaries">Dictionaries<a class="headerlink" href="#dictionaries" title="Permanent link">¤</a></h2>
 <p>When the metadata <em>value</em> is a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict" target="_blank">dict</a> it will be converted to a <a class="autorefs autorefs-internal" title="            Metadata" href="../../api/metadata/#msl.io.metadata.Metadata">Metadata</a> instance</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;one&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"one"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"two"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"three"</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span>
-<span class="go">&lt;Metadata &#39;/&#39; {&#39;one&#39;: 1, &#39;two&#39;: 2, &#39;three&#39;: 3}&gt;</span>
+<span class="go">&lt;Metadata '/' {'one': 1, 'two': 2, 'three': 3}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">nested</span><span class="o">.</span><span class="n">two</span>
 <span class="go">2</span>
 </code></pre></div>

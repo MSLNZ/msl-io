@@ -1456,19 +1456,19 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">one</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">two</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
 <p>create a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>,</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dataset1&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"dataset1"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 </code></pre></div>
 <p>create a <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>,</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_group</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;my_group&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">my_group</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">"my_group"</span><span class="p">)</span>
 </code></pre></div>
 <p>and create a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a> in <code>my_group</code></p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset2</span> <span class="o">=</span> <span class="n">my_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dataset2&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">three</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset2</span> <span class="o">=</span> <span class="n">my_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"dataset2"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">three</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 <p>If the parent <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s do not exist, they are created</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset3</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;group1/group2/group3/dataset3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset3</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"group1/group2/group3/dataset3"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
 </code></pre></div>
 <p>Finally, we write the file</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">"my_file.json"</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1482,103 +1482,103 @@
 <h2 id="read-a-file">Read a file<a class="headerlink" href="#read-a-file" title="Permanent link">¤</a></h2>
 <p>The <a class="autorefs autorefs-internal" title="            read" href="api/base/#msl.io.base.read">read</a> function is available to read a file. Provided that a <a class="autorefs autorefs-internal" title="Readers" href="readers/#msl-io-readers">Reader</a> subclass has been implemented to read the file, the subclass instance is returned. We will now read the file that we created above</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">"my_file.json"</span><span class="p">)</span>
 </code></pre></div>
 <p>You can print a <em>tree</em> representation of all <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s and <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s in the <a class="autorefs autorefs-internal" title="            Root" href="api/base/#msl.io.base.Root">Root</a> by calling the <a class="autorefs autorefs-internal" title="            tree" href="api/base/#msl.io.base.Root.tree">tree</a> method</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tree</span><span class="p">())</span>
-<span class="go">&lt;JSONReader &#39;my_file.json&#39; (4 groups, 3 datasets, 2 metadata)&gt;</span>
-<span class="go">  &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">  &lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">    &lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">      &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">        &lt;Dataset &#39;/group1/group2/group3/dataset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">  &lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">    &lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
+<span class="go">&lt;JSONReader 'my_file.json' (4 groups, 3 datasets, 2 metadata)&gt;</span>
+<span class="go">  &lt;Dataset '/dataset1' shape=(4,) dtype='&lt;f8' (0 metadata)&gt;</span>
+<span class="go">  &lt;Group '/group1' (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">    &lt;Group '/group1/group2' (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">      &lt;Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">        &lt;Dataset '/group1/group2/group3/dataset3' shape=(3,) dtype='&lt;f8' (0 metadata)&gt;</span>
+<span class="go">  &lt;Group '/my_group' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">    &lt;Dataset '/my_group/dataset2' shape=(2, 2) dtype='&lt;f8' (1 metadata)&gt;</span>
 </code></pre></div>
 <p>Since the <code>root</code> item is a <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a> instance (which operates like a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>) you can iterate over the items that are in the file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">node</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="go">&#39;/dataset1&#39; -- &lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">&#39;/my_group&#39; -- &lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&#39;/my_group/dataset2&#39; -- &lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
-<span class="go">&#39;/group1&#39; -- &lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&#39;/group1/group2&#39; -- &lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&#39;/group1/group2/group3&#39; -- &lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&#39;/group1/group2/group3/dataset3&#39; -- &lt;Dataset &#39;/group1/group2/group3/dataset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">node</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">'/dataset1' -- &lt;Dataset '/dataset1' shape=(4,) dtype='&lt;f8' (0 metadata)&gt;</span>
+<span class="go">'/my_group' -- &lt;Group '/my_group' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">'/my_group/dataset2' -- &lt;Dataset '/my_group/dataset2' shape=(2, 2) dtype='&lt;f8' (1 metadata)&gt;</span>
+<span class="go">'/group1' -- &lt;Group '/group1' (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">'/group1/group2' -- &lt;Group '/group1/group2' (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">'/group1/group2/group3' -- &lt;Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">'/group1/group2/group3/dataset3' -- &lt;Dataset '/group1/group2/group3/dataset3' shape=(3,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>where <em>node</em> will either be a <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a> or a <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>.</p>
 <p>You can iterate only over the <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s that are in the file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">groups</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-<span class="go">&lt;Group &#39;/my_group&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1/group2&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/group1/group2/group3&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/my_group' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/group1' (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/group1/group2' (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/group1/group2/group3' (0 groups, 1 dataset, 0 metadata)&gt;</span>
 </code></pre></div>
 <p>or iterate over the <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">datasets</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
-<span class="go">&lt;Dataset &#39;/dataset1&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
-<span class="go">&lt;Dataset &#39;/my_group/dataset2&#39; shape=(2, 2) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
-<span class="go">&lt;Dataset &#39;/group1/group2/group3/dataset3&#39; shape=(3,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="go">&lt;Dataset '/dataset1' shape=(4,) dtype='&lt;f8' (0 metadata)&gt;</span>
+<span class="go">&lt;Dataset '/my_group/dataset2' shape=(2, 2) dtype='&lt;f8' (1 metadata)&gt;</span>
+<span class="go">&lt;Dataset '/group1/group2/group3/dataset3' shape=(3,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>You can access the <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a> of any item through the <code>metadata</code> attribute</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-<span class="go">&lt;Metadata &#39;/&#39; {&#39;one&#39;: 1, &#39;two&#39;: 2}&gt;</span>
+<span class="go">&lt;Metadata '/' {'one': 1, 'two': 2}&gt;</span>
 </code></pre></div>
 <p>You can access values of the <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a> as attributes</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset2</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">three</span>
 <span class="go">3</span>
 </code></pre></div>
 <p>or as keys</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset2</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;three&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset2</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"three"</span><span class="p">]</span>
 <span class="go">3</span>
 </code></pre></div>
 <p>When <code>root</code> is returned, it is accessed in read-only mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">read_only</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="go">is &#39;/dataset1&#39; in read-only mode? True</span>
-<span class="go">is &#39;/my_group&#39; in read-only mode? True</span>
-<span class="go">is &#39;/my_group/dataset2&#39; in read-only mode? True</span>
-<span class="go">is &#39;/group1&#39; in read-only mode? True</span>
-<span class="go">is &#39;/group1/group2&#39; in read-only mode? True</span>
-<span class="go">is &#39;/group1/group2/group3&#39; in read-only mode? True</span>
-<span class="go">is &#39;/group1/group2/group3/dataset3&#39; in read-only mode? True</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">is '/dataset1' in read-only mode? True</span>
+<span class="go">is '/my_group' in read-only mode? True</span>
+<span class="go">is '/my_group/dataset2' in read-only mode? True</span>
+<span class="go">is '/group1' in read-only mode? True</span>
+<span class="go">is '/group1/group2' in read-only mode? True</span>
+<span class="go">is '/group1/group2/group3' in read-only mode? True</span>
+<span class="go">is '/group1/group2/group3/dataset3' in read-only mode? True</span>
 </code></pre></div>
 <p>If you want to edit the <a class="autorefs autorefs-internal" href="items/metadata/#msl-io-metadata">Metadata</a> of <code>root</code>, or modify any <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s or <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s in <code>root</code>, then you must first set the item to be writeable. Setting the read-only mode of <code>root</code> propagates that mode to all items within <code>root</code>. For example,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div>
 <p>will make <code>root</code> and all sub-<a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s and all sub-<a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s within <code>root</code> to be writeable</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="go">is &#39;/dataset1&#39; in read-only mode? False</span>
-<span class="go">is &#39;/my_group&#39; in read-only mode? False</span>
-<span class="go">is &#39;/my_group/dataset2&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2/group3&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2/group3/dataset3&#39; in read-only mode? False</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">is '/dataset1' in read-only mode? False</span>
+<span class="go">is '/my_group' in read-only mode? False</span>
+<span class="go">is '/my_group/dataset2' in read-only mode? False</span>
+<span class="go">is '/group1' in read-only mode? False</span>
+<span class="go">is '/group1/group2' in read-only mode? False</span>
+<span class="go">is '/group1/group2/group3' in read-only mode? False</span>
+<span class="go">is '/group1/group2/group3/dataset3' in read-only mode? False</span>
 </code></pre></div>
 <p>You can make only a specific item (and its descendants) writeable as well. You can make <code>my_group</code> and <code>dataset2</code> to be in read-only mode by the following (recall that <code>root</code> behaves like a Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>)</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;my_group&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">"my_group"</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
 <p>and this will keep <code>root</code>, <code>dataset1</code> and all items contained within the <code>group1</code> <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a> to be in read-write mode, but change <code>my_group</code> and <code>dataset2</code> to be in read-only mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">read_only</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="go">is &#39;/dataset1&#39; in read-only mode? False</span>
-<span class="go">is &#39;/my_group&#39; in read-only mode? True</span>
-<span class="go">is &#39;/my_group/dataset2&#39; in read-only mode? True</span>
-<span class="go">is &#39;/group1&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2/group3&#39; in read-only mode? False</span>
-<span class="go">is &#39;/group1/group2/group3/dataset3&#39; in read-only mode? False</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"is </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> in read-only mode? </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">read_only</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">is '/dataset1' in read-only mode? False</span>
+<span class="go">is '/my_group' in read-only mode? True</span>
+<span class="go">is '/my_group/dataset2' in read-only mode? True</span>
+<span class="go">is '/group1' in read-only mode? False</span>
+<span class="go">is '/group1/group2' in read-only mode? False</span>
+<span class="go">is '/group1/group2/group3' in read-only mode? False</span>
+<span class="go">is '/group1/group2/group3/dataset3' in read-only mode? False</span>
 </code></pre></div>
 <p>You can access <a class="autorefs autorefs-internal" title="Groups" href="items/groups/#msl-io-group">Group</a>s and <a class="autorefs autorefs-internal" title="Datasets" href="items/datasets/#msl-io-dataset">Dataset</a>s as keys or as class attributes</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;my_group&quot;</span><span class="p">][</span><span class="s2">&quot;dataset2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">"my_group"</span><span class="p">][</span><span class="s2">"dataset2"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(2, 2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">my_group</span><span class="o">.</span><span class="n">dataset2</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(2, 2)</span>
@@ -1587,8 +1587,8 @@
 <h2 id="convert-a-file">Convert a file<a class="headerlink" href="#convert-a-file" title="Permanent link">¤</a></h2>
 <p>You can convert between file formats using any of the <a class="autorefs autorefs-internal" href="writers/#msl-io-writers">Writers</a>. Suppose you had a file in the <a href="https://www.json.org/" target="_blank">JSON</a> format and you wanted to convert it to the <a href="https://www.hdfgroup.org/" target="_blank">HDF5</a> format</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">HDF5Writer</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">HDF5Writer</span><span class="p">(</span><span class="s2">&quot;my_file.h5&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;my_file.json&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">HDF5Writer</span><span class="p">(</span><span class="s2">"my_file.h5"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="s2">"my_file.json"</span><span class="p">))</span>
 </code></pre></div>
 <h2 id="gtc-archive">GTC Archive<a class="headerlink" href="#gtc-archive" title="Permanent link">¤</a></h2>
 <p>You can store and retrieve a <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive" target="_blank">GTC Archive</a> so that uncertain numbers can be used in later calculations.</p>
@@ -1600,13 +1600,13 @@
 <span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ureal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 
 <span class="c1"># Write the Archive as metadata (using any Writer is okay)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">JSONWriter</span><span class="p">(</span><span class="s2">&quot;archived.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">JSONWriter</span><span class="p">(</span><span class="s2">"archived.json"</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
 <span class="o">...</span>     <span class="n">w</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="n">archive</span><span class="o">=</span><span class="n">pr</span><span class="o">.</span><span class="n">dumps_json</span><span class="p">(</span><span class="n">archive</span><span class="p">))</span>
 
 <span class="c1"># Read the file and load the Archive from metadata</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;archived.json&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s2">"archived.json"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">loads_json</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">archive</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">archive</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span>
 <span class="n">ureal</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="read-a-table">Read a table<a class="headerlink" href="#read-a-table" title="Permanent link">¤</a></h2>
@@ -1650,11 +1650,11 @@
 
 <p>You can read this table using the <a class="autorefs autorefs-internal" title="            read_table" href="api/tables/#msl.io.tables.read_table">read_table</a> function</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_table</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
-<span class="go">&lt;Dataset &#39;my_table.txt&#39; shape=(3, 3) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
+<span class="go">&lt;Dataset 'my_table.txt' shape=(3, 3) dtype='&lt;f8' (1 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;my_table.txt&#39; {&#39;header&#39;: [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]}&gt;</span>
+<span class="go">&lt;Metadata 'my_table.txt' {'header': ['x', 'y', 'z']}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([[1., 2., 3.],</span>
 <span class="go">       [4., 5., 6.],</span>
@@ -1667,37 +1667,37 @@
 <span class="go">9.0</span>
 </code></pre></div>
 <p>You can define the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" target="_blank">dtype</a> of the items in the table. For example, to return integer values instead of floating-point numbers you can include the <code>dtype=int</code> keyword argument.</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype(&#39;int64&#39;)</span>
+<span class="go">dtype('int64')</span>
 </code></pre></div>
 <p>If you specify the <code>dtype</code> value as a string that starts with the text <code>header</code>, then the values in the <em>header</em> are used as field names for the <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays" target="_blank">structured array</a> that is created where each data type is by default a <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.double" target="_blank">double</a> <em>(the header is still included as metadata)</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"header"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype([(&#39;x&#39;, &#39;&lt;f8&#39;), (&#39;y&#39;, &#39;&lt;f8&#39;), (&#39;z&#39;, &#39;&lt;f8&#39;)])</span>
+<span class="go">dtype([('x', '&lt;f8'), ('y', '&lt;f8'), ('z', '&lt;f8')])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">x</span>
 <span class="go">array([1., 4., 7.])</span>
 </code></pre></div>
 <p>You can also specify the data type to use for all items by specifying <code>header:</code> followed by the data type</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header:f4&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"header:f4"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype([(&#39;x&#39;, &#39;&lt;f4&#39;), (&#39;y&#39;, &#39;&lt;f4&#39;), (&#39;z&#39;, &#39;&lt;f4&#39;)])</span>
+<span class="go">dtype([('x', '&lt;f4'), ('y', '&lt;f4'), ('z', '&lt;f4')])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">y</span>
 <span class="go">array([2., 5., 8.], dtype=float32)</span>
 </code></pre></div>
 <p>or you can specify the data type of each column by separating each data type with a comma.</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header:int32,f8,H&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"header:int32,f8,H"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype([(&#39;x&#39;, &#39;&lt;i4&#39;), (&#39;y&#39;, &#39;&lt;f8&#39;), (&#39;z&#39;, &#39;&lt;u2&#39;)])</span>
+<span class="go">dtype([('x', '&lt;i4'), ('y', '&lt;f8'), ('z', '&lt;u2')])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">z</span>
 <span class="go">array([3, 6, 9], dtype=uint16)</span>
 </code></pre></div>
 <p>You can also specify the number of times to repeat a data type for adjacent columns and use the <code>*</code> character to repeat a data type as many times as necessary to match the length of the <em>header</em>. For example, <code>header:2U16,*double,?</code> means that the first two columns are <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.str_" target="_blank">unicode strings</a> that may contain up to 16 characters, the third to second-to-last columns are of type <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.double" target="_blank">double</a> and the last column is of type <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.bool" target="_blank">bool</a>. Note that using <em>repeats</em> when using the <code>header:</code> prefix is different than how numpy treats a <em>repeats</em> specification. Here, <em>repeats</em> is the number of times to repeat the data type for adjacent columns, e.g., <code>3f8</code> is expanded to <code>f8,f8,f8</code>, whereas numpy would treat <code>3f8</code> as a 3 x 1 sub-array of type <code>f8</code>. If you want the sub-array feature, do not use the <code>header:</code> prefix.</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;my_table.txt&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;header:U8,*int&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="s2">"my_table.txt"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"header:U8,*int"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype([(&#39;x&#39;, &#39;&lt;U8&#39;), (&#39;y&#39;, &#39;&lt;i8&#39;), (&#39;z&#39;, &#39;&lt;i8&#39;)])</span>
+<span class="go">dtype([('x', '&lt;U8'), ('y', '&lt;i8'), ('z', '&lt;i8')])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">x</span>
-<span class="go">array([&#39;1&#39;, &#39;4&#39;, &#39;7&#39;], dtype=&#39;&lt;U8&#39;)</span>
+<span class="go">array(['1', '4', '7'], dtype='&lt;U8')</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">y</span>
 <span class="go">array([2, 5, 8])</span>
 </code></pre></div>
@@ -1712,7 +1712,7 @@
 -->
 
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">name</span>
-<span class="go">&#39;data.xyz&#39;</span>
+<span class="go">'data.xyz'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 <span class="go">value;uncertainty</span>
 <span class="go">6.317;0.045</span>
@@ -1731,12 +1731,12 @@
       module-attribute
   " href="api/tables/#msl.io.tables.extension_delimiter_map">extension_delimiter_map</a></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">extension_delimiter_map</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">extension_delimiter_map</span><span class="p">[</span><span class="s2">&quot;.xyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extension_delimiter_map</span><span class="p">[</span><span class="s2">".xyz"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">";"</span>
 </code></pre></div>
 <p>and then you can read a table from files with the <em>.xyz</em> extension without needing to explicitly specify the delimiter to use every time you read a table</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">&lt;Metadata &#39;data.xyz&#39; {&#39;header&#39;: [&#39;value&#39;, &#39;uncertainty&#39;]}&gt;</span>
+<span class="go">&lt;Metadata 'data.xyz' {'header': ['value', 'uncertainty']}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([[6.317, 0.045],</span>
 <span class="go">       [4.362, 0.009],</span>

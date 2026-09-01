@@ -2412,7 +2412,7 @@
   
       module-attribute
    (msl.io.typing.ShapeLike)" href="../typing/#msl.io.typing.ShapeLike">ShapeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"K"</span><span class="p">,</span> <span class="s2">"A"</span><span class="p">,</span> <span class="s2">"C"</span><span class="p">,</span> <span class="s2">"F"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span>
 <span class="p">)</span>
@@ -2718,11 +2718,11 @@ as well as <code>dtype</code> and <code>order</code>, to be used as the underlyi
     <span class="n">buffer</span><span class="p">:</span> <span class="n">Buffer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">strides</span><span class="p">:</span> <span class="n">ShapeLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"K"</span><span class="p">,</span> <span class="s2">"A"</span><span class="p">,</span> <span class="s2">"C"</span><span class="p">,</span> <span class="s2">"F"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A *Dataset* functions as a numpy [ndarray][numpy.ndarray] with [Metadata][msl.io.metadata.Metadata].</span>
+<span class="w">    </span><span class="sd">"""A *Dataset* functions as a numpy [ndarray][numpy.ndarray] with [Metadata][msl.io.metadata.Metadata].</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Do not instantiate directly. Create a new [Dataset][msl.io.node.Dataset] using the</span>
@@ -2745,7 +2745,7 @@ as well as <code>dtype</code> and <code>order</code>, to be used as the underlyi
 <span class="sd">            as well as `dtype` and `order`, to be used as the underlying data.</span>
 <span class="sd">        metadata: All other keyword arguments are used as</span>
 <span class="sd">            [Metadata][msl.io.metadata.Metadata] for this [Dataset][msl.io.node.Dataset].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">_unix_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parent</span>
@@ -2809,7 +2809,7 @@ You can directly call any <a class="autorefs autorefs-external" href="https://nu
 instance.</p>
 <p>For example,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span>
-<span class="go">&lt;Dataset &#39;/my_data&#39; shape=(4, 3) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="go">&lt;Dataset '/my_data' shape=(4, 3) dtype='&lt;f8' (0 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span>
 <span class="go">array([[ 0.,  1.,  2.],</span>
 <span class="go">       [ 3.,  4.,  5.],</span>
@@ -2990,12 +2990,12 @@ instance.</p>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add metadata to the [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Add metadata to the [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metadata: Key-value pairs to add to the [Metadata][msl.io.metadata.Metadata] for this</span>
 <span class="sd">            [Dataset][msl.io.node.Dataset].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3093,7 +3093,7 @@ creates a copy using the mode for the <a class="autorefs autorefs-internal" titl
 <span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a copy of this [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Create a copy of this [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        read_only: Whether the copy should be created in read-only mode. If `None`,</span>
@@ -3101,7 +3101,7 @@ creates a copy using the mode for the <a class="autorefs autorefs-internal" titl
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A copy of this [Dataset][msl.io.node.Dataset].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
         <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span>
@@ -3413,7 +3413,7 @@ remove the extra <em>empty</em> rows that were created.</p>
     <span class="n">date_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A [Dataset][msl.io.node.Dataset] that handles [logging][]{:target=&quot;_blank&quot;} records.</span>
+<span class="w">    </span><span class="sd">"""A [Dataset][msl.io.node.Dataset] that handles [logging][]{:target="_blank"} records.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Do not instantiate directly. Create a new [DatasetLogging][msl.io.node.DatasetLogging] using</span>
@@ -3445,49 +3445,49 @@ remove the extra <em>empty</em> rows that were created.</p>
 <span class="sd">            want to call [remove_empty_rows][msl.io.node.DatasetLogging.remove_empty_rows] before</span>
 <span class="sd">            writing `DatasetLogging` to a file or interacting with the data in `DatasetLogging` to</span>
 <span class="sd">            remove the extra _empty_ rows that were created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">attributes</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must specify logging attributes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Must specify logging attributes"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnnecessaryIsInstance]</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Must specify attribute names as strings, got: </span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Must specify attribute names as strings, got: </span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_uses_asctime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;asctime&quot;</span> <span class="ow">in</span> <span class="n">attributes</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_date_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">date_fmt</span> <span class="ow">or</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_uses_asctime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"asctime"</span> <span class="ow">in</span> <span class="n">attributes</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_date_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">date_fmt</span> <span class="ow">or</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span>
 
     <span class="n">_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
 
     <span class="c1"># these 3 keys in the metadata are used to distinguish a DatasetLogging</span>
     <span class="c1"># object from a regular Dataset object</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;logging_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_level</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;logging_level_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">_level</span><span class="p">)</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;logging_date_format&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_fmt</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">"logging_level"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_level</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">"logging_level_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">_level</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">"logging_date_format"</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_fmt</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_auto_resize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">&quot;size&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s2">&quot;shape&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_auto_resize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="s2">"size"</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s2">"shape"</span> <span class="ow">in</span> <span class="n">kwargs</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_resize</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;size&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">),)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">],)</span>
+        <span class="k">if</span> <span class="s2">"size"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"size"</span><span class="p">),)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">],)</span>
 
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, the number of dimensions must be 1&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, the number of dimensions must be 1"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">object_</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">a</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">])</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">intp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_resize</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">&lt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_resize</span><span class="p">(</span><span class="n">new_allocated</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_resize</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">&lt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resize</span><span class="p">(</span><span class="n">new_allocated</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">_level</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -3662,11 +3662,11 @@ remove the extra <em>empty</em> rows that were created.</p>
 <span class="normal">409</span>
 <span class="normal">410</span>
 <span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_filter</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a logging filter.</span>
+<span class="w">    </span><span class="sd">"""Add a logging filter.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        log_filter: The logging [Filter][logging.Filter] to add to the [Handler][logging.Handler]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">log_filter</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3708,16 +3708,16 @@ rows in the <a class="autorefs autorefs-internal" title="            Dataset" hr
 <span class="normal">446</span>
 <span class="normal">447</span>
 <span class="normal">448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_empty_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove empty rows from the [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Remove empty rows from the [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    If the [DatasetLogging][msl.io.node.DatasetLogging] object was initialized with a `shape` or a `size`</span>
 <span class="sd">    keyword argument then the size of the [Dataset][msl.io.node.Dataset] is always greater than or equal to</span>
 <span class="sd">    the number of [logging records][log-record] that were added to it. Calling this method will remove the</span>
 <span class="sd">    rows in the [Dataset][msl.io.node.Dataset] that were not from a [logging record][log-record].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
 
-    <span class="c1"># don&#39;t use &quot;is not None&quot; since this does not work as expected</span>
+    <span class="c1"># don't use "is not None" since this does not work as expected</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># noqa: E711</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3781,11 +3781,11 @@ rows in the <a class="autorefs autorefs-internal" title="            Dataset" hr
 <span class="normal">454</span>
 <span class="normal">455</span>
 <span class="normal">456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_filter</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a logging filter.</span>
+<span class="w">    </span><span class="sd">"""Remove a logging filter.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        log_filter: The logging [Filter][logging.Filter] to remove from the [Handler][logging.Handler].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">log_filter</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3821,11 +3821,11 @@ to the <a class="autorefs autorefs-internal" title="            Dataset" href="#
 <span class="normal">463</span>
 <span class="normal">464</span>
 <span class="normal">465</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove this class&#39;s [Handler][logging.Handler] from the associated [Logger][logging.Logger].</span>
+<span class="w">    </span><span class="sd">"""Remove this class's [Handler][logging.Handler] from the associated [Logger][logging.Logger].</span>
 
 <span class="sd">    After calling this method [logging records][log-record] are no longer added</span>
 <span class="sd">    to the [Dataset][msl.io.node.Dataset].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3896,11 +3896,11 @@ to the <a class="autorefs autorefs-internal" title="            Dataset" href="#
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add this class&#39;s [Handler][logging.Handler] to a [Logger][logging.Logger].</span>
+<span class="w">    </span><span class="sd">"""Add this class's [Handler][logging.Handler] to a [Logger][logging.Logger].</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        logger: The [Logger][logging.Logger] to add this class&#39;s [Handler][logging.Handler] to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        logger: The [Logger][logging.Logger] to add this class's [Handler][logging.Handler] to.</span>
+<span class="sd">    """</span>
     <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handler</span><span class="o">.</span><span class="n">level</span>
     <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">&gt;</span> <span class="n">level</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
@@ -4063,7 +4063,7 @@ parent directory by the <code>/</code> character.</p>
 <span class="normal">505</span>
 <span class="normal">506</span>
 <span class="normal">507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s.</span>
+<span class="w">    </span><span class="sd">"""A [Group][msl.io.node.Group] can contain sub-[Group][msl.io.node.Group]s and/or [Dataset][msl.io.node.Dataset]s.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Do not instantiate directly. Create a new [Group][msl.io.node.Group] using</span>
@@ -4078,7 +4078,7 @@ parent directory by the <code>/</code> character.</p>
 <span class="sd">        read_only: Whether the [Group][msl.io.node.Group] is initialised in read-only mode.</span>
 <span class="sd">        metadata: All additional keyword arguments are used to create the</span>
 <span class="sd">            [Metadata][msl.io.metadata.Metadata] for this [Group][msl.io.node.Group].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: E501</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">_unix_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">parent</span>
@@ -4282,19 +4282,19 @@ and sub-<a class="autorefs autorefs-internal" title="            Dataset" href="
 <span class="normal">840</span>
 <span class="normal">841</span>
 <span class="normal">842</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Add a [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the new [Dataset][msl.io.node.Dataset] to add. Automatically creates the ancestor</span>
 <span class="sd">            [Group][msl.io.node.Group]s if they do not exist.</span>
 <span class="sd">        dataset: The [Dataset][msl.io.node.Dataset] to add. The data and the</span>
 <span class="sd">            [Metadata][msl.io.metadata.Metadata] in the [Dataset][msl.io.node.Dataset] are copied.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnnecessaryIsInstance]</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Must pass in a Dataset object, got </span><span class="si">{</span><span class="n">dataset</span><span class="si">!r}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Must pass in a Dataset object, got </span><span class="si">{</span><span class="n">dataset</span><span class="si">!r}</span><span class="s2">"</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">read_only</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">**</span><span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4392,19 +4392,19 @@ data and <a class="autorefs autorefs-internal" title="            Metadata" href
 <span class="normal">910</span>
 <span class="normal">911</span>
 <span class="normal">912</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_dataset_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_logging</span><span class="p">:</span> <span class="n">DatasetLogging</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a [DatasetLogging][msl.io.node.DatasetLogging].</span>
+<span class="w">    </span><span class="sd">"""Add a [DatasetLogging][msl.io.node.DatasetLogging].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the new [DatasetLogging][msl.io.node.DatasetLogging] to add.</span>
 <span class="sd">            Automatically creates the ancestor [Group][msl.io.node.Group]s if they do not exist.</span>
 <span class="sd">        dataset_logging: The [DatasetLogging][msl.io.node.DatasetLogging] to add. The</span>
 <span class="sd">            data and [Metadata][msl.io.metadata.Metadata] are copied.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_logging</span><span class="p">,</span> <span class="n">DatasetLogging</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnnecessaryIsInstance]</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Must pass in a DatasetLogging object, got </span><span class="si">{</span><span class="n">dataset_logging</span><span class="si">!r}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Must pass in a DatasetLogging object, got </span><span class="si">{</span><span class="n">dataset_logging</span><span class="si">!r}</span><span class="s2">"</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dataset_logging</span><span class="p">(</span>
         <span class="n">name</span><span class="p">,</span>
         <span class="n">level</span><span class="o">=</span><span class="n">dataset_logging</span><span class="o">.</span><span class="n">level</span><span class="p">,</span>
@@ -4514,7 +4514,7 @@ data and <a class="autorefs autorefs-internal" title="            Metadata" href
 <span class="normal">780</span>
 <span class="normal">781</span>
 <span class="normal">782</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Add a [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the new [Group][msl.io.node.Group] to add. Automatically creates the ancestor</span>
@@ -4522,12 +4522,12 @@ data and <a class="autorefs autorefs-internal" title="            Metadata" href
 <span class="sd">        group: The [Group][msl.io.node.Group] to add. The [Dataset][msl.io.node.Dataset]s and</span>
 <span class="sd">            [Metadata][msl.io.metadata.Metadata] that are contained within the</span>
 <span class="sd">            `group` will be copied.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">Group</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnnecessaryIsInstance]</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Must pass in a Group object, got </span><span class="si">{</span><span class="n">group</span><span class="si">!r}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Must pass in a Group object, got </span><span class="si">{</span><span class="n">group</span><span class="si">!r}</span><span class="s2">"</span>  <span class="c1"># type: ignore[unreachable] # pyright: ignore[reportUnreachable]</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span><span class="p">:</span>  <span class="c1"># no sub-Groups or Datasets, only add the Metadata</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">group</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -4603,12 +4603,12 @@ data and <a class="autorefs autorefs-internal" title="            Metadata" href
 <span class="normal">621</span>
 <span class="normal">622</span>
 <span class="normal">623</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add metadata to the [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Add metadata to the [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metadata: Key-value pairs to add to the [Metadata][msl.io.metadata.Metadata] for this</span>
 <span class="sd">            [Group][msl.io.node.Group].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4667,11 +4667,11 @@ data and <a class="autorefs autorefs-internal" title="            Metadata" href
 <span class="normal">753</span>
 <span class="normal">754</span>
 <span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Group</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield all ancestor (parent) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Yield all ancestor (parent) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        The ancestors of this [Group][msl.io.node.Group].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
     <span class="k">while</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">parent</span>
@@ -4808,7 +4808,7 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 <span class="normal">858</span>
 <span class="normal">859</span>
 <span class="normal">860</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Create a new [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the new [Dataset][msl.io.node.Dataset]. Automatically creates the ancestor</span>
@@ -4820,7 +4820,7 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The new [Dataset][msl.io.node.Dataset] that was created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read_only</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_ancestors</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -4841,7 +4841,7 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">create_dataset_logging</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">level</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Sequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence">Sequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="logging.Logger" href="https://docs.python.org/3/library/logging.html#logging.Logger">Logger</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">date_fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5078,15 +5078,15 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">date_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetLogging</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a [Dataset][msl.io.node.Dataset] that handles [logging][] records.</span>
+<span class="w">    </span><span class="sd">"""Create a [Dataset][msl.io.node.Dataset] that handles [logging][] records.</span>
 
-<span class="sd">    !!! example &quot;See [here][msl-io-dataset-logging] for an example.&quot;</span>
+<span class="sd">    !!! example "See [here][msl-io-dataset-logging] for an example."</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: A name to associate with the [Dataset][msl.io.node.Dataset].</span>
@@ -5099,7 +5099,7 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
 <span class="sd">            will be associated with. If `None`, it is associated with the _root_ [Logger][logging.Logger].</span>
 <span class="sd">        date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]</span>
 <span class="sd">            to use to represent the _asctime_ [attribute][logrecord-attributes] in.</span>
-<span class="sd">            If `None`, uses the ISO 8601 format `&quot;%Y-%m-%dT%H:%M:%S.%f&quot;`.</span>
+<span class="sd">            If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].</span>
 <span class="sd">            The default behaviour is to append every [logging record][log-record]</span>
 <span class="sd">            to the [Dataset][msl.io.node.Dataset]. This guarantees that the size of the</span>
@@ -5120,17 +5120,17 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [DatasetLogging][msl.io.node.DatasetLogging] that was created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read_only</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_ancestors</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># if the default attribute names are changed then update the `attributes`</span>
         <span class="c1"># description in the docstring of create_dataset_logging() and require_dataset_logging()</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;asctime&quot;</span><span class="p">,</span> <span class="s2">&quot;levelname&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">]</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"asctime"</span><span class="p">,</span> <span class="s2">"levelname"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">date_fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># if the default date_fmt is changed then update the `date_fmt`</span>
         <span class="c1"># description in the docstring of create_dataset_logging() and require_dataset_logging()</span>
-        <span class="n">date_fmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+        <span class="n">date_fmt</span> <span class="o">=</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">"</span>
     <span class="k">return</span> <span class="n">DatasetLogging</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">date_fmt</span><span class="o">=</span><span class="n">date_fmt</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span>
     <span class="p">)</span>
@@ -5266,7 +5266,7 @@ for the new <a class="autorefs autorefs-internal" title="            Group" href
 <span class="normal">798</span>
 <span class="normal">799</span>
 <span class="normal">800</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Group</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Create a new [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the new [Group][msl.io.node.Group]. Automatically creates the ancestor</span>
@@ -5278,7 +5278,7 @@ for the new <a class="autorefs autorefs-internal" title="            Group" href
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The new [Group][msl.io.node.Group] that was created.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read_only</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_ancestors</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
@@ -5438,7 +5438,7 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">704</span>
 <span class="normal">705</span>
 <span class="normal">706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield the [Dataset][msl.io.node.Dataset]s in this [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Yield the [Dataset][msl.io.node.Dataset]s in this [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        exclude: A regular-expression pattern to use to exclude [Dataset][msl.io.node.Dataset]s.</span>
@@ -5454,7 +5454,7 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="sd">    Yields:</span>
 <span class="sd">        The filtered [Dataset][msl.io.node.Dataset]s based on the `exclude` and `include` patterns.</span>
 <span class="sd">            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -5520,11 +5520,11 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">742</span>
 <span class="normal">743</span>
 <span class="normal">744</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">descendants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Group</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield all descendant (children) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Yield all descendant (children) [Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        The descendants of this [Group][msl.io.node.Group].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Group</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">obj</span>
@@ -5684,7 +5684,7 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">732</span>
 <span class="normal">733</span>
 <span class="normal">734</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exclude</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Group</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield the sub-[Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Yield the sub-[Group][msl.io.node.Group]s of this [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        exclude: A regular-expression pattern to use to exclude sub-[Group][msl.io.node.Group]s.</span>
@@ -5700,7 +5700,7 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="sd">    Yields:</span>
 <span class="sd">        The filtered sub-[Group][msl.io.node.Group]s based on the `exclude` and `include` patterns.</span>
 <span class="sd">            The `exclude` pattern has more precedence than the `include` pattern if there is a conflict.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -5804,14 +5804,14 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">653</span>
 <span class="normal">654</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_dataset</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an object is an instance of [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Check if an object is an instance of [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        obj: The object to check.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether `obj` is an instance of [Dataset][msl.io.node.Dataset].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5907,14 +5907,14 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">665</span>
 <span class="normal">666</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_dataset_logging</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an object is an instance of [DatasetLogging][msl.io.node.DatasetLogging].</span>
+<span class="w">    </span><span class="sd">"""Check if an object is an instance of [DatasetLogging][msl.io.node.DatasetLogging].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        obj: The object to check.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether `obj` is an instance of [DatasetLogging][msl.io.node.DatasetLogging].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DatasetLogging</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6010,14 +6010,14 @@ The <code>exclude</code> pattern has more precedence than the <code>include</cod
 <span class="normal">677</span>
 <span class="normal">678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_group</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an object is an instance of [Group][msl.io.node.Group].</span>
+<span class="w">    </span><span class="sd">"""Check if an object is an instance of [Group][msl.io.node.Group].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        obj: The object to check.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether `obj` is an instance of [Group][msl.io.node.Group].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Group</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6110,7 +6110,7 @@ there was no <a class="autorefs autorefs-internal" title="            Group" hre
 <span class="normal">1087</span>
 <span class="normal">1088</span>
 <span class="normal">1089</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span> <span class="o">|</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a [Group][msl.io.node.Group] or a [Dataset][msl.io.node.Dataset].</span>
+<span class="w">    </span><span class="sd">"""Remove a [Group][msl.io.node.Group] or a [Dataset][msl.io.node.Dataset].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] to remove.</span>
@@ -6118,8 +6118,8 @@ there was no <a class="autorefs autorefs-internal" title="            Group" hre
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] that was removed or `None` if</span>
 <span class="sd">            there was no [Group][msl.io.node.Group] or [Dataset][msl.io.node.Dataset] with the specified `name`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6263,7 +6263,7 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 <span class="normal">886</span>
 <span class="normal">887</span>
 <span class="normal">888</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">require_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Require that a [Dataset][msl.io.node.Dataset] exists.</span>
+<span class="w">    </span><span class="sd">"""Require that a [Dataset][msl.io.node.Dataset] exists.</span>
 
 <span class="sd">    If the [Dataset][msl.io.node.Dataset] exists it will be returned, otherwise it is created then returned.</span>
 
@@ -6276,15 +6276,15 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Dataset][msl.io.node.Dataset] that was created or that already existed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">name</span>
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">dataset_name</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">read_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">dataset</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="n">read_only</span>
             <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>  <span class="c1"># only add the kwargs that should be Metadata</span>
-                <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">,</span> <span class="s2">&quot;dtype&quot;</span><span class="p">,</span> <span class="s2">&quot;buffer&quot;</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="s2">&quot;strides&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"shape"</span><span class="p">,</span> <span class="s2">"dtype"</span><span class="p">,</span> <span class="s2">"buffer"</span><span class="p">,</span> <span class="s2">"offset"</span><span class="p">,</span> <span class="s2">"strides"</span><span class="p">,</span> <span class="s2">"order"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">]:</span>
                     <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">dataset</span>
@@ -6306,7 +6306,7 @@ If <code>None</code>, uses the mode for this <a class="autorefs autorefs-interna
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">require_dataset_logging</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">level</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Sequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence">Sequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="logging.Logger" href="https://docs.python.org/3/library/logging.html#logging.Logger">Logger</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">date_fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6584,13 +6584,13 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">date_fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetLogging</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Require that a [Dataset][msl.io.node.Dataset] exists for handling [logging][] records.</span>
+<span class="w">    </span><span class="sd">"""Require that a [Dataset][msl.io.node.Dataset] exists for handling [logging][] records.</span>
 
 <span class="sd">    If the [DatasetLogging][msl.io.node.DatasetLogging] exists it will be returned</span>
 <span class="sd">    otherwise it is created and then returned.</span>
@@ -6606,7 +6606,7 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
 <span class="sd">            will be associated with. If `None`, it is associated with the _root_ [Logger][logging.Logger].</span>
 <span class="sd">        date_fmt: The [datetime][datetime.datetime] [format code][strftime-strptime-behavior]</span>
 <span class="sd">            to use to represent the _asctime_ [attribute][logrecord-attributes] in.</span>
-<span class="sd">            If `None`, uses the ISO 8601 format `&quot;%Y-%m-%dT%H:%M:%S.%f&quot;`.</span>
+<span class="sd">            If `None`, uses the ISO 8601 format `"%Y-%m-%dT%H:%M:%S.%f"`.</span>
 <span class="sd">        kwargs: All additional keyword arguments are passed to [Dataset][msl.io.node.Dataset].</span>
 <span class="sd">            The default behaviour is to append every [logging record][log-record]</span>
 <span class="sd">            to the [Dataset][msl.io.node.Dataset]. This guarantees that the size of the</span>
@@ -6627,23 +6627,23 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [DatasetLogging][msl.io.node.DatasetLogging] that was created or that already existed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">name</span>
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">dataset_name</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;logging_level&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;logging_level_name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;logging_date_format&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+                <span class="p">(</span><span class="s2">"logging_level"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">"logging_level_name"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">"logging_date_format"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
             <span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The required Dataset was found but it is not used for logging&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The required Dataset was found but it is not used for logging"</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">attributes</span><span class="p">)):</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The attribute names of the existing logging Dataset are &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="si">}</span><span class="s2"> which does not equal </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The attribute names of the existing logging Dataset are "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="si">}</span><span class="s2"> which does not equal </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -6659,7 +6659,7 @@ with the data in <a class="autorefs autorefs-internal" title="            Datase
             <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">dset</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">datasets</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">dset</span> <span class="ow">is</span> <span class="n">dataset</span><span class="p">:</span>
-                        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">dset</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">dset</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                         <span class="k">del</span> <span class="n">group</span><span class="o">.</span><span class="n">_mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c1"># noqa: SLF001</span>
                         <span class="k">break</span>
 
@@ -6823,7 +6823,7 @@ for the required <a class="autorefs autorefs-internal" title="            Group"
 <span class="normal">824</span>
 <span class="normal">825</span>
 <span class="normal">826</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">require_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Group</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Require that a [Group][msl.io.node.Group] exists.</span>
+<span class="w">    </span><span class="sd">"""Require that a [Group][msl.io.node.Group] exists.</span>
 
 <span class="sd">    If the [Group][msl.io.node.Group] exists it will be returned otherwise it is created then returned.</span>
 
@@ -6837,8 +6837,8 @@ for the required <a class="autorefs autorefs-internal" title="            Group"
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The required [Group][msl.io.node.Group] that was created or that already existed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
     <span class="n">group_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="n">name</span>
     <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">group_name</span><span class="p">:</span>

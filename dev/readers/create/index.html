@@ -1379,7 +1379,7 @@
 <p>Create a new <a class="autorefs autorefs-internal" title="            Reader" href="../../api/base/#msl.io.base.Reader">Reader</a> by following this template. Save it in the <code>src/msl/io/readers</code> folder.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="c1"># It&#39;s a good idea to provide type annotations in your code</span>
+<span class="c1"># It's a good idea to provide type annotations in your code</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="c1"># Import the necessary msl-io object to subclass</span>
@@ -1393,11 +1393,11 @@
 
 <span class="c1"># Sub-classing Reader will tell msl-io that your MyReader exists</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MyReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name your class to be whatever you want, i.e., change MyReader.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Name your class to be whatever you want, i.e., change MyReader."""</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method answers the following question:</span>
+<span class="w">        </span><span class="sd">"""This method answers the following question:</span>
 
 <span class="sd">        Given a file-like object (e.g., a file stream or a buffered reader)</span>
 <span class="sd">        or a file path, can your Reader read this file?</span>
@@ -1410,10 +1410,10 @@
 
 <span class="sd">        This method must return a boolean:</span>
 <span class="sd">        True (can read) or False (cannot read)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method reads the data file(s).</span>
+<span class="w">        </span><span class="sd">"""This method reads the data file(s).</span>
 
 <span class="sd">        The optional kwargs can be passed in via the msl.io.read() function.</span>
 
@@ -1428,7 +1428,7 @@
 <span class="sd">        To create a Dataset in Root use self.create_dataset()</span>
 
 <span class="sd">        This method should return None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 </code></pre></div>
 </li>
 <li>

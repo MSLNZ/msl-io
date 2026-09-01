@@ -1670,12 +1670,12 @@
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">read_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">VT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A key-value map that can be made read only.</span>
+<span class="w">    </span><span class="sd">"""A key-value map that can be made read only.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        read_only: Whether the mapping is initially in read-only mode (frozen).</span>
 <span class="sd">        kwargs: All other keyword arguments are used to create the underlying map object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_read_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VT</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -1741,7 +1741,7 @@
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maybe remove all items from the map, only if the map is not in read-only mode.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Maybe remove all items from the map, only if the map is not in read-only mode."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_read_only</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1771,7 +1771,7 @@
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VT</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[ItemsView][collections.abc.ItemsView][[str][], VT] &amp;mdash; Return a view of the map&#39;s items.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[ItemsView][collections.abc.ItemsView][[str][], VT] &amp;mdash; Return a view of the map's items."""</span>
     <span class="k">return</span> <span class="n">ItemsView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1800,7 +1800,7 @@
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[KeysView][collections.abc.KeysView][[str][]] &amp;mdash; Returns a view of the map&#39;s keys.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[KeysView][collections.abc.KeysView][[str][]] &amp;mdash; Returns a view of the map's keys."""</span>
     <span class="k">return</span> <span class="n">KeysView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1829,7 +1829,7 @@
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="n">VT</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[ValuesView][collections.abc.ValuesView][VT] &amp;mdash; Returns a view of the map&#39;s values.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[ValuesView][collections.abc.ValuesView][VT] &amp;mdash; Returns a view of the map's values."""</span>
     <span class="k">return</span> <span class="n">ValuesView</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

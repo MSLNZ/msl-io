@@ -1375,7 +1375,7 @@
 <p>Create a new <a class="autorefs autorefs-internal" title="            Writer" href="../../api/base/#msl.io.base.Writer">Writer</a> by following this template. Save it in the <code>src/msl/io/writers</code> folder.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="c1"># It&#39;s a good idea to provide type annotations in your code</span>
+<span class="c1"># It's a good idea to provide type annotations in your code</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="c1"># Import the necessary msl-io objects</span>
@@ -1389,10 +1389,10 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyWriter</span><span class="p">(</span><span class="n">Writer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Name your class to be whatever you want, i.e., change MyWriter.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Name your class to be whatever you want, i.e., change MyWriter."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">WriteLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Group</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement your write method with the above signature.</span>
+<span class="w">        </span><span class="sd">"""Implement your write method with the above signature.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file: The file to write to. If `None` then uses the value of</span>
@@ -1400,7 +1400,7 @@
 <span class="sd">            root: Write `root` to the file. If None then write the Groups</span>
 <span class="sd">                and Datasets that were created using `MyWriter`.</span>
 <span class="sd">            kwargs: Optional keyword arguments.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 </code></pre></div>
 </li>
 <li>

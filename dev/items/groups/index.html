@@ -1378,52 +1378,52 @@
 -->
 
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tree</span><span class="p">())</span>
-<span class="go">&lt;JSONWriter &#39;example.json&#39; (3 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">  &lt;Group &#39;/a&#39; (2 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">    &lt;Group &#39;/a/b&#39; (1 group, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">      &lt;Group &#39;/a/b/c&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
-<span class="go">        &lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="go">&lt;JSONWriter 'example.json' (3 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">  &lt;Group '/a' (2 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">    &lt;Group '/a/b' (1 group, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">      &lt;Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">        &lt;Dataset '/a/b/c/dset' shape=(100,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>A <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can either be in read-only mode</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset_b&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"dset_b"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">   </span><span class="c">...</span>
-<span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Group &#39;/a/b&#39; (1 group, 1 dataset, 0 metadata)&gt;. It is accessed in read-only mode.</span>
+<span class="gr">ValueError</span>: <span class="n">Cannot modify &lt;Group '/a/b' (1 group, 1 dataset, 0 metadata)&gt;. It is accessed in read-only mode.</span>
 </code></pre></div>
 <p>or in read-write mode</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dset_b&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="go">&lt;Dataset &#39;/a/b/dset_b&#39; shape=(4,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"dset_b"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="go">&lt;Dataset '/a/b/dset_b' shape=(4,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>The items in a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> can be accessed as <em>keys</em></p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">][</span><span class="s2">&quot;b&quot;</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">][</span><span class="s2">&quot;dset&quot;</span><span class="p">]</span>
-<span class="go">&lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">"a"</span><span class="p">][</span><span class="s2">"b"</span><span class="p">][</span><span class="s2">"c"</span><span class="p">][</span><span class="s2">"dset"</span><span class="p">]</span>
+<span class="go">&lt;Dataset '/a/b/c/dset' shape=(100,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>or as class attributes</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">dset</span>
-<span class="go">&lt;Dataset &#39;/a/b/c/dset&#39; shape=(100,) dtype=&#39;&lt;f8&#39; (0 metadata)&gt;</span>
+<span class="go">&lt;Dataset '/a/b/c/dset' shape=(100,) dtype='&lt;f8' (0 metadata)&gt;</span>
 </code></pre></div>
 <p>See <a class="autorefs autorefs-internal" href="../attribute_access/#attribute-key-limitations">Accessing Keys as Class Attributes</a> for more information.</p>
 <p>You can navigate through the tree by considering a <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> to be an ancestor or descendant of other <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ancestor</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">ancestors</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
-<span class="go">&lt;Group &#39;/a/b&#39; (1 group, 2 datasets, 0 metadata)&gt;</span>
-<span class="go">&lt;Group &#39;/a&#39; (2 groups, 2 datasets, 0 metadata)&gt;</span>
-<span class="go">&lt;JSONWriter &#39;example.json&#39; (3 groups, 2 datasets, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/a/b' (1 group, 2 datasets, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/a' (2 groups, 2 datasets, 0 metadata)&gt;</span>
+<span class="go">&lt;JSONWriter 'example.json' (3 groups, 2 datasets, 0 metadata)&gt;</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">descendant</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">descendants</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">descendant</span><span class="p">)</span>
-<span class="go">&lt;Group &#39;/a/b/c&#39; (0 groups, 1 dataset, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/a/b/c' (0 groups, 1 dataset, 0 metadata)&gt;</span>
 </code></pre></div>
 <p>If you want to create a new <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a> and its parent <a class="autorefs autorefs-internal" title="            Group" href="../../api/node/#msl.io.node.Group">Group</a>s do not exist yet, they are automatically created for you</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">day</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;2025/07/28&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;2025&quot;</span><span class="p">]</span>
-<span class="go">&lt;Group &#39;/2025&#39; (2 groups, 0 datasets, 0 metadata)&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;2025&quot;</span><span class="p">][</span><span class="s2">&quot;07&quot;</span><span class="p">]</span>
-<span class="go">&lt;Group &#39;/2025/07&#39; (1 group, 0 datasets, 0 metadata)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">day</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">"2025/07/28"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">"2025"</span><span class="p">]</span>
+<span class="go">&lt;Group '/2025' (2 groups, 0 datasets, 0 metadata)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">[</span><span class="s2">"2025"</span><span class="p">][</span><span class="s2">"07"</span><span class="p">]</span>
+<span class="go">&lt;Group '/2025/07' (1 group, 0 datasets, 0 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">day</span>
-<span class="go">&lt;Group &#39;/2025/07/28&#39; (0 groups, 0 datasets, 0 metadata)&gt;</span>
+<span class="go">&lt;Group '/2025/07/28' (0 groups, 0 datasets, 0 metadata)&gt;</span>
 </code></pre></div>
 
 

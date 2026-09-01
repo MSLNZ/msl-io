@@ -1837,7 +1837,7 @@
       module-attribute
    (msl.io.typing.PathLike)" href="../typing/#msl.io.typing.PathLike">PathLike</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            FileLikeRead (msl.io.typing.FileLikeRead)" href="../typing/#msl.io.typing.FileLikeRead">FileLikeRead</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">algorithm</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+    <span class="n">algorithm</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"sha256"</span><span class="p">,</span>
     <span class="n">chunk_size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">65536</span><span class="p">,</span>
     <span class="n">shake_length</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
@@ -2006,9 +2006,9 @@ See <a class="autorefs autorefs-external" href="https://docs.python.org/3/librar
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">checksum</span><span class="p">(</span>
-    <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">FileLikeRead</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">65536</span><span class="p">,</span> <span class="n">shake_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">FileLikeRead</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sha256"</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">65536</span><span class="p">,</span> <span class="n">shake_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the checksum of a file.</span>
+<span class="w">    </span><span class="sd">"""Get the checksum of a file.</span>
 
 <span class="sd">    A checksum is a sequence of numbers and letters that act as a fingerprint</span>
 <span class="sd">    for a file against which later comparisons can be made to detect errors or</span>
@@ -2024,7 +2024,7 @@ See <a class="autorefs autorefs-external" href="https://docs.python.org/3/librar
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The checksum value (which only contains hexadecimal digits).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read</span><span class="p">(</span><span class="n">fp</span><span class="p">:</span> <span class="n">FileLikeRead</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2038,7 +2038,7 @@ See <a class="autorefs autorefs-external" href="https://docs.python.org/3/librar
     <span class="n">_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">algorithm</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
-        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">_read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">position</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
@@ -2269,7 +2269,7 @@ the latest access time and latest modification time with the file.</p>
     <span class="n">include_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a file.</span>
+<span class="w">    </span><span class="sd">"""Copy a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: The path to a file to copy.</span>
@@ -2283,7 +2283,7 @@ the latest access time and latest modification time with the file.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The path to where the file was copied.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="n">src</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
@@ -2294,7 +2294,7 @@ the latest access time and latest modification time with the file.</p>
         <span class="n">dst</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">dst</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Will not overwrite </span><span class="si">{</span><span class="n">destination</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Will not overwrite </span><span class="si">{</span><span class="n">destination</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">)</span>
@@ -2428,7 +2428,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
 <span class="normal">454</span>
 <span class="normal">455</span>
 <span class="normal">456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_basename</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="n">WriteLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the basename (the final path component) of a file.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Get the basename (the final path component) of a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        obj: The object to get the basename of. If `obj` is an in-memory file-like</span>
@@ -2436,7 +2436,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The basename of `obj`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">name</span>
 
@@ -2644,7 +2644,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
 <span class="normal">640</span>
 <span class="normal">641</span>
 <span class="normal">642</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_bytes</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">FileLikeRead</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="n">positions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>  <span class="c1"># noqa: C901, PLR0912, PLR0915</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return bytes from a file.</span>
+<span class="w">    </span><span class="sd">"""Return bytes from a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read bytes from.</span>
@@ -2663,7 +2663,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The bytes from the file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
@@ -2680,7 +2680,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
             <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
                 <span class="n">size</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2716,7 +2716,7 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
     <span class="n">n_bytes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
         <span class="k">assert</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
-        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_bytes</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2852,21 +2852,21 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
 <span class="normal">658</span>
 <span class="normal">659</span>
 <span class="normal">660</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="n">WriteLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the extension of the file.</span>
+<span class="w">    </span><span class="sd">"""Return the extension of the file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to get the extension of.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The extension (including the `.`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">suffix</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">""</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2891,15 +2891,15 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
    (msl.io.typing.PathLike)" href="../typing/#msl.io.typing.PathLike">PathLike</a></span><span class="p">,</span>
     <span class="o">*</span><span class="n">lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">remove_empty_lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
-    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;strict&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"strict"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"strict"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_lines</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            FileLikeRead (msl.io.typing.FileLikeRead)" href="../typing/#msl.io.typing.FileLikeRead">FileLikeRead</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">],</span>
     <span class="o">*</span><span class="n">lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">remove_empty_lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"strict"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">]</span>
 </code></pre></div>          </div>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_lines</span><span class="p">(</span>
@@ -2916,8 +2916,8 @@ object then the class <a class="autorefs autorefs-external" href="https://docs.p
    (msl.io.typing.ReadLike)" href="../typing/#msl.io.typing.ReadLike">ReadLike</a></span><span class="p">,</span>
     <span class="o">*</span><span class="n">lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">remove_empty_lines</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
-    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;strict&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"strict"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"strict"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -3147,10 +3147,10 @@ opened in binary mode, otherwise a <a class="autorefs autorefs-external" href="h
     <span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="n">ReadLike</span><span class="p">,</span>
     <span class="o">*</span><span class="n">lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">remove_empty_lines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
-    <span class="n">errors</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;strict&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"strict"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"strict"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return lines from a file.</span>
+<span class="w">    </span><span class="sd">"""Return lines from a file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read lines from.</span>
@@ -3174,18 +3174,18 @@ opened in binary mode, otherwise a <a class="autorefs autorefs-external" href="h
 <span class="sd">        The lines from the `file`. Trailing whitespace is stripped from each line.</span>
 <span class="sd">            A [list][][[bytes][]] is returned if `file` is a file-like object</span>
 <span class="sd">            opened in binary mode, otherwise a [list][][[str][]] is returned.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># want the &quot;stop&quot; line to be included</span>
+<span class="sd">    """</span>
+    <span class="c1"># want the "stop" line to be included</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span> <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
 
-    <span class="c1"># want the &quot;start&quot; line to be included</span>
+    <span class="c1"># want the "start" line to be included</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="c1"># itertools.islice does not support negative indices, but want to allow</span>
-    <span class="c1"># getting the last &quot;N&quot; lines from a file.</span>
+    <span class="c1"># getting the last "N" lines from a file.</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">val</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
             <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -3202,7 +3202,7 @@ opened in binary mode, otherwise a <a class="autorefs autorefs-external" href="h
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Too many values in *lines, a maximum of 3 values may be specified&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Too many values in *lines, a maximum of 3 values may be specified"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
@@ -3346,9 +3346,9 @@ then returns <code>None</code>.</p>
 <span class="normal">708</span>
 <span class="normal">709</span>
 <span class="normal">710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">git_head</span><span class="p">(</span><span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GitHead</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get information about the [HEAD]{:target=&quot;_blank&quot;} of a repository.</span>
+<span class="w">    </span><span class="sd">"""Get information about the [HEAD]{:target="_blank"} of a repository.</span>
 
-<span class="sd">    This function requires that [git](https://git-scm.com/){:target=&quot;_blank&quot;} is installed and</span>
+<span class="sd">    This function requires that [git](https://git-scm.com/){:target="_blank"} is installed and</span>
 <span class="sd">    that it is available on the `PATH` environment variable.</span>
 
 <span class="sd">    [HEAD]: https://git-scm.com/docs/gitglossary#def_HEAD</span>
@@ -3360,15 +3360,15 @@ then returns <code>None</code>.</p>
 <span class="sd">        Information about the most recent commit on the current branch.</span>
 <span class="sd">            If `directory` is not a directory that is under version control</span>
 <span class="sd">            then returns `None`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--format=%H </span><span class="si">%c</span><span class="s2">t&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"git"</span><span class="p">,</span> <span class="s2">"show"</span><span class="p">,</span> <span class="s2">"-s"</span><span class="p">,</span> <span class="s2">"--format=%H </span><span class="si">%c</span><span class="s2">t"</span><span class="p">,</span> <span class="s2">"HEAD"</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>  <span class="c1"># noqa: S603</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">sha</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">GitHead</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">sha</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)))</span>  <span class="c1"># noqa: DTZ006</span>
+    <span class="k">return</span> <span class="n">GitHead</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="n">sha</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">),</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)))</span>  <span class="c1"># noqa: DTZ006</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3432,17 +3432,17 @@ then returns <code>None</code>.</p>
 <span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_admin</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the current process is being run as an administrator.</span>
+<span class="w">    </span><span class="sd">"""Check if the current process is being run as an administrator.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        `True` if the current process is being run as an administrator, otherwise `False`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">is_admin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">shell32</span><span class="o">.</span><span class="n">IsUserAnAdmin</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">!=</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">!=</span> <span class="s2">"win32"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3574,7 +3574,7 @@ then returns <code>None</code>.</p>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_dir_accessible</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a directory exists and is accessible.</span>
+<span class="w">    </span><span class="sd">"""Check if a directory exists and is accessible.</span>
 
 <span class="sd">    An accessible directory is one that the user has permission to access.</span>
 
@@ -3584,7 +3584,7 @@ then returns <code>None</code>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the directory exists and is accessible.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -3716,7 +3716,7 @@ then returns <code>None</code>.</p>
 <span class="normal">174</span>
 <span class="normal">175</span>
 <span class="normal">176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_file_readable</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a file exists and is readable.</span>
+<span class="w">    </span><span class="sd">"""Check if a file exists and is readable.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to check.</span>
@@ -3724,9 +3724,9 @@ then returns <code>None</code>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the file exists and is readable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
@@ -3816,7 +3816,7 @@ Group and Others. The read and execute permissions are preserved.</p>
 <span class="normal">726</span>
 <span class="normal">727</span>
 <span class="normal">728</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_write_permissions</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove all write permissions of a file.</span>
+<span class="w">    </span><span class="sd">"""Remove all write permissions of a file.</span>
 
 <span class="sd">    On Windows, this function will set the file attribute to be read only.</span>
 
@@ -3825,7 +3825,7 @@ Group and Others. The read and execute permissions are preserved.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: The path to remove the write permissions of.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="n">current_permissions</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IMODE</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span>
@@ -4273,7 +4273,7 @@ process ID (Windows).</p>
     <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Popen</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a process as an administrator and return its output.</span>
+<span class="w">    </span><span class="sd">"""Run a process as an administrator and return its output.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        args: A sequence of program arguments or else a command string. Providing a sequence of</span>
@@ -4295,9 +4295,9 @@ process ID (Windows).</p>
 <span class="sd">            (the _stdout_ stream of the process). If non-blocking, the returned object will either be the</span>
 <span class="sd">            [subprocess.Popen][] instance that is running the process (POSIX) or an [int][] which is the</span>
 <span class="sd">            process ID (Windows).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">executable</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must specify the args and/or an executable&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Must specify the args and/or an executable"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">stderr</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span> <span class="k">if</span> <span class="n">capture_stderr</span> <span class="k">else</span> <span class="kc">None</span>
@@ -4309,21 +4309,21 @@ process ID (Windows).</p>
             <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
         <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="n">executable</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 
-    <span class="n">exe</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">executable</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">executable</span><span class="p">)])</span>
+    <span class="n">exe</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">executable</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">executable</span><span class="p">)])</span>
 
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"nt"</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
-            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="n">exe</span><span class="p">]</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sudo"</span><span class="p">,</span> <span class="n">exe</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
-            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="n">exe</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">args</span><span class="p">)]</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sudo"</span><span class="p">,</span> <span class="n">exe</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">args</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="n">exe</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">,</span> <span class="n">args</span><span class="p">))]</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sudo"</span><span class="p">,</span> <span class="n">exe</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">,</span> <span class="n">args</span><span class="p">))]</span>
         <span class="k">return</span> <span class="n">process</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 
     <span class="c1"># Windows is more complicated</span>
 
     <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
@@ -4332,33 +4332,33 @@ process ID (Windows).</p>
 
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">cwd</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>  <span class="c1"># noqa: PTH109</span>
 
-    <span class="c1"># the &#39;runas&#39; verb starts in C:\WINDOWS\system32</span>
-    <span class="n">cd</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="s2">&quot;cd&quot;</span><span class="p">,</span> <span class="s2">&quot;/d&quot;</span><span class="p">,</span> <span class="n">cwd</span><span class="p">,</span> <span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">])</span>
+    <span class="c1"># the 'runas' verb starts in C:\WINDOWS\system32</span>
+    <span class="n">cd</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="s2">"cd"</span><span class="p">,</span> <span class="s2">"/d"</span><span class="p">,</span> <span class="n">cwd</span><span class="p">,</span> <span class="s2">"&amp;&amp;"</span><span class="p">])</span>
 
     <span class="c1"># check if a Python environment needs to be activated</span>
-    <span class="n">activate</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">activate</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="k">if</span> <span class="n">exe</span> <span class="o">==</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">):</span>
-        <span class="n">conda</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CONDA_PREFIX&quot;</span><span class="p">)</span>  <span class="c1"># conda</span>
-        <span class="n">venv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;VIRTUAL_ENV&quot;</span><span class="p">)</span>  <span class="c1"># venv</span>
+        <span class="n">conda</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"CONDA_PREFIX"</span><span class="p">)</span>  <span class="c1"># conda</span>
+        <span class="n">venv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"VIRTUAL_ENV"</span><span class="p">)</span>  <span class="c1"># venv</span>
         <span class="k">if</span> <span class="n">conda</span><span class="p">:</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"CONDA_DEFAULT_ENV"</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;CONDA_DEFAULT_ENV environment variable does not exist&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"CONDA_DEFAULT_ENV environment variable does not exist"</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span><span class="p">:</span>
-                <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">conda</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;Scripts&quot;</span> <span class="o">/</span> <span class="s2">&quot;activate.bat&quot;</span>
+            <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">"base"</span><span class="p">:</span>
+                <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">conda</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"Scripts"</span> <span class="o">/</span> <span class="s2">"activate.bat"</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">conda</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;Scripts&quot;</span> <span class="o">/</span> <span class="s2">&quot;activate.bat&quot;</span>
+                <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">conda</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"Scripts"</span> <span class="o">/</span> <span class="s2">"activate.bat"</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">bat</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">bat</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot find </span><span class="si">{</span><span class="n">bat</span><span class="si">}</span><span class="s2">"</span>
                 <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">activate</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">bat</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">])</span>
+            <span class="n">activate</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">bat</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="s2">"&amp;&amp;"</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">venv</span><span class="p">:</span>
-            <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;Scripts&quot;</span> <span class="o">/</span> <span class="s2">&quot;activate.bat&quot;</span>
+            <span class="n">bat</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"Scripts"</span> <span class="o">/</span> <span class="s2">"activate.bat"</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">bat</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">bat</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot find </span><span class="si">{</span><span class="n">bat</span><span class="si">}</span><span class="s2">"</span>
                 <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">activate</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">bat</span><span class="p">,</span> <span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">])</span>
+            <span class="n">activate</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">([</span><span class="n">bat</span><span class="p">,</span> <span class="s2">"&amp;&amp;"</span><span class="p">])</span>
 
     <span class="c1"># redirect stdout (stderr) to a file</span>
     <span class="n">redirect</span> <span class="o">=</span> <span class="kc">None</span>
@@ -4368,60 +4368,60 @@ process ID (Windows).</p>
         <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>  <span class="c1"># noqa: PLC0415</span>
 
         <span class="n">stdout_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">stdout_file</span><span class="p">)]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"&gt;"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">stdout_file</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">capture_stderr</span><span class="p">:</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;2&gt;&amp;1&quot;</span><span class="p">)</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"2&gt;&amp;1"</span><span class="p">)</span>
         <span class="n">redirect</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">list2cmdline</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d$&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\d$"</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
             <span class="c1"># this number is also considered as a file handle, so add a space</span>
-            <span class="n">redirect</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">redirect</span>
+            <span class="n">redirect</span> <span class="o">=</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">redirect</span>
 
     <span class="c1"># the string that is passed to cmd.exe</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/S /C &quot;</span><span class="si">{</span><span class="n">cd</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">activate</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">exe</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">&quot;</span><span class="si">{</span><span class="n">redirect</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'/S /C "</span><span class="si">{</span><span class="n">cd</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">activate</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">exe</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">"</span><span class="si">{</span><span class="n">redirect</span><span class="si">}</span><span class="s1">'</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">ctypes.wintypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">DWORD</span><span class="p">,</span> <span class="n">HANDLE</span><span class="p">,</span> <span class="n">HINSTANCE</span><span class="p">,</span> <span class="n">HKEY</span><span class="p">,</span> <span class="n">HWND</span><span class="p">,</span> <span class="n">INT</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">,</span> <span class="n">ULONG</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">ShellExecuteInfoW</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">Structure</span><span class="p">):</span>
         <span class="n">_fields_</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnannotatedClassAttribute]</span>
-            <span class="p">(</span><span class="s2">&quot;cbSize&quot;</span><span class="p">,</span> <span class="n">DWORD</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;fMask&quot;</span><span class="p">,</span> <span class="n">ULONG</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;hwnd&quot;</span><span class="p">,</span> <span class="n">HWND</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpVerb&quot;</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpFile&quot;</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpParameters&quot;</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpDirectory&quot;</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;nShow&quot;</span><span class="p">,</span> <span class="n">INT</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;hInstApp&quot;</span><span class="p">,</span> <span class="n">HINSTANCE</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpIDList&quot;</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;lpClass&quot;</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;hkeyClass&quot;</span><span class="p">,</span> <span class="n">HKEY</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;dwHotKey&quot;</span><span class="p">,</span> <span class="n">DWORD</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;hIcon&quot;</span><span class="p">,</span> <span class="n">HANDLE</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;hProcess&quot;</span><span class="p">,</span> <span class="n">HANDLE</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"cbSize"</span><span class="p">,</span> <span class="n">DWORD</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"fMask"</span><span class="p">,</span> <span class="n">ULONG</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"hwnd"</span><span class="p">,</span> <span class="n">HWND</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpVerb"</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpFile"</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpParameters"</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpDirectory"</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"nShow"</span><span class="p">,</span> <span class="n">INT</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"hInstApp"</span><span class="p">,</span> <span class="n">HINSTANCE</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpIDList"</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"lpClass"</span><span class="p">,</span> <span class="n">LPCWSTR</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"hkeyClass"</span><span class="p">,</span> <span class="n">HKEY</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"dwHotKey"</span><span class="p">,</span> <span class="n">DWORD</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"hIcon"</span><span class="p">,</span> <span class="n">HANDLE</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"hProcess"</span><span class="p">,</span> <span class="n">HANDLE</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="n">sei</span> <span class="o">=</span> <span class="n">ShellExecuteInfoW</span><span class="p">()</span>
     <span class="n">sei</span><span class="o">.</span><span class="n">fMask</span> <span class="o">=</span> <span class="mh">0x00000040</span> <span class="o">|</span> <span class="mh">0x00008000</span>  <span class="c1"># SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NO_CONSOLE</span>
-    <span class="n">sei</span><span class="o">.</span><span class="n">lpVerb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verb&quot;</span><span class="p">,</span> <span class="s2">&quot;runas&quot;</span><span class="p">)</span>  <span class="c1"># change the verb when running the tests</span>
-    <span class="n">sei</span><span class="o">.</span><span class="n">lpFile</span> <span class="o">=</span> <span class="s2">&quot;cmd.exe&quot;</span>
+    <span class="n">sei</span><span class="o">.</span><span class="n">lpVerb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"verb"</span><span class="p">,</span> <span class="s2">"runas"</span><span class="p">)</span>  <span class="c1"># change the verb when running the tests</span>
+    <span class="n">sei</span><span class="o">.</span><span class="n">lpFile</span> <span class="o">=</span> <span class="s2">"cmd.exe"</span>
     <span class="n">sei</span><span class="o">.</span><span class="n">lpParameters</span> <span class="o">=</span> <span class="n">params</span>
-    <span class="n">sei</span><span class="o">.</span><span class="n">lpDirectory</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">cwd</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">sei</span><span class="o">.</span><span class="n">lpDirectory</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">cwd</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="n">sei</span><span class="o">.</span><span class="n">nShow</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">show</span><span class="p">)</span>
     <span class="n">sei</span><span class="o">.</span><span class="n">cbSize</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">sizeof</span><span class="p">(</span><span class="n">sei</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">Shell32</span><span class="o">.</span><span class="n">ShellExecuteExW</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">sei</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">WinError</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">blocking</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="n">sei</span><span class="o">.</span><span class="n">hProcess</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"int"</span><span class="p">,</span> <span class="n">sei</span><span class="o">.</span><span class="n">hProcess</span><span class="p">)</span>
 
     <span class="n">kernel32</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span>
-    <span class="n">timeout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># INFINITE = -1</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># INFINITE = -1</span>
     <span class="n">milliseconds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">timeout</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span> <span class="k">if</span> <span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">timeout</span>
 
     <span class="n">ret</span> <span class="o">=</span> <span class="n">kernel32</span><span class="o">.</span><span class="n">WaitForSingleObject</span><span class="p">(</span><span class="n">sei</span><span class="o">.</span><span class="n">hProcess</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># WAIT_OBJECT_0</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
         <span class="k">if</span> <span class="n">stdout_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stdout_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout_file</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
             <span class="n">stdout_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
@@ -4432,14 +4432,14 @@ process ID (Windows).</p>
 
         <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">FormatError</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-            <span class="n">out_str</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="n">out_str</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Set show=False to capture the stdout stream.&quot;</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Set show=False to capture the stdout stream."</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">capture_stderr</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Set capture_stderr=True to see if more information is available.&quot;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Set capture_stderr=True to see if more information is available."</span>
                 <span class="k">if</span> <span class="n">out_str</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">out_str</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">out_str</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">WinError</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
         <span class="n">kernel32</span><span class="o">.</span><span class="n">CloseHandle</span><span class="p">(</span><span class="n">sei</span><span class="o">.</span><span class="n">hProcess</span><span class="p">)</span>
@@ -4450,19 +4450,19 @@ process ID (Windows).</p>
 
     <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mh">0x00000080</span><span class="p">:</span>  <span class="c1"># WAIT_ABANDONED  # noqa: PLR2004</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;The specified object is a mutex object that was not &quot;</span>
-            <span class="s2">&quot;released by the thread that owned the mutex object before &quot;</span>
-            <span class="s2">&quot;the owning thread terminated. Ownership of the mutex &quot;</span>
-            <span class="s2">&quot;object is granted to the calling thread and the mutex state &quot;</span>
-            <span class="s2">&quot;is set to non-signalled. If the mutex was protecting persistent &quot;</span>
-            <span class="s2">&quot;state information, you should check it for consistency.&quot;</span>
+            <span class="s2">"The specified object is a mutex object that was not "</span>
+            <span class="s2">"released by the thread that owned the mutex object before "</span>
+            <span class="s2">"the owning thread terminated. Ownership of the mutex "</span>
+            <span class="s2">"object is granted to the calling thread and the mutex state "</span>
+            <span class="s2">"is set to non-signalled. If the mutex was protecting persistent "</span>
+            <span class="s2">"state information, you should check it for consistency."</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">ret</span> <span class="o">==</span> <span class="mh">0x00000102</span><span class="p">:</span>  <span class="c1"># WAIT_TIMEOUT  # noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The timeout interval elapsed after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s) and the object&#39;s state is non-signalled.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"The timeout interval elapsed after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s) and the object's state is non-signalled."</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown return value 0x</span><span class="si">{</span><span class="n">ret</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Unknown return value 0x</span><span class="si">{</span><span class="n">ret</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">"</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;WaitForSingleObject: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"WaitForSingleObject: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4781,7 +4781,7 @@ starts with a <code>.</code> (a dot).</p>
     <span class="n">ignore_hidden_folders</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Search for files starting from a root directory.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Search for files starting from a root directory.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        directory: The root directory to begin searching for files.</span>
@@ -4792,15 +4792,15 @@ starts with a <code>.</code> (a dot).</p>
 <span class="sd">        include: A regular-expression pattern to use to include files. If `None`, no filtering</span>
 <span class="sd">            is applied and all files are yielded (that are not `exclude`d). For example,</span>
 
-<span class="sd">            * `r&quot;data&quot;` &amp;#8594; find files with the word `data` in the file path</span>
-<span class="sd">            * `r&quot;\.png$&quot;` &amp;#8594; find files with the extension `.png`</span>
-<span class="sd">            * `r&quot;\.jpe*g$&quot;` &amp;#8594; find files with the extension `.jpeg` or `.jpg`</span>
+<span class="sd">            * `r"data"` &amp;#8594; find files with the word `data` in the file path</span>
+<span class="sd">            * `r"\.png$"` &amp;#8594; find files with the extension `.png`</span>
+<span class="sd">            * `r"\.jpe*g$"` &amp;#8594; find files with the extension `.jpeg` or `.jpg`</span>
 
 <span class="sd">        exclude: A regular-expression pattern to use to exclude files. The `exclude` pattern</span>
 <span class="sd">            has precedence over the `include` pattern. For example,</span>
 
-<span class="sd">            * `r&quot;bin&quot;` &amp;#8594; exclude all files that contain the word `bin` in the file path</span>
-<span class="sd">            * `r&quot;bin|lib&quot;` &amp;#8594; exclude all files that contain the word `bin` or `lib` in the file path</span>
+<span class="sd">            * `r"bin"` &amp;#8594; exclude all files that contain the word `bin` in the file path</span>
+<span class="sd">            * `r"bin|lib"` &amp;#8594; exclude all files that contain the word `bin` or `lib` in the file path</span>
 
 <span class="sd">        flags: The flags to use to compile the regular-expression pattern (if it is a [str][] type).</span>
 <span class="sd">        ignore_os_error: Whether to ignore an [OSError][], if one occurs, while iterating through a directory.</span>
@@ -4811,14 +4811,14 @@ starts with a <code>.</code> (a dot).</p>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        The path to a file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">depth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span>
 
     <span class="n">folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">ignore_hidden_folders</span> <span class="ow">and</span> <span class="n">folder</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;search ignored hidden folder &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ignore_hidden_folders</span> <span class="ow">and</span> <span class="n">folder</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"search ignored hidden folder '</span><span class="si">%s</span><span class="s2">'"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -4833,7 +4833,7 @@ starts with a <code>.</code> (a dot).</p>
                 <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
                     <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span>
                     <span class="k">if</span> <span class="n">exclude</span> <span class="ow">and</span> <span class="n">exclude</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;search excluded file </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"search excluded file </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">include</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                         <span class="k">yield</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">(</span><span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">):</span>
@@ -4848,7 +4848,7 @@ starts with a <code>.</code> (a dot).</p>
                         <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">,</span>
                     <span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;search raised OSError for &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"search raised OSError for '</span><span class="si">%s</span><span class="s2">'"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_os_error</span><span class="p">:</span>
             <span class="k">raise</span>
 </code></pre></div></td></tr></table></div>
@@ -5110,7 +5110,7 @@ in <code>&lt;html&gt;&lt;/html&gt;</code> tags to use HTML elements to format th
     <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send an email.</span>
+<span class="w">    </span><span class="sd">"""Send an email.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config: An INI-style configuration file that contains information on how to send</span>
@@ -5152,15 +5152,15 @@ in <code>&lt;html&gt;&lt;/html&gt;</code> tags to use HTML elements to format th
 
 <span class="sd">        recipients: The email address(es) of the recipient(s). Can omit the `@domain.com`</span>
 <span class="sd">            part if a `domain` key is specified in the `config` file. Can use the value</span>
-<span class="sd">            `&#39;me&#39;` if sending an email to yourself via Gmail.</span>
+<span class="sd">            `'me'` if sending an email to yourself via Gmail.</span>
 <span class="sd">        sender: The email address of the sender. Can omit the `@domain.com` part</span>
 <span class="sd">            if a `domain` key is specified in the `config` file. If `sender` is not</span>
 <span class="sd">            specified, it becomes the value of the first `recipient` if using SMTP</span>
-<span class="sd">            or the value `&#39;me&#39;` if using Gmail.</span>
+<span class="sd">            or the value `'me'` if using Gmail.</span>
 <span class="sd">        subject: The text to include in the subject field.</span>
 <span class="sd">        body: The text to include in the body of the email. The text can be enclosed</span>
 <span class="sd">            in `&lt;html&gt;&lt;/html&gt;` tags to use HTML elements to format the message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">_prepare_email</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">_SMTPConfig</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">email.mime.multipart</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIMEMultipart</span>  <span class="c1"># noqa: PLC0415</span>
@@ -5175,11 +5175,11 @@ in <code>&lt;html&gt;&lt;/html&gt;</code> tags to use HTML elements to format th
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">username</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">password</span><span class="p">:</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
-            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">frm</span>
-            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">to</span><span class="p">)</span>
-            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span> <span class="ow">or</span> <span class="s2">&quot;(no subject)&quot;</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">body</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-            <span class="n">subtype</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;html&gt;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;plain&quot;</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">"From"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">frm</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">"To"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">to</span><span class="p">)</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span> <span class="ow">or</span> <span class="s2">"(no subject)"</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">body</span> <span class="ow">or</span> <span class="s2">""</span>
+            <span class="n">subtype</span> <span class="o">=</span> <span class="s2">"html"</span> <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;html&gt;"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"plain"</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">subtype</span><span class="p">))</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">frm</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">to</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
     <span class="k">else</span><span class="p">:</span>

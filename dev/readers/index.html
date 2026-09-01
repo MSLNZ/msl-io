@@ -1596,11 +1596,11 @@
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for a [Reader][msl-io-readers].</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for a [Reader][msl-io-readers].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file</span>
 </code></pre></div></td></tr></table></div>
@@ -1741,7 +1741,7 @@
 <span class="normal">40</span>
 <span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># noqa: ARG004</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the first line starts with `DRS` and ends with `Shindo`.</span>
+<span class="w">    </span><span class="sd">"""Checks if the first line starts with `DRS` and ends with `Shindo`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to check.</span>
@@ -1749,15 +1749,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether `file` was acquired in the DRS laboratory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;.dat&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">get_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">".dat"</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">line</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;DRS&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;DRS&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;Shindo&quot;</span><span class="p">,</span> <span class="s1">&#39;Shindo&quot;&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"DRS"</span><span class="p">,</span> <span class="s1">'"DRS'</span><span class="p">))</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">"Shindo"</span><span class="p">,</span> <span class="s1">'Shindo"'</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1839,27 +1839,27 @@
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the `.DAT` and corresponding `.LOG` file.</span>
+<span class="w">    </span><span class="sd">"""Reads the `.DAT` and corresponding `.LOG` file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kwargs: All keyword arguments are ignored.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_default_alias</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;l(nm)&quot;</span><span class="p">:</span> <span class="s2">&quot;wavelength&quot;</span><span class="p">}</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_default_alias</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"l(nm)"</span><span class="p">:</span> <span class="s2">"wavelength"</span><span class="p">}</span>
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># noqa: S101</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_lines_dat</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">remove_empty_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_num_lines_dat</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines_dat</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_lines_log</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;LOG&quot;</span><span class="p">,</span> <span class="n">remove_empty_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lines_log</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"LOG"</span><span class="p">,</span> <span class="n">remove_empty_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_num_lines_log</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines_log</span><span class="p">)</span>
 
     <span class="n">num_runs</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_index_dat</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_index_log</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_dat</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_lines_dat</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;DRS&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lines_dat</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_dat</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">"DRS"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lines_dat</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_dat</span><span class="p">]:</span>
             <span class="n">num_runs</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;run</span><span class="si">{</span><span class="n">num_runs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="sa">f</span><span class="s2">"run</span><span class="si">{</span><span class="n">num_runs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_read_run</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_index_dat</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1961,11 +1961,11 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for a [Reader][msl-io-readers].</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for a [Reader][msl-io-readers].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file</span>
 </code></pre></div></td></tr></table></div>
@@ -2103,7 +2103,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">48</span>
 <span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># noqa: ARG004</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks if the file has the [HDF5 signature]{:target=&quot;_blank&quot;}.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Checks if the file has the [HDF5 signature]{:target="_blank"}.</span>
 
 <span class="sd">    [HDF5 signature]: https://support.hdfgroup.org/documentation/hdf5/latest/_f_m_t11.html#subsec_fmt11_boot_super</span>
 
@@ -2113,9 +2113,9 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the first 8 bytes are `\x89HDF\r\n\x1a\n`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">BufferedIOBase</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">get_bytes</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x89</span><span class="s2">HDF</span><span class="se">\r\n\x1a\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">get_bytes</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x89</span><span class="s2">HDF</span><span class="se">\r\n\x1a\n</span><span class="s2">"</span>
     <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2213,30 +2213,30 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the [HDF5](https://www.hdfgroup.org/) file.</span>
+<span class="w">    </span><span class="sd">"""Reads the [HDF5](https://www.hdfgroup.org/) file.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        kwargs: All keyword arguments are passed to [h5py.File][]{:target=&quot;_blank&quot;}.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        kwargs: All keyword arguments are passed to [h5py.File][]{:target="_blank"}.</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_h5py</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must install h5py to read HDF5 files, run</span><span class="se">\n</span><span class="s2">  pip install h5py&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"You must install h5py to read HDF5 files, run</span><span class="se">\n</span><span class="s2">  pip install h5py"</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="nd">@no_type_check</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">head</span><span class="p">]</span> <span class="k">if</span> <span class="n">head</span> <span class="k">else</span> <span class="bp">self</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s2">"/"</span> <span class="o">+</span> <span class="n">head</span><span class="p">]</span> <span class="k">if</span> <span class="n">head</span> <span class="k">else</span> <span class="bp">self</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="p">[:],</span> <span class="o">**</span><span class="n">obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="o">**</span><span class="n">obj</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Should never get here, unhandled h5py object </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Should never get here, unhandled h5py object </span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="nd">@no_type_check</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">h5_open</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_metadata</span><span class="p">(</span><span class="o">**</span><span class="n">h5</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
             <span class="n">h5</span><span class="o">.</span><span class="n">visititems</span><span class="p">(</span><span class="n">convert</span><span class="p">)</span>  <span class="c1"># cSpell: ignore visititems</span>
 
@@ -2248,10 +2248,10 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">BufferedIOBase</span><span class="p">):</span>
         <span class="n">h5_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># noqa: PTH123</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># noqa: PTH123</span>
             <span class="n">h5_open</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Should never get here, file type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Should never get here, file type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2344,11 +2344,11 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for a [Reader][msl-io-readers].</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for a [Reader][msl-io-readers].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file</span>
 </code></pre></div></td></tr></table></div>
@@ -2490,7 +2490,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">40</span>
 <span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the file was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
+<span class="w">    </span><span class="sd">"""Checks if the file was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to check.</span>
@@ -2498,7 +2498,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the text `MSL JSONWriter` is in the first line of the file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">BufferedIOBase</span><span class="p">)):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">get_bytes</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">34</span><span class="p">)</span>
@@ -2507,7 +2507,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">text</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;MSL JSONWriter&quot;</span>
+    <span class="k">return</span> <span class="n">text</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"MSL JSONWriter"</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2617,21 +2617,21 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
+<span class="w">    </span><span class="sd">"""Read the file that was created by [JSONWriter][msl.io.writers.json_.JSONWriter].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kwargs:  Accepts `encoding` and `errors` keyword arguments which are passed to</span>
 <span class="sd">            [open][]. The default `encoding` value is `utf-8` and the default</span>
 <span class="sd">            `errors` value is `strict`. All additional keyword arguments are passed to</span>
 <span class="sd">            [json.loads][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">open_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;errors&quot;</span><span class="p">,</span> <span class="s2">&quot;strict&quot;</span><span class="p">),</span>
+        <span class="s2">"encoding"</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"encoding"</span><span class="p">,</span> <span class="s2">"utf-8"</span><span class="p">),</span>
+        <span class="s2">"errors"</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"errors"</span><span class="p">,</span> <span class="s2">"strict"</span><span class="p">),</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># noqa: PTH123, UP015</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"rt"</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># noqa: PTH123, UP015</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># skip the first line</span>
             <span class="n">dict_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2646,19 +2646,19 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># Metadata</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="k">elif</span> <span class="s2">&quot;dtype&quot;</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">and</span> <span class="s2">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># Dataset</span>
+            <span class="k">elif</span> <span class="s2">"dtype"</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">and</span> <span class="s2">"data"</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># Dataset</span>
                 <span class="n">kws</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">d_key</span><span class="p">,</span> <span class="n">d_val</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
-                    <span class="k">if</span> <span class="n">d_key</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
-                        <span class="k">pass</span>  <span class="c1"># handled in the &#39;dtype&#39; check</span>
-                    <span class="k">elif</span> <span class="n">d_key</span> <span class="o">==</span> <span class="s2">&quot;dtype&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">d_key</span> <span class="o">==</span> <span class="s2">"data"</span><span class="p">:</span>
+                        <span class="k">pass</span>  <span class="c1"># handled in the 'dtype' check</span>
+                    <span class="k">elif</span> <span class="n">d_key</span> <span class="o">==</span> <span class="s2">"dtype"</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d_val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                            <span class="n">kws</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-                                <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]],</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]</span>
+                            <span class="n">kws</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                                <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]],</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]</span>
                                 <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d_val</span><span class="p">],</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]</span>
                             <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">kws</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">d_val</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
+                            <span class="n">kws</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">"data"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">d_val</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
                     <span class="k">else</span><span class="p">:</span>  <span class="c1"># Metadata</span>
                         <span class="n">kws</span><span class="p">[</span><span class="n">d_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_val</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
@@ -2666,7 +2666,7 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
                 <span class="n">create_group</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
 
     <span class="c1"># create the root group</span>
-    <span class="n">create_group</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dict_</span><span class="p">)</span>
+    <span class="n">create_group</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">dict_</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2758,11 +2758,11 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for a [Reader][msl-io-readers].</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for a [Reader][msl-io-readers].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to read.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file</span>
 </code></pre></div></td></tr></table></div>
@@ -2871,14 +2871,14 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">29</span>
 <span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">can_read</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">ReadLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># noqa: ARG004</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the file extension is `.dat` and the filename starts with `Trans_`.</span>
+<span class="w">    </span><span class="sd">"""Checks if the file extension is `.dat` and the filename starts with `Trans_`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: The file to check.</span>
 <span class="sd">        kwargs: All keyword arguments are ignored.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">get_basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Trans_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.dat&quot;</span><span class="p">,</span> <span class="s2">&quot;.DAT&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Trans_"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".dat"</span><span class="p">,</span> <span class="s2">".DAT"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3074,56 +3074,56 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ARG002, C901, PLR0915</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the data in the corresponding `.log` and `.celsius` files.</span>
+<span class="w">    </span><span class="sd">"""Reads the data in the corresponding `.log` and `.celsius` files.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kwargs: All keyword arguments are ignored.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># noqa: S101</span>
-    <span class="n">lines_log</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">remove_empty_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">lines_log</span> <span class="o">=</span> <span class="n">get_lines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"log"</span><span class="p">,</span> <span class="n">remove_empty_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">num_lines_log</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines_log</span><span class="p">)</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;trans_data&quot;</span><span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">"trans_data"</span><span class="p">)</span>
     <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_time</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lines_log</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_time</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lines_log</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_time</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lines_log</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_time</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lines_log</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;note&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;No end time recorded.&quot;</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"note"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"No end time recorded."</span>
     <span class="n">this_line</span> <span class="o">=</span> <span class="mi">2</span>
 
     <span class="c1"># Read temperature data out of celsius file</span>
-    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;avg_temp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_celsius_file</span><span class="p">()</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s2">"avg_temp"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_celsius_file</span><span class="p">()</span>
 
     <span class="c1"># skip lines until we get to the wavelength information and save comment</span>
     <span class="n">comment</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Wavelengths Settings:&quot;</span><span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Wavelengths Settings:"</span><span class="p">):</span>
         <span class="n">comment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">])</span>
         <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s2">"comment"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
     <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Wavelengths read&quot;</span><span class="p">):</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;wavelength input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Read from text file&quot;</span>
+    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Wavelengths read"</span><span class="p">):</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"wavelength input"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Read from text file"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;wavelength input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Manually input&quot;</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"wavelength input"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Manually input"</span>
 
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TEST MODULE:&quot;</span><span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"TEST MODULE:"</span><span class="p">):</span>
         <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;DVM INIT&quot;</span><span class="p">):</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;dvm init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"DVM INIT"</span><span class="p">):</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"dvm init"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span>
 
     <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">2</span>
-    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;DELAY&quot;</span><span class="p">):</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;delay&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"DELAY"</span><span class="p">):</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"delay"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">2</span>
-    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;NUM SAMPLES&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"NUM SAMPLES"</span><span class="p">):</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;n_samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">"n_samples"</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_samples</span>
 
     <span class="n">wavelengths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">dark_current</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3144,23 +3144,23 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
     <span class="n">n_measurements</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">while</span> <span class="n">this_line</span> <span class="o">&lt;</span> <span class="n">num_lines_log</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Wavelength = &quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Wavelength = "</span><span class="p">):</span>
             <span class="n">n_measurements</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">wavelengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
-            <span class="n">i0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">i0_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
-            <span class="n">m0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">m0_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
-            <span class="n">corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">dark_current</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">dark_current_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
-            <span class="n">dark_current_m</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">dark_current_m_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=|</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
-            <span class="n">is_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
-            <span class="n">is_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
-            <span class="n">is_m</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
-            <span class="n">is_m_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
-            <span class="n">is_corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
+            <span class="n">i0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">i0_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">m0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">m0_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">dark_current</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">dark_current_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">dark_current_m</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">])[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">dark_current_m_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"=|</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">])[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">is_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
+            <span class="n">is_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
+            <span class="n">is_m</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
+            <span class="n">is_m_u</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
+            <span class="n">is_corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lines_log</span><span class="p">[</span><span class="n">this_line</span> <span class="o">+</span> <span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">item</span><span class="p">]))</span>
 
             <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">10</span>
 
@@ -3168,16 +3168,16 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
             <span class="n">this_line</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;wavelength&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;signal&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u_signal&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mon_signal&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u_mon_signal&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;correlation&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;dark_current&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u_dark_current&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mon_dark&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u_mon_dark&quot;</span><span class="p">,</span>
+        <span class="s2">"wavelength"</span><span class="p">,</span>
+        <span class="s2">"signal"</span><span class="p">,</span>
+        <span class="s2">"u_signal"</span><span class="p">,</span>
+        <span class="s2">"mon_signal"</span><span class="p">,</span>
+        <span class="s2">"u_mon_signal"</span><span class="p">,</span>
+        <span class="s2">"correlation"</span><span class="p">,</span>
+        <span class="s2">"dark_current"</span><span class="p">,</span>
+        <span class="s2">"u_dark_current"</span><span class="p">,</span>
+        <span class="s2">"mon_dark"</span><span class="p">,</span>
+        <span class="s2">"u_mon_dark"</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="nb">list</span><span class="p">(</span>
@@ -3196,16 +3196,16 @@ the file using <a href="https://www.h5py.org/" target="_blank">h5py</a>.</p>
         <span class="p">),</span>
         <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fieldnames</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
 
     <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;Transmitted signal&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u(Transmitted signal)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Monitor transmitted&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;u(Monitor transmitted)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Transmitted correlation&quot;</span><span class="p">,</span>
+        <span class="s2">"Transmitted signal"</span><span class="p">,</span>
+        <span class="s2">"u(Transmitted signal)"</span><span class="p">,</span>
+        <span class="s2">"Monitor transmitted"</span><span class="p">,</span>
+        <span class="s2">"u(Monitor transmitted)"</span><span class="p">,</span>
+        <span class="s2">"Transmitted correlation"</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="n">d_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Is&quot;</span><span class="p">,</span> <span class="s2">&quot;Is_u&quot;</span><span class="p">,</span> <span class="s2">&quot;Is_M&quot;</span><span class="p">,</span> <span class="s2">&quot;Is_M_u&quot;</span><span class="p">,</span> <span class="s2">&quot;Is_corr&quot;</span><span class="p">]</span>
+    <span class="n">d_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Is"</span><span class="p">,</span> <span class="s2">"Is_u"</span><span class="p">,</span> <span class="s2">"Is_M"</span><span class="p">,</span> <span class="s2">"Is_M_u"</span><span class="p">,</span> <span class="s2">"Is_corr"</span><span class="p">]</span>
     <span class="n">sample_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">is_</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">is_u</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">is_m</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">is_m_u</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">is_corr</span><span class="p">)))</span>
     <span class="p">)</span>
