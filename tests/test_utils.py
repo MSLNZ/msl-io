@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import hashlib
 import os
 import re
@@ -10,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import uuid
+from datetime import datetime
 from io import BufferedReader, BytesIO, StringIO, TextIOWrapper
 from pathlib import Path
 
@@ -91,7 +91,7 @@ def test_git_head() -> None:
     assert all(char.isalnum() for char in head.hash)
     assert all(char.isalnum() for char in head["hash"])
     assert isinstance(head.hash, str)
-    assert isinstance(head.timestamp, datetime.datetime)
+    assert isinstance(head.timestamp, datetime)
     assert head.timestamp.year > 2024
     assert head["timestamp"].year > 2024
 
