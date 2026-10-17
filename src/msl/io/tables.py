@@ -78,7 +78,7 @@ in a text-based file format. If the file extension is not in the map, then colum
 """
 
 
-def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
+def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:  # noqa: C901
     """Read a data table from a text-based file.
 
     The generic way to read any table is with the [read_table][msl.io.tables.read_table] function.
@@ -136,6 +136,12 @@ def read_table_text(file: PathLike | ReadLike, **kwargs: Any) -> Dataset:
                 data = np.loadtxt(f, **kwargs)
         else:
             data = np.loadtxt(file, **kwargs)
+
+    if data.ndim == 0:  # a scalar
+        shape = (1, 1) if data.dtype.fields is None else (1,)
+        data = data.reshape(shape)
+    elif data.ndim == 1 and data.size > 0 and data.dtype.fields is None:  # a single column
+        data = data.reshape(data.size, 1)
 
     return Dataset(
         name=get_basename(file), parent=None, read_only=True, data=data, header=np.asarray(header, dtype=str)
@@ -325,19 +331,10 @@ def read_table_ods(  # noqa: PLR0913
     return _spreadsheet_to_dataset(table, file, dtype)
 
 
-def _spreadsheet_to_dataset(table: Any | list[tuple[Any, ...]], file: str, dtype: DTypeLike | None) -> Dataset:
+def _spreadsheet_to_dataset(table: list[tuple[Any, ...]], file: str, dtype: DTypeLike | None) -> Dataset:
     header: Any
     data: Any
-    if not table:
-        header, data = [], []
-    elif len(table) == 1:
-        header, data = table[0], []
-    elif len(table[0]) == 1:  # a single column
-        header, data = table[0], [row[0] for row in table[1:]]
-    else:
-        header, data = table[0], table[1:]
-        if len(data) == 1:  # a single row
-            data = data[0]
+    header, data = (table[0], table[1:]) if table else ([], [])
 
     if isinstance(dtype, str) and dtype[:6].lower().startswith("header"):
         dtype = _header_dtype(dtype, header)

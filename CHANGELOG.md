@@ -2,6 +2,16 @@
 
 ---
 
+## unreleased
+
+***Added:***
+
+- support for Python 3.15
+
+***Changed:***
+
+- [read_table][msl.io.tables.read_table] now returns a 2-dimensional array if the table data contains a single value, a single column or a single row
+
 ## 0.4.0 (2026-06-30)
 
 ***Added:***

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from datetime import datetime
 from io import BytesIO, StringIO
 from pathlib import Path
@@ -123,6 +124,31 @@ def test_ods_range_out_of_bounds() -> None:
     assert np.array_equal(dset.data, ods_data)
 
 
+@pytest.mark.parametrize(("ext", "delimiter"), [(".csv", ","), (".txt", "\t")])
+def test_loadtxt_scalar_value(ext: str, delimiter: str) -> None:
+    dset = read_table(get_url(ext), usecols=1, skiprows=9, delimiter=delimiter)
+    assert np.array_equal(dset.metadata.header, ["-0.505096"])
+    assert np.array_equal(dset.data, [[-0.505072]])
+
+
+@pytest.mark.parametrize(("ext", "delimiter"), [(".csv", ","), (".txt", "\t")])
+def test_loadtxt_single_header_no_data(ext: str, delimiter: str) -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UserWarning)
+        dset = read_table(get_url(ext), usecols=1, skiprows=10, delimiter=delimiter)
+    assert np.array_equal(dset.metadata.header, ["-0.505072"])
+    assert np.array_equal(dset.data, [])
+    assert dset.size == 0
+
+
+@pytest.mark.parametrize(("ext", "delimiter"), [(".csv", ","), (".txt", "\t")])
+def test_loadtxt_single_row_dtype_header(ext: str, delimiter: str) -> None:
+    dset = read_table(get_url(ext), max_rows=1, delimiter=delimiter, dtype="header:U19,f8,f8,f8,f8")
+    assert np.array_equal(dset.metadata.header, header)
+    assert np.array_equal(dset.data, np.array([data[0]], dtype=dset.dtype))
+    assert dset.size == 1
+
+
 @pytest.mark.parametrize(("extension"), [".xls", ".xlsx", ".ods"])
 def test_single_cell_specified(extension: str) -> None:
     expected = np.asarray([[e["f1"], e["f2"], e["f3"], e["f4"]] for e in data])
@@ -138,7 +164,7 @@ def test_single_cell_specified(extension: str) -> None:
     if extension != ".xls":
         dset = read_table(get_url(extension), cells="AFB154041", sheet="AEX154041")
         assert np.array_equal(dset.metadata.header, ["uncert2"])
-        assert np.array_equal(dset.data, data["f4"])
+        assert np.array_equal(dset.data, [[v] for v in data["f4"]])
 
 
 @pytest.mark.parametrize(("extension"), [".xls", ".xlsx", ".ods"])
@@ -213,7 +239,32 @@ def test_ignore_timestamp_column(ext: str, kwargs: dict[str, Any]) -> None:  # t
 def test_single_column(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, [header[1]])
-    assert np.array_equal(dset.data, data["f1"])
+    assert np.array_equal(dset.data, [[v] for v in data["f1"]])
+    assert np.array_equal(dset.flatten(), data["f1"])
+    assert dset.ndim == 2
+    assert dset.shape == (10, 1)
+
+
+@pytest.mark.parametrize(
+    ("ext", "kwargs"),
+    [
+        (".csv", {"usecols": 1}),
+        (".txt", {"usecols": 1, "delimiter": "\t"}),
+        (".xls", {"sheet": "A1", "cells": "B1:B11"}),
+        (".xls", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".xlsx", {"sheet": "A1", "cells": "B1:B11"}),
+        (".xlsx", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".xlsx", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"}),
+        (".ods", {"sheet": "A1", "cells": "B1:B11"}),
+        (".ods", {"sheet": "BH11", "cells": "BI11:BI21"}),
+        (".ods", {"sheet": "AEX154041", "cells": "AEY154041:AEY154051"}),
+    ],
+)
+def test_single_column_dtype_header(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
+    dset = read_table(get_url(ext), dtype="header", **kwargs)
+    assert np.array_equal(dset.metadata.header, [header[1]])
+    assert np.array_equal(dset.data, np.array([(v,) for v in data["f1"]], dtype=[("val1", "<f8")]))
+    assert dset.ndim == 1
     assert dset.shape == (10,)
 
 
@@ -236,7 +287,8 @@ def test_single_row(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[m
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, header)
     expect = ods_data if ext == ".ods" else data
-    assert np.array_equal(dset.data, expect[0])
+    assert np.array_equal(dset.data, [expect[0]])
+    assert dset.shape == (1,)
 
 
 @pytest.mark.parametrize(
@@ -256,6 +308,23 @@ def test_header_only(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[
     dset = read_table(get_url(ext), **kwargs)
     assert np.array_equal(dset.metadata.header, header)
     assert dset.data.size == 0
+    assert np.array_equal(dset.data, [])
+
+
+@pytest.mark.parametrize(
+    ("ext", "kwargs"),
+    [
+        (".xls", {"sheet": "A1", "cells": "A1:A2"}),
+        (".xlsx", {"sheet": "A1", "cells": "A1:A2"}),
+        (".ods", {"sheet": "A1", "cells": "A1:A2"}),
+    ],
+)
+def test_single_spreadsheet_value(ext: str, kwargs: dict[str, Any]) -> None:  # type: ignore[misc]
+    dset = read_table(get_url(ext), **kwargs)
+    assert np.array_equal(dset.metadata.header, ["timestamp"])
+    assert dset.data.size == 1
+    d = datetime(2019, 9, 11, 14, 6, 55)  # noqa: DTZ001
+    assert np.array_equal(dset.data, np.array([[d]], dtype=object))
 
 
 def to_datetime(string: bytes) -> datetime:
@@ -694,7 +763,7 @@ def test_gsheets_one_row() -> None:
     file = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet"
     dset = read_table(file, account="testing", sheet="row")
     assert np.array_equal(dset.metadata.header, gsheet_header)
-    assert np.array_equal(dset, gsheet_data[0])
+    assert np.array_equal(dset, [gsheet_data[0]])
 
 
 @skipif_no_sheets_readonly
@@ -703,7 +772,7 @@ def test_gsheets_one_column() -> None:
     file = "1Q0TAgnw6AJQWkLMf8V3qEhEXuCEXTFAc95cEcshOXnQ.gsheet"
     dset = read_table(file, account="testing", sheet="column")
     assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
-    assert np.array_equal(dset, gsheet_data[:, 1])
+    assert np.array_equal(dset, [[v] for v in gsheet_data[:, 1]])
 
 
 @skipif_no_sheets_readonly
@@ -751,11 +820,11 @@ def test_gsheets_cell_range() -> None:
 
     dset = read_table(file, account="testing", sheet="StartA1", cells="B1:B11")
     assert np.array_equal(dset.metadata.header, [gsheet_header[1]])
-    assert np.array_equal(dset, gsheet_data[:, 1])
+    assert np.array_equal(dset, [[v] for v in gsheet_data[:, 1]])
 
     dset = read_table(file, account="testing", sheet="StartA1", cells="A1:D2")
     assert np.array_equal(dset.metadata.header, gsheet_header)
-    assert np.array_equal(dset, gsheet_data[0])
+    assert np.array_equal(dset, [gsheet_data[0]])
 
     dset = read_table(file, account="testing", sheet="StartA1", cells="B:D", dtype=object)
     assert np.array_equal(dset.metadata.header, gsheet_header[1:4])
